@@ -3,7 +3,7 @@
 
 ![Ziggy Javascript Laravel Routes Example](http://i.imgur.com/m6C9Cfy.gif)
 
-Ziggy creates a Blade directive which you can include in your views. This will include a JS object of named routes, keyed by name, as well as a global `route()` helper function which you can use to access your routes in your JS.
+Ziggy creates a Blade directive which you can include in your views. This will include a JS object of named routes, keyed by name, as well as a global `route()` helper function which you can use to access your routes in your JS. It's called ziggy because I didn't want to call it `laravel-named-routes-in-js`. So sue me.
 
 ### Installation 
 
