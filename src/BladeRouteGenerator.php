@@ -19,7 +19,7 @@ class BladeRouteGenerator
 
         return <<<EOT
 <script type="text/javascript">
-    var namedRoutes = JSON.parse('{ $routes }');
+    var namedRoutes = JSON.parse('$routes');
 
     function route (name, params) {
         return namedRoutes[name].uri.replace(
@@ -36,7 +36,7 @@ EOT;
     private function nameKeyedRoutes()
     {
         return collect($this->router->getRoutes()->getRoutesByName())->map(function ($route) {
-            return collect($route)->only(['uri', 'methods', 'parameters']);
+            return collect($route)->only(['uri', 'methods']);
         });
     }
 }
