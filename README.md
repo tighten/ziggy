@@ -1,6 +1,6 @@
 # Ziggy - Use your Laravel Named Routes inside Javascript
 
-![Ziggy Javascript Laravel Routes Example](http://i.imgur.com/m6C9Cfy.gif)
+![Ziggy Javascript Laravel Routes Example](http://i.imgur.com/tWu1ZqT.gif)
 
 Ziggy creates a Blade directive which you can include in your views. This will export a JavaScript object of your application's named routes, keyed by their names (aliases), as well as a global `route()` helper function which you can use to access your routes in your JS.
 
@@ -20,11 +20,11 @@ The package also creates an optional `route()` JavaScript helper which functions
 
 For example:
 
-`route('posts.index')` should return `/posts`
+`route('posts.index')` should return `posts`
 
 If you wish to retrieve the URL for a route with required parameters, pass a JavaScript object with the parameterss as the second argument to `route()`:
 
-`route('posts.show', {id: 1})` should return `/posts/1`
+`route('posts.show', {id: 1})` should return `posts/1`
 
 Here's a full example:
 
