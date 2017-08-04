@@ -11,6 +11,8 @@ Ziggy creates a Blade directive which you can include in your views. This will i
 
 Add `Ziggy\ZiggyServiceProvider::class` to the `providers` array in your `config/app.php`.
 
+Include our Blade Directive (`@jsroutes`) somewhere in your template before your main App JS is loaded.
+
 ### Usage
 
 Your Routes will be stored as a nested JS object at `window.namedRoutes`.
