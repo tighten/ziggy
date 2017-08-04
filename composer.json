@@ -1,9 +1,8 @@
 {
-    "name": "coulbourne/js-named-routes",
+    "name": "tightenco/ziggy",
     "description": "Generates a routes.js file with all of your named Laravel routes. Provides a nice route() helper function in JS.",
-    "type": "library",
     "require": {
-        "laravel/laravel": "^5.4"
+        "laravel/framework": "^5.4",
     },
     "license": "GPL",
     "authors": [
@@ -14,7 +13,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "JsNamedRoutes\\": "src/"
+            "Ziggy\\": "src/"
         }
     }
 }

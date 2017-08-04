@@ -1,12 +1,12 @@
 <?php
 
-namespace JsNamedRoutes;
+namespace Ziggy;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Route;
 
-class JsNamedRoutesServiceProvider extends ServiceProvider
+class ZiggyServiceProvider extends ServiceProvider
 {
     public function boot()
     {
@@ -17,7 +17,7 @@ class JsNamedRoutesServiceProvider extends ServiceProvider
 
             return "<script type='text/javascript'>
                         var namedRoutes = JSON.parse('" . $routes . "');
-                        
+
                         function route(name, params) {
                             return namedRoutes[name].uri.replace(
                                 /\{([^}]+)\}/,
