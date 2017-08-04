@@ -1,3 +1,5 @@
+![Ziggy - Use your Laravel Named Routes inside Javascript](http://i.imgur.com/JLC1ZP6.png)
+
 # Ziggy - Use your Laravel Named Routes inside Javascript
 
 ![Ziggy Javascript Laravel Routes Example](http://i.imgur.com/tWu1ZqT.gif)
