@@ -1,6 +1,6 @@
 {
     "name": "tightenco/ziggy",
-    "description": "Generates a routes.js file with all of your named Laravel routes. Provides a nice route() helper function in JS.",
+    "description": "Generates a Blade directive exporting all of your named Laravel routes. Also provides a nice route() helper function in JavaScript.",
     "require": {
         "laravel/framework": "^5.4.29"
     },
