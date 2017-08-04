@@ -1,29 +1,44 @@
-# Ziggy
-## Use your Laravel Named Routes inside Javascript
+# Ziggy - Use your Laravel Named Routes inside Javascript
 
 ![Ziggy Javascript Laravel Routes Example](http://i.imgur.com/m6C9Cfy.gif)
 
-Ziggy creates a Blade directive which you can include in your views. This will include a JS object of named routes, keyed by name, as well as a global `route()` helper function which you can use to access your routes in your JS. It's called ziggy because I didn't want to call it `laravel-named-routes-in-js`. So sue me.
+Ziggy creates a Blade directive which you can include in your views. This will export a JavaScript object of your application's named routes, keyed by their names (aliases), as well as a global `route()` helper function which you can use to access your routes in your JS.
 
-### Installation 
+## Installation 
 
-`composer require tightenco/ziggy`
+1. Add Ziggy to your Composer file: `composer require tightenco/ziggy`
 
-Add `Ziggy\ZiggyServiceProvider::class` to the `providers` array in your `config/app.php`.
+2. (if Laravel 5.4) Add `Tightenco\Ziggy\ZiggyServiceProvider::class` to the `providers` array in your `config/app.php`.
 
-Include our Blade Directive (`@jsroutes`) somewhere in your template before your main App JS is loaded.
+3. Include our Blade Directive (`@jsroutes`) somewhere in your template before your main application JavaScript is loaded--likely in the header somewhere.
 
-### Usage
+## Usage
 
-Your Routes will be stored as a nested JS object at `window.namedRoutes`.
-Included is an optional `route()` helper method which can be used to retrieve URLs by name.
+This package replaces the `@routes` directive with a collection of all of your application's routes, keyed by their names. This collection is available at `window.namedRoutes`.
+
+The package also creates an optional `route()` JavaScript helper which functions like Laravel's `route()` PHP helper, which can be usedc to retrieve URLs by name and (optionally) parameters. 
+
+For example:
 
 `route('posts.index')` should return `/posts`
 
-If you wish to retrieve the URL for a route with required parameters, pass a JS object with the params as the second argument to `route()`
+If you wish to retrieve the URL for a route with required parameters, pass a JavaScript object with the parameterss as the second argument to `route()`:
 
 `route('posts.show', {id: 1})` should return `/posts/1`
 
-### Thanks
+Here's a full example:
 
-Thanks to [Caleb Porzio](http://twitter.com/calebporzio), [Adam Wathan](http://twitter.com/adamwathan), [Matt Stauffer](http://twitter.com/stauffermatt), and [Jeffrey Way](http://twitter.com/jeffrey_way) for helping me think through all the ways to skin this cat.
+```javascript
+let postId = 1337;
+
+return axios.get(route('posts.show', {id: postId}))
+    .then((response) => {
+        return response.data;
+    });
+```
+
+## Credits
+
+Author: [Daniel Coulbourne](https://twitter.com/DCoulbourne)
+
+Thanks to [Caleb Porzio](http://twitter.com/calebporzio), [Adam Wathan](http://twitter.com/adamwathan), [Matt Stauffer](http://twitter.com/stauffermatt), and [Jeffrey Way](http://twitter.com/jeffrey_way).
