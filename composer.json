@@ -15,5 +15,13 @@
         "psr-4": {
             "Tightenco\\Ziggy\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tightenco\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "~3.4"
     }
 }

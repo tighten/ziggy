@@ -7,19 +7,20 @@ use Illuminate\Routing\Router;
 class BladeRouteGenerator
 {
     private $router;
+    public $routes;
 
     public function __construct(Router $router)
     {
         $this->router = $router;
+        $this->routes = $this->nameKeyedRoutes();
     }
 
     public function generate()
     {
-        $routes = (string) $this->nameKeyedRoutes();
-
+        $json = (string) $routes;
         return <<<EOT
 <script type="text/javascript">
-    var namedRoutes = JSON.parse('$routes');
+    var namedRoutes = JSON.parse('$json');
 
     function route (name, params) {
         return namedRoutes[name].uri.replace(
@@ -35,7 +36,9 @@ EOT;
 
     private function nameKeyedRoutes()
     {
-        return collect($this->router->getRoutes()->getRoutesByName())->map(function ($route) {
+        $routesByName = $this->router->getRoutes();
+
+        return collect($routesByName->getRoutesByName())->map(function ($route) {
             return collect($route)->only(['uri', 'methods']);
         });
     }
