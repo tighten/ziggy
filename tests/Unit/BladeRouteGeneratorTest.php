@@ -13,7 +13,7 @@ use Tightenco\Ziggy\BladeRouteGenerator;
 class BladeRouteGeneratorTest extends TestCase
 {
     /** @test */
-    function generator_at_least_vaguely_works_and_outputs_something_vageuly_right_ish()
+    function generator_at_least_vaguely_works_and_outputs_something_vaguely_right_ish()
     {
         $generator = app(BladeRouteGenerator::class);
 
