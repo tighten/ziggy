@@ -13,21 +13,55 @@ use Tightenco\Ziggy\BladeRouteGenerator;
 class BladeRouteGeneratorTest extends TestCase
 {
     /** @test */
-    public function generator_returns_only_named_routes()
+    function generator_at_least_vaguely_works_and_outputs_something_vageuly_right_ish()
     {
-        $router = app()->make('router');
+        $generator = app(BladeRouteGenerator::class);
 
-        // Not Named. Shouldn't end up in JSON
+        $this->assertContains("JSON.parse('[]')", $generator->generate());
+    }
+
+    /** @test */
+    function generator_outputs_named_routes_with_expected_structure()
+    {
+        $router = app('router');
+
+        // Named. Should end up in JSON
+        $router->get('/posts/{post}/comments', function () { return ''; })
+            ->name('postComments.index');
+
+        $router->getRoutes()->refreshNameLookups();
+
+        $generator = (new BladeRouteGenerator($router));
+
+        $this->assertEquals([
+            'postComments.index' =>[
+                'uri' => 'posts/{post}/comments',
+                'methods' => ['GET', 'HEAD']
+            ],
+        ], $generator->nameKeyedRoutes()->toArray());
+    }
+
+    /** @test */
+    // @todo: Just assert it has the four defined and not the one not-defined;
+    //        we already asserted the structure above
+    function generator_returns_only_named_routes()
+    {
+        $router = app('router');
+
+        // Not named. Shouldn't end up in JSON
         $router->get('/', function () { return ''; });
 
         // Named. Should end up in JSON
-        $router->get('/posts', function () { return ''; })->name('posts.index');
-        $router->get('/posts/{post}', function () { return ''; })->name('posts.show');
-        $router->get('/posts/{post}/comments', function () { return ''; })->name('postComments.index');
-        $router->post('/posts', function () { return ''; })->name('posts.store');
+        $router->get('/posts', function () { return ''; })
+            ->name('posts.index');
+        $router->get('/posts/{post}', function () { return ''; })
+            ->name('posts.show');
+        $router->get('/posts/{post}/comments', function () { return ''; })
+            ->name('postComments.index');
+        $router->post('/posts', function () { return ''; })
+            ->name('posts.store');
 
-        $c = $router->getRoutes();
-        $c->refreshNameLookups();
+        $router->getRoutes()->refreshNameLookups();
 
         $generator = (new BladeRouteGenerator($router));
 
@@ -48,6 +82,6 @@ class BladeRouteGeneratorTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['POST']
             ],
-        ], $generator->routes->toArray());
+        ], $generator->nameKeyedRoutes()->toArray());
     }
 }

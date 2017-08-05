@@ -12,12 +12,12 @@ class BladeRouteGenerator
     public function __construct(Router $router)
     {
         $this->router = $router;
-        $this->routes = $this->nameKeyedRoutes();
     }
 
     public function generate()
     {
-        $json = (string) $routes;
+        $json = (string) $this->nameKeyedRoutes();
+
         return <<<EOT
 <script type="text/javascript">
     var namedRoutes = JSON.parse('$json');
@@ -34,12 +34,11 @@ class BladeRouteGenerator
 EOT;
     }
 
-    private function nameKeyedRoutes()
+    public function nameKeyedRoutes()
     {
-        $routesByName = $this->router->getRoutes();
-
-        return collect($routesByName->getRoutesByName())->map(function ($route) {
-            return collect($route)->only(['uri', 'methods']);
-        });
+        return collect($this->router->getRoutes()->getRoutesByName())
+            ->map(function ($route) {
+                return collect($route)->only(['uri', 'methods']);
+            });
     }
 }
