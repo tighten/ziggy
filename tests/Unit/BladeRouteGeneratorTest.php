@@ -7,7 +7,7 @@ use Illuminate\Events\Dispatcher;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Route;
-use Orchestra\Testbench\TestCase;
+use Tightenco\Tests\TestCase;
 use Tightenco\Ziggy\BladeRouteGenerator;
 
 class BladeRouteGeneratorTest extends TestCase
@@ -42,8 +42,6 @@ class BladeRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    // @todo: Just assert it has the four defined and not the one not-defined;
-    //        we already asserted the structure above
     function generator_returns_only_named_routes()
     {
         $router = app('router');
@@ -65,23 +63,36 @@ class BladeRouteGeneratorTest extends TestCase
 
         $generator = (new BladeRouteGenerator($router));
 
-        $this->assertEquals([
-            'posts.index' =>[
+        $array = $generator->nameKeyedRoutes()->toArray();
+
+        $this->assertCount(4, $array);
+
+        $this->assertJsonContains($array, [
+            'posts.index' => [
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD']
-            ],
+            ]
+        ]);
+
+        $this->assertJsonContains($array, [
             'posts.show' =>[
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD']
             ],
+        ]);
+
+        $this->assertJsonContains($array, [
             'postComments.index' =>[
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD']
             ],
+        ]);
+
+        $this->assertJsonContains($array, [
             'posts.store' =>[
                 'uri' => 'posts',
                 'methods' => ['POST']
             ],
-        ], $generator->nameKeyedRoutes()->toArray());
+        ]);
     }
 }
