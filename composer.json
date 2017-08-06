@@ -4,11 +4,15 @@
     "require": {
         "laravel/framework": "^5.4.29"
     },
-    "license": "GPL",
+    "license": "MIT",
     "authors": [
         {
             "name": "Daniel Coulbourne",
             "email": "daniel@tighten.co"
+        },
+        {
+            "name": "Matt Stauffer",
+            "email": "matt@tighten.co"
         }
     ],
     "autoload": {
