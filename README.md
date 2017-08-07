@@ -40,10 +40,11 @@ return axios.get(route('posts.show', {id: postId}))
 ```
 
 ## Caching
-Laravel caches views by default, so we're circumventing View caching by default when `config('app.env')` is `local`.
-If you want to do this in some other environment for some reason, just set `ziggy_cache` to `false` in your `config/app.php`.
+Laravel caches views by default, so we're doing a little magic to circumvent view caching if you've made any changes to your routes. By default this circumvention only happens when `config('app.env')` is `local`. If you want to do this in some other environment for some reason, just set `config('ziggy.skip_view_cache')` to `true`.
 
 If you don't already, we'd recomment making sure you're running `view:clear` when deploying to non-local environments to make sure all your changes get reflected on the server.
+
+*The current hashing technique we're using to check if your routes file has changed is a little unorthodox (some might even say "sketchy") so rest assured that we'll be hacking on it in the next week or two to optimize it.*
 
 
 ## Credits
