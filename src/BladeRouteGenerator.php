@@ -8,7 +8,6 @@ class BladeRouteGenerator
 {
     private $router;
     public $routes;
-    private static $token = '@__ziggy_was_here__@';
 
     public function __construct(Router $router)
     {
@@ -18,11 +17,9 @@ class BladeRouteGenerator
     public function generate()
     {
         $json = (string) $this->nameKeyedRoutes();
-        $token = self::getToken();
 
         return <<<EOT
 <script type="text/javascript">
-    // $token
     var namedRoutes = JSON.parse('$json');
 
     function route (name, params) {
@@ -43,10 +40,5 @@ EOT;
             ->map(function ($route) {
                 return collect($route)->only(['uri', 'methods']);
             });
-    }
-
-    public static function getToken()
-    {
-        return self::$token;
     }
 }
