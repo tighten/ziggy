@@ -39,6 +39,13 @@ return axios.get(route('posts.show', {id: postId}))
     });
 ```
 
+## Caching
+Laravel caches views by default, so we're circumventing View caching by default when `config('app.env')` is `local`.
+If you want to do this in some other environment for some reason, just set `ziggy_cache` to `false` in your `config/app.php`.
+
+If you don't already, we'd recomment making sure you're running `view:clear` when deploying to non-local environments to make sure all your changes get reflected on the server.
+
+
 ## Credits
 
 Author: [Daniel Coulbourne](https://twitter.com/DCoulbourne)
