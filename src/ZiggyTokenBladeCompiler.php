@@ -6,8 +6,8 @@ use Illuminate\View\Compilers\BladeCompiler;
 
 class ZiggyTokenBladeCompiler extends BladeCompiler
 {
-	public function isExpired($path)
-	{
+    public function isExpired($path)
+    {
         if (parent::isExpired($path)) {
             return true;
         }
@@ -15,7 +15,7 @@ class ZiggyTokenBladeCompiler extends BladeCompiler
         if ($this->containsZiggyDirective($path) && $this->routesAreDirty()) {
             return true;
         }
-	}
+    }
 
     protected function containsZiggyDirective($path)
     {
