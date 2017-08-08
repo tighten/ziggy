@@ -4,7 +4,7 @@
 
 # Ziggy - Use your Laravel Named Routes inside Javascript
 
-Ziggy creates a Blade directive which you can include in your views. This will export a JavaScript object of your application's named routes, keyed by their names (aliases), as well as a global `route()` helper function which you can use to access your routes in your JS.
+Ziggy creates a Blade directive which you can include in your views. This will export a JavaScript object of your application's named routes, keyed by their names (aliases), as well as a global `route()` helper function which you can use to access your routes in your JavaScript.
 
 ## Installation 
 
@@ -12,7 +12,7 @@ Ziggy creates a Blade directive which you can include in your views. This will e
 
 2. (if Laravel 5.4) Add `Tightenco\Ziggy\ZiggyServiceProvider::class` to the `providers` array in your `config/app.php`.
 
-3. Include our Blade Directive (`@routes`) somewhere in your template before your main application JavaScript is loaded--likely in the header somewhere.
+3. Include our Blade Directive (`@routes`) somewhere in your template before your main application JavaScript is loaded&mdash;likely in the header somewhere.
 
 ## Usage
 
@@ -38,11 +38,6 @@ return axios.get(route('posts.show', {id: postId}))
         return response.data;
     });
 ```
-
-## Caching
-Laravel caches views by default, so we're doing a little magic to circumvent view caching if you've made any changes to your routes. By default this circumvention only happens when `config('app.env')` is `local`. If you want to do this in some other environment for some reason, just set `config('ziggy.skip_view_cache')` to `true`.
-
-*The current hashing technique we're using to check if your routes file has changed is a little unorthodox (some might even say "sketchy") so rest assured that we'll be hacking on it in the next week or two to optimize it.*
 
 
 ## Credits
