@@ -26,8 +26,7 @@
         }
     },
     "require-dev": {
-        "orchestra/testbench": "~3.4",
-        "phpunit/phpunit": "~5.7"
+        "orchestra/testbench": "~3.4"
     },
     "extra": {
         "laravel": {
