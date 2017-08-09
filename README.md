@@ -6,19 +6,23 @@
 
 Ziggy creates a Blade directive which you can include in your views. This will export a JavaScript object of your application's named routes, keyed by their names (aliases), as well as a global `route()` helper function which you can use to access your routes in your JavaScript.
 
-## Installation 
+## Installation
 
 1. Add Ziggy to your Composer file: `composer require tightenco/ziggy`
 
 2. (if Laravel 5.4) Add `Tightenco\Ziggy\ZiggyServiceProvider::class` to the `providers` array in your `config/app.php`.
 
-3. Include our Blade Directive (`@routes`) somewhere in your template before your main application JavaScript is loaded&mdash;likely in the header somewhere.
+3. publish the package assets with
+
+`php artisan vendor:publish --provider="Tightenco\Ziggy\ZiggyServiceProvider"`
+
+4. Include our Blade Directive (`@routes`) somewhere in your template before your main application JavaScript is loaded&mdash;likely in the header somewhere.
 
 ## Usage
 
 This package replaces the `@routes` directive with a collection of all of your application's routes, keyed by their names. This collection is available at `window.namedRoutes`.
 
-The package also creates an optional `route()` JavaScript helper which functions like Laravel's `route()` PHP helper, which can be used to retrieve URLs by name and (optionally) parameters. 
+The package also creates an optional `route()` JavaScript helper which functions like Laravel's `route()` PHP helper, which can be used to retrieve URLs by name and (optionally) parameters.
 
 For example:
 
@@ -38,7 +42,6 @@ return axios.get(route('posts.show', {id: postId}))
         return response.data;
     });
 ```
-
 
 ## Credits
 
