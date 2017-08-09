@@ -13,8 +13,11 @@
          verbose="true"
 >
     <testsuites>
-        <testsuite name="Laravel Test Suite">
+        <testsuite name="Ziggy Test Suite">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
+    <php>
+        <env name="APP_URL" value="myapp.com/"/>
+    </php>
 </phpunit>
