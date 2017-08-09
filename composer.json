@@ -27,5 +27,12 @@
     },
     "require-dev": {
         "orchestra/testbench": "~3.4"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Tightenco\\Ziggy\\ZiggyServiceProvider"
+            ]
+        }
     }
 }
