@@ -25,10 +25,18 @@ class BladeRouteGenerator
         baseUrl = '$appUrl';
 
     function route (name, params, absolute = true) {
-        return (absolute ? baseUrl : '') + namedRoutes[name].uri.replace(
-            /\{([^}]+)\}/,
+        var domain = namedRoutes[name].domain ? namedRoutes[name].domain : baseUrl;
+        var url = (absolute ? domain : '') + namedRoutes[name].uri
+
+        return url.replace(
+            /\{([^}]+)\}/gi,
             function (tag) {
-                return params[tag.replace(/\{|\}/gi, '')];
+                var key = tag.replace(/\{|\}/gi, '');
+                if (params[key] === undefined) {
+                    console.error('Ziggy Error: "' + key + '" key is required for route "' + name + '"');
+                    return tag;
+                }
+                return params[key];
             }
         );
     }
@@ -40,7 +48,8 @@ EOT;
     {
         return collect($this->router->getRoutes()->getRoutesByName())
             ->map(function ($route) {
-                return collect($route)->only(['uri', 'methods']);
+                return collect($route)->only(['uri', 'methods'])
+                    ->put('domain', $route->domain());
             });
     }
 }
