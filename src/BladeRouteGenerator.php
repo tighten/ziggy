@@ -17,13 +17,15 @@ class BladeRouteGenerator
     public function generate()
     {
         $json = (string) $this->nameKeyedRoutes();
+        $appUrl = rtrim(config('app.url'), '/') . '/';
 
         return <<<EOT
 <script type="text/javascript">
-    var namedRoutes = JSON.parse('$json');
+    var namedRoutes = JSON.parse('$json'),
+        baseUrl = '$appUrl';
 
-    function route (name, params) {
-        return namedRoutes[name].uri.replace(
+    function route (name, params, absolute = true) {
+        return (absolute ? baseUrl : '') + namedRoutes[name].uri.replace(
             /\{([^}]+)\}/,
             function (tag) {
                 return params[tag.replace(/\{|\}/gi, '')];
