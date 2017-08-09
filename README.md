@@ -1,3 +1,5 @@
+[ ![Codeship Status for tightenco/ziggy](https://app.codeship.com/projects/fd5f2a10-5f32-0135-294e-56d74613da6d/status?branch=master)](https://app.codeship.com/projects/238934)
+
 ![Ziggy - Use your Laravel Named Routes inside Javascript](http://i.imgur.com/JLC1ZP6.png)
 
 ![Ziggy Javascript Laravel Routes Example](http://i.imgur.com/tWu1ZqT.gif)
