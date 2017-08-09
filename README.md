@@ -44,6 +44,7 @@ return axios.get(route('posts.show', {id: postId}))
 
 ## Credits
 
-Author: [Daniel Coulbourne](https://twitter.com/DCoulbourne)
+- [Daniel Coulbourne](https://twitter.com/DCoulbourne)
+- [Matt Stauffer](https://twitter.com/stauffermatt)
 
-Thanks to [Caleb Porzio](http://twitter.com/calebporzio), [Adam Wathan](http://twitter.com/adamwathan), [Matt Stauffer](http://twitter.com/stauffermatt), and [Jeffrey Way](http://twitter.com/jeffrey_way).
+Thanks to [Caleb Porzio](http://twitter.com/calebporzio), [Adam Wathan](http://twitter.com/adamwathan), and [Jeffrey Way](http://twitter.com/jeffrey_way).
