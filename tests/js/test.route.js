@@ -14,7 +14,7 @@ describe('route()', function() {
     
     it('Should return missing params error when run with missing params on a route with required params', function() {
         assert.throws(
-            () => route.route('posts.show'),
+            function(){ route.route('posts.show') },
             /\"id\" key is required/
         );
     });
