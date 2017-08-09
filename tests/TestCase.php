@@ -8,7 +8,6 @@ use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
 {
-    // Steal JSON helpers from Laravel
     protected function assertJsonContains(array $haystack, array $needle)
     {
         $actual = json_encode(Arr::sortRecursive(

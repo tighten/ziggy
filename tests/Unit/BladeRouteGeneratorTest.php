@@ -21,7 +21,7 @@ class BladeRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    function generator_outputs_named_routes_with_expected_structure()
+    function generator_outputs_non_domain_named_routes_with_expected_structure()
     {
         $router = app('router');
 
@@ -34,9 +34,34 @@ class BladeRouteGeneratorTest extends TestCase
         $generator = (new BladeRouteGenerator($router));
 
         $this->assertEquals([
-            'postComments.index' =>[
+            'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD']
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+        ], $generator->nameKeyedRoutes()->toArray());
+    }
+
+    /** @test */
+    function generator_outputs_domain_as_defined()
+    {
+        $router = app('router');
+
+        // Named. Should end up in JSON
+        $router->domain('{account}.myapp.com')->group(function () use ($router) {
+            $router->get('/posts/{post}/comments', function () { return ''; })
+                ->name('postComments.index');
+        });
+
+        $router->getRoutes()->refreshNameLookups();
+
+        $generator = (new BladeRouteGenerator($router));
+
+        $this->assertEquals([
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => '{account}.myapp.com',
             ],
         ], $generator->nameKeyedRoutes()->toArray());
     }
@@ -67,32 +92,9 @@ class BladeRouteGeneratorTest extends TestCase
 
         $this->assertCount(4, $array);
 
-        $this->assertJsonContains($array, [
-            'posts.index' => [
-                'uri' => 'posts',
-                'methods' => ['GET', 'HEAD']
-            ]
-        ]);
-
-        $this->assertJsonContains($array, [
-            'posts.show' =>[
-                'uri' => 'posts/{post}',
-                'methods' => ['GET', 'HEAD']
-            ],
-        ]);
-
-        $this->assertJsonContains($array, [
-            'postComments.index' =>[
-                'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD']
-            ],
-        ]);
-
-        $this->assertJsonContains($array, [
-            'posts.store' =>[
-                'uri' => 'posts',
-                'methods' => ['POST']
-            ],
-        ]);
+        $this->assertArrayHasKey('posts.index', $array);
+        $this->assertArrayHasKey('posts.show', $array);
+        $this->assertArrayHasKey('posts.store', $array);
+        $this->assertArrayHasKey('postComments.index', $array);
     }
 }

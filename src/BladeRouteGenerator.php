@@ -24,17 +24,16 @@ class BladeRouteGenerator
     var namedRoutes = JSON.parse('$json'),
         baseUrl = '$appUrl';
 
-    function route (name, params, absolute = true) {
-        var domain = namedRoutes[name].domain ? namedRoutes[name].domain : baseUrl;
-        var url = (absolute ? domain : '') + namedRoutes[name].uri
+    function route (name, params = {}, absolute = true) {
+        var domain = namedRoutes[name].domain || baseUrl,
+            url = (absolute ? domain : '') + namedRoutes[name].uri
 
         return url.replace(
             /\{([^}]+)\}/gi,
             function (tag) {
                 var key = tag.replace(/\{|\}/gi, '');
                 if (params[key] === undefined) {
-                    console.error('Ziggy Error: "' + key + '" key is required for route "' + name + '"');
-                    return tag;
+                    throw 'Ziggy Error: "' + key + '" key is required for route "' + name + '"';
                 }
                 return params[key];
             }
