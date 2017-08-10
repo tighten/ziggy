@@ -1,10 +1,10 @@
-[ ![Codeship Status for tightenco/ziggy](https://app.codeship.com/projects/fd5f2a10-5f32-0135-294e-56d74613da6d/status?branch=master)](https://app.codeship.com/projects/238934)
-
 ![Ziggy - Use your Laravel Named Routes inside JavaScript](https://raw.githubusercontent.com/tightenco/ziggy/master/ziggy-banner-sunrise.png)
 
 ![Ziggy Javascript Laravel Routes Example](http://i.imgur.com/tWu1ZqT.gif)
 
 # Ziggy - Use your Laravel Named Routes inside JavaScript
+[ ![Codeship Status for tightenco/ziggy](https://app.codeship.com/projects/fd5f2a10-5f32-0135-294e-56d74613da6d/status?branch=master)](https://app.codeship.com/projects/238934)
+
 
 Ziggy creates a Blade directive which you can include in your views. This will export a JavaScript object of your application's named routes, keyed by their names (aliases), as well as a global `route()` helper function which you can use to access your routes in your JavaScript.
 
