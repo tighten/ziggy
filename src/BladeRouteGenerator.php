@@ -16,15 +16,15 @@ class BladeRouteGenerator
 
     public function generate()
     {
-        $json = (string) $this->nameKeyedRoutes();
-        $appUrl = rtrim(config('app.url'), '/') . '/';
+        $json = $this->nameKeyedRoutes()->toJson();
+        $appUrl = url('/') . '/';
         $routeFunction = file_get_contents(__DIR__ . '/js/route.js');
 
         return <<<EOT
 <script type="text/javascript">
     var namedRoutes = JSON.parse('$json'),
         baseUrl = '$appUrl';
-    $routeFunction
+        $routeFunction
 </script>
 EOT;
     }
