@@ -1,16 +1,16 @@
 var route = function(name, params = {}, absolute = true) {
     var domain = (namedRoutes[name].domain || baseUrl).replace(/\/+$/,'') + '/',
         url = (absolute ? domain : '') + namedRoutes[name].uri,
-        arrayKey = 0;
+        paramsArrayKey = 0;
 
     return url.replace(
         /\{([^}]+)\}/gi,
         function (tag) {
-            var key = Array.isArray(params) ? arrayKey : tag.replace(/\{|\}/gi, '');
+            var key = Array.isArray(params) ? paramsArrayKey : tag.replace(/\{|\}/gi, '');
+            paramsArrayKey++;
             if (params[key] === undefined) {
                 throw 'Ziggy Error: "' + key + '" key is required for route "' + name + '"';
             }
-            arrayKey++;
             return params[key];
         }
     );
