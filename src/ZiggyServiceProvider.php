@@ -14,20 +14,33 @@ class ZiggyServiceProvider extends ServiceProvider
             return "<?php echo app('" . BladeRouteGenerator::class . "')->generate(); ?>";
         });
 
-        /**
-         * generate file automatically.
-         *
-         * todo: add blade directive or whatever to
-         * get the file dis-regarding of the time stamp
-         */
+        $this->autoGen();
+    }
+
+    /**
+     * generate file automatically.
+     *
+     * todo: add a blade directive to load the file ex."mix(...)"
+     */
+    protected function autoGen()
+    {
         $routes_folder     = base_path('routes');
         $modification_time = filemtime($routes_folder);
-        $js_data           = File::get(__DIR__.'/js/route.js');
 
-        $new_path = public_path("assets/js/ziggy.{$modification_time}.js");
-        $old_path = public_path('assets/js/ziggy.*.js');
+        // create vendor if not already
+        $dir = resource_path('assets/vendor');
+        if (!File::exists($dir)) {
+            File::makeDirectory($dir, 0755, true);
+        }
 
+        $new_path = $dir . "/ziggy.{$modification_time}.js";
+        $old_path = $dir . '/ziggy.*';
+
+        // create js file when routes has changed
         if (!File::exists($new_path)) {
+            app(BladeRouteGenerator::class)->generate();
+            $js_data = File::get(__DIR__ . '/js/route.js'); // or where ever u gonna save the compiled file
+
             File::delete(File::glob($old_path));
             File::put($new_path, $js_data);
         }
