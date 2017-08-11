@@ -34,14 +34,13 @@ class ZiggyServiceProvider extends ServiceProvider
         }
 
         $new_path = $dir . "/ziggy.{$modification_time}.js";
-        $old_path = $dir . '/ziggy.*';
+        $old_path = File::glob($dir . '/ziggy.*');
 
         // create js file when routes has changed
         if (!File::exists($new_path)) {
-            app(BladeRouteGenerator::class)->generate();
-            $js_data = File::get(__DIR__ . '/js/route.js'); // or where ever u gonna save the compiled file
+            $js_data = app(BladeRouteGenerator::class)->generate();
 
-            File::delete(File::glob($old_path));
+            File::delete($old_path);
             File::put($new_path, $js_data);
         }
     }
