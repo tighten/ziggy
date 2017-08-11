@@ -1,4 +1,4 @@
-![Ziggy - Use your Laravel Named Routes inside JavaScript](https://raw.githubusercontent.com/tightenco/ziggy/master/ziggy-banner-sunrise.png)
+![Ziggy - Use your Laravel Named Routes inside JavaScript](https://raw.githubusercontent.com/tightenco/ziggy/master/ziggy-banner.png)
 
 ![Ziggy Javascript Laravel Routes Example](http://i.imgur.com/tWu1ZqT.gif)
 
