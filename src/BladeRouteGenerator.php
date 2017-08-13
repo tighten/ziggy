@@ -33,7 +33,7 @@ EOT;
     {
         return collect($this->router->getRoutes()->getRoutesByName())
             ->map(function ($route) {
-                return collect($route)->only(['uri', 'methods'])
+                return collect($route)->only(['uri'])
                     ->put('domain', $route->domain());
             });
     }
