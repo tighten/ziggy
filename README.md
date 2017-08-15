@@ -93,7 +93,7 @@ To get started contributing to Ziggy, check out [the contribution guide](CONTRIB
 
 Thanks to [Caleb Porzio](http://twitter.com/calebporzio), [Adam Wathan](http://twitter.com/adamwathan), and [Jeffrey Way](http://twitter.com/jeffrey_way) for help solidifying the idea.
 
-Thanks to the following feature contributors:
+### Thanks to the following feature contributors:
  - [Jesse Leite](https://github.com/JesseLeite)
 
 
