@@ -60,9 +60,13 @@ If you do want to filter routes, we have provided two optional configuration set
 
 As shown in the example above, Ziggy the use of asterisks as wildcards in filters. `home` will only match the route named `home` whereas `api.*` will match any route whose name begins with `api.`, such as `api.posts.index` and `api.users.show`.
 
-## Credits
+## Contributions & Credits
+
+To get started contributing to Ziggy, check out [the contribution guide](CONTRIBUTING.md).
 
 - [Daniel Coulbourne](https://twitter.com/DCoulbourne)
 - [Matt Stauffer](https://twitter.com/stauffermatt)
 
 Thanks to [Caleb Porzio](http://twitter.com/calebporzio), [Adam Wathan](http://twitter.com/adamwathan), and [Jeffrey Way](http://twitter.com/jeffrey_way).
+
+
