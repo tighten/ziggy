@@ -54,6 +54,25 @@ describe('route()', function() {
         );
     });
 
+    it('Should return URL when run with whole object params on a route with required params', function() {
+        var event = {id: 1, name: 'World Series'};
+        var venue = {id: 2, name: 'Rogers Centre'};
+
+        assert.equal(
+            "http://myapp.dev/events/1/venues/2",
+            route.route('events.venues.show', [event, venue])
+        );
+    });
+
+    it('Should return URL when run with some whole object params on a route with required params', function() {
+        var venue = {id: 2, name: 'Rogers Centre'};
+
+        assert.equal(
+            "http://myapp.dev/events/1/venues/2",
+            route.route('events.venues.show', [1, venue])
+        );
+    });
+
     it('Should return correct URL when run with params on a route with required domain params', function() {
         assert.equal(
             "tighten.myapp.dev/users/1",

@@ -8,7 +8,7 @@
 
 Ziggy creates a Blade directive which you can include in your views. This will export a JavaScript object of your application's named routes, keyed by their names (aliases), as well as a global `route()` helper function which you can use to access your routes in your JavaScript.
 
-## Installation 
+## Installation
 
 1. Add Ziggy to your Composer file: `composer require tightenco/ziggy`
 
@@ -20,22 +20,46 @@ Ziggy creates a Blade directive which you can include in your views. This will e
 
 This package replaces the `@routes` directive with a collection of all of your application's routes, keyed by their names. This collection is available at `window.namedRoutes`.
 
-The package also creates an optional `route()` JavaScript helper which functions like Laravel's `route()` PHP helper, which can be used to retrieve URLs by name and (optionally) parameters. 
+The package also creates an optional `route()` JavaScript helper which functions like Laravel's `route()` PHP helper, which can be used to retrieve URLs by name and (optionally) parameters.
 
-For example:
+### Examples:
 
-`route('posts.index')` should return `posts`
+Without parameters:
 
-If you wish to retrieve the URL for a route with required parameters, pass a JavaScript object with the parameterss as the second argument to `route()`:
+```js
+route('posts.index') // Returns '/posts'
+```
 
-`route('posts.show', {id: 1})` should return `posts/1`
+With required parameter:
 
-Here's a full example:
+```js
+route('posts.show', {id: 1}) // Returns '/posts/1'
+route('posts.show', [1]) // Returns '/posts/1'
+route('posts.show', 1) // Returns '/posts/1'
+```
+
+With multiple required parameters:
+
+```js
+route('events.venues.show', {event: 1, venue: 2}) // Returns '/events/1/venues/2'
+route('events.venues.show', [1, 2]) // Returns '/events/1/venues/2'
+```
+
+If whole objects are passed, Ziggy will automatically look for `id` primary key:
+
+```js
+var event = {id: 1, name: 'World Series'};
+var venue = {id: 2, name: 'Rogers Centre'};
+
+route('events.venues.show', [event, venue]) // Returns '/events/1/venues/2'
+```
+
+Practical AJAX example:
 
 ```javascript
-let postId = 1337;
+var post = {id: 1, title: 'Ziggy Stardust'};
 
-return axios.get(route('posts.show', {id: postId}))
+return axios.get(route('posts.show', post))
     .then((response) => {
         return response.data;
     });
