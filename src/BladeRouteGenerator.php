@@ -7,16 +7,17 @@ use Illuminate\Routing\Router;
 class BladeRouteGenerator
 {
     private $router;
-    public $routes;
+    public $routePayload;
 
     public function __construct(Router $router)
     {
         $this->router = $router;
+        $this->routePayload = RoutePayload::compile($this->router);
     }
 
     public function generate()
     {
-        $json = $this->nameKeyedRoutes()->toJson();
+        $json = $this->routePayload->toJson();
         $appUrl = url('/') . '/';
         $routeFunction = file_get_contents(__DIR__ . '/js/route.js');
 
@@ -27,14 +28,5 @@ class BladeRouteGenerator
         $routeFunction
 </script>
 EOT;
-    }
-
-    public function nameKeyedRoutes()
-    {
-        return collect($this->router->getRoutes()->getRoutesByName())
-            ->map(function ($route) {
-                return collect($route)->only(['uri', 'methods'])
-                    ->put('domain', $route->domain());
-            });
     }
 }

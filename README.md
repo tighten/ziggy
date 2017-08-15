@@ -41,6 +41,24 @@ return axios.get(route('posts.show', {id: postId}))
     });
 ```
 
+## Filtering Routes
+
+Filtering routes is *completely* optional. If you want to pass all of your routes to JavaScript by default, you can carry on using Ziggy as described above.
+
+If you do want to filter routes, we have provided two optional configuration settings to allow you to do so. To take advantage of these, create a standard config file called `ziggy.php` in the `config/` directory of your Laravel app and set **either** the `whitelist` or `blacklist` setting to an array of route names.
+
+**Note: You've got to choose one or the other. Setting `whitelist` and `blacklist` will disable filtering altogether and simple return the default list of routes.**
+
+#### Example `config/ziggy.php`
+```php
+<?php
+[
+	// 'whitelist' => ['home', 'api.*'],
+	'blacklist' => ['admin.*', 'vulnerabilities.*'],
+]
+```
+
+As shown in the example above, Ziggy the use of asterisks as wildcards in filters. `home` will only match the route named `home` whereas `api.*` will match any route whose name begins with `api.`, such as `api.posts.index` and `api.users.show`.
 
 ## Credits
 
