@@ -12,7 +12,7 @@ var route = function(name, params = {}, absolute = true) {
             if (params[key] === undefined) {
                 throw 'Ziggy Error: "' + key + '" key is required for route "' + name + '"';
             }
-            return params[key];
+            return params[key].id || params[key];
         }
     );
 }
