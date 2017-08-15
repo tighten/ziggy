@@ -56,7 +56,7 @@ route('events.venues.show', [event, venue]) // Returns '/events/1/venues/2'
 
 Practical AJAX example:
 
-```javascript
+```js
 var post = {id: 1, title: 'Ziggy Stardust'};
 
 return axios.get(route('posts.show', post))
@@ -71,14 +71,14 @@ Filtering routes is *completely* optional. If you want to pass all of your route
 
 If you do want to filter routes, we have provided two optional configuration settings to allow you to do so. To take advantage of these, create a standard config file called `ziggy.php` in the `config/` directory of your Laravel app and set **either** the `whitelist` or `blacklist` setting to an array of route names.
 
-**Note: You've got to choose one or the other. Setting `whitelist` and `blacklist` will disable filtering altogether and simple return the default list of routes.**
+**Note: You've got to choose one or the other. Setting `whitelist` and `blacklist` will disable filtering altogether and simply return the default list of routes.**
 
 #### Example `config/ziggy.php`
 ```php
 <?php
 return [
-	// 'whitelist' => ['home', 'api.*'],
-	'blacklist' => ['admin.*', 'vulnerabilities.*'],
+    // 'whitelist' => ['home', 'api.*'],
+    'blacklist' => ['admin.*', 'vulnerabilities.*'],
 ];
 ```
 
