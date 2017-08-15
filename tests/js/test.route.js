@@ -14,7 +14,7 @@ describe('route()', function() {
 
     it('Should return missing params error when run with missing params on a route with required params', function() {
         assert.throws(
-            () => route.route('posts.show'),
+            function(){ route.route('posts.show')},
             /\"id\" key is required/
         );
     });
@@ -77,6 +77,13 @@ describe('route()', function() {
         assert.equal(
             "tighten.myapp.dev/users/1",
             route.route('team.user.show', {team: 'tighten', id: 1})
+        );
+    });
+
+    it('Should return base url if path is "/"', function() {
+        assert.equal(
+            "http://myapp.dev/",
+            route.route('home')
         );
     });
 });
