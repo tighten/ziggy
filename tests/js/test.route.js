@@ -60,4 +60,11 @@ describe('route()', function() {
             route.route('team.user.show', {team: 'tighten', id: 1})
         );
     });
+
+    it('Should return base url if path is "/"', function() {
+        assert.equal(
+            "http://myapp.dev/",
+            route.route('home')
+        );
+    });
 });
