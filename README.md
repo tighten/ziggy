@@ -33,8 +33,7 @@ route('posts.index') // Returns '/posts'
 With required parameter:
 
 ```js
-route('posts.show')
-route('posts.show', {id: 1})
+route('posts.show', {id: 1}) // Returns '/posts/1'
 route('posts.show', [1]) // Returns '/posts/1'
 route('posts.show', 1) // Returns '/posts/1'
 ```
