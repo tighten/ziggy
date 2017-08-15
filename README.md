@@ -76,10 +76,10 @@ If you do want to filter routes, we have provided two optional configuration set
 #### Example `config/ziggy.php`
 ```php
 <?php
-[
+return [
 	// 'whitelist' => ['home', 'api.*'],
 	'blacklist' => ['admin.*', 'vulnerabilities.*'],
-]
+];
 ```
 
 As shown in the example above, Ziggy the use of asterisks as wildcards in filters. `home` will only match the route named `home` whereas `api.*` will match any route whose name begins with `api.`, such as `api.posts.index` and `api.users.show`.
