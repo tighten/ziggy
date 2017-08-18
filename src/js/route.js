@@ -1,4 +1,5 @@
-var route = function(name, params = {}, absolute) {
+var route = function(name, params, absolute) {
+    if (params === undefined) params = {}; 
     if (absolute === undefined) absolute = true;
 
     var domain = (namedRoutes[name].domain || baseUrl).replace(/\/+$/,'') + '/',
