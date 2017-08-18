@@ -10,7 +10,7 @@ If you have an idea for a feature, we'd prefer you open an issue before going to
 
 Just for the sake of easy readability we like to name commits and Pull requests in "imperetive present tense." This means the name should start with a verb describing what you are doing (in present tense). All the titles in this document are in imperitive present tense :smile:
 
-Example: `Add parameters to routes` instead of `Added parameters to routes` or `Adding parameters to routes. 
+Example: `Add parameters to routes` instead of `Added parameters to routes` or `Adding parameters to routes`. 
 
 ## Write tests.
 
