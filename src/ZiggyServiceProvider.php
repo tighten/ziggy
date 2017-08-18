@@ -9,8 +9,8 @@ class ZiggyServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        Blade::directive('routes', function () {
-            return "<?php echo app('" . BladeRouteGenerator::class . "')->generate(); ?>";
+        Blade::directive('routes', function ($group) {
+            return "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>";
         });
     }
 }

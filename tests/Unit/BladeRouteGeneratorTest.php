@@ -39,7 +39,7 @@ class BladeRouteGeneratorTest extends TestCase
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
-        ], $generator->routePayload->toArray());
+        ], $generator->getRoutePayload()->toArray());
     }
 
     /** @test */
@@ -63,7 +63,7 @@ class BladeRouteGeneratorTest extends TestCase
                 'methods' => ['GET', 'HEAD'],
                 'domain' => '{account}.myapp.com',
             ],
-        ], $generator->routePayload->toArray());
+        ], $generator->getRoutePayload()->toArray());
     }
 
     /** @test */
@@ -88,7 +88,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         $generator = (new BladeRouteGenerator($router));
 
-        $array = $generator->routePayload->toArray();
+        $array = $generator->getRoutePayload()->toArray();
 
         $this->assertCount(4, $array);
 
