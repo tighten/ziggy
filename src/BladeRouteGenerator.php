@@ -12,12 +12,16 @@ class BladeRouteGenerator
     public function __construct(Router $router)
     {
         $this->router = $router;
-        $this->routePayload = RoutePayload::compile($this->router);
     }
 
-    public function generate()
+    public function getRoutePayload($group = false)
     {
-        $json = $this->routePayload->toJson();
+        return RoutePayload::compile($this->router, $group);
+    }
+
+    public function generate($group = false)
+    {
+        $json = $this->getRoutePayload($group)->toJson();
         $appUrl = url('/') . '/';
         $routeFunction = file_get_contents(__DIR__ . '/js/route.js');
 

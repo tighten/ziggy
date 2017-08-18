@@ -35,6 +35,9 @@ class RoutePayloadTest extends TestCase
         $this->router->post('/posts', function () { return ''; })
                ->name('posts.store');
 
+       $this->router->get('/admin/users', function () { return ''; })
+              ->name('admin.users.index');
+
         $this->router->getRoutes()->refreshNameLookups();
     }
 
@@ -70,7 +73,7 @@ class RoutePayloadTest extends TestCase
     public function only_matching_routes_excluded_with_blacklist_enabled()
     {
         $routePayload = new RoutePayload($this->router);
-        $filters = ['posts.s*', 'home'];
+        $filters = ['posts.s*', 'home', 'admin.*'];
         $routes = $routePayload->filter($filters, false);
 
         $expected = [
@@ -90,7 +93,7 @@ class RoutePayloadTest extends TestCase
     }
 
     /** @test */
-    public function existance_of_whitelist_config_causes_routes_to_whitelist()
+    public function existence_of_whitelist_config_causes_routes_to_whitelist()
     {
         app()['config']->set('ziggy', [
             'whitelist' => ['posts.s*', 'home']
@@ -120,10 +123,10 @@ class RoutePayloadTest extends TestCase
     }
 
     /** @test */
-    public function existance_of_blacklist_config_causes_routes_to_blacklist()
+    public function existence_of_blacklist_config_causes_routes_to_blacklist()
     {
         app()['config']->set('ziggy', [
-            'blacklist' => ['posts.s*', 'home']
+            'blacklist' => ['posts.s*', 'home', 'admin.*']
         ]);
 
         $routes = RoutePayload::compile($this->router);
@@ -145,7 +148,7 @@ class RoutePayloadTest extends TestCase
     }
 
     /** @test */
-    public function existance_of_both_configs_returns_unfiltered_routes()
+    public function existence_of_both_configs_returns_unfiltered_routes()
     {
         app()['config']->set('ziggy', [
             'blacklist' => ['posts.s*'],
@@ -178,6 +181,89 @@ class RoutePayloadTest extends TestCase
             'posts.store' => [
                 'uri' => 'posts',
                 'methods' => ['POST'],
+                'domain' => null,
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+        ];
+
+        $this->assertEquals($expected, $routes->toArray());
+    }
+
+    /** @test */
+    public function only_matching_routes_included_with_group_enabled()
+    {
+        app()['config']->set('ziggy', [
+            'groups' => [
+                'authors' => ['home', 'posts.*']
+            ]
+        ]);
+
+        $routes = RoutePayload::compile($this->router, 'authors');
+
+        $expected = [
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+                'domain' => null,
+            ],
+        ];
+
+        $this->assertEquals($expected, $routes->toArray());
+    }
+
+    /** @test */
+    public function non_existence_of_group_returns_unfiltered_routes()
+    {
+        $routes = RoutePayload::compile($this->router, 'authors');
+
+        $expected = [
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+                'domain' => null,
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
         ];

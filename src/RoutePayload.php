@@ -14,16 +14,20 @@ class RoutePayload
         $this->routes = $this->nameKeyedRoutes();
     }
 
-    static public function compile(Router $router)
+    public static function compile(Router $router, $group = false)
     {
-        return (new RoutePayload($router))->applyFilters();
+        return (new static($router))->applyFilters($group);
     }
 
-    public function applyFilters()
+    public function applyFilters($group)
     {
+        if ($group && config()->has("ziggy.groups.{$group}")) {
+            return $this->group($group);
+        }
+
         // return unfiltered routes if user set both config options.
         if (config()->has('ziggy.blacklist') && config()->has('ziggy.whitelist')) {
-            return $this->routes; 
+            return $this->routes;
         }
 
         if (config()->has('ziggy.blacklist')) {
@@ -35,6 +39,11 @@ class RoutePayload
         }
 
         return $this->routes;
+    }
+
+    public function group($group)
+    {
+        return $this->filter(config("ziggy.groups.{$group}"), true);
     }
 
     public function blacklist()
