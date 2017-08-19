@@ -14,7 +14,7 @@ describe('route()', function() {
 
     it('Should return missing params error when run with missing params on a route with required params', function() {
         assert.throws(
-            function(){ route.route('posts.show')},
+            function(){route.route('posts.show').toString()},
             /\"id\" key is required/
         );
     });
@@ -24,12 +24,20 @@ describe('route()', function() {
             "http://myapp.dev/posts/1",
             route.route('posts.show', 1)
         );
+        assert.equal(
+            "http://myapp.dev/posts/1",
+            route.route('posts.show').with(1)
+        );
     });
 
     it('Should return URL when run with single object param on a route with required params', function() {
         assert.equal(
             "http://myapp.dev/posts/1",
             route.route('posts.show', {id: 1})
+        );
+        assert.equal(
+            "http://myapp.dev/posts/1",
+            route.route('posts.show').with({id: 1})
         );
     });
 
@@ -38,6 +46,10 @@ describe('route()', function() {
             "http://myapp.dev/posts/1",
             route.route('posts.show', [1])
         );
+        assert.equal(
+            "http://myapp.dev/posts/1",
+            route.route('posts.show').with([1])
+        );
     });
 
     it('Should return URL when run with multiple object params on a route with required params', function() {
@@ -45,12 +57,20 @@ describe('route()', function() {
             "http://myapp.dev/events/1/venues/2",
             route.route('events.venues.show', {event: 1, venue: 2})
         );
+        assert.equal(
+            "http://myapp.dev/events/1/venues/2",
+            route.route('events.venues.show').with({event: 1, venue: 2})
+        );
     });
 
     it('Should return URL when run with multiple array params on a route with required params', function() {
         assert.equal(
             "http://myapp.dev/events/1/venues/2",
             route.route('events.venues.show', [1, 2])
+        );
+        assert.equal(
+            "http://myapp.dev/events/1/venues/2",
+            route.route('events.venues.show').with([1, 2])
         );
     });
 
@@ -62,6 +82,10 @@ describe('route()', function() {
             "http://myapp.dev/events/1/venues/2",
             route.route('events.venues.show', [event, venue])
         );
+        assert.equal(
+            "http://myapp.dev/events/1/venues/2",
+            route.route('events.venues.show').with([event, venue])
+        );
     });
 
     it('Should return URL when run with some whole object params on a route with required params', function() {
@@ -71,12 +95,20 @@ describe('route()', function() {
             "http://myapp.dev/events/1/venues/2",
             route.route('events.venues.show', [1, venue])
         );
+        assert.equal(
+            "http://myapp.dev/events/1/venues/2",
+            route.route('events.venues.show').with([1, venue])
+        );
     });
 
     it('Should return correct URL when run with params on a route with required domain params', function() {
         assert.equal(
             "tighten.myapp.dev/users/1",
             route.route('team.user.show', {team: 'tighten', id: 1})
+        );
+        assert.equal(
+            "tighten.myapp.dev/users/1",
+            route.route('team.user.show').with({team: 'tighten', id: 1})
         );
     });
 

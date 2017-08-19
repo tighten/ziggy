@@ -1,23 +1,57 @@
-var route = function(name, params, absolute) {
-    if (params === undefined) params = {}; 
-    if (absolute === undefined) absolute = true;
+var Router = function(name, params, absolute) {
+    this.name = name;
+    this.params = params === undefined ? {} : params;
+    this.absolute = absolute === undefined ? true : absolute;
+    this.domain = this.constructDomain();
+    this.url = namedRoutes[this.name].uri.replace(/^\//, '');
 
-    var domain = (namedRoutes[name].domain || baseUrl).replace(/\/+$/,'') + '/',
-        url = (absolute ? domain : '') + namedRoutes[name].uri.replace(/^\//, ''),
-        params = typeof params !== 'object' ? [params] : params,
-        paramsArrayKey = 0;
+    this.return = '';
 
+};
+
+Router.prototype.toString = function() {
+    this.parse();
+    return this.return;
+};
+
+Router.prototype.constructDomain = function() {
+    if (this.absolute)
+        return (namedRoutes[this.name].domain || baseUrl).replace(/\/+$/,'') + '/';
+
+    return '';
+};
+
+Router.prototype.with = function(params) {
+    this.params = params;
+
+    return this;
+};
+
+Router.prototype.parse = function() {
+    this.return = this.constructUrl();
+};
+
+Router.prototype.constructUrl = function() {
+    tags = typeof this.params !== 'object' ? [this.params] : this.params,
+    paramsArrayKey = 0;
+    var url = this.domain + this.url;
     return url.replace(
         /\{([^}]+)\}/gi,
         function (tag) {
-            var key = Array.isArray(params) ? paramsArrayKey : tag.replace(/\{|\}/gi, '');
+            var keyName = tag.replace(/\{|\}/gi, '');
+            var key = Array.isArray(tags) ? paramsArrayKey : keyName;
+
             paramsArrayKey++;
-            if (params[key] === undefined) {
-                throw 'Ziggy Error: "' + key + '" key is required for route "' + name + '"';
+            if (tags[key] === undefined) {
+                throw 'Ziggy Error: "' + keyName + '" key is required for route "' + this.name + '"';
             }
-            return params[key].id || params[key];
+            return tags[key].id || tags[key];
         }
     );
 }
+
+var route = function(name, params, absolute) {
+    return new Router(name, params, absolute);
+};
 
 if (typeof exports !== 'undefined'){ exports.route = route }
