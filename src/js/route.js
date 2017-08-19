@@ -1,5 +1,5 @@
 var route = function(name, params, absolute) {
-    if (params === undefined) params = {}; 
+    if (params === undefined) params = {};
     if (absolute === undefined) absolute = true;
 
     var domain = (namedRoutes[name].domain || baseUrl).replace(/\/+$/,'') + '/',
@@ -10,12 +10,16 @@ var route = function(name, params, absolute) {
     return url.replace(
         /\{([^}]+)\}/gi,
         function (tag) {
-            var key = Array.isArray(params) ? paramsArrayKey : tag.replace(/\{|\}/gi, '');
+            var key = Array.isArray(params) ? paramsArrayKey : tag.replace(/\{|\}/gi, '').replace(/\?$/, '');
             paramsArrayKey++;
-            if (params[key] === undefined) {
-                throw 'Ziggy Error: "' + key + '" key is required for route "' + name + '"';
+            if (typeof params[key] !== 'undefined') {
+              return params[key].id || params[key];
             }
-            return params[key].id || params[key];
+            if (tag.indexOf('?') === -1) {
+              throw 'Ziggy Error: "' + key + '" key is required for route "' + name + '"';
+            } else {
+              return '';
+            }
         }
     );
 }

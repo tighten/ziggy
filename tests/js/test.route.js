@@ -1,7 +1,7 @@
 var assert = require('assert');
 var route = require('../../src/js/route');
 
-namedRoutes = JSON.parse('{"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users\/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts\/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts\/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts\/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events\/{event}\/venues\/{venue}","methods":["GET","HEAD"],"domain":null}}'),
+namedRoutes = JSON.parse('{"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users\/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts\/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts\/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts\/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events\/{event}\/venues\/{venue}","methods":["GET","HEAD"],"domain":null},"optional":{"uri":"optional\/{id}\/{slug?}","methods":["GET","HEAD"],"domain":null}}'),
     baseUrl = 'http://myapp.dev/';
 
 describe('route()', function() {
@@ -85,5 +85,19 @@ describe('route()', function() {
             "http://myapp.dev/",
             route.route('home')
         );
+    });
+
+    it('Should skip the optional parameter `slug`', function() {
+      assert.equal(
+        route.route('optional', { id: 123}),
+        'http://myapp.dev/optional/123/'
+      )
+    });
+
+    it('Should accept the optional parameter `slug`', function() {
+      assert.equal(
+        route.route('optional', { id: 123, slug:'news'}),
+        'http://myapp.dev/optional/123/news'
+      )
     });
 });
