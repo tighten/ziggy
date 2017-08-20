@@ -1,4 +1,6 @@
 var assert = require('assert');
+var axios = require('axios');
+var moxios = require('moxios');
 var route = require('../../src/js/route');
 
 namedRoutes = JSON.parse('{"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users\/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts\/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts\/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts\/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events\/{event}\/venues\/{venue}","methods":["GET","HEAD"],"domain":null}}'),
@@ -117,5 +119,19 @@ describe('route()', function() {
             "http://myapp.dev/",
             route.route('home')
         );
+    });
+
+    it('Should make an axios call when a route() is passed', function() {
+        moxios.install()
+        moxios.stubRequest('http://myapp.dev/posts/1', {
+            status: 200,
+            responseText: 'Worked!'
+        });
+
+        axios.get(route.route('posts.show', 1)).then(function(response) {
+            assert.equal(200, response.status)
+        });
+
+        moxios.uninstall()
     });
 });
