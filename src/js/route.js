@@ -38,14 +38,18 @@ Router.prototype.constructUrl = function() {
     return url.replace(
         /\{([^}]+)\}/gi,
         function (tag) {
-            var keyName = tag.replace(/\{|\}/gi, '');
+            var keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, '');
             var key = Array.isArray(tags) ? paramsArrayKey : keyName;
 
             paramsArrayKey++;
-            if (tags[key] === undefined) {
-                throw 'Ziggy Error: "' + keyName + '" key is required for route "' + this.name + '"';
+            if (typeof tags[key] !== 'undefined') {
+              return tags[key].id || tags[key];
             }
-            return tags[key].id || tags[key];
+            if (tag.indexOf('?') === -1) {
+              throw 'Ziggy Error: "' + keyName + '" key is required for route "' + this.name + '"';
+            } else {
+              return '';
+            }
         }
     );
 }
