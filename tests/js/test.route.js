@@ -148,4 +148,18 @@ describe('route()', function() {
         'http://myapp.dev/optional/123/news'
       )
     });
+
+    it('Should accept queryString params as keyed values in param object', function() {
+        assert.equal(
+            'http://myapp.dev/events/1/venues/2?foo=bar',
+            route.route('events.venues.show', {event: 1, venue: 2, foo: 'bar'})
+        )
+    });
+
+    it('Should accept queryString params as keyed values in withQuery object', function() {
+        assert.equal(
+            'http://myapp.dev/events/1/venues/2?foo=bar',
+            route.route('events.venues.show', [1, 2]).withQuery({foo: 'bar'})
+        )
+    });
 });

@@ -1,9 +1,11 @@
 var Router = function(name, params, absolute) {
     this.name = name;
-    this.params = params === undefined ? {} : params;
+    this.urlParams = undefined ? {} : params;
+    this.queryParams = undefined ? {} : params;
     this.absolute = absolute === undefined ? true : absolute;
     this.domain = this.constructDomain();
     this.url = namedRoutes[this.name].uri.replace(/^\//, '');
+    this.queryString = '';
 
     this.return = '';
 
@@ -22,20 +24,38 @@ Router.prototype.constructDomain = function() {
 };
 
 Router.prototype.with = function(params) {
-    this.params = params;
+    this.urlParams = params;
 
     return this;
 };
+
+// @todo Make withQuery merge params into this.queryParams and have constructQuery() generate the string on constructUrl()
+Router.prototype.withQuery = function(params)
+{
+    if(this.url === null) {
+        return this.url;
+    }
+  
+    var queryString = '?';
+  
+    Object.keys(params).forEach(function(key, i) {
+        queryString = i === 0 ? queryString : queryString + '&';
+        queryString += key + '=' + params[key];
+    });
+    
+    this.queryString = queryString;
+    return this;
+}
 
 Router.prototype.parse = function() {
     this.return = this.constructUrl();
 };
 
 Router.prototype.constructUrl = function() {
-    tags = typeof this.params !== 'object' ? [this.params] : this.params,
+    tags = typeof this.urlParams !== 'object' ? [this.urlParams] : this.urlParams,
     paramsArrayKey = 0;
     var url = this.domain + this.url;
-    return url.replace(
+    var hydratedUrl = url.replace(
         /\{([^}]+)\}/gi,
         function (tag) {
             var keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, '');
@@ -52,6 +72,8 @@ Router.prototype.constructUrl = function() {
             }
         }
     );
+
+    return hydratedUrl + this.constructQuery();
 }
 
 var route = function(name, params, absolute) {
