@@ -1,4 +1,6 @@
 var assert = require('assert');
+var axios = require('axios');
+var moxios = require('moxios');
 var route = require('../../src/js/route');
 
 namedRoutes = JSON.parse('{"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users\/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts\/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts\/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts\/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events\/{event}\/venues\/{venue}","methods":["GET","HEAD"],"domain":null},"optional":{"uri":"optional\/{id}\/{slug?}","methods":["GET","HEAD"],"domain":null}}'),
@@ -14,7 +16,7 @@ describe('route()', function() {
 
     it('Should return missing params error when run with missing params on a route with required params', function() {
         assert.throws(
-            function(){ route.route('posts.show')},
+            function(){route.route('posts.show').toString()},
             /\"id\" key is required/
         );
     });
@@ -24,12 +26,20 @@ describe('route()', function() {
             "http://myapp.dev/posts/1",
             route.route('posts.show', 1)
         );
+        assert.equal(
+            "http://myapp.dev/posts/1",
+            route.route('posts.show').with(1)
+        );
     });
 
     it('Should return URL when run with single object param on a route with required params', function() {
         assert.equal(
             "http://myapp.dev/posts/1",
             route.route('posts.show', {id: 1})
+        );
+        assert.equal(
+            "http://myapp.dev/posts/1",
+            route.route('posts.show').with({id: 1})
         );
     });
 
@@ -38,6 +48,10 @@ describe('route()', function() {
             "http://myapp.dev/posts/1",
             route.route('posts.show', [1])
         );
+        assert.equal(
+            "http://myapp.dev/posts/1",
+            route.route('posts.show').with([1])
+        );
     });
 
     it('Should return URL when run with multiple object params on a route with required params', function() {
@@ -45,12 +59,20 @@ describe('route()', function() {
             "http://myapp.dev/events/1/venues/2",
             route.route('events.venues.show', {event: 1, venue: 2})
         );
+        assert.equal(
+            "http://myapp.dev/events/1/venues/2",
+            route.route('events.venues.show').with({event: 1, venue: 2})
+        );
     });
 
     it('Should return URL when run with multiple array params on a route with required params', function() {
         assert.equal(
             "http://myapp.dev/events/1/venues/2",
             route.route('events.venues.show', [1, 2])
+        );
+        assert.equal(
+            "http://myapp.dev/events/1/venues/2",
+            route.route('events.venues.show').with([1, 2])
         );
     });
 
@@ -62,6 +84,10 @@ describe('route()', function() {
             "http://myapp.dev/events/1/venues/2",
             route.route('events.venues.show', [event, venue])
         );
+        assert.equal(
+            "http://myapp.dev/events/1/venues/2",
+            route.route('events.venues.show').with([event, venue])
+        );
     });
 
     it('Should return URL when run with some whole object params on a route with required params', function() {
@@ -71,12 +97,20 @@ describe('route()', function() {
             "http://myapp.dev/events/1/venues/2",
             route.route('events.venues.show', [1, venue])
         );
+        assert.equal(
+            "http://myapp.dev/events/1/venues/2",
+            route.route('events.venues.show').with([1, venue])
+        );
     });
 
     it('Should return correct URL when run with params on a route with required domain params', function() {
         assert.equal(
             "tighten.myapp.dev/users/1",
             route.route('team.user.show', {team: 'tighten', id: 1})
+        );
+        assert.equal(
+            "tighten.myapp.dev/users/1",
+            route.route('team.user.show').with({team: 'tighten', id: 1})
         );
     });
 
@@ -85,6 +119,20 @@ describe('route()', function() {
             "http://myapp.dev/",
             route.route('home')
         );
+    });
+
+    it('Should make an axios call when a route() is passed', function() {
+        moxios.install()
+        moxios.stubRequest('http://myapp.dev/posts/1', {
+            status: 200,
+            responseText: 'Worked!'
+        });
+
+        axios.get(route.route('posts.show', 1)).then(function(response) {
+            assert.equal(200, response.status)
+        });
+
+        moxios.uninstall()
     });
 
     it('Should skip the optional parameter `slug`', function() {
