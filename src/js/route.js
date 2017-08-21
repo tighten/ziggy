@@ -32,7 +32,7 @@ Router.prototype.parse = function() {
 };
 
 Router.prototype.constructUrl = function() {
-    tags = typeof this.params !== 'object' ? [this.params] : this.params,
+    var tags = typeof this.params !== 'object' ? [this.params] : this.params,
     paramsArrayKey = 0;
     var url = this.domain + this.url;
     return url.replace(
@@ -52,7 +52,7 @@ Router.prototype.constructUrl = function() {
             }
         }
     );
-}
+};
 
 var route = function(name, params, absolute) {
     return new Router(name, params, absolute);
