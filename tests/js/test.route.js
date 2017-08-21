@@ -153,4 +153,23 @@ describe('route()', function() {
         'http://myapp.dev/optional/123/news'
       );
     });
+
+    it('Should return an error if route is not found in the route list', function() {
+        assert.throws(
+            function() {
+                route('unkown-route').toString()
+            },
+            /route "unkown-route" is not found in the route list/
+        );
+    });
+
+    it('Should return an error if route name isnt provided', function() {
+        assert.throws(
+            function() {
+                route()
+            },
+            /You must provide a route name/
+        );
+    });
+
 });
