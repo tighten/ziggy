@@ -157,9 +157,9 @@ describe('route()', function() {
     it('Should return an error if route is not found in the route list', function() {
         assert.throws(
             function() {
-                route('unkown-route').toString()
+                route('unknown-route').toString()
             },
-            /route "unkown-route" is not found in the route list/
+            /route "unknown-route" is not found in the route list/
         );
     });
 
