@@ -4,9 +4,6 @@ var Router = function(name, params, absolute) {
     this.absolute = absolute === undefined ? true : absolute;
     this.domain = this.constructDomain();
     this.url = namedRoutes[this.name].uri.replace(/^\//, '');
-
-    this.return = '';
-
 };
 
 Router.prototype.toString = function() {
@@ -15,10 +12,15 @@ Router.prototype.toString = function() {
 };
 
 Router.prototype.constructDomain = function() {
-    if (this.absolute)
+    if(this.name === undefined) {
+        throw 'Ziggy Error: You must provide a route name';
+    }
+    else if (namedRoutes[this.name] === undefined) {
+        throw 'Ziggy Error: route "'+ this.name +'" is not found in the route list';
+    }
+    else {
         return (namedRoutes[this.name].domain || baseUrl).replace(/\/+$/,'') + '/';
-
-    return '';
+    }
 };
 
 Router.prototype.with = function(params) {
