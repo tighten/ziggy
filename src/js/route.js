@@ -36,9 +36,9 @@ Router.prototype.constructUrl = function() {
     paramsArrayKey = 0;
     var url = this.domain + this.url;
     return url.replace(
-        /\{([^}]+)\}/gi,
+        /{([^}]+)}/gi,
         function (tag) {
-            var keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, '');
+            var keyName = tag.replace(/[{}]/gi, '').replace(/\?$/, '');
             var key = Array.isArray(tags) ? paramsArrayKey : keyName;
 
             paramsArrayKey++;
