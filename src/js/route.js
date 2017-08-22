@@ -88,4 +88,4 @@ var route = function(name, params, absolute) {
     return new Router(name, params, absolute);
 };
 
-if (typeof exports !== 'undefined') { exports.route = route 
+if (typeof exports !== 'undefined') { exports.route = route }
