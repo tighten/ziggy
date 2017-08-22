@@ -175,14 +175,14 @@ describe('route()', function() {
     it('Should accept queryString params as keyed values in param object', function() {
         assert.equal(
             'http://myapp.dev/events/1/venues/2?search=rogers&page=2',
-            route.route('events.venues.show', {event: 1, venue: 2, search: 'rogers', page: 2})
+            route('events.venues.show', {event: 1, venue: 2, search: 'rogers', page: 2})
         )
     });
 
     it('Should accept queryString params as keyed values in withQuery object', function() {
         assert.equal(
             'http://myapp.dev/events/1/venues/2?search=rogers&page=2',
-            route.route('events.venues.show', [1, 2]).withQuery({search: 'rogers', page: 2})
+            route('events.venues.show', [1, 2]).withQuery({search: 'rogers', page: 2})
         )
     });
 });
