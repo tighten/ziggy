@@ -95,7 +95,7 @@ return [
         'admin' => [
             'admin.*',
             'posts.*',
-        ]
+        ],
         'author' => [
             'posts.*',
         ]
