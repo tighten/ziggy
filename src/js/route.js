@@ -1,19 +1,20 @@
 var Router = function(name, params, absolute) {
     this.name = name;
-    this.urlParams = undefined ? {} : params;
-    this.queryParams = undefined ? {} : params;
+    this.urlParams = this.normalizeParams(params);
+    this.queryParams = this.normalizeParams(params);
     this.absolute = absolute === undefined ? true : absolute;
     this.domain = this.constructDomain();
     this.url = namedRoutes[this.name].uri.replace(/^\//, '');
-    this.queryString = '';
-
-    this.return = '';
-
 };
 
-Router.prototype.toString = function() {
-    this.parse();
-    return this.return;
+Router.prototype.normalizeParams = function(params) {
+    if (params === undefined)
+        return {};
+
+    params = typeof params !== 'object' ? [params] : params;
+    this.numericParamIndices = Array.isArray(params);
+
+    return Object.assign({}, params);
 };
 
 Router.prototype.constructDomain = function() {
@@ -24,60 +25,67 @@ Router.prototype.constructDomain = function() {
 };
 
 Router.prototype.with = function(params) {
-    this.urlParams = params;
+    this.urlParams = this.normalizeParams(params);
 
     return this;
 };
 
-// @todo Make withQuery merge params into this.queryParams and have constructQuery() generate the string on constructUrl()
-Router.prototype.withQuery = function(params)
-{
-    if(this.url === null) {
-        return this.url;
-    }
-  
-    var queryString = '?';
-  
-    Object.keys(params).forEach(function(key, i) {
-        queryString = i === 0 ? queryString : queryString + '&';
-        queryString += key + '=' + params[key];
-    });
-    
-    this.queryString = queryString;
-    return this;
-}
+Router.prototype.withQuery = function(params) {
+    Object.assign(this.queryParams, params);
 
-Router.prototype.parse = function() {
-    this.return = this.constructUrl();
+    return this;
 };
 
 Router.prototype.constructUrl = function() {
-    tags = typeof this.urlParams !== 'object' ? [this.urlParams] : this.urlParams,
-    paramsArrayKey = 0;
-    var url = this.domain + this.url;
-    var hydratedUrl = url.replace(
+    var url = this.domain + this.url,
+        tags = this.urlParams,
+        paramsArrayKey = 0;
+
+    return url.replace(
         /\{([^}]+)\}/gi,
         function (tag) {
-            var keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, '');
-            var key = Array.isArray(tags) ? paramsArrayKey : keyName;
+            var keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
+                key = this.numericParamIndices ? paramsArrayKey : keyName;
 
             paramsArrayKey++;
             if (typeof tags[key] !== 'undefined') {
-              return tags[key].id || tags[key];
+                delete this.queryParams[key];
+                return tags[key].id || tags[key];
             }
             if (tag.indexOf('?') === -1) {
-              throw 'Ziggy Error: "' + keyName + '" key is required for route "' + this.name + '"';
+                throw 'Ziggy Error: "' + keyName + '" key is required for route "' + this.name + '"';
             } else {
-              return '';
+                return '';
             }
-        }
+        }.bind(this)
     );
+};
 
-    return hydratedUrl + this.constructQuery();
-}
+Router.prototype.constructQuery = function() {
+    if (Object.keys(this.queryParams).length === 0)
+        return '';
+
+    var queryString = '?';
+
+    Object.keys(this.queryParams).forEach(function(key, i) {
+        queryString = i === 0 ? queryString : queryString + '&';
+        queryString += key + '=' + this.queryParams[key];
+    }.bind(this));
+
+    return queryString;
+};
+
+Router.prototype.toString = function() {
+    this.parse();
+    return this.return;
+};
+
+Router.prototype.parse = function() {
+    this.return = this.constructUrl() + this.constructQuery();
+};
 
 var route = function(name, params, absolute) {
     return new Router(name, params, absolute);
 };
 
-if (typeof exports !== 'undefined'){ exports.route = route }
+if (typeof exports !== 'undefined') { exports.route = route }
