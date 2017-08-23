@@ -18,15 +18,15 @@ Router.prototype.normalizeParams = function(params) {
 };
 
 Router.prototype.constructDomain = function() {
-    if(this.name === undefined) {
+    if (this.name === undefined) {
         throw 'Ziggy Error: You must provide a route name';
-    }
-    else if (namedRoutes[this.name] === undefined) {
+    } else if (namedRoutes[this.name] === undefined) {
         throw 'Ziggy Error: route "'+ this.name +'" is not found in the route list';
+    } else if (! this.absolute) {
+        return '/';
     }
-    else {
-        return (namedRoutes[this.name].domain || baseUrl).replace(/\/+$/,'') + '/';
-    }
+
+    return (namedRoutes[this.name].domain || baseUrl).replace(/\/+$/,'') + '/';
 };
 
 Router.prototype.with = function(params) {
