@@ -14,6 +14,13 @@ describe('route()', function() {
         );
     });
 
+    it('Should return URL without domain when passing false into absolute param.', function() {
+        assert.equal(
+            "/posts",
+            route('posts.index', [], false)
+        );
+    });
+
     it('Should return missing params error when run with missing params on a route with required params', function() {
         assert.throws(
             function() {
