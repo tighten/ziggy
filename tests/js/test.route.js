@@ -147,6 +147,24 @@ describe('route()', function() {
         moxios.uninstall()
     });
 
+    it('Should make an axios call with query params when a route() is passed', function(done) {
+      moxios.install();
+
+      moxios.stubRequest('http://myapp.dev/posts/1', {
+        status: 200,
+        responseText: "Worked!"
+      });
+
+      axios
+        .get(route('posts.show', 1),{params:{page:1}})
+        .then(function(response) {
+          assert.equal(200, response.status);
+          done();
+        });
+
+      moxios.uninstall()
+    });
+
     it('Should skip the optional parameter `slug`', function() {
       assert.equal(
         route('optional', { id: 123 }),
