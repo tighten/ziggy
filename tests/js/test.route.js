@@ -7,6 +7,14 @@ namedRoutes = JSON.parse('{"home":{"uri":"\/","methods":["GET","HEAD"],"domain":
 baseUrl = 'http://myapp.dev/';
 
 describe('route()', function() {
+
+    it('Should return `string` type upon success', function() {
+      assert.equal(
+        "string",
+        typeof route('posts.index')
+      );
+    });
+
     it('Should return URL when run without params on a route without params', function() {
         assert.equal(
             "http://myapp.dev/posts",
