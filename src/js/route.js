@@ -5,7 +5,13 @@ var Router = function(name, params, absolute) {
     this.absolute = absolute === undefined ? true : absolute;
     this.domain = this.constructDomain();
     this.url = namedRoutes[this.name].uri.replace(/^\//, '');
+
+    String.call(this);
 };
+
+
+Router.prototype = Object.create(String.prototype);
+Router.prototype.constructor = Router;
 
 Router.prototype.normalizeParams = function(params) {
     if (params === undefined)
@@ -81,6 +87,11 @@ Router.prototype.constructQuery = function() {
 };
 
 Router.prototype.toString = function() {
+    this.parse();
+    return this.return;
+};
+
+Router.prototype.valueOf = function() {
     this.parse();
     return this.return;
 };
