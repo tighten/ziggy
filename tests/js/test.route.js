@@ -142,6 +142,31 @@ describe('route()', function() {
             .get(route('posts.show', 1))
             .then(function(response) {
                 assert.equal(200, response.status)
+            }).catch(function(error) {
+                throw error;
+            });
+
+        moxios.uninstall()
+    });
+
+    it('Should make an axios call when a route() and params are passed', function() {
+        moxios.install();
+
+        moxios.stubRequest('http://myapp.dev/posts/1', {
+            status: 200,
+            responseText: "Worked!"
+        });
+
+        axios.get(route('posts.index'), {
+              page: 2,
+              params: { thing: 'thing'}
+            })
+            .then(function(response) {
+                assert.equal(200, response.status)
+
+            }).catch(function(error) {
+                console.log(error);
+                assert.equal(true, false);
             });
 
         moxios.uninstall()
