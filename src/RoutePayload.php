@@ -73,8 +73,19 @@ class RoutePayload
     {
         return collect($this->router->getRoutes()->getRoutesByName())
             ->map(function ($route) {
+
+                if (array_get($route->getAction(), 'blacklist') === true) {
+                    $this->appendToBlacklist($route->getName());
+                }
+
                 return collect($route)->only(['uri', 'methods'])
                     ->put('domain', $route->domain());
             });
+    }
+
+    protected function appendToBlacklist($routeName)
+    {
+        $blacklist = array_merge(config('ziggy.blacklist', []), [$routeName]);
+        config()->set('ziggy.blacklist', $blacklist);
     }
 }
