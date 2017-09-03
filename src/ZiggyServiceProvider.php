@@ -11,7 +11,10 @@ class ZiggyServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        Route::macro('blacklist', function () {
+        // Considering Mixin usage for 5.5
+        // Route::mixin(new BlacklistMixin);
+
+        Route::mixin('blacklist', function () {
             return new BlacklistMacro($this);
         });
 
