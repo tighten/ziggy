@@ -1,7 +1,5 @@
 ![Ziggy - Use your Laravel Named Routes inside JavaScript](https://raw.githubusercontent.com/tightenco/ziggy/master/ziggy-banner.png?version=2)
 
-![Ziggy Javascript Laravel Routes Example](http://i.imgur.com/tWu1ZqT.gif)
-
 # Ziggy - Use your Laravel Named Routes inside JavaScript
 ![TravisCi Status for tightenco/ziggy](https://travis-ci.org/tightenco/ziggy.svg?branch=master)
 
@@ -103,10 +101,10 @@ return [
 ];
 ```
 
-In the above example, you can see we have configured multiple whitelists for different user roles.  You may expose a specific whitelist group by passing the group key into `@route` within your blade view.  Example:
+In the above example, you can see we have configured multiple whitelists for different user roles.  You may expose a specific whitelist group by passing the group key into `@routes` within your blade view.  Example:
 
 ```php
-@route('author')
+@routes('author')
 ```
 
 **Note: Using a group will always take precedence over the above mentioned `whitelist` and `blacklist` settings.**
