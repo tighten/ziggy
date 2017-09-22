@@ -39,8 +39,8 @@ class BladeRouteGenerator
         baseUrl = '{$this->baseUrl}',
         baseProtocol = '{$this->baseProtocol}',
         baseDomain = '{$this->baseDomain}',
-        basePort = {$this->basePort},
-        $routeFunction
+        basePort = {$this->basePort};
+    $routeFunction
 </script>
 EOT;
     }
