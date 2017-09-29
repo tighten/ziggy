@@ -3,7 +3,7 @@
 namespace Tightenco\Ziggy;
 
 use Illuminate\Routing\Router;
-use function str_before;
+use function array_key_exists;
 
 class BladeRouteGenerator
 {
@@ -48,14 +48,10 @@ EOT;
     private function prepareDomain()
     {
         $url = url('/');
+        $parsedUrl = parse_url($url);
         $this->baseUrl = $url . '/';
-        $this->baseProtocol = str_before($url, ':');
-        $this->baseDomain = str_replace($this->baseProtocol . '://', '', $url);
-        $this->basePort = 'false';
-        if (strpos($this->baseDomain, ':')) {
-            $urlParts = explode(':', $this->baseDomain);
-            $this->baseDomain = $urlParts[0];
-            $this->basePort = $urlParts[1];
-        }
+        $this->baseProtocol = array_key_exists(PHP_URL_SCHEME, $parsedUrl) ? $parsedUrl[PHP_URL_SCHEME] : 'http';
+        $this->baseDomain = array_key_exists(PHP_URL_HOST, $parsedUrl) ? $parsedUrl[PHP_URL_HOST] : '';
+        $this->basePort = array_key_exists(PHP_URL_PORT, $parsedUrl) ? $parsedUrl[PHP_URL_PORT] : 'false';
     }
 }
