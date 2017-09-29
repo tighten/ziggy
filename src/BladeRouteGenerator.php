@@ -51,7 +51,7 @@ EOT;
         $this->baseUrl = $url . '/';
         $this->baseProtocol = str_before($url, ':');
         $this->baseDomain = str_replace($this->baseProtocol . '://', '', $url);
-        $this->basePort = false;
+        $this->basePort = 'false';
         if (strpos($this->baseDomain, ':')) {
             $urlParts = explode(':', $this->baseDomain);
             $this->baseDomain = $urlParts[0];
