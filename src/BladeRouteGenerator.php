@@ -3,11 +3,17 @@
 namespace Tightenco\Ziggy;
 
 use Illuminate\Routing\Router;
+use function array_key_exists;
 
 class BladeRouteGenerator
 {
+
+    private $baseDomain;
+    private $basePort;
+    private $baseUrl;
+    private $baseProtocol;
     private $router;
-    public $routePayload;
+    public  $routePayload;
 
     public function __construct(Router $router)
     {
@@ -21,16 +27,32 @@ class BladeRouteGenerator
 
     public function generate($group = false)
     {
+        $this->prepareDomain();
+
         $json = $this->getRoutePayload($group)->toJson();
-        $appUrl = url('/') . '/';
+
         $routeFunction = file_get_contents(__DIR__ . '/js/route.js');
 
         return <<<EOT
 <script type="text/javascript">
     var namedRoutes = JSON.parse('$json'),
-        baseUrl = '$appUrl';
-        $routeFunction
+        baseUrl = '{$this->baseUrl}',
+        baseProtocol = '{$this->baseProtocol}',
+        baseDomain = '{$this->baseDomain}',
+        basePort = {$this->basePort};
+    $routeFunction
 </script>
 EOT;
+    }
+
+    private function prepareDomain()
+    {
+        $url = url('/');
+        $parsedUrl = parse_url($url);
+
+        $this->baseUrl = $url . '/';
+        $this->baseProtocol = array_key_exists('scheme', $parsedUrl) ? $parsedUrl['scheme'] : 'http';
+        $this->baseDomain = array_key_exists('host', $parsedUrl) ? $parsedUrl['host'] : '';
+        $this->basePort = array_key_exists('port', $parsedUrl) ? $parsedUrl['port'] : 'false';
     }
 }

@@ -32,7 +32,12 @@ Router.prototype.constructDomain = function() {
         return '/';
     }
 
-    return (namedRoutes[this.name].domain || baseUrl).replace(/\/+$/,'') + '/';
+    var routeDomain = (namedRoutes[this.name].domain || baseDomain).replace(/\/+$/, '');
+    if (basePort && (routeDomain.replace(/\/+$/, '') === baseDomain.replace(/\/+$/, ''))) {
+        routeDomain = routeDomain + ':' + basePort;
+    }
+
+    return baseProtocol + '://' + routeDomain + '/';
 };
 
 Router.prototype.with = function(params) {
