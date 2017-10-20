@@ -5,9 +5,17 @@ namespace Tightenco\Tests;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Tightenco\Ziggy\ZiggyServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {
+    protected function getPackageProviders($app)
+    {
+        return [
+            ZiggyServiceProvider::class,
+        ];
+    }
+
     protected function assertJsonContains(array $haystack, array $needle)
     {
         $actual = json_encode(Arr::sortRecursive(

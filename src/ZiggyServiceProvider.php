@@ -7,6 +7,7 @@ use Tightenco\Ziggy\BlacklistMacro;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Tightenco\Ziggy\CommandRouteGenerator;
 
 class ZiggyServiceProvider extends ServiceProvider
 {
@@ -19,5 +20,11 @@ class ZiggyServiceProvider extends ServiceProvider
         Blade::directive('routes', function ($group) {
             return "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>";
         });
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CommandRouteGenerator::class,
+            ]);
+        }
     }
 }
