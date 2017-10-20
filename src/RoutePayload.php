@@ -59,6 +59,10 @@ class RoutePayload
     public function filter($filters = [], $include = true)
     {
         return $this->routes->filter(function ($route, $name) use ($filters, $include) {
+            if (array_get($route, 'blacklist', false) === true) {
+                return false;
+            }
+
             foreach ($filters as $filter) {
                 if (str_is($filter, $name)) {
                     return $include;
@@ -66,6 +70,9 @@ class RoutePayload
             }
 
             return ! $include;
+        })->map(function ($route) {
+            array_forget($route, 'blacklist');
+            return $route;
         });
     }
 
@@ -73,19 +80,22 @@ class RoutePayload
     {
         return collect($this->router->getRoutes()->getRoutesByName())
             ->map(function ($route) {
+                $blacklisted = $route->getAction('blacklist');
 
-                if (array_get($route->getAction(), 'blacklist') === true) {
-                    $this->appendToBlacklist($route->getName());
+                if ($blacklisted && $name = $route->getName()) {
+                    $this->appendToBlacklist($name);
                 }
 
                 return collect($route)->only(['uri', 'methods'])
+                    ->put('blacklist', $blacklisted)
                     ->put('domain', $route->domain());
             });
     }
 
     protected function appendToBlacklist($routeName)
     {
-        $blacklist = array_merge(config('ziggy.blacklist', []), [$routeName]);
-        config()->set('ziggy.blacklist', $blacklist);
+        config()->set('ziggy.blacklist', array_merge(
+            config('ziggy.blacklist', []), [$routeName]
+        ));
     }
 }

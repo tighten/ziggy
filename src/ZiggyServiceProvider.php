@@ -2,6 +2,7 @@
 
 namespace Tightenco\Ziggy;
 
+use Closure;
 use Tightenco\Ziggy\BlacklistMacro;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
@@ -11,11 +12,8 @@ class ZiggyServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        // Considering Mixin usage for 5.5
-        // Route::mixin(new BlacklistMixin);
-
-        Route::macro('blacklist', function () {
-            return new BlacklistMacro($this);
+        Route::macro('blacklist', function (Closure $routes) {
+            $this->group(['blacklist' => true], $routes);
         });
 
         Blade::directive('routes', function ($group) {

@@ -13,8 +13,6 @@ use Tightenco\Ziggy\RoutePayload;
 
 class MacroTest extends TestCase
 {
-    protected $router;
-
     protected function getPackageProviders($app)
     {
         return [
@@ -22,54 +20,33 @@ class MacroTest extends TestCase
         ];
     }
 
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->router = app('router');
-        $this->router->get('/home', function () { return ''; })
-               ->name('home');
-
-        $this->router->blacklist()
-               ->name('posts.index')
-               ->get('/posts', function () { return ''; });
-
-        $this->router->get('/posts/{post}', function () { return ''; })
-               ->name('posts.show');
-
-        $this->router->blacklist()
-               ->get('/tags', function () { return ''; })
-               ->name('tags.index');
-
-        $this->router->get('/tags/{tag}', function () { return ''; })
-               ->name('tags.show');
-
-        $this->router->getRoutes()->refreshNameLookups();
-    }
-
     /** @test */
     function only_matching_routes_excluded_with_blacklist_macro_enabled()
     {
-        $routePayload = new RoutePayload($this->router);
-        $routes = $routePayload->blacklist();
+        $router = app('router');
 
-        $this->assertEquals($this->expectedPayload(), $routes->toArray());
-    }
+        $router->get('/', function () { return ''; });
 
-    /** @test */
-    function only_matching_route_groups_excluded_with_blacklist_macro_enabled()
-    {
-        $this->router->blacklist()->group(['prefix' => 'posts'], function ($router) {
-            $router->get('/comments', function () { return ''; })
-                ->name('comments.index');
-
-            $router->get('/comments/{comment}', function () { return ''; })
-                ->name('comments.show');
+        $router->blacklist(function ($router) {
+            $router->get('/posts', function () { return ''; });
+            $router->get('/posts/show', function () { return ''; })
+                ->name('posts.show');
         });
 
-        $this->router->getRoutes()->refreshNameLookups();
+        $router->get('/tags/{tag}', function () { return ''; })
+                ->name('tags.show');
 
-        $routePayload = new RoutePayload($this->router);
+        $router->blacklist(function ($router) {
+            $router->get('/pages', function () { return ''; })
+                ->name('pages.index');
+        });
+
+        $router->get('/pages/{slug}', function () { return ''; })
+            ->name('pages.show');
+
+        $router->getRoutes()->refreshNameLookups();
+
+        $routePayload = new RoutePayload($router);
         $routes = $routePayload->blacklist();
 
         $this->assertEquals($this->expectedPayload(), $routes->toArray());
@@ -78,18 +55,13 @@ class MacroTest extends TestCase
     protected function expectedPayload()
     {
         return [
-            'home' => [
-                'uri' => 'home',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-            ],
-            'posts.show' => [
-                'uri' => 'posts/{post}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-            ],
             'tags.show' => [
                 'uri' => 'tags/{tag}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'pages.show' => [
+                'uri' => 'pages/{slug}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
