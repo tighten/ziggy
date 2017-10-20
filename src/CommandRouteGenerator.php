@@ -12,7 +12,7 @@ class CommandRouteGenerator extends Command
 {
     protected $signature = 'ziggy:generate {path=./resources/assets/js/ziggy.js}';
 
-    protected $description = 'Generate js file for inclusing in build process';
+    protected $description = 'Generate js file for including in build process';
 
     protected $baseUrl;
     protected $baseProtocol;
