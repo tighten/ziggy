@@ -59,10 +59,6 @@ class RoutePayload
     public function filter($filters = [], $include = true)
     {
         return $this->routes->filter(function ($route, $name) use ($filters, $include) {
-            if (array_get($route, 'blacklist', false) === true) {
-                return false;
-            }
-
             foreach ($filters as $filter) {
                 if (str_is($filter, $name)) {
                     return $include;
@@ -70,9 +66,6 @@ class RoutePayload
             }
 
             return ! $include;
-        })->map(function ($route) {
-            array_forget($route, 'blacklist');
-            return $route;
         });
     }
 
@@ -80,22 +73,25 @@ class RoutePayload
     {
         return collect($this->router->getRoutes()->getRoutesByName())
             ->map(function ($route) {
-                $blacklisted = $route->getAction('blacklist');
-
-                if ($blacklisted && $name = $route->getName()) {
-                    $this->appendToBlacklist($name);
+                if ($this->isListedAs($route, 'blacklist')) {
+                    $this->appendRouteToList($route->getName(), 'blacklist');
+                } elseif ($this->isListedAs($route, 'whitelist')) {
+                    $this->appendRouteToList($route->getName(), 'whitelist');
                 }
 
                 return collect($route)->only(['uri', 'methods'])
-                    ->put('blacklist', $blacklisted)
                     ->put('domain', $route->domain());
             });
     }
 
-    protected function appendToBlacklist($routeName)
+    protected function appendRouteToList($name, $list)
     {
-        config()->set('ziggy.blacklist', array_merge(
-            config('ziggy.blacklist', []), [$routeName]
-        ));
+        config()->push("ziggy.{$list}", $name);
+    }
+
+    protected function isListedAs($route, $list)
+    {
+        return (isset($route->listedAs) && $route->listedAs === $list)
+            || $route->getAction('listed_as') === $list;
     }
 }
