@@ -92,6 +92,6 @@ class RoutePayload
     protected function isListedAs($route, $list)
     {
         return (isset($route->listedAs) && $route->listedAs === $list)
-            || $route->getAction('listed_as') === $list;
+            || array_get($route->getAction(), 'listed_as', null) === $list;
     }
 }
