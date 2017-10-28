@@ -82,6 +82,30 @@ return [
 
 As shown in the example above, Ziggy the use of asterisks as wildcards in filters. `home` will only match the route named `home` whereas `api.*` will match any route whose name begins with `api.`, such as `api.posts.index` and `api.users.show`.
 
+### Simple Whitelisting & Blacklisting Macros
+
+Whitelisting and blacklisting can also be achieved using the following macros.
+
+#### Example Whitelisting
+
+```php
+Route::whitelist(function () {
+    Route::get('...')->name('posts');
+});
+
+Route::whitelist()->get('...')->name('posts');
+```
+
+#### Example Blacklisting
+
+```php
+Route::blacklist(function () {
+    Route::get('...')->name('posts');
+});
+
+Route::blacklist()->get('...')->name('posts');
+```
+
 ### Advanced Whitelisting Using Groups
 
 You may also optionally define multiple whitelists by defining `groups` in your `config/ziggy.php`:
@@ -118,7 +142,6 @@ To get started contributing to Ziggy, check out [the contribution guide](CONTRIB
 
 Thanks to [Caleb Porzio](http://twitter.com/calebporzio), [Adam Wathan](http://twitter.com/adamwathan), and [Jeffrey Way](http://twitter.com/jeffrey_way) for help solidifying the idea.
 
-### Thanks to the following feature contributors:
- - [Jesse Leite](https://github.com/JesseLeite)
+### Thanks to [all our contributors](https://github.com/tightenco/ziggy/graphs/contributors)
 
 
