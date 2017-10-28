@@ -31,7 +31,7 @@ class BladeRouteGenerator
 
         $json = $this->getRoutePayload($group)->toJson();
 
-        $routeFunction = file_get_contents(__DIR__ . '/js/route.js');
+        $routeFunction = file_get_contents(__DIR__ . '../dist/js/route.js');
 
         return <<<EOT
 <script type="text/javascript">
