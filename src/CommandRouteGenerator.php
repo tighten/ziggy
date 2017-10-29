@@ -46,18 +46,16 @@ class CommandRouteGenerator extends Command
         $json = $this->getRoutePayload($group)->toJson();
 
         return <<<EOT
-    var namedRoutes = JSON.parse('$json'),
-        baseUrl = '{$this->baseUrl}',
-        baseProtocol = '{$this->baseProtocol}',
-        baseDomain = '{$this->baseDomain}',
-        basePort = {$this->basePort};
+    var Ziggy = {
+        namedRoutes: JSON.parse('$json'),
+        baseUrl: '{$this->baseUrl}',
+        baseProtocol: '{$this->baseProtocol}',
+        baseDomain: '{$this->baseDomain}',
+        basePort: {$this->basePort}
+    };
 
     export {
-        namedRoutes,
-        baseUrl,
-        baseProtocol,
-        baseDomain,
-        basePort
+        Ziggy
     }
 
 EOT;

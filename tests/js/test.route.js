@@ -4,11 +4,13 @@ let moxios = require('moxios');
 
 import route from '../../dist/js/route.js';
 
-global.namedRoutes = JSON.parse('{"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users\/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts\/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts\/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts\/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events\/{event}\/venues\/{venue}","methods":["GET","HEAD"],"domain":null},"optional":{"uri":"optional\/{id}\/{slug?}","methods":["GET","HEAD"],"domain":null}}');
-global.baseUrl = 'http://myapp.dev/';
-global.baseProtocol = 'http';
-global.baseDomain = 'myapp.dev';
-global.basePort = false;
+global.Ziggy = {
+    namedRoutes: JSON.parse('{"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users\/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts\/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts\/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts\/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events\/{event}\/venues\/{venue}","methods":["GET","HEAD"],"domain":null},"optional":{"uri":"optional\/{id}\/{slug?}","methods":["GET","HEAD"],"domain":null}}'),
+    baseUrl: 'http://myapp.dev/',
+    baseProtocol: 'http',
+    baseDomain: 'myapp.dev',
+    basePort: false
+};
 
 describe('route()', function() {
     it('Should return URL when run without params on a route without params', function() {
@@ -223,32 +225,32 @@ describe('route()', function() {
     });
 
     it('Should return URL with port when run without params on a route without params', function() {
-        let orgBaseUrl    = baseUrl;
-        let orgBaseDomain = baseDomain;
-        let orgBasePort   = basePort;
+        let orgBaseUrl    = Ziggy.baseUrl;
+        let orgBaseDomain = Ziggy.baseDomain;
+        let orgBasePort   = Ziggy.basePort;
 
-        global.baseUrl    = 'http://myapp.dev:81/';
-        global.baseDomain = 'myapp.dev';
-        global.basePort   = 81;
+        global.Ziggy.baseUrl    = 'http://myapp.dev:81/';
+        global.Ziggy.baseDomain = 'myapp.dev';
+        global.Ziggy.basePort   = 81;
 
         assert.equal(
             "http://myapp.dev:81/posts",
             route('posts.index')
         );
 
-        global.baseUrl    = orgBaseUrl;
-        global.baseDomain = orgBaseDomain;
-        global.basePort   = orgBasePort;
+        global.Ziggy.baseUrl    = orgBaseUrl;
+        global.Ziggy.baseDomain = orgBaseDomain;
+        global.Ziggy.basePort   = orgBasePort;
     });
 
     it('Should return correct URL without port when run with params on a route with required domain params', function() {
-        let orgBaseUrl    = baseUrl;
-        let orgBaseDomain = baseDomain;
-        let orgBasePort   = basePort;
+        let orgBaseUrl    = Ziggy.baseUrl;
+        let orgBaseDomain = Ziggy.baseDomain;
+        let orgBasePort   = Ziggy.basePort;
 
-        global.baseUrl    = 'http://myapp.dev:81/';
-        global.baseDomain = 'myapp.dev';
-        global.basePort   = 81;
+        global.Ziggy.baseUrl    = 'http://myapp.dev:81/';
+        global.Ziggy.baseDomain = 'myapp.dev';
+        global.Ziggy.basePort   = 81;
 
         assert.equal(
             "http://tighten.myapp.dev/users/1",

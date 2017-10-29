@@ -105,7 +105,7 @@ var Router = function (_String) {
         _this.queryParams = _this.normalizeParams(params);
         _this.absolute = absolute === undefined ? true : absolute;
         _this.domain = _this.constructDomain();
-        _this.url = namedRoutes[_this.name].uri.replace(/^\//, '');
+        _this.url = Ziggy.namedRoutes[_this.name].uri.replace(/^\//, '');
         return _this;
     }
 
@@ -123,19 +123,19 @@ var Router = function (_String) {
         key: 'constructDomain',
         value: function constructDomain() {
             if (this.name === undefined) {
-                throw 'Ziggy Error: You must provide a route name';
-            } else if (namedRoutes[this.name] === undefined) {
+                throw new Error('Ziggy Error: You must provide a route name');
+            } else if (Ziggy.namedRoutes[this.name] === undefined) {
                 throw new Error('Ziggy Error: route \'' + this.name + '\' is not found in the route list');
             } else if (!this.absolute) {
                 return '/';
             }
 
-            var routeDomain = (namedRoutes[this.name].domain || baseDomain).replace(/\/+$/, '');
-            if (basePort && routeDomain.replace(/\/+$/, '') === baseDomain.replace(/\/+$/, '')) {
-                routeDomain = routeDomain + ':' + basePort;
+            var routeDomain = (Ziggy.namedRoutes[this.name].domain || Ziggy.baseDomain).replace(/\/+$/, '');
+            if (Ziggy.basePort && routeDomain.replace(/\/+$/, '') === Ziggy.baseDomain.replace(/\/+$/, '')) {
+                routeDomain = routeDomain + ':' + Ziggy.basePort;
             }
 
-            return baseProtocol + '://' + routeDomain + '/';
+            return Ziggy.baseProtocol + '://' + routeDomain + '/';
         }
     }, {
         key: 'with',
