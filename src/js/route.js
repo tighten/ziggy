@@ -31,7 +31,7 @@ class Router extends String {
             return '/';
         }
     
-        var routeDomain = (namedRoutes[this.name].domain || baseDomain).replace(/\/+$/, '');
+        let routeDomain = (namedRoutes[this.name].domain || baseDomain).replace(/\/+$/, '');
         if (basePort && (routeDomain.replace(/\/+$/, '') === baseDomain.replace(/\/+$/, ''))) {
             routeDomain = routeDomain + ':' + basePort;
         }
@@ -55,14 +55,14 @@ class Router extends String {
     
     
     constructUrl() {
-        var url = this.domain + this.url,
+        let url = this.domain + this.url,
             tags = this.urlParams,
             paramsArrayKey = 0;
     
         return url.replace(
             /{([^}]+)}/gi,
             function (tag) {
-                var keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
+                let keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
                     key = this.numericParamIndices ? paramsArrayKey : keyName;
     
                 paramsArrayKey++;
@@ -84,7 +84,7 @@ class Router extends String {
         if (Object.keys(this.queryParams).length === 0)
             return '';
     
-        var queryString = '?';
+        let queryString = '?';
     
         Object.keys(this.queryParams).forEach(function(key, i) {
             queryString = i === 0 ? queryString : queryString + '&';
@@ -112,6 +112,6 @@ class Router extends String {
     };   
 }
 
-export function route(name, params, absolute) {
+export default function route(name, params, absolute) {
     return new Router(name, params, absolute);
 };
