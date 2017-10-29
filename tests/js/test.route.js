@@ -18,6 +18,13 @@ describe('route()', function() {
         );
     });
 
+    it('Should return URL when when passed the url() methods', function() {
+        assert.equal(
+            "http://myapp.dev/posts",
+            route('posts.index').url()
+        );
+    });
+
     it('Should return URL without domain when passing false into absolute param.', function() {
         assert.equal(
             "/posts",

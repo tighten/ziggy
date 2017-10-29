@@ -4,13 +4,12 @@ class Router extends String {
         super();
 
         this.name = name;
-        this.urlParams = this.normalizeParams(params);
+        this.uriParams = this.normalizeParams(params);
         this.queryParams = this.normalizeParams(params);
         this.absolute = absolute === undefined ? true : absolute;
         this.domain = this.constructDomain();
-        this.url = namedRoutes[this.name].uri.replace(/^\//, '');
+        this.uri = namedRoutes[this.name].uri.replace(/^\//, '');
     }
-
     normalizeParams(params) {
         if (params === undefined)
             return {};
@@ -20,7 +19,6 @@ class Router extends String {
 
         return Object.assign({}, params);
     };
-
 
     constructDomain() {
         if (this.name === undefined) {
@@ -39,13 +37,11 @@ class Router extends String {
         return baseProtocol + '://' + routeDomain + '/';
     };
 
-
     with(params) {
-        this.urlParams = this.normalizeParams(params);
+        this.uriParams = this.normalizeParams(params);
 
         return this;
     };
-
 
     withQuery(params) {
         Object.assign(this.queryParams, params);
@@ -53,10 +49,9 @@ class Router extends String {
         return this;
     };
 
-
     constructUrl() {
-        let url = this.domain + this.url,
-            tags = this.urlParams,
+        let url = this.domain + this.uri,
+            tags = this.uriParams,
             paramsArrayKey = 0;
 
         return url.replace(
@@ -79,7 +74,6 @@ class Router extends String {
         );
     };
 
-
     constructQuery() {
         if (Object.keys(this.queryParams).length === 0)
             return '';
@@ -94,21 +88,21 @@ class Router extends String {
         return queryString;
     };
 
-
-    toString() {
-        this.parse();
-        return this.return;
-    };
-
-
-    valueOf() {
-        this.parse();
-        return this.return;
-    };
-
-
     parse() {
         this.return = this.constructUrl() + this.constructQuery();
+    };
+
+    url() {
+        this.parse();
+        return this.return;
+    };
+
+    toString() {
+        return this.url();
+    };
+
+    valueOf() {
+        return this.url();
     };
 }
 

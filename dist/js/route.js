@@ -101,11 +101,11 @@ var Router = function (_String) {
         var _this = _possibleConstructorReturn(this, (Router.__proto__ || Object.getPrototypeOf(Router)).call(this));
 
         _this.name = name;
-        _this.urlParams = _this.normalizeParams(params);
+        _this.uriParams = _this.normalizeParams(params);
         _this.queryParams = _this.normalizeParams(params);
         _this.absolute = absolute === undefined ? true : absolute;
         _this.domain = _this.constructDomain();
-        _this.url = namedRoutes[_this.name].uri.replace(/^\//, '');
+        _this.uri = namedRoutes[_this.name].uri.replace(/^\//, '');
         return _this;
     }
 
@@ -123,7 +123,7 @@ var Router = function (_String) {
         key: 'constructDomain',
         value: function constructDomain() {
             if (this.name === undefined) {
-                throw 'Ziggy Error: You must provide a route name';
+                throw new Error('Ziggy Error: You must provide a route name');
             } else if (namedRoutes[this.name] === undefined) {
                 throw new Error('Ziggy Error: route \'' + this.name + '\' is not found in the route list');
             } else if (!this.absolute) {
@@ -140,7 +140,7 @@ var Router = function (_String) {
     }, {
         key: 'with',
         value: function _with(params) {
-            this.urlParams = this.normalizeParams(params);
+            this.uriParams = this.normalizeParams(params);
 
             return this;
         }
@@ -154,8 +154,8 @@ var Router = function (_String) {
     }, {
         key: 'constructUrl',
         value: function constructUrl() {
-            var url = this.domain + this.url,
-                tags = this.urlParams,
+            var url = this.domain + this.uri,
+                tags = this.uriParams,
                 paramsArrayKey = 0;
 
             return url.replace(/{([^}]+)}/gi, function (tag) {
@@ -189,21 +189,25 @@ var Router = function (_String) {
             return queryString;
         }
     }, {
-        key: 'toString',
-        value: function toString() {
+        key: 'parse',
+        value: function parse() {
+            this.return = this.constructUrl() + this.constructQuery();
+        }
+    }, {
+        key: 'url',
+        value: function url() {
             this.parse();
             return this.return;
+        }
+    }, {
+        key: 'toString',
+        value: function toString() {
+            return this.url();
         }
     }, {
         key: 'valueOf',
         value: function valueOf() {
-            this.parse();
-            return this.return;
-        }
-    }, {
-        key: 'parse',
-        value: function parse() {
-            this.return = this.constructUrl() + this.constructQuery();
+            return this.url();
         }
     }]);
 
