@@ -18,20 +18,12 @@
   "homepage": "https://github.com/tightenco/ziggy#readme",
   "devDependencies": {
     "axios": "^0.16.2",
-    "babel-preset-es2015": "^6.24.1",
     "babel-register": "^6.26.0",
-    "laravel-mix": "^1.5.1",
     "mocha": "^3.5.0",
     "moxios": "^0.4.0"
   },
   "scripts": {
-    "dev": "NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch": "NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "hot": "NODE_ENV=development webpack-dev-server --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "production": "NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "test": "mocha 'tests/js' --require babel-register"
   },
-  "dependencies": {
-    "babel-loader": "^7.1.2"
-  }
+  "dependencies": {}
 }
