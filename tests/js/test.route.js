@@ -1,13 +1,14 @@
-var assert = require('assert');
-var axios = require('axios');
-var moxios = require('moxios');
-var route = require('../../src/js/route').route;
+let assert = require('assert');
+let axios = require('axios');
+let moxios = require('moxios');
 
-namedRoutes = JSON.parse('{"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users\/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts\/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts\/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts\/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events\/{event}\/venues\/{venue}","methods":["GET","HEAD"],"domain":null},"optional":{"uri":"optional\/{id}\/{slug?}","methods":["GET","HEAD"],"domain":null}}'),
-    baseUrl = 'http://myapp.dev/',
-    baseProtocol = 'http',
-    baseDomain = 'myapp.dev',
-    basePort = false;
+import route from '../../dist/js/route.js';
+
+global.namedRoutes = JSON.parse('{"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users\/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts\/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts\/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts\/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events\/{event}\/venues\/{venue}","methods":["GET","HEAD"],"domain":null},"optional":{"uri":"optional\/{id}\/{slug?}","methods":["GET","HEAD"],"domain":null}}');
+global.baseUrl = 'http://myapp.dev/';
+global.baseProtocol = 'http';
+global.baseDomain = 'myapp.dev';
+global.basePort = false;
 
 describe('route()', function() {
     it('Should return URL when run without params on a route without params', function() {
@@ -29,7 +30,7 @@ describe('route()', function() {
             function() {
                 route('posts.show').toString()
             },
-                /"id" key is required/
+                /'id' key is required/
         );
     });
 
@@ -89,8 +90,8 @@ describe('route()', function() {
     });
 
     it('Should return URL when run with whole object params on a route with required params', function() {
-        var event = { id: 1, name: 'World Series' };
-        var venue = { id: 2, name: 'Rogers Centre' };
+        let event = { id: 1, name: 'World Series' };
+        let venue = { id: 2, name: 'Rogers Centre' };
 
         assert.equal(
             "http://myapp.dev/events/1/venues/2",
@@ -103,7 +104,7 @@ describe('route()', function() {
     });
 
     it('Should return URL when run with some whole object params on a route with required params', function() {
-        var venue = { id: 2, name: "Rogers Centre" };
+        let venue = { id: 2, name: "Rogers Centre" };
 
         assert.equal(
             "http://myapp.dev/events/1/venues/2",
@@ -194,7 +195,7 @@ describe('route()', function() {
             function() {
                 route('unknown-route').toString()
             },
-            /route "unknown-route" is not found in the route list/
+            /route 'unknown-route' is not found in the route list/
         );
     });
 
@@ -222,32 +223,32 @@ describe('route()', function() {
     });
 
     it('Should return URL with port when run without params on a route without params', function() {
-        orgBaseUrl    = baseUrl;
-        orgBaseDomain = baseDomain;
-        orgBasePort   = basePort;
+        let orgBaseUrl    = baseUrl;
+        let orgBaseDomain = baseDomain;
+        let orgBasePort   = basePort;
 
-        baseUrl    = 'http://myapp.dev:81/';
-        baseDomain = 'myapp.dev';
-        basePort   = 81;
+        global.baseUrl    = 'http://myapp.dev:81/';
+        global.baseDomain = 'myapp.dev';
+        global.basePort   = 81;
 
         assert.equal(
             "http://myapp.dev:81/posts",
             route('posts.index')
         );
 
-        baseUrl    = orgBaseUrl;
-        baseDomain = orgBaseDomain;
-        basePort   = orgBasePort;
+        global.baseUrl    = orgBaseUrl;
+        global.baseDomain = orgBaseDomain;
+        global.basePort   = orgBasePort;
     });
 
     it('Should return correct URL without port when run with params on a route with required domain params', function() {
-        orgBaseUrl    = baseUrl;
-        orgBaseDomain = baseDomain;
-        orgBasePort   = basePort;
+        let orgBaseUrl    = baseUrl;
+        let orgBaseDomain = baseDomain;
+        let orgBasePort   = basePort;
 
-        baseUrl    = 'http://myapp.dev:81/';
-        baseDomain = 'myapp.dev';
-        basePort   = 81;
+        global.baseUrl    = 'http://myapp.dev:81/';
+        global.baseDomain = 'myapp.dev';
+        global.basePort   = 81;
 
         assert.equal(
             "http://tighten.myapp.dev/users/1",
@@ -257,9 +258,5 @@ describe('route()', function() {
             "http://tighten.myapp.dev/users/1",
             route('team.user.show').with({team: "tighten", id: 1})
         );
-
-        baseUrl    = orgBaseUrl;
-        baseDomain = orgBaseDomain;
-        basePort   = orgBasePort;
     });
 });

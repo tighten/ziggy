@@ -1,0 +1,34 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "modules": false,
+        "targets": {
+          "browsers": [
+            "> 2%",
+            "last 2 versions"
+          ],
+          "uglify": true
+        }
+      }
+    ]
+  ],
+  "plugins": [
+    "transform-object-assign"
+  ],
+  "env": {
+    "test": {
+      "presets": [
+        [
+          "env",
+          {
+            "targets": {
+              "node": "current"
+            }
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -2,11 +2,18 @@ language: php
 php:
   - '5.6'
   - '7.1'
+git:
+  depth: 1
 install: 
-  - composer install
+  - composer install --no-interaction
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
   - npm install
 script:
+  - npm run build
   - npm test
+cache:
+  directories:
+  - node_modules
+  - $HOME/.cache/composer
