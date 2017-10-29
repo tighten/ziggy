@@ -125,7 +125,7 @@ var Router = function (_String) {
             if (this.name === undefined) {
                 throw 'Ziggy Error: You must provide a route name';
             } else if (namedRoutes[this.name] === undefined) {
-                throw 'Ziggy Error: route "' + this.name + '" is not found in the route list';
+                throw new Error('Ziggy Error: route \'' + this.name + '\' is not found in the route list');
             } else if (!this.absolute) {
                 return '/';
             }
@@ -168,7 +168,7 @@ var Router = function (_String) {
                     return tags[key].id || tags[key];
                 }
                 if (tag.indexOf('?') === -1) {
-                    throw 'Ziggy Error: "' + keyName + '" key is required for route "' + this.name + '"';
+                    throw new Error('Ziggy Error: \'' + keyName + '\' key is required for route \'' + this.name + '\'');
                 } else {
                     return '';
                 }

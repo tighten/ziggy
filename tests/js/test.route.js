@@ -30,7 +30,7 @@ describe('route()', function() {
             function() {
                 route('posts.show').toString()
             },
-                /"id" key is required/
+                /'id' key is required/
         );
     });
 
@@ -195,7 +195,7 @@ describe('route()', function() {
             function() {
                 route('unknown-route').toString()
             },
-            /route "unknown-route" is not found in the route list/
+            /route 'unknown-route' is not found in the route list/
         );
     });
 
