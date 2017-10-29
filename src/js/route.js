@@ -8,7 +8,7 @@ class Router extends String {
         this.queryParams = this.normalizeParams(params);
         this.absolute = absolute === undefined ? true : absolute;
         this.domain = this.constructDomain();
-        this.uri = namedRoutes[this.name].uri.replace(/^\//, '');
+        this.uri = Ziggy.namedRoutes[this.name].uri.replace(/^\//, '');
     }
     normalizeParams(params) {
         if (params === undefined)
@@ -23,18 +23,18 @@ class Router extends String {
     constructDomain() {
         if (this.name === undefined) {
             throw new Error('Ziggy Error: You must provide a route name');
-        } else if (namedRoutes[this.name] === undefined) {
+        } else if (Ziggy.namedRoutes[this.name] === undefined) {
             throw new Error(`Ziggy Error: route '${this.name}' is not found in the route list`);
         } else if (! this.absolute) {
             return '/';
         }
 
-        let routeDomain = (namedRoutes[this.name].domain || baseDomain).replace(/\/+$/, '');
-        if (basePort && (routeDomain.replace(/\/+$/, '') === baseDomain.replace(/\/+$/, ''))) {
-            routeDomain = routeDomain + ':' + basePort;
+        let routeDomain = (Ziggy.namedRoutes[this.name].domain || Ziggy.baseDomain).replace(/\/+$/, '');
+        if (Ziggy.basePort && (routeDomain.replace(/\/+$/, '') === Ziggy.baseDomain.replace(/\/+$/, ''))) {
+            routeDomain = routeDomain + ':' + Ziggy.basePort;
         }
 
-        return baseProtocol + '://' + routeDomain + '/';
+        return Ziggy.baseProtocol + '://' + routeDomain + '/';
     };
 
     with(params) {

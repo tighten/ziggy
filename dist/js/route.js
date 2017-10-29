@@ -130,12 +130,12 @@ var Router = function (_String) {
                 return '/';
             }
 
-            var routeDomain = (namedRoutes[this.name].domain || baseDomain).replace(/\/+$/, '');
-            if (basePort && routeDomain.replace(/\/+$/, '') === baseDomain.replace(/\/+$/, '')) {
-                routeDomain = routeDomain + ':' + basePort;
+            var routeDomain = (Ziggy.namedRoutes[this.name].domain || Ziggy.baseDomain).replace(/\/+$/, '');
+            if (Ziggy.basePort && routeDomain.replace(/\/+$/, '') === Ziggy.baseDomain.replace(/\/+$/, '')) {
+                routeDomain = routeDomain + ':' + Ziggy.basePort;
             }
 
-            return baseProtocol + '://' + routeDomain + '/';
+            return Ziggy.baseProtocol + '://' + routeDomain + '/';
         }
     }, {
         key: 'with',
