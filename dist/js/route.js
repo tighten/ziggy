@@ -105,7 +105,7 @@ var Router = function (_String) {
         _this.queryParams = _this.normalizeParams(params);
         _this.absolute = absolute === undefined ? true : absolute;
         _this.domain = _this.constructDomain();
-        _this.uri = namedRoutes[_this.name].uri.replace(/^\//, '');
+        _this.uri = Ziggy.namedRoutes[_this.name].uri.replace(/^\//, '');
         return _this;
     }
 
@@ -124,7 +124,7 @@ var Router = function (_String) {
         value: function constructDomain() {
             if (this.name === undefined) {
                 throw new Error('Ziggy Error: You must provide a route name');
-            } else if (namedRoutes[this.name] === undefined) {
+            } else if (Ziggy.namedRoutes[this.name] === undefined) {
                 throw new Error('Ziggy Error: route \'' + this.name + '\' is not found in the route list');
             } else if (!this.absolute) {
                 return '/';
