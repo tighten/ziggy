@@ -80,6 +80,7 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["default"] = route;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__UrlBuilder__ = __webpack_require__(1);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -92,6 +93,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+
+
 var Router = function (_String) {
     _inherits(Router, _String);
 
@@ -101,11 +104,9 @@ var Router = function (_String) {
         var _this = _possibleConstructorReturn(this, (Router.__proto__ || Object.getPrototypeOf(Router)).call(this));
 
         _this.name = name;
-        _this.uriParams = _this.normalizeParams(params);
+        _this.absolute = absolute;
+        _this.urlParams = _this.normalizeParams(params);
         _this.queryParams = _this.normalizeParams(params);
-        _this.absolute = absolute === undefined ? true : absolute;
-        _this.domain = _this.constructDomain();
-        _this.uri = Ziggy.namedRoutes[_this.name].uri.replace(/^\//, '');
         return _this;
     }
 
@@ -120,45 +121,25 @@ var Router = function (_String) {
             return _extends({}, params);
         }
     }, {
-        key: 'constructDomain',
-        value: function constructDomain() {
-            if (this.name === undefined) {
-                throw new Error('Ziggy Error: You must provide a route name');
-            } else if (Ziggy.namedRoutes[this.name] === undefined) {
-                throw new Error('Ziggy Error: route \'' + this.name + '\' is not found in the route list');
-            } else if (!this.absolute) {
-                return '/';
-            }
-
-            var routeDomain = (Ziggy.namedRoutes[this.name].domain || Ziggy.baseDomain).replace(/\/+$/, '');
-            if (Ziggy.basePort && routeDomain.replace(/\/+$/, '') === Ziggy.baseDomain.replace(/\/+$/, '')) {
-                routeDomain = routeDomain + ':' + Ziggy.basePort;
-            }
-
-            return Ziggy.baseProtocol + '://' + routeDomain + '/';
-        }
-    }, {
         key: 'with',
         value: function _with(params) {
-            this.uriParams = this.normalizeParams(params);
-
+            this.urlParams = this.normalizeParams(params);
             return this;
         }
     }, {
         key: 'withQuery',
         value: function withQuery(params) {
             _extends(this.queryParams, params);
-
             return this;
         }
     }, {
-        key: 'constructUrl',
-        value: function constructUrl() {
-            var url = this.domain + this.uri,
-                tags = this.uriParams,
-                paramsArrayKey = 0;
+        key: 'hydrateUrl',
+        value: function hydrateUrl() {
+            var tags = this.urlParams,
+                paramsArrayKey = 0,
+                template = new __WEBPACK_IMPORTED_MODULE_0__UrlBuilder__["a" /* default */](this.name, this.absolute).construct();
 
-            return url.replace(/{([^}]+)}/gi, function (tag) {
+            return template.replace(/{([^}]+)}/gi, function (tag) {
                 var keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
                     key = this.numericParamIndices ? paramsArrayKey : keyName;
 
@@ -175,6 +156,17 @@ var Router = function (_String) {
             }.bind(this));
         }
     }, {
+        key: 'matchUrl',
+        value: function matchUrl() {
+            var tags = this.urlParams,
+                paramsArrayKey = 0,
+                template = new __WEBPACK_IMPORTED_MODULE_0__UrlBuilder__["a" /* default */](this.name, this.absolute).construct();
+
+            var windowUrl = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
+
+            return new RegExp("^" + template.split(/{([^}]+)}/).join(".*") + "$").test(windowUrl);
+        }
+    }, {
         key: 'constructQuery',
         value: function constructQuery() {
             if (Object.keys(this.queryParams).length === 0) return '';
@@ -189,9 +181,22 @@ var Router = function (_String) {
             return queryString;
         }
     }, {
+        key: 'current',
+        value: function current() {
+            var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+            var routeNames = Object.keys(Ziggy.namedRoutes);
+
+            var currentRoute = routeNames.filter(function (name) {
+                return new Router(name).matchUrl();
+            })[0];
+
+            return name ? name == currentRoute : currentRoute;
+        }
+    }, {
         key: 'parse',
         value: function parse() {
-            this.return = this.constructUrl() + this.constructQuery();
+            this.return = this.hydrateUrl() + this.constructQuery();
         }
     }, {
         key: 'url',
@@ -217,6 +222,56 @@ var Router = function (_String) {
 function route(name, params, absolute) {
     return new Router(name, params, absolute);
 };
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var UrlBuilder = function () {
+    function UrlBuilder(name, absolute) {
+        _classCallCheck(this, UrlBuilder);
+
+        this.name = name;
+        this.route = Ziggy.namedRoutes[this.name];
+
+        if (this.name === undefined) {
+            throw new Error('Ziggy Error: You must provide a route name');
+        } else if (this.route === undefined) {
+            throw new Error('Ziggy Error: route \'' + this.name + '\' is not found in the route list');
+        }
+
+        this.absolute = absolute === undefined ? true : absolute;
+        this.domain = this.setDomain();
+        this.path = this.route.uri.replace(/^\//, '');
+    }
+
+    _createClass(UrlBuilder, [{
+        key: 'setDomain',
+        value: function setDomain() {
+            if (!this.absolute) return '/';
+
+            var host = (this.route.domain || Ziggy.baseDomain).replace(/\/+$/, '');
+
+            if (Ziggy.basePort && host.replace(/\/+$/, '') === Ziggy.baseDomain.replace(/\/+$/, '')) host = host + ':' + Ziggy.basePort;
+
+            return Ziggy.baseProtocol + '://' + host + '/';
+        }
+    }, {
+        key: 'construct',
+        value: function construct() {
+            return this.domain + this.path;
+        }
+    }]);
+
+    return UrlBuilder;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (UrlBuilder);
 
 /***/ })
 /******/ ])["default"];

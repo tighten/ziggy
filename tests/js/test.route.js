@@ -2,7 +2,7 @@ let assert = require('assert');
 let axios = require('axios');
 let moxios = require('moxios');
 
-import route from '../../dist/js/route.js';
+import route from '../../src/js/route.js';
 
 global.Ziggy = {
     namedRoutes: JSON.parse('{"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users\/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts\/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts\/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts\/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events\/{event}\/venues\/{venue}","methods":["GET","HEAD"],"domain":null},"optional":{"uri":"optional\/{id}\/{slug?}","methods":["GET","HEAD"],"domain":null}}'),
@@ -205,15 +205,6 @@ describe('route()', function() {
                 route('unknown-route').toString()
             },
             /route 'unknown-route' is not found in the route list/
-        );
-    });
-
-    it('Should return an error if route name isnt provided', function() {
-        assert.throws(
-            function() {
-                route()
-            },
-            /You must provide a route name/
         );
     });
 
