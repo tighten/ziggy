@@ -2,7 +2,7 @@ let assert = require('assert');
 let axios = require('axios');
 let moxios = require('moxios');
 
-import route from '../../dist/js/route.js';
+import route from '../../src/js/route.js';
 
 global.Ziggy = {
     namedRoutes: JSON.parse('{"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users\/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts\/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts\/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts\/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events\/{event}\/venues\/{venue}","methods":["GET","HEAD"],"domain":null},"optional":{"uri":"optional\/{id}\/{slug?}","methods":["GET","HEAD"],"domain":null}}'),
@@ -20,7 +20,7 @@ describe('route()', function() {
         );
     });
 
-    it('Should return URL when when passed the url() methods', function() {
+    it('Should return URL when when passed the url() method', function() {
         assert.equal(
             "http://myapp.dev/posts",
             route('posts.index').url()
@@ -208,15 +208,6 @@ describe('route()', function() {
         );
     });
 
-    it('Should return an error if route name isnt provided', function() {
-        assert.throws(
-            function() {
-                route()
-            },
-            /You must provide a route name/
-        );
-    });
-
     it('Should accept queryString params as keyed values in param object', function() {
         assert.equal(
             'http://myapp.dev/events/1/venues/2?search=rogers&page=2',
@@ -266,6 +257,32 @@ describe('route()', function() {
         assert.equal(
             "http://tighten.myapp.dev/users/1",
             route('team.user.show').with({team: "tighten", id: 1})
+        );
+    });
+
+    it('Should return correct route name for current() and respond accurately when queried.', function() {
+        global.window = {
+            location: {
+                hostname: "myapp.dev",
+                pathname: "/events/1/venues/2",
+                port: "81",
+                protocol: "http:"
+            }
+        };
+
+        assert.equal(
+            "events.venues.show",
+            route().current()
+        );
+
+        assert.equal(
+            true,
+            route().current("events.venues.show")
+        );
+
+        assert.equal(
+            false,
+            route().current("events.venues.index")
         );
     });
 });

@@ -131,6 +131,35 @@ In the above example, you can see we have configured multiple whitelists for dif
 @routes('author')
 ```
 
+### Other useful methods
+
+#### `current()`
+To get the name of the current route (based on the browser's `window.location`) you can use:
+
+```javascript
+route().current()
+// returns "home"
+```
+
+To check that we are at a current route, pass the desired route in the only param:
+
+```javascript
+route().current("home")
+// returns true
+```
+
+#### `url()`
+Ziggy returns a wrapper of the string primitive, which behaves exactly like a string in almost all cases.
+In rare cases where third-party libraries use strict type checking, you may require an actual `String` literal.
+
+To achieve this simple call `.url()` on your route:
+
+```javascript
+route('home').url()
+// http://myapp.dev/
+```
+
+
 **Note: Using a group will always take precedence over the above mentioned `whitelist` and `blacklist` settings.**
 
 ## Contributions & Credits

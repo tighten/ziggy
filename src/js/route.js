@@ -1,15 +1,15 @@
-class Router extends String {
+import UrlBuilder from './UrlBuilder';
 
+class Router extends String {
     constructor(name, params, absolute) {
         super();
 
-        this.name = name;
-        this.uriParams = this.normalizeParams(params);
-        this.queryParams = this.normalizeParams(params);
-        this.absolute = absolute === undefined ? true : absolute;
-        this.domain = this.constructDomain();
-        this.uri = Ziggy.namedRoutes[this.name].uri.replace(/^\//, '');
+        this.name           = name;
+        this.absolute       = absolute;
+        this.urlParams      = this.normalizeParams(params);
+        this.queryParams    = this.normalizeParams(params);
     }
+
     normalizeParams(params) {
         if (params === undefined)
             return {};
@@ -18,43 +18,24 @@ class Router extends String {
         this.numericParamIndices = Array.isArray(params);
 
         return Object.assign({}, params);
-    };
-
-    constructDomain() {
-        if (this.name === undefined) {
-            throw new Error('Ziggy Error: You must provide a route name');
-        } else if (Ziggy.namedRoutes[this.name] === undefined) {
-            throw new Error(`Ziggy Error: route '${this.name}' is not found in the route list`);
-        } else if (! this.absolute) {
-            return '/';
-        }
-
-        let routeDomain = (Ziggy.namedRoutes[this.name].domain || Ziggy.baseDomain).replace(/\/+$/, '');
-        if (Ziggy.basePort && (routeDomain.replace(/\/+$/, '') === Ziggy.baseDomain.replace(/\/+$/, ''))) {
-            routeDomain = routeDomain + ':' + Ziggy.basePort;
-        }
-
-        return Ziggy.baseProtocol + '://' + routeDomain + '/';
-    };
+    }
 
     with(params) {
-        this.uriParams = this.normalizeParams(params);
-
+        this.urlParams = this.normalizeParams(params);
         return this;
-    };
+    }
 
     withQuery(params) {
         Object.assign(this.queryParams, params);
-
         return this;
-    };
-
-    constructUrl() {
-        let url = this.domain + this.uri,
-            tags = this.uriParams,
-            paramsArrayKey = 0;
-
-        return url.replace(
+    }
+    
+    hydrateUrl() {
+        let tags = this.urlParams,
+            paramsArrayKey = 0,
+            template = new UrlBuilder(this.name, this.absolute).construct();
+        
+        return template.replace(
             /{([^}]+)}/gi,
             function (tag) {
                 let keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
@@ -72,7 +53,18 @@ class Router extends String {
                 }
             }.bind(this)
         );
-    };
+    }
+    
+    matchUrl() {
+        let tags = this.urlParams,
+            paramsArrayKey = 0,
+            template = new UrlBuilder(this.name, this.absolute).construct();
+
+        let windowUrl = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
+
+        let searchTemplate = template.replace(/(\{[^\}]*\})/gi, '.*');
+        return new RegExp("^" + searchTemplate + "$").test(windowUrl);
+    }
 
     constructQuery() {
         if (Object.keys(this.queryParams).length === 0)
@@ -86,24 +78,34 @@ class Router extends String {
         }.bind(this));
 
         return queryString;
-    };
+    }
+
+    current(name = null) {
+        let routeNames = Object.keys(Ziggy.namedRoutes);
+
+        let currentRoute = routeNames.filter(name => {
+            return new Router(name).matchUrl();
+        })[0];
+
+        return name ? (name == currentRoute) : currentRoute;
+    }
 
     parse() {
-        this.return = this.constructUrl() + this.constructQuery();
-    };
+        this.return = this.hydrateUrl() + this.constructQuery();
+    }
 
     url() {
         this.parse();
         return this.return;
-    };
+    }
 
     toString() {
         return this.url();
-    };
+    }
 
     valueOf() {
         return this.url();
-    };
+    }
 }
 
 export default function route(name, params, absolute) {
