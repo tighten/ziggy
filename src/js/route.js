@@ -62,7 +62,8 @@ class Router extends String {
 
         let windowUrl = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
 
-        return new RegExp("^" + template.split(/{([^}]+)}/).join(".*") + "$").test(windowUrl);
+        let searchTemplate = template.replace(/(\{[^\}]*\})/gi, '.*');
+        return new RegExp("^" + searchTemplate + "$").test(windowUrl);
     }
 
     constructQuery() {

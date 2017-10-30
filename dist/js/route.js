@@ -164,7 +164,8 @@ var Router = function (_String) {
 
             var windowUrl = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
 
-            return new RegExp("^" + template.split(/{([^}]+)}/).join(".*") + "$").test(windowUrl);
+            var searchTemplate = template.replace(/(\{[^\}]*\})/gi, '.*');
+            return new RegExp("^" + searchTemplate + "$").test(windowUrl);
         }
     }, {
         key: 'constructQuery',

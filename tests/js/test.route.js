@@ -20,7 +20,7 @@ describe('route()', function() {
         );
     });
 
-    it('Should return URL when when passed the url() methods', function() {
+    it('Should return URL when when passed the url() method', function() {
         assert.equal(
             "http://myapp.dev/posts",
             route('posts.index').url()
@@ -257,6 +257,32 @@ describe('route()', function() {
         assert.equal(
             "http://tighten.myapp.dev/users/1",
             route('team.user.show').with({team: "tighten", id: 1})
+        );
+    });
+
+    it('Should return correct route name for current() and respond accurately when queried.', function() {
+        global.window = {
+            location: {
+                hostname: "myapp.dev",
+                pathname: "/events/1/venues/2",
+                port: "81",
+                protocol: "http:"
+            }
+        };
+
+        assert.equal(
+            "events.venues.show",
+            route().current()
+        );
+
+        assert.equal(
+            true,
+            route().current("events.venues.show")
+        );
+
+        assert.equal(
+            false,
+            route().current("events.venues.index")
         );
     });
 });
