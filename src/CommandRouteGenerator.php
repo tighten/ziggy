@@ -47,7 +47,7 @@ class CommandRouteGenerator extends Command
 
         return <<<EOT
     var Ziggy = {
-        namedRoutes: JSON.parse('$json'),
+        namedRoutes: $json,
         baseUrl: '{$this->baseUrl}',
         baseProtocol: '{$this->baseProtocol}',
         baseDomain: '{$this->baseDomain}',
