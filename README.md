@@ -16,7 +16,7 @@ Ziggy creates a Blade directive which you can include in your views. This will e
 
 ## Usage
 
-This package replaces the `@routes` directive with a collection of all of your application's routes, keyed by their names. This collection is available at `window.namedRoutes`.
+This package replaces the `@routes` directive with a collection of all of your application's routes, keyed by their names. This collection is available at `Ziggy.namedRoutes`.
 
 The package also creates an optional `route()` JavaScript helper which functions like Laravel's `route()` PHP helper, which can be used to retrieve URLs by name and (optionally) parameters.
 
