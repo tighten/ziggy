@@ -11,7 +11,7 @@ class Router extends String {
     }
 
     normalizeParams(params) {
-        if (params === undefined)
+        if (typeof params === 'undefined')
             return {};
 
         params = typeof params !== 'object' ? [params] : params;
@@ -29,12 +29,12 @@ class Router extends String {
         Object.assign(this.queryParams, params);
         return this;
     }
-    
+
     hydrateUrl() {
         let tags = this.urlParams,
             paramsArrayKey = 0,
             template = new UrlBuilder(this.name, this.absolute).construct();
-        
+
         return template.replace(
             /{([^}]+)}/gi,
             function (tag) {
@@ -54,7 +54,7 @@ class Router extends String {
             }.bind(this)
         );
     }
-    
+
     matchUrl() {
         let tags = this.urlParams,
             paramsArrayKey = 0,

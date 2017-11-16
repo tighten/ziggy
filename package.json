@@ -19,7 +19,7 @@
   "scripts": {
     "build": "webpack --hide-modules --progress",
     "build:watch": "npm run build -- --watch",
-    "test": "NODE_ENV=test mocha-webpack 'tests/**/*.js'",
+    "test": "NODE_ENV=test mocha-webpack 'tests/js/**/*.js'",
     "test:watch": "npm run test -- --watch"
   },
   "devDependencies": {
