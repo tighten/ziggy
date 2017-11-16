@@ -5,7 +5,7 @@ let moxios = require('moxios');
 import route from '../../src/js/route.js';
 
 global.Ziggy = {
-    namedRoutes: JSON.parse('{"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users\/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts\/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts\/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts\/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events\/{event}\/venues\/{venue}","methods":["GET","HEAD"],"domain":null},"optional":{"uri":"optional\/{id}\/{slug?}","methods":["GET","HEAD"],"domain":null}}'),
+    namedRoutes: {"home":{"uri":"/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events/{event}/venues/{venue}","methods":["GET","HEAD"],"domain":null},"optional":{"uri":"optional/{id}/{slug?}","methods":["GET","HEAD"],"domain":null}},
     baseUrl: 'http://myapp.dev/',
     baseProtocol: 'http',
     baseDomain: 'myapp.dev',
