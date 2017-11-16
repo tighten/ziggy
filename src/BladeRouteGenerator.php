@@ -36,7 +36,7 @@ class BladeRouteGenerator
         return <<<EOT
 <script type="text/javascript">
     var Ziggy = {
-        namedRoutes: JSON.parse('$json'),
+        namedRoutes: $json,
         baseUrl: '{$this->baseUrl}',
         baseProtocol: '{$this->baseProtocol}',
         baseDomain: '{$this->baseDomain}',
