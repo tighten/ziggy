@@ -29,5 +29,10 @@ class ZiggyServiceProvider extends ServiceProvider
                 CommandRouteGenerator::class,
             ]);
         }
+
+        $this->publishes([
+            realpath(__DIR__ . '/../config/ziggy.php') => config_path('ziggy.php')
+        ], 'config');
     }
+
 }
