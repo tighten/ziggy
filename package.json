@@ -1,40 +1,24 @@
 {
-  "name": "ziggy",
-  "version": "0.5.0",
-  "description": "Generates a Blade directive exporting all of your named Laravel routes. Also provides a nice route() helper function in JavaScript.",
-  "main": "src/js/route.js",
-  "directories": {
-    "test": "tests/js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tightenco/ziggy.git"
-  },
-  "author": "Daniel Coulbourne",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/tightenco/ziggy/issues"
-  },
-  "homepage": "https://github.com/tightenco/ziggy#readme",
+  "name": "compilling-assets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "build": "webpack --hide-modules --progress",
-    "build:watch": "npm run build -- --watch",
-    "test": "NODE_ENV=test mocha-webpack 'tests/js/**/*.js'",
-    "test:watch": "npm run test -- --watch"
+    "dev": "NODE_ENV=development webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "NODE_ENV=development webpack --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "hot": "NODE_ENV=development webpack-dev-server --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "production": "NODE_ENV=production webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "axios": "^0.16.2",
-    "babel-core": "^6.25.0",
-    "babel-loader": "^7.1.0",
-    "babel-plugin-transform-object-assign": "^6.22.0",
-    "babel-preset-env": "^1.6.1",
-    "mocha": "^3.5.0",
-    "mocha-webpack": "^1.0.1",
-    "moxios": "^0.4.0",
-    "webpack": "^3.8.1"
+    "laravel-mix": "^1.6.1"
   },
-  "dependencies": {},
-  "engines": {
-    "node": ">= 6.11.0"
+  "dependencies": {
+    "bootstrap": "^4.0.0-beta.2",
+    "jquery": "^3.2.1",
+    "popper.js": "^1.13.0",
+    "prismjs": "^1.8.4"
   }
 }
