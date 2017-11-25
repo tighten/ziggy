@@ -5,12 +5,13 @@ php:
 git:
   depth: 1
 install: 
-  - composer install --no-interaction
+  - composer install --no-interaction --no-suggest
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
   - npm install
 script:
+  - phpunit
   - npm run build
   - npm test
 cache:
