@@ -168,7 +168,7 @@ route('events.venues.show', [event, venue])</code></pre>
 				</div>
 			</div>
 
-			
+
 
 			<p>5. With AJAX:</p>
 			<div class="example-box">
@@ -183,7 +183,7 @@ return axios.get(route('posts.show', post))
     });</code></pre>
 				</div>
 			</div>
-			
+
 		</section>
 
 		<section>
@@ -272,6 +272,15 @@ return [
 					<pre><code class="language-javascript">@routes('author')</code></pre>
 				</div>
 			</div>
+
+			<div class="alert alert-warning" role="alert">
+				<div class="row">
+					<div class="col-1 d-none d-sm-block">
+						<img class="caution" src="dist/images/caution.svg">
+					</div>
+					<p class="col">Using a group will always take precedence over the above mentioned <code>whitelist</code> and <code>blacklist</code> settings.</p>
+				</div>
+			</div>
 		</section>
 
 		<section>
@@ -315,14 +324,6 @@ return [
 					<pre><code class="language-javascript">"http://myapp.dev/"</code></pre>
 				</div>
 			</div>
-			<div class="alert alert-warning" role="alert">
-				<div class="row">
-					<div class="col-1 d-none d-sm-block">
-						<img class="caution" src="dist/images/caution.svg">
-					</div>
-					<p class="col">Using a group will always take precedence over the above mentioned <code>whitelist</code> and <code>blacklist</code> settings.</p>
-				</div>
-			</div>
 		</section>
 
 		<section>
@@ -352,7 +353,7 @@ return [
 				</small>
 			</p>
 		</footer>
-	
+
 	</main>
 
 	<script src="dist/javascript/thedocs.js"></script>
