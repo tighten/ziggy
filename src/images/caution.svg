@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   width="675"
+   height="585"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.45.1"
+   sodipodi:docname="caution.svg"
+   sodipodi:docbase="G:\Documents\map-icons\svg\vehicle"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <metadata
+     id="metadata12">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:window-height="749"
+     inkscape:window-width="1024"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="0.45689977"
+     inkscape:cx="337.5"
+     inkscape:cy="447.2619"
+     inkscape:window-x="198"
+     inkscape:window-y="261"
+     inkscape:current-layer="svg2" />
+  <defs
+     id="defs4" />
+  <g
+     id="g1909"
+     transform="matrix(0.977077,0,0,0.977077,-30.42813,-35.56338)">
+    <path
+       id="path1902"
+       d="M 71.985614,631.52918 C 60.553114,631.52918 49.989054,625.43 44.272794,615.52918 C 38.556554,605.62833 38.556554,593.43 44.272794,583.52918 L 348.84719,55.99085 C 354.56345,46.09002 365.12751,39.99084 376.56,39.99084 C 387.99251,39.99084 398.55659,46.09002 404.27283,55.99085 L 708.84723,583.52918 C 714.56347,593.43 714.56347,605.62833 708.84723,615.52918 C 703.13097,625.42999 692.56691,631.52918 681.13441,631.52918 L 71.985614,631.52918 z "
+       style="fill:white;fill-rule:evenodd;stroke:black;stroke-width:2" />
+    <path
+       id="path1904"
+       d="M 71.985614,619.52918 C 64.840294,619.52918 58.237754,615.7172 54.665094,609.52918 C 51.092454,603.34114 51.092454,595.7172 54.665094,589.52918 L 359.23951,61.99086 C 362.81215,55.80282 369.41471,51.99084 376.56,51.99084 C 383.70533,51.99084 390.30787,55.80282 393.88053,61.99086 L 698.45493,589.52918 C 702.02757,595.7172 702.02757,603.34114 698.45493,609.52918 C 694.88227,615.7172 688.27973,619.52918 681.13441,619.52918 L 71.985614,619.52918 z M 141.2677,559.52918 L 376.56,151.99085 L 611.85233,559.52918 L 141.2677,559.52918 z "
+       style="fill:#c00;fill-rule:evenodd;stroke:none" />
+  </g>
+  <path
+     id="path37169"
+     style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 305.54965,214.69023 C 305.54965,178.32435 369.45035,178.50719 369.45035,214.69023 L 352.68951,405.86854 C 352.68951,420.93416 322.83426,420.97671 322.83426,405.86854 L 305.54965,214.69023 z " />
+  <path
+     id="path37167"
+     style="fill:black;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     d="M 369.18845,460.60298 C 369.18845,478.10403 355.00104,492.29143 337.5,492.29143 C 319.99896,492.29143 305.81155,478.10403 305.81155,460.60298 C 305.81155,443.10194 319.99896,428.91453 337.5,428.91453 C 355.00104,428.91453 369.18845,443.10194 369.18845,460.60298 z " />
+</svg>
