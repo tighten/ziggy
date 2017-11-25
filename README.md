@@ -130,6 +130,7 @@ In the above example, you can see we have configured multiple whitelists for dif
 ```php
 @routes('author')
 ```
+**Note: Using a group will always take precedence over the above mentioned `whitelist` and `blacklist` settings.**
 
 ### Other useful methods
 
@@ -158,9 +159,6 @@ To achieve this simple call `.url()` on your route:
 route('home').url()
 // http://myapp.dev/
 ```
-
-
-**Note: Using a group will always take precedence over the above mentioned `whitelist` and `blacklist` settings.**
 
 ## Contributions & Credits
 
