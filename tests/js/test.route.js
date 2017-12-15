@@ -300,5 +300,15 @@ describe('route()', function() {
             'events.venues.index',
             route().current()
         );
-    })
+    });
+
+    it('Should still work if paths are appended to baseUrl.', function() {
+        let orgBaseUrl = Ziggy.baseUrl;
+        global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
+
+        assert.equal(
+            'http://test.thing/ab/cd/events/1/venues',
+            route('events.venues.index', 1)
+        );
+    });
 });
