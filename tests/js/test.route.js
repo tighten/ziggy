@@ -5,7 +5,7 @@ let moxios = require('moxios');
 import route from '../../src/js/route.js';
 
 global.Ziggy = {
-    namedRoutes: {"home":{"uri":"/","methods":["GET","HEAD"],"domain":null},"team.user.show":{"uri":"users/{id}","methods":["GET","HEAD"],"domain":"{team}.myapp.dev"},"posts.index":{"uri":"posts","methods":["GET","HEAD"],"domain":null},"posts.show":{"uri":"posts/{id}","methods":["GET","HEAD"],"domain":null},"posts.update":{"uri":"posts/{id}","methods":["PUT"],"domain":null},"posts.store":{"uri":"posts","methods":["POST"],"domain":null},"posts.destroy":{"uri":"posts/{id}","methods":["DELETE"],"domain":null},"events.venues.show":{"uri":"events/{event}/venues/{venue}","methods":["GET","HEAD"],"domain":null},"optional":{"uri":"optional/{id}/{slug?}","methods":["GET","HEAD"],"domain":null}},
+    namedRoutes: { "home": { "uri": "/", "methods": ["GET", "HEAD"], "domain": null }, "team.user.show": { "uri": "users/{id}", "methods": ["GET", "HEAD"], "domain": "{team}.myapp.dev" }, "posts.index": { "uri": "posts", "methods": ["GET", "HEAD"], "domain": null }, "posts.show": { "uri": "posts/{id}", "methods": ["GET", "HEAD"], "domain": null }, "posts.update": { "uri": "posts/{id}", "methods": ["PUT"], "domain": null }, "posts.store": { "uri": "posts", "methods": ["POST"], "domain": null }, "posts.destroy": { "uri": "posts/{id}", "methods": ["DELETE"], "domain": null }, "events.venues.show": { "uri": "events/{event}/venues/{venue}", "methods": ["GET", "HEAD"], "domain": null }, "events.venues.index": { "uri": "events/{event}/venues", "methods": ["GET", "HEAD"], "domain": null },"optional":{"uri":"optional/{id}/{slug?}","methods":["GET","HEAD"],"domain":null}},
     baseUrl: 'http://myapp.dev/',
     baseProtocol: 'http',
     baseDomain: 'myapp.dev',
@@ -283,6 +283,32 @@ describe('route()', function() {
         assert.equal(
             false,
             route().current("events.venues.index")
+        );
+    });
+
+    it('Should respond "true" on route().current() regardless of trailing slashes or query variables.', function () {
+        global.window = {
+            location: {
+                hostname: "myapp.dev",
+                pathname: "/events/1/venues/",
+                port: "81",
+                protocol: "http:"
+            }
+        };
+
+        assert.equal(
+            'events.venues.index',
+            route().current()
+        );
+    });
+
+    it('Should still work if paths are appended to baseUrl.', function() {
+        let orgBaseUrl = Ziggy.baseUrl;
+        global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
+
+        assert.equal(
+            'http://test.thing/ab/cd/events/1/venues',
+            route('events.venues.index', 1)
         );
     });
 });
