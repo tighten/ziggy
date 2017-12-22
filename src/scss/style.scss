@@ -72,6 +72,53 @@ ol {
 .text-card {
 	transform: rotate(-1deg);
 }
+.list-inline {
+  padding-left: 0;
+  list-style: none;
+}
+
+.list-inline-item {
+  display: inline-block;
+}
+
+.list-inline-item:not(:last-child) {
+  margin-right: 5px;
+}
+.version-btn {
+	cursor: pointer;
+	display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+	background: #eae2a6;
+    font-size: 20px;
+    margin-top: -5px;
+}
+.version-menu {
+	min-width: auto;
+	background-color: #eae2a6;
+	border: 1px solid rgba(0, 0, 0, 0);
+	font-size: 20px;
+	.dropdown-item:focus, .dropdown-item:hover, .dropdown-item:active {
+		background-color: #e0d5a4;
+		color: #000;
+	}
+	.dropdown-item.active {
+		color: #000;
+		background-color: rgba(237, 139, 125, 0.5);
+	}
+}
 .wink {
     width: 20px;
 }
