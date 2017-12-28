@@ -16,18 +16,7 @@ class UrlBuilder {
     }
 
     setDomain() {
-        if (! this.absolute)
-            return '/';
-
-        if (!this.route.domain)
-            return Ziggy.baseUrl.replace(/\/?$/, '/');
-
-        let host = (this.route.domain || Ziggy.baseDomain).replace(/\/+$/, '');
-
-        if (Ziggy.basePort && (host.replace(/\/+$/, '') === Ziggy.baseDomain.replace(/\/+$/, '')))
-            host = Ziggy.baseDomain + ':' + Ziggy.basePort;
-
-        return Ziggy.baseProtocol + '://' + host + '/';
+        return Ziggy.baseUrl.replace(/\/?$/, '/');
     }
 
     construct() {

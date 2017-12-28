@@ -113,7 +113,7 @@ var Router = function (_String) {
     _createClass(Router, [{
         key: 'normalizeParams',
         value: function normalizeParams(params) {
-            if (params === undefined) return {};
+            if (typeof params === 'undefined') return {};
 
             params = (typeof params === 'undefined' ? 'undefined' : _typeof(params)) !== 'object' ? [params] : params;
             this.numericParamIndices = Array.isArray(params);
@@ -164,8 +164,9 @@ var Router = function (_String) {
 
             var windowUrl = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
 
-            var searchTemplate = template.replace(/(\{[^\}]*\})/gi, '.*');
-            return new RegExp("^" + searchTemplate + "$").test(windowUrl);
+            var searchTemplate = template.replace(/(\{[^\}]*\})/gi, '[^\/\?]+');
+            var urlWithTrailingSlash = windowUrl.replace(/\/?$/, '/');
+            return new RegExp("^" + searchTemplate + "\/$").test(urlWithTrailingSlash);
         }
     }, {
         key: 'constructQuery',
@@ -240,13 +241,13 @@ var UrlBuilder = function () {
         this.name = name;
         this.route = Ziggy.namedRoutes[this.name];
 
-        if (this.name === undefined) {
+        if (typeof this.name === 'undefined') {
             throw new Error('Ziggy Error: You must provide a route name');
-        } else if (this.route === undefined) {
+        } else if (typeof this.route === 'undefined') {
             throw new Error('Ziggy Error: route \'' + this.name + '\' is not found in the route list');
         }
 
-        this.absolute = absolute === undefined ? true : absolute;
+        this.absolute = typeof absolute === 'undefined' ? true : absolute;
         this.domain = this.setDomain();
         this.path = this.route.uri.replace(/^\//, '');
     }
@@ -254,13 +255,7 @@ var UrlBuilder = function () {
     _createClass(UrlBuilder, [{
         key: 'setDomain',
         value: function setDomain() {
-            if (!this.absolute) return '/';
-
-            var host = (this.route.domain || Ziggy.baseDomain).replace(/\/+$/, '');
-
-            if (Ziggy.basePort && host.replace(/\/+$/, '') === Ziggy.baseDomain.replace(/\/+$/, '')) host = host + ':' + Ziggy.basePort;
-
-            return Ziggy.baseProtocol + '://' + host + '/';
+            return Ziggy.baseUrl.replace(/\/?$/, '/');
         }
     }, {
         key: 'construct',
