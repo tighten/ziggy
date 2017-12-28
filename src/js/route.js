@@ -42,7 +42,7 @@ class Router extends String {
                     key = this.numericParamIndices ? paramsArrayKey : keyName;
                 
                  if (defaultParameters[keyName]) {
-                    return defaultParameters[keyName];
+                    tags[key] = defaultParameters[keyName]
                  }
                 
                 paramsArrayKey++;
