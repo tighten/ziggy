@@ -41,9 +41,17 @@ class Router extends String {
                 let keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
                     key = this.numericParamIndices ? paramsArrayKey : keyName;
                 
-                 if (defaultParameters[keyName]) {
-                    tags[key] = defaultParameters[keyName]
-                 }
+                    if (typeof defaultParameters !== 'undefined' && defaultParameters[keyName]){
+                        let this_key = key
+                        if(tags[this_key]){
+                            while(tags[key]){
+                                key++
+                            }
+                            tags[key] = tags[this_key]
+                        }
+                        tags[this_key] = defaultParameters[keyName]
+                        key = this_key
+                    }
                 
                 paramsArrayKey++;
                 if (typeof tags[key] !== 'undefined') {
