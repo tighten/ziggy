@@ -2,6 +2,7 @@
 
 namespace Tightenco\Ziggy;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Compilers\BladeCompiler;
@@ -18,10 +19,8 @@ class ZiggyServiceProvider extends ServiceProvider
             return Macro::whitelist($this, $group);
         });
 
-        $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
-            $bladeCompiler->directive('routes', function ($group) {
-                return "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>";
-            });
+        Blade::directive('routes', function($group = null){ 
+            return "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>"; 
         });
 
         if ($this->app->runningInConsole()) {
