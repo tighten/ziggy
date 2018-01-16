@@ -33,6 +33,8 @@ class BladeRouteGenerator
 
         $routeFunction = file_get_contents($this->getRouteFilePath());
 
+        $defaultParameters = method_exists(app('url'), 'getDefaultParameters') ? json_encode(app('url')->getDefaultParameters()) : '[]';
+
         return <<<EOT
 <script type="text/javascript">
     var Ziggy = {
@@ -40,7 +42,8 @@ class BladeRouteGenerator
         baseUrl: '{$this->baseUrl}',
         baseProtocol: '{$this->baseProtocol}',
         baseDomain: '{$this->baseDomain}',
-        basePort: {$this->basePort}
+        basePort: {$this->basePort},
+        defaultParameters: $defaultParameters
     };
 
     $routeFunction

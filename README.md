@@ -62,6 +62,18 @@ return axios.get(route('posts.show', post))
         return response.data;
     });
 ```
+### Default Values
+See Laravel [documentation](https://laravel.com/docs/5.5/urls#default-values)
+
+Default values work out of the box for Laravel versions >= 5.5.29,
+for the previous versions you will need to set the default parameters
+by including this code somewhere in the same page as our Blade Directive (@routes)
+```js
+Ziggy.defautParameters = {
+    //example
+    locale: "en"
+}
+```
 
 ## Filtering Routes
 Filtering routes is *completely* optional. If you want to pass all of your routes to JavaScript by default, you can carry on using Ziggy as described above.

@@ -33,13 +33,29 @@ class Router extends String {
     hydrateUrl() {
         let tags = this.urlParams,
             paramsArrayKey = 0,
-            template = new UrlBuilder(this.name, this.absolute).construct();
+            template = new UrlBuilder(this.name, this.absolute).construct(),
+            params = template.match(/{([^}]+)}/gi),
+            needDefaultParams = false;
+        
+        if (params && params.length != Object.keys(tags).length) {
+            needDefaultParams = true
+        }
 
         return template.replace(
             /{([^}]+)}/gi,
             function (tag) {
                 let keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
-                    key = this.numericParamIndices ? paramsArrayKey : keyName;
+                    key = this.numericParamIndices ? paramsArrayKey : keyName,
+                    defaultParameter = Ziggy.defaultParameters[keyName];
+
+                if (defaultParameter && needDefaultParams) {
+                    if (this.numericParamIndices) {
+                        tags = Object.values(tags)
+                        tags.splice(key, 0, defaultParameter)
+                    } else {
+                        tags[key] = defaultParameter
+                    }
+                }
 
                 paramsArrayKey++;
                 if (typeof tags[key] !== 'undefined') {
