@@ -60,7 +60,7 @@ class Router extends String {
                 paramsArrayKey++;
                 if (typeof tags[key] !== 'undefined') {
                     delete this.queryParams[key];
-                    return tags[key].id || tags[key];
+                    return tags[key].id || encodeURIComponent(tags[key]);
                 }
                 if (tag.indexOf('?') === -1) {
                     throw new Error(`Ziggy Error: '${keyName}' key is required for route '${this.name}'`);
@@ -91,7 +91,7 @@ class Router extends String {
 
         Object.keys(this.queryParams).forEach(function(key, i) {
             queryString = i === 0 ? queryString : queryString + '&';
-            queryString += key + '=' + this.queryParams[key];
+            queryString += key + '=' + encodeURIComponent(this.queryParams[key]);
         }.bind(this));
 
         return queryString;

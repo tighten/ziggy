@@ -450,4 +450,18 @@ describe('route()', function() {
             route('events.venues.index', 1)
         );
     });
+
+    it('Should URL encode path params.', function() {
+        assert.equal(
+            'http://test.thing/ab/cd/events/Fun%26Games/venues',
+            route('events.venues.index', {event: "Fun&Games"}).url()
+        );
+    });
+
+    it('Should URL encode query params.', function() {
+        assert.equal(
+            'http://test.thing/ab/cd/events/Fun%26Games/venues?location=Brews%26Clues',
+            route('events.venues.index', {event: "Fun&Games", location: "Brews&Clues"}).url()
+        );
+    });
 });
