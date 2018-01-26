@@ -31,7 +31,7 @@ class BladeRouteGenerator
 
         $json = $this->getRoutePayload($group)->toJson();
 
-        $routeFunction = file_get_contents($this->getRouteFilePath());
+        $routeFunction = $this->getRouteFunction();
 
         $defaultParameters = method_exists(app('url'), 'getDefaultParameters') ? json_encode(app('url')->getDefaultParameters()) : '[]';
 
@@ -55,6 +55,14 @@ EOT;
     {
         $isMin = app()->isLocal() ? '' : '.min';
         return __DIR__ . "/../dist/js/route{$isMin}.js";
+    }
+
+    private function getRouteFunction()
+    {
+        if (config()->get('ziggy.skip-route-function')) {
+            return '';
+        }
+        return file_get_contents($this->getRouteFilePath());
     }
 
     private function prepareDomain()
