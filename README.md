@@ -169,7 +169,71 @@ To achieve this simple call `.url()` on your route:
 
 ```javascript
 route('home').url()
-// http://myapp.dev/
+// http://myapp.local/
+```
+
+## Artisan command
+
+Ziggy publishes an artisan command to generate a `ziggy.js` routes file, which can be used as part of an asset pipeline such as `Elixir` or `Mix`.
+
+You can run `php artisan ziggy:generate` in your project to generate a static routes file in `resources/assets/js/ziggy.js`.
+
+Optionally, include a second parameter to override the path and file names (you must pass a file name with the path):
+
+```
+php artisan ziggy:generate "resources/foo.js"
+```
+
+Example `ziggy.js`, where the named routes `home` and `login` exist in `routes/web.php`:
+
+```php
+// routes/web.php
+
+<?php
+
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
+
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
+```
+
+```js
+// ziggy.js
+
+var Ziggy = {
+    namedRoutes: {"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"login":{"uri":"login","methods":["GET","HEAD"],"domain":null}},
+    baseUrl: 'http://myapp.local/',
+    baseProtocol: 'http',
+    baseDomain: 'myapp.local',
+    basePort: false
+};
+
+export {
+    Ziggy
+}
+```
+
+## Environment-based loading of minified route helper file
+
+When loading the blade helper file, Ziggy will detect the current environment and minify the output if `APP_ENV` is not `local`.
+
+When this happens, `ziggy.min.js` will be loaded. Otherwise, `ziggy.js` will be used.
+
+## Optional `route` helper
+
+If you only want routes available through `@routes`, but don't need the `route` helper function, you can include `skip-route-function` in your config and set it to `true`:
+
+```php
+// config/ziggy.php
+
+<?php
+
+return [
+    'skip-route-function' => true
+];
 ```
 
 ## Contributions & Credits
