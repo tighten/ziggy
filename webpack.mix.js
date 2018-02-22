@@ -11,8 +11,8 @@ let mix = require('laravel-mix');
  |
  */
 
-mix.js('src/javascript/app.js', 'dist/javascript/docs778541379301.js')
-   .sass('src/scss/app.scss', 'dist/css/docs778541379301.css')
+mix.js('src/javascript/app.js', 'dist/javascript/docs379301778541.js')
+   .sass('src/scss/app.scss', 'dist/css/docs379301778541.css')
    .setPublicPath('dist')
    .copyDirectory('src/images', 'dist/images')
    .sourceMaps();

@@ -3,14 +3,35 @@ body {
 }
 header {
     background: #fdf6ef;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+	position:fixed;
+	top: 0;
+	bottom:0;
+	left:0;
+	right: 0;
+	z-index:-1;
     h1, h2 {
     	font-weight: 100;
     }
 }
+main {
+	z-index:1;
+	background: #fff;
+	border-radius: 0.3em;
+	margin-top: 620px;
+	padding: 30px 30px 20px 30px;
+}
+@media (min-width: 48em) {
+	main {
+		margin-top: 280px;
+	}
+}
 h1, h2, h3, h4, h5, h6 {
 	font-family: 'Roboto Slab', serif;
 	font-weight: 700;
+}
+a.title-link::after {
+	content: '#';
 }
 ::selection,
 pre[class*="language-"]::selection, pre[class*="language-"] ::selection, code[class*="language-"]::selection, code[class*="language-"] ::selection {
@@ -19,12 +40,15 @@ pre[class*="language-"]::selection, pre[class*="language-"] ::selection, code[cl
 section {
     margin-bottom: 40px;
 }
-main {
-	margin-top: 50px;
-}
 code {
-    border: 1px solid #eee;
-    padding: 2px 5px;
+	color: #ec4917;
+	padding: 2px 5px;
+	border-radius: 0.2em;
+	background: rgba(238,238,238,.35);
+	box-shadow: 0 1px 1px rgba(0,0,0,.125);
+}
+pre code {
+	box-shadow: none;
 }
 img {
 	user-select: none;
@@ -48,7 +72,6 @@ ol {
 @media (min-width: 48em) {
 	.page-container {
 		max-width: 46rem;
-	    padding: 0 30px;
 	}
 }
 @media (max-width: 767px) {
@@ -115,8 +138,8 @@ ol {
 		color: #000;
 	}
 	.dropdown-item.active {
-		color: #000;
-		background-color: rgba(237, 139, 125, 0.5);
+		background-color: #ec4917;
+		color: #fff;
 	}
 }
 .wink {
@@ -181,36 +204,5 @@ ol {
 	}
 	p {
 		margin-top: 20px;
-	}
-}
-// the sidebar
-.fixed-sidebar {
-	display: none;
-	position: fixed;
-	top: 130px;
-	left: 15px;
-	font-size: 14px;
-	padding: 10px;
-    background: #fef6ef;
-    border-radius: 0.2em;
-    box-shadow: 0 1px 2px #ec7a16;
-    min-width: 290px;
-   p {
-    	margin-bottom: 5px;
-    	font-size: 20px;
-    }
-	ul {
-		list-style: none;
-		padding: 0;
-		margin-bottom: 0;
-	}
-	.nav-link.active {
-		font-weight: 700;
-	}
-}
-@media (min-width: 1290px)
-{
-	.fixed-sidebar {
-		display: block;
 	}
 }
