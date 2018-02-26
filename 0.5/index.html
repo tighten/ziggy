@@ -7,13 +7,12 @@
 	<meta name="description" content="Ziggy creates a Blade directive which you can include in your views. This will export a JavaScript object of your application's named routes, keyed by their names (aliases), as well as a global route() helper function which you can use to access your routes in your JavaScript.">
 	<title>Ziggy - Use your Laravel Named Routes inside JavaScript</title>
 	<link href="https://fonts.googleapis.com/css?family=Roboto+Slab:300,700|Fira+Sans:400,700" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="../dist/css/docs778541379301.css">
+	<link rel="stylesheet" type="text/css" href="../dist/css/docs379301778541.css">
 </head>
 <body>
 
-	<a href="https://github.com/tightenco/ziggy" target="_blank" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#ec706b; color:#fdf6ef; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
-
 	<header>
+		<a href="https://github.com/tightenco/ziggy" target="_blank" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#ec706b; color:#fdf6ef; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
 		<div class="container header-container">
 			<div class="row justify-content-center page-header">
 				<div class="col-md-4">
@@ -48,47 +47,15 @@
 		</div>
 	</header>
 
-	<aside>
-	    <div class="fixed-sidebar">
-	    	<p>Menu</p>
-			<ul class="nav flex-column" id="docs-sidebar">
-				<li class="nav-item">
-					<a class="nav-link" href="#installation">Installation</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#usage">Usage</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#examples">Examples</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#filtering-routes">Filtering Routes</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#simple-whitelisting-blacklisting-macros">Simple Whitelisting & Blacklisting Macros</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#advanced-whitelisting-using-groups">Advanced Whitelisting Using Groups</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#other-useful-methods">Other Useful Methods</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#contributions-credits">Contributions & Credits</a>
-				</li>
-			</ul>
-	    </div>
-	</aside>
-
 	<main class="container page-container">
 
 		<section>
-			<h2>What Is Ziggy?</h2>
+				<h2 id="what-is-ziggy"><a class="title-link" href="#what-is-ziggy"></a> What Is Ziggy?</h2>
 			<p>Ziggy creates a Blade directive which you can include in your views. This will export a JavaScript object of your application's named routes, keyed by their names (aliases), as well as a global <code>route()</code> helper function which you can use to access your routes in your JavaScript.</p>
 		</section>
 
 		<section>
-			<h2 id="installation">Installation</h2>
+				<h2 id="installation"><a class="title-link" href="#installation"></a> Installation</h2>
 			<ol>
 				<li>
 					Add Ziggy to your Composer file:
@@ -116,13 +83,13 @@
 		</section>
 
 		<section>
-			<h2 id="usage">Usage</h2>
+				<h2 id="usage"><a class="title-link" href="#usage"></a> Usage</h2>
 			<p>This package replaces the <code>@routes</code> directive with a collection of all of your application's routes, keyed by their names. This collection is available at <code>Ziggy.namedRoutes</code>.</p>
 			<p>The package also creates an optional <code>route()</code> JavaScript helper which functions like Laravel's <code>route()</code> PHP helper, which can be used to retrieve URLs by name and (optionally) parameters.</p>
 		</section>
 
 		<section>
-			<h2 id="examples">Examples</h2>
+				<h2 id="examples"><a class="title-link" href="#examples"></a> Examples</h2>
 			<p>1. Without parameters:</p>
 			<div class="example-box">
 				<p>Example</p>
@@ -202,7 +169,7 @@ return axios.get(route('posts.show', post))
 		</section>
 
 		<section>
-			<h2 id="filtering-routes">Filtering Routes</h2>
+				<h2 id="filtering-routes"><a class="title-link" href="#filtering-routes"></a> Filtering Routes</h2>
 			<p>Filtering routes is <b>completely</b> optional. If you want to pass all of your routes to JavaScript by default, you can carry on using Ziggy as described above.</p>
 
 			<h3>Basic Whitelisting & Blacklisting</h3>
@@ -230,7 +197,7 @@ return [
 		</section>
 
 		<section>
-			<h2 id="simple-whitelisting-blacklisting-macros">Simple Whitelisting & Blacklisting Macros</h2>
+			<h2 id="simple-whitelisting-blacklisting-macros"><a class="title-link" href="#simple-whitelisting-blacklisting-macros"></a> Simple Whitelisting & Blacklisting Macros</h2>
 			<p>Whitelisting and blacklisting can also be achieved using the following macros.</p>
 			<h3>Example Whitelisting</h3>
 			<div class="example-box">
@@ -259,7 +226,7 @@ Route::blacklist()->get('...')->name('posts');</code></pre>
 		</section>
 
 		<section>
-			<h2 id="advanced-whitelisting-using-groups">Advanced Whitelisting Using Groups</h2>
+			<h2 id="advanced-whitelisting-using-groups"><a class="title-link" href="#advanced-whitelisting-using-groups"></a> Advanced Whitelisting Using Groups</h2>
 			<p>You may also optionally define multiple whitelists by defining <code>groups</code> in your <code>config/ziggy.php</code>:</p>
 			<div class="example-box">
 				<p>Example</p>
@@ -299,7 +266,7 @@ return [
 		</section>
 
 		<section>
-			<h2 id="other-useful-methods">Other Useful Methods</h2>
+				<h2 id="other-useful-methods"><a class="title-link" href="#other-useful-methods"></a> Other Useful Methods</h2>
 			<h3>1. <code>current()</code></h3>
 			<p>To get the name of the current route (based on the browser's <code>window.location</code>) you can use:</p>
 			<div class="example-box">
@@ -342,7 +309,7 @@ return [
 		</section>
 
 		<section>
-			<h2 id="contributions-credits">Contributions & Credits</h2>
+				<h2 id="contributions-credits"><a class="title-link" href="#contributions-credits"></a> Contributions & Credits</h2>
 			<div class="row justify-content-center text-center">
 				<div class="col-md-4">
 					<div class="avatar">
@@ -371,6 +338,6 @@ return [
 
 	</main>
 
-	<script src="../dist/javascript/docs778541379301.js"></script>
+	<script src="../dist/javascript/docs379301778541.js"></script>
 </body>
 </html>

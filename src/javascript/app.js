@@ -10,10 +10,7 @@ try {
     require('bootstrap');
 } catch (e) {}
 
-// Sidebar scrollspy
-$('body').scrollspy({ target: '#docs-sidebar' });
-
-// Sidebar links animations
+// Links animations
 var $root = $('html, body');
 $('a[href^="#"]').click(function () {
     $root.animate({
