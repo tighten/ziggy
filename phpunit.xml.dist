@@ -18,6 +18,6 @@
         </testsuite>
     </testsuites>
     <php>
-        <env name="APP_URL" value="myapp.com/"/>
+        <env name="APP_URL" value="http://myapp.com/"/>
     </php>
 </phpunit>
