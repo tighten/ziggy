@@ -242,6 +242,25 @@ return [
 ];
 ```
 
+### Using with Vue components
+
+If you want to use the `route` helper within a Vue component, you'll need to add this to your `app.js` file:
+
+```js
+Vue.mixin({
+    methods: {
+        route: route
+    }
+});
+```
+
+Then, use the method in your Vue components like so:
+
+`<a class="nav-link" :href="route('home')">Home</a>`
+
+Thanks to [Archer70](https://github.com/tightenco/ziggy/issues/70#issuecomment-369129032) for this solution.
+
+
 ## Contributions & Credits
 
 To get started contributing to Ziggy, check out [the contribution guide](CONTRIBUTING.md).
