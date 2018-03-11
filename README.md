@@ -43,6 +43,12 @@ route('events.venues.show', {event: 1, venue: 2}) // Returns '/events/1/venues/2
 route('events.venues.show', [1, 2]) // Returns '/events/1/venues/2'
 ```
 
+With query parameters:
+
+```js
+route('events.venues.show', {event: 1, venue: 2, page: 5, count: 10}) // Returns '/events/1/venues/2?page=5&count=10'
+```
+
 If whole objects are passed, Ziggy will automatically look for `id` primary key:
 
 ```js
