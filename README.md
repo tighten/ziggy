@@ -43,6 +43,12 @@ route('events.venues.show', {event: 1, venue: 2}) // Returns '/events/1/venues/2
 route('events.venues.show', [1, 2]) // Returns '/events/1/venues/2'
 ```
 
+With query parameters:
+
+```js
+route('events.venues.show', {event: 1, venue: 2, page: 5, count: 10}) // Returns '/events/1/venues/2?page=5&count=10'
+```
+
 If whole objects are passed, Ziggy will automatically look for `id` primary key:
 
 ```js
@@ -235,6 +241,25 @@ return [
     'skip-route-function' => true
 ];
 ```
+
+### Using with Vue components
+
+If you want to use the `route` helper within a Vue component, you'll need to add this to your `app.js` file:
+
+```js
+Vue.mixin({
+    methods: {
+        route: route
+    }
+});
+```
+
+Then, use the method in your Vue components like so:
+
+`<a class="nav-link" :href="route('home')">Home</a>`
+
+Thanks to [Archer70](https://github.com/tightenco/ziggy/issues/70#issuecomment-369129032) for this solution.
+
 
 ## Contributions & Credits
 
