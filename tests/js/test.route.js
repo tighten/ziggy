@@ -5,7 +5,78 @@ let moxios = require('moxios');
 import route from '../../src/js/route.js';
 
 global.Ziggy = {
-    namedRoutes: { "translateTeam.user.show": { "uri": "{locale}/users/{id}", "methods": ["GET", "HEAD"], "domain": "{team}.myapp.dev" },"translateEvents.venues.show": { "uri": "{locale}/events/{event}/venues/{venue}", "methods": ["GET", "HEAD"], "domain": null },"translatePosts.index":{"uri":"{locale}/posts", "methods": ["GET", "HEAD"], "domain": null}, "translatePosts.show":{"uri":"{locale}/posts/{id}", "methods": ["GET", "HEAD"], "domain": null},"home": { "uri": "/", "methods": ["GET", "HEAD"], "domain": null }, "team.user.show": { "uri": "users/{id}", "methods": ["GET", "HEAD"], "domain": "{team}.myapp.dev" }, "posts.index": { "uri": "posts", "methods": ["GET", "HEAD"], "domain": null }, "posts.show": { "uri": "posts/{id}", "methods": ["GET", "HEAD"], "domain": null }, "posts.update": { "uri": "posts/{id}", "methods": ["PUT"], "domain": null }, "posts.store": { "uri": "posts", "methods": ["POST"], "domain": null }, "posts.destroy": { "uri": "posts/{id}", "methods": ["DELETE"], "domain": null }, "events.venues.show": { "uri": "events/{event}/venues/{venue}", "methods": ["GET", "HEAD"], "domain": null }, "events.venues.index": { "uri": "events/{event}/venues", "methods": ["GET", "HEAD"], "domain": null },"optional":{"uri":"optional/{id}/{slug?}","methods":["GET","HEAD"],"domain":null}},
+    namedRoutes: { 
+        "translateTeam.user.show": {
+            "uri": "{locale}/users/{id}",
+            "methods": ["GET", "HEAD"],
+            "domain": "{team}.myapp.dev" 
+        },
+        "translateEvents.venues.show": {
+            "uri": "{locale}/events/{event}/venues/{venue}",
+            "methods": ["GET", "HEAD"],
+            "domain": null
+        },
+        "translatePosts.index": {
+            "uri":"{locale}/posts",
+            "methods": ["GET", "HEAD"],
+            "domain": null
+        },
+        "translatePosts.show": {
+            "uri":"{locale}/posts/{id}",
+            "methods": ["GET", "HEAD"],
+            "domain": null
+        },
+        "home": {
+            "uri": "/",
+            "methods": ["GET", "HEAD"],
+            "domain": null
+        },
+        "team.user.show": {
+            "uri": "users/{id}",
+            "methods": ["GET", "HEAD"],
+            "domain": "{team}.myapp.dev"
+        },
+        "posts.index": {
+            "uri": "posts",
+            "methods": ["GET", "HEAD"],
+            "domain": null
+        },
+        "posts.show": {
+            "uri": "posts/{post}",
+            "methods": ["GET", "HEAD"],
+            "domain": null
+        },
+        "posts.update": {
+            "uri": "posts/{post}",
+            "methods": ["PUT"],
+            "domain": null
+        },
+        "posts.store": {
+            "uri": "posts",
+            "methods": ["POST"],
+            "domain": null
+        },
+        "posts.destroy": {
+            "uri": "posts/{id}",
+            "methods": ["DELETE"],
+            "domain": null
+        },
+        "events.venues.show": {
+            "uri": "events/{event}/venues/{venue}",
+            "methods": ["GET", "HEAD"],
+            "domain": null
+        },
+        "events.venues.index": {
+            "uri": "events/{event}/venues",
+            "methods": ["GET", "HEAD"],
+            "domain": null
+        },
+        "optional": {
+            "uri": "optional/{id}/{slug?}",
+            "methods": ["GET","HEAD"],
+            "domain": null
+        }
+    },
     baseUrl: 'http://myapp.dev/',
     baseProtocol: 'http',
     baseDomain: 'myapp.dev',
@@ -64,7 +135,7 @@ describe('route()', function() {
             function() {
                 route('posts.show').toString()
             },
-                /'id' key is required/
+                /'post' key is required/
         );
     });
 
@@ -120,6 +191,13 @@ describe('route()', function() {
             "http://myapp.dev/posts/1",
             route('posts.show').with({ id: 1 })
         );
+    });
+
+    it('Should return URL when run with multiple object params on a route with required params', () => {
+	assert.equal(
+            'http://myapp.dev/events/1/venues/2',
+            route('events.venues.show', [{id: 1, title: 'Event'}, {id: 2, title: 'Venue'}])
+	);
     });
 
     it('Should return URL when run with single object param on a route with required params and default params', function() {
