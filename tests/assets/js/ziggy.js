@@ -3,7 +3,8 @@
         baseUrl: 'http://myapp.com/',
         baseProtocol: 'http',
         baseDomain: 'myapp.com',
-        basePort: false
+        basePort: false,
+        defaultParameters: []
     };
 
     export {
