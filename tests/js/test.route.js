@@ -589,4 +589,32 @@ describe('route()', function() {
             route('posts.index', {filled: 'filling', empty: null}).url()
         );
     });
+
+    it('Should allow route().current() regardless of protocol', function() {
+        let orgBaseUrl = Ziggy.baseUrl;
+        let orgBaseDomain = Ziggy.baseDomain;
+        let orgBasePort = Ziggy.basePort;
+
+        global.Ziggy.baseUrl = 'http://myapp.dev:81/';
+        global.Ziggy.baseDomain = 'myapp.dev';
+        global.Ziggy.basePort = 81;
+
+        global.window = {
+            location: {
+                hostname: "myapp.dev",
+                pathname: "/events/1/venues/",
+                port: "81",
+                protocol: ""
+            }
+        };
+
+        assert.equal(
+            'events.venues.index',
+            route().current()
+        );
+
+        global.Ziggy.baseUrl = orgBaseUrl;
+        global.Ziggy.baseDomain = orgBaseDomain;
+        global.Ziggy.basePort = orgBasePort;
+    });
 });
