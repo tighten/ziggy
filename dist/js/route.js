@@ -188,10 +188,11 @@ var Router = function (_String) {
             var tags = this.urlParams,
                 paramsArrayKey = 0;
 
-            var windowUrl = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
+            var windowUrl = window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
 
-            var searchTemplate = this.template.replace(/(\{[^\}]*\})/gi, '[^\/\?]+');
+            var searchTemplate = this.template.replace(/(\{[^\}]*\})/gi, '[^\/\?]+').split('://')[1];
             var urlWithTrailingSlash = windowUrl.replace(/\/?$/, '/');
+
             return new RegExp("^" + searchTemplate + "\/$").test(urlWithTrailingSlash);
         }
     }, {

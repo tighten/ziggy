@@ -85,10 +85,11 @@ class Router extends String {
         let tags = this.urlParams,
             paramsArrayKey = 0;
         
-        let windowUrl = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
+        let windowUrl = window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
 
-        let searchTemplate = this.template.replace(/(\{[^\}]*\})/gi, '[^\/\?]+');
+        let searchTemplate = this.template.replace(/(\{[^\}]*\})/gi, '[^\/\?]+').split('://')[1];
         let urlWithTrailingSlash = windowUrl.replace(/\/?$/, '/');
+
         return new RegExp("^" + searchTemplate + "\/$").test(urlWithTrailingSlash);
     }
 
