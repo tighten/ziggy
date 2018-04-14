@@ -463,9 +463,9 @@ describe('route()', function() {
         let orgBaseDomain = Ziggy.baseDomain;
         let orgBasePort   = Ziggy.basePort;
 
-        global.Ziggy.baseUrl    = 'http://myapp.dev:81/';
+        global.Ziggy.baseUrl = 'http://myapp.dev:81/';
         global.Ziggy.baseDomain = 'myapp.dev';
-        global.Ziggy.basePort   = 81;
+        global.Ziggy.basePort = 81;
 
         assert.equal(
             "http://tighten.myapp.dev/users/1",
@@ -475,9 +475,21 @@ describe('route()', function() {
             "http://tighten.myapp.dev/users/1",
             route('team.user.show').with({team: "tighten", id: 1})
         );
+
+        global.Ziggy.baseUrl = orgBaseUrl;
+        global.Ziggy.baseDomain = orgBaseDomain;
+        global.Ziggy.basePort = orgBasePort;
     });
 
     it('Should return correct route name for current() and respond accurately when queried.', function() {
+        let orgBaseUrl = Ziggy.baseUrl;
+        let orgBaseDomain = Ziggy.baseDomain;
+        let orgBasePort = Ziggy.basePort;
+
+        global.Ziggy.baseUrl = 'http://myapp.dev:81/';
+        global.Ziggy.baseDomain = 'myapp.dev';
+        global.Ziggy.basePort = 81;
+
         global.window = {
             location: {
                 hostname: "myapp.dev",
@@ -501,9 +513,21 @@ describe('route()', function() {
             false,
             route().current("events.venues.index")
         );
+
+        global.Ziggy.baseUrl = orgBaseUrl;
+        global.Ziggy.baseDomain = orgBaseDomain;
+        global.Ziggy.basePort = orgBasePort;
     });
 
     it('Should respond "true" on route().current() regardless of trailing slashes or query variables.', function () {
+        let orgBaseUrl = Ziggy.baseUrl;
+        let orgBaseDomain = Ziggy.baseDomain;
+        let orgBasePort = Ziggy.basePort;
+
+        global.Ziggy.baseUrl = 'http://myapp.dev:81/';
+        global.Ziggy.baseDomain = 'myapp.dev';
+        global.Ziggy.basePort = 81;
+
         global.window = {
             location: {
                 hostname: "myapp.dev",
@@ -517,6 +541,10 @@ describe('route()', function() {
             'events.venues.index',
             route().current()
         );
+
+        global.Ziggy.baseUrl = orgBaseUrl;
+        global.Ziggy.baseDomain = orgBaseDomain;
+        global.Ziggy.basePort = orgBasePort;
     });
 
     it('Should still work if paths are appended to baseUrl.', function() {
@@ -527,19 +555,38 @@ describe('route()', function() {
             'http://test.thing/ab/cd/events/1/venues',
             route('events.venues.index', 1)
         );
+
+        global.Ziggy.baseUrl = orgBaseUrl;
     });
 
     it('Should URL encode path params.', function() {
+        let orgBaseUrl = Ziggy.baseUrl;
+        global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
+
         assert.equal(
             'http://test.thing/ab/cd/events/Fun%26Games/venues',
             route('events.venues.index', {event: "Fun&Games"}).url()
         );
+
+        global.Ziggy.baseUrl = orgBaseUrl;
     });
 
     it('Should URL encode query params.', function() {
+        let orgBaseUrl = Ziggy.baseUrl;
+        global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
+
         assert.equal(
             'http://test.thing/ab/cd/events/Fun%26Games/venues?location=Brews%26Clues',
             route('events.venues.index', {event: "Fun&Games", location: "Brews&Clues"}).url()
+        );
+
+        global.Ziggy.baseUrl = orgBaseUrl;
+    });
+
+    it('Should not pass query param if its value is null', function() {
+        assert.equal(
+            "http://myapp.dev/posts?filled=filling",
+            route('posts.index', {filled: 'filling', empty: null}).url()
         );
     });
 });
