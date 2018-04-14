@@ -77,7 +77,7 @@ EOT;
 
     public function getRoutePayload($group = false)
     {
-        return RoutePayload::compile($this->router, $group);
+        return RoutePayload::compile($group);
     }
 
     protected function makeDirectory($path)

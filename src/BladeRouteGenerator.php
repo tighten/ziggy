@@ -2,8 +2,8 @@
 
 namespace Tightenco\Ziggy;
 
-use Illuminate\Routing\Router;
 use function array_key_exists;
+use Tightenco\Ziggy\RoutePayload;
 
 class BladeRouteGenerator
 {
@@ -12,17 +12,11 @@ class BladeRouteGenerator
     private $basePort;
     private $baseUrl;
     private $baseProtocol;
-    private $router;
     public  $routePayload;
 
-    public function __construct(Router $router)
+    public static function getRoutePayload($group = false)
     {
-        $this->router = $router;
-    }
-
-    public function getRoutePayload($group = false)
-    {
-        return RoutePayload::compile($this->router, $group);
+        return RoutePayload::compile($group);
     }
 
     public function generate($group = false)

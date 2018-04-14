@@ -24,7 +24,7 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = RoutePayload::compile($router);
+        $payload = RoutePayload::compile();
 
         $this->assertEquals(['tags.show'], array_keys($payload->toArray()));
     }
@@ -45,7 +45,7 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = RoutePayload::compile($router);
+        $payload = RoutePayload::compile();
 
         $this->assertEquals(['pages.show'], array_keys($payload->toArray()));
     }
@@ -75,7 +75,7 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = RoutePayload::compile($router);
+        $payload = RoutePayload::compile();
 
         $this->assertEquals(['tags.show', 'pages.show'], array_keys($payload->toArray()));
     }
@@ -94,7 +94,7 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = RoutePayload::compile($router);
+        $payload = RoutePayload::compile();
 
         $this->assertEquals(['pages.index'], array_keys($payload->toArray()));
     }
@@ -117,7 +117,7 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = RoutePayload::compile($router);
+        $payload = RoutePayload::compile();
 
         $this->assertEquals(['posts.show'], array_keys($payload->toArray()));
     }
@@ -147,7 +147,7 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = RoutePayload::compile($router);
+        $payload = RoutePayload::compile();
 
         $this->assertEquals(['posts.show', 'pages.index'], array_keys($payload->toArray()));
     }

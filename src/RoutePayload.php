@@ -3,20 +3,21 @@
 namespace Tightenco\Ziggy;
 
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Route;
+use Tightenco\Ziggy\DefaultRouteCollector;
 
 class RoutePayload
 {
-    protected $routes;
+    public $routes;
 
-    public function __construct(Router $router)
+    public function __construct()
     {
-        $this->router = $router;
         $this->routes = $this->nameKeyedRoutes();
     }
 
-    public static function compile(Router $router, $group = false)
+    public static function compile($group = false)
     {
-        return (new static($router))->applyFilters($group);
+        return (new static)->applyFilters($group);
     }
 
     public function applyFilters($group)
@@ -71,27 +72,8 @@ class RoutePayload
 
     protected function nameKeyedRoutes()
     {
-        return collect($this->router->getRoutes()->getRoutesByName())
-            ->map(function ($route) {
-                if ($this->isListedAs($route, 'blacklist')) {
-                    $this->appendRouteToList($route->getName(), 'blacklist');
-                } elseif ($this->isListedAs($route, 'whitelist')) {
-                    $this->appendRouteToList($route->getName(), 'whitelist');
-                }
+        $routeCollector = config('ziggy.routeCollector', DefaultRouteCollector::class);
 
-                return collect($route)->only(['uri', 'methods'])
-                    ->put('domain', $route->domain());
-            });
-    }
-
-    protected function appendRouteToList($name, $list)
-    {
-        config()->push("ziggy.{$list}", $name);
-    }
-
-    protected function isListedAs($route, $list)
-    {
-        return (isset($route->listedAs) && $route->listedAs === $list)
-            || array_get($route->getAction(), 'listed_as', null) === $list;
+        return (new $routeCollector)->collect();
     }
 }

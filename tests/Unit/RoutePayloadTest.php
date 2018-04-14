@@ -72,7 +72,7 @@ class RoutePayloadTest extends TestCase
     /** @test */
     public function only_matching_routes_excluded_with_blacklist_enabled()
     {
-        $routePayload = new RoutePayload($this->router);
+        $routePayload = new RoutePayload();
         $filters = ['posts.s*', 'home', 'admin.*'];
         $routes = $routePayload->filter($filters, false);
 
@@ -99,7 +99,7 @@ class RoutePayloadTest extends TestCase
             'whitelist' => ['posts.s*', 'home']
         ]);
 
-        $routes = RoutePayload::compile($this->router);
+        $routes = RoutePayload::compile();
 
         $expected = [
             'home' => [
@@ -129,7 +129,7 @@ class RoutePayloadTest extends TestCase
             'blacklist' => ['posts.s*', 'home', 'admin.*']
         ]);
 
-        $routes = RoutePayload::compile($this->router);
+        $routes = RoutePayload::compile();
 
         $expected = [
             'posts.index' => [
@@ -155,7 +155,7 @@ class RoutePayloadTest extends TestCase
             'whitelist' => ['home'],
         ]);
 
-        $routes = RoutePayload::compile($this->router);
+        $routes = RoutePayload::compile();
 
         $expected = [
             'posts.index' => [
@@ -202,7 +202,7 @@ class RoutePayloadTest extends TestCase
             ]
         ]);
 
-        $routes = RoutePayload::compile($this->router, 'authors');
+        $routes = RoutePayload::compile('authors');
 
         $expected = [
             'home' => [
@@ -233,7 +233,7 @@ class RoutePayloadTest extends TestCase
     /** @test */
     public function non_existence_of_group_returns_unfiltered_routes()
     {
-        $routes = RoutePayload::compile($this->router, 'authors');
+        $routes = RoutePayload::compile('authors');
 
         $expected = [
             'posts.index' => [
