@@ -265,10 +265,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var UrlBuilder = function () {
     function UrlBuilder(name, absolute) {
+        var route = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        var customZiggy = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
         _classCallCheck(this, UrlBuilder);
 
         this.name = name;
-        this.route = Ziggy.namedRoutes[this.name];
+        this.ziggy = customZiggy ? customZiggy : Ziggy;
+        this.route = route ? route : this.ziggy.namedRoutes[this.name];
 
         if (typeof this.name === 'undefined') {
             throw new Error('Ziggy Error: You must provide a route name');
@@ -286,13 +290,13 @@ var UrlBuilder = function () {
         value: function setDomain() {
             if (!this.absolute) return '/';
 
-            if (!this.route.domain) return Ziggy.baseUrl.replace(/\/?$/, '/');
+            if (!this.route.domain) return this.ziggy.baseUrl.replace(/\/?$/, '/');
 
-            var host = (this.route.domain || Ziggy.baseDomain).replace(/\/+$/, '');
+            var host = (this.route.domain || this.ziggy.baseDomain).replace(/\/+$/, '');
 
-            if (Ziggy.basePort && host.replace(/\/+$/, '') === Ziggy.baseDomain.replace(/\/+$/, '')) host = Ziggy.baseDomain + ':' + Ziggy.basePort;
+            if (this.ziggy.basePort && host.replace(/\/+$/, '') === this.ziggy.baseDomain.replace(/\/+$/, '')) host = this.ziggy.baseDomain + ':' + this.ziggy.basePort;
 
-            return Ziggy.baseProtocol + '://' + host + '/';
+            return this.ziggy.baseProtocol + '://' + host + '/';
         }
     }, {
         key: 'construct',
