@@ -99,13 +99,16 @@ var Router = function (_String) {
     _inherits(Router, _String);
 
     function Router(name, params, absolute) {
+        var customZiggy = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
         _classCallCheck(this, Router);
 
         var _this = _possibleConstructorReturn(this, (Router.__proto__ || Object.getPrototypeOf(Router)).call(this));
 
         _this.name = name;
         _this.absolute = absolute;
-        _this.template = _this.name ? new __WEBPACK_IMPORTED_MODULE_0__UrlBuilder__["a" /* default */](name, absolute).construct() : '', _this.urlParams = _this.normalizeParams(params);
+        _this.ziggy = customZiggy ? customZiggy : Ziggy;
+        _this.template = _this.name ? new __WEBPACK_IMPORTED_MODULE_0__UrlBuilder__["a" /* default */](name, absolute, _this.ziggy).construct() : '', _this.urlParams = _this.normalizeParams(params);
         _this.queryParams = _this.normalizeParams(params);
         return _this;
     }
@@ -250,8 +253,8 @@ var Router = function (_String) {
     return Router;
 }(String);
 
-function route(name, params, absolute) {
-    return new Router(name, params, absolute);
+function route(name, params, absolute, customZiggy) {
+    return new Router(name, params, absolute, customZiggy);
 };
 
 /***/ }),
@@ -264,15 +267,12 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var UrlBuilder = function () {
-    function UrlBuilder(name, absolute) {
-        var route = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-        var customZiggy = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-
+    function UrlBuilder(name, absolute, ziggyObject) {
         _classCallCheck(this, UrlBuilder);
 
         this.name = name;
-        this.ziggy = customZiggy ? customZiggy : Ziggy;
-        this.route = route ? route : this.ziggy.namedRoutes[this.name];
+        this.ziggy = ziggyObject;
+        this.route = this.ziggy.namedRoutes[this.name];
 
         if (typeof this.name === 'undefined') {
             throw new Error('Ziggy Error: You must provide a route name');

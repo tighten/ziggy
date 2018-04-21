@@ -1,12 +1,13 @@
 import UrlBuilder from './UrlBuilder';
 
 class Router extends String {
-    constructor(name, params, absolute) {
+    constructor(name, params, absolute, customZiggy=null) {
         super();
 
         this.name           = name;
         this.absolute       = absolute;
-        this.template       = this.name ? new UrlBuilder(name, absolute).construct() : '',
+        this.ziggy          = customZiggy ? customZiggy : Ziggy;
+        this.template       = this.name ? new UrlBuilder(name, absolute, this.ziggy).construct() : '',
         this.urlParams      = this.normalizeParams(params);
         this.queryParams    = this.normalizeParams(params);
     }
@@ -137,6 +138,6 @@ class Router extends String {
     }
 }
 
-export default function route(name, params, absolute) {
-    return new Router(name, params, absolute);
+export default function route(name, params, absolute, customZiggy) {
+    return new Router(name, params, absolute, customZiggy);
 };
