@@ -57,7 +57,7 @@ class Router extends String {
             (tag, i) => {
 		 let keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
                     key = this.numericParamIndices ? paramsArrayKey : keyName,
-                    defaultParameter = Ziggy.defaultParameters[keyName];
+                    defaultParameter = this.ziggy.defaultParameters[keyName];
 
                 if (defaultParameter && needDefaultParams) {
                     if (this.numericParamIndices) {
@@ -111,7 +111,7 @@ class Router extends String {
     }
 
     current(name = null) {
-        let routeNames = Object.keys(Ziggy.namedRoutes);
+        let routeNames = Object.keys(this.ziggy.namedRoutes);
 
         let currentRoute = routeNames.filter(name => {
             return new Router(name).matchUrl();

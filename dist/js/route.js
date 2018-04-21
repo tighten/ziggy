@@ -162,7 +162,7 @@ var Router = function (_String) {
             return this.template.replace(/{([^}]+)}/gi, function (tag, i) {
                 var keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
                     key = _this2.numericParamIndices ? paramsArrayKey : keyName,
-                    defaultParameter = Ziggy.defaultParameters[keyName];
+                    defaultParameter = _this2.ziggy.defaultParameters[keyName];
 
                 if (defaultParameter && needDefaultParams) {
                     if (_this2.numericParamIndices) {
@@ -219,7 +219,7 @@ var Router = function (_String) {
         value: function current() {
             var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-            var routeNames = Object.keys(Ziggy.namedRoutes);
+            var routeNames = Object.keys(this.ziggy.namedRoutes);
 
             var currentRoute = routeNames.filter(function (name) {
                 return new Router(name).matchUrl();
