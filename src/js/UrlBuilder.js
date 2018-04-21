@@ -1,8 +1,9 @@
 class UrlBuilder {
-    constructor(name, absolute) {
+    constructor(name, absolute, route = null, customZiggy = null) {
 
-        this.name       = name;
-        this.route      = Ziggy.namedRoutes[this.name];
+        this.name = name;
+        this.ziggy = customZiggy ? customZiggy : Ziggy;
+        this.route = route ? route : this.ziggy.namedRoutes[this.name];
 
         if (typeof this.name === 'undefined') {
             throw new Error('Ziggy Error: You must provide a route name');
@@ -10,24 +11,24 @@ class UrlBuilder {
             throw new Error(`Ziggy Error: route '${this.name}' is not found in the route list`);
         }
 
-        this.absolute   = typeof absolute === 'undefined' ? true : absolute;
-        this.domain     = this.setDomain();
-        this.path       = this.route.uri.replace(/^\//, '');
+        this.absolute = typeof absolute === 'undefined' ? true : absolute;
+        this.domain = this.setDomain();
+        this.path = this.route.uri.replace(/^\//, '');
     }
 
     setDomain() {
-        if (! this.absolute)
+        if (!this.absolute)
             return '/';
 
         if (!this.route.domain)
-            return Ziggy.baseUrl.replace(/\/?$/, '/');
+            return this.ziggy.baseUrl.replace(/\/?$/, '/');
 
-        let host = (this.route.domain || Ziggy.baseDomain).replace(/\/+$/, '');
+        let host = (this.route.domain || this.ziggy.baseDomain).replace(/\/+$/, '');
 
-        if (Ziggy.basePort && (host.replace(/\/+$/, '') === Ziggy.baseDomain.replace(/\/+$/, '')))
-            host = Ziggy.baseDomain + ':' + Ziggy.basePort;
+        if (this.ziggy.basePort && (host.replace(/\/+$/, '') === this.ziggy.baseDomain.replace(/\/+$/, '')))
+            host = this.ziggy.baseDomain + ':' + this.ziggy.basePort;
 
-        return Ziggy.baseProtocol + '://' + host + '/';
+        return this.ziggy.baseProtocol + '://' + host + '/';
     }
 
     construct() {
