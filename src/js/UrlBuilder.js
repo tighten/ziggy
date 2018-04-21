@@ -1,9 +1,9 @@
 class UrlBuilder {
-    constructor(name, absolute, route = null, customZiggy = null) {
+    constructor(name, absolute, ziggyObject) {
 
         this.name = name;
-        this.ziggy = customZiggy ? customZiggy : Ziggy;
-        this.route = route ? route : this.ziggy.namedRoutes[this.name];
+        this.ziggy = ziggyObject;
+        this.route = this.ziggy.namedRoutes[this.name];
 
         if (typeof this.name === 'undefined') {
             throw new Error('Ziggy Error: You must provide a route name');

@@ -617,4 +617,28 @@ describe('route()', function() {
         global.Ziggy.baseDomain = orgBaseDomain;
         global.Ziggy.basePort = orgBasePort;
     });
+
+    it('Should still work if I pass in a custom Ziggy object', function() {
+        const customZiggy = {
+            namedRoutes: {
+                "tightenDev.packages.index": {
+                    "uri": "tightenDev/{dev}/packages",
+                    "methods": ["GET", "HEAD"],
+                    "domain": null
+                },
+            },
+            baseUrl: 'http://notYourAverage.dev/',
+            baseProtocol: 'http',
+            baseDomain: 'notYourAverage.dev',
+            basePort: false,
+            defaultParameters: {
+                locale: "en"
+            }
+        };
+
+        assert.equal(
+            'http://notYourAverage.dev/tightenDev/1/packages',
+            route('tightenDev.packages.index', { dev: 1 }, true, customZiggy).url()
+        )
+    });
 });
