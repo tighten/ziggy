@@ -40,4 +40,19 @@ class CommandRouteGeneratorTest extends TestCase
 
         $this->assertFileEquals('./tests/assets/js/ziggy.js', vfsStream::url('testDir/ziggy.js'));
     }
+
+    /** @test */
+    function file_is_created_with_a_custom_url()
+    {
+        $router = app('router');
+
+        $router->get('/posts/{post}/comments', function () { return ''; })
+            ->name('postComments.index');
+
+        $router->getRoutes()->refreshNameLookups();
+
+        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/ziggy.js'), '--url' => 'http://example.org']);
+
+        $this->assertFileEquals('./tests/assets/js/custom-url.js', vfsStream::url('testDir/ziggy.js'));
+    }
 }

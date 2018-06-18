@@ -10,7 +10,7 @@ use Tightenco\Ziggy\RoutePayload;
 
 class CommandRouteGenerator extends Command
 {
-    protected $signature = 'ziggy:generate {path=./resources/assets/js/ziggy.js}';
+    protected $signature = 'ziggy:generate {path=./resources/assets/js/ziggy.js} {--url=/}';
 
     protected $description = 'Generate js file for including in build process';
 
@@ -66,7 +66,7 @@ EOT;
 
     private function prepareDomain()
     {
-        $url = url('/');
+        $url = url($this->option('url'));
         $parsedUrl = parse_url($url);
 
         $this->baseUrl = $url . '/';
