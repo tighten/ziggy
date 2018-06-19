@@ -5,11 +5,11 @@ let moxios = require('moxios');
 import route from '../../src/js/route.js';
 
 global.Ziggy = {
-    namedRoutes: { 
+    namedRoutes: {
         "translateTeam.user.show": {
             "uri": "{locale}/users/{id}",
             "methods": ["GET", "HEAD"],
-            "domain": "{team}.myapp.dev" 
+            "domain": "{team}.myapp.dev"
         },
         "translateEvents.venues.show": {
             "uri": "{locale}/events/{event}/venues/{venue}",
@@ -115,7 +115,7 @@ describe('route()', function() {
         );
     });
 
-    
+
     it('Should return URL without domain when passing false into absolute param.', function() {
         assert.equal(
             "/posts",
@@ -639,6 +639,41 @@ describe('route()', function() {
         assert.equal(
             'http://notYourAverage.dev/tightenDev/1/packages',
             route('tightenDev.packages.index', { dev: 1 }, true, customZiggy).url()
-        )
+        );
+    });
+
+    it('Should allow route().current() when there is no global Ziggy object', function() {
+        const orgZiggy = global.Ziggy;
+
+        global.Ziggy = undefined;
+
+        global.window = {
+            location: {
+                hostname: "myapp.dev",
+                pathname: "/events/",
+                protocol: ""
+            }
+        };
+
+        const customZiggy = {
+            namedRoutes: {
+                "events.index": {
+                    "uri": "events",
+                    "methods": ["GET", "HEAD"],
+                    "domain": null
+                },
+            },
+            baseUrl: 'http://myapp.dev/',
+            baseProtocol: 'http',
+            baseDomain: 'myapp.dev',
+            basePort: false,
+        };
+
+        assert.equal(
+            'events.index',
+            route(undefined, undefined, undefined, customZiggy).current()
+        );
+
+        global.Ziggy = orgZiggy;
     });
 });
