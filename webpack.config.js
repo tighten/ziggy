@@ -2,45 +2,55 @@
 
 const webpack = require('webpack');
 const path = require('path');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const UnminifiedWebpackPlugin = require('unminified-webpack-plugin');
 
 module.exports = {
+  mode: 'production',
   context: __dirname,
   resolve: {
-	modules: [
-	  path.resolve(__dirname, 'src'),
-	  'node_modules'
-	],
+    modules: [
+      path.resolve(__dirname, 'node_modules'),
+    ],
   },
-  entry: {
-	'route': './src/js/route.js',
-	'route.min': './src/js/route.js',
-  },
-  externals: [],
+  entry: './src/js/route.js',
   output: {
-	path: path.resolve(__dirname, 'dist/js'),
-	filename: "[name].js",
-	library: 'route',
-	libraryTarget: 'umd',
-	umdNamedDefine: true,
-	libraryExport: 'default'
+    path: path.resolve(__dirname, 'dist/js'),
+    filename: 'route.min.js',
+    library: 'route',
+    libraryTarget: 'umd',
+    umdNamedDefine: true,
+    libraryExport: 'default',
+    globalObject: 'this',
   },
   module: {
-	rules: [
-	  {
-		test: /\.js$/,
-		loader: 'babel-loader',
-		exclude: path.resolve(__dirname, 'node_modules'),
-	  },
-	]
+    rules: [
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/,
+      },
+    ]
   },
   plugins: [
-	new webpack.optimize.UglifyJsPlugin({
-	  include: /\.min\.js$/,
-	  minimize: true,
-	}),
+    new UnminifiedWebpackPlugin(),
+    new UglifyJsPlugin({
+      sourceMap: false,
+      uglifyOptions: {
+        output: {
+          beautify: false
+        },
+        compress: {
+          drop_console: true
+        }
+      }
+    }),
   ],
   devtool: false,
   performance: {
-	hints: false,
-  }
+    hints: false,
+  },
+  stats: {
+    modules: false,
+  },
 };
