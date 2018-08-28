@@ -17,21 +17,23 @@
   },
   "homepage": "https://github.com/tightenco/ziggy#readme",
   "scripts": {
-    "build": "webpack --hide-modules --progress",
+    "build": "NODE_ENV=production webpack --progress",
     "build:watch": "npm run build -- --watch",
     "test": "NODE_ENV=test mocha-webpack 'tests/js/**/*.js'",
     "test:watch": "npm run test -- --watch"
   },
   "devDependencies": {
-    "axios": "^0.16.2",
-    "babel-core": "^6.25.0",
-    "babel-loader": "^7.1.0",
+    "axios": "^0.18.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
     "babel-plugin-transform-object-assign": "^6.22.0",
-    "babel-preset-env": "^1.6.1",
-    "mocha": "^3.5.0",
-    "mocha-webpack": "^1.0.1",
+    "babel-preset-env": "^1.7.0",
+    "mocha": "^5.2.0",
+    "mocha-webpack": "^2.0.0-beta.0",
     "moxios": "^0.4.0",
-    "webpack": "^3.8.1"
+    "unminified-webpack-plugin": "^2.0.0",
+    "webpack": "^4.16.5",
+    "webpack-command": "^0.4.1"
   },
   "dependencies": {},
   "engines": {
