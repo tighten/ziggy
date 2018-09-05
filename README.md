@@ -94,7 +94,7 @@ To take advantage of basic whitelisting or blacklisting of routes, you will firs
 <?php
 return [
     // 'whitelist' => ['home', 'api.*'],
-    'blacklist' => ['admin.*', 'vulnerabilities.*'],
+    'blacklist' => ['debugbar.*', 'horizon.*', 'admin.*'],
 ];
 ```
 
