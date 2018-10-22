@@ -18,12 +18,12 @@ class Router extends String {
 
         // If you passed in a string or integer, wrap it in an array
         params = typeof params !== 'object' ? [params] : params;
-        
+
         // If the tags object contains an ID and there isn't an ID param in the
         // url template, they probably passed in a single model object and we should
         // wrap this in an array. This could be slightly dangerous and I want to find
         // a better solution for this rare case.
-        
+
         if (params.hasOwnProperty('id') && this.template.indexOf('{id}') == -1) {
             params = [params.id];
         }
@@ -47,7 +47,7 @@ class Router extends String {
             paramsArrayKey = 0,
             params = this.template.match(/{([^}]+)}/gi),
             needDefaultParams = false;
-        
+
         if (params && params.length != Object.keys(tags).length) {
             needDefaultParams = true
         }
@@ -85,7 +85,7 @@ class Router extends String {
     matchUrl() {
         let tags = this.urlParams,
             paramsArrayKey = 0;
-        
+
         let windowUrl = window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
 
         let searchTemplate = this.template.replace(/(\{[^\}]*\})/gi, '[^\/\?]+').split('://')[1];
@@ -114,6 +114,10 @@ class Router extends String {
         let routeNames = Object.keys(this.ziggy.namedRoutes);
 
         let currentRoute = routeNames.filter(name => {
+            if (this.ziggy.namedRoutes[name].methods.indexOf('GET') === -1) {
+                return false;
+            }
+
             return new Router(name, undefined, undefined, this.ziggy).matchUrl();
         })[0];
 
