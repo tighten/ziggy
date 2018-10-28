@@ -115,6 +115,29 @@ describe('route()', function() {
         );
     });
 
+    it('Should return Relative URL prefixed with a slash when when passed the relativeUrl() method', function () {
+        assert.equal(
+            "/posts",
+            route('posts.index').relativeUrl()
+        );
+    });
+
+
+    it('Should return Relative URL prefixed with a slash when when passed the relativeUrl() method with default params', function () {
+        assert.equal(
+            "/en/posts",
+            route('translatePosts.index').relativeUrl()
+        );
+    });
+
+
+    it('Should return Relative URL prefixed with a slash when when passed the relativeUrl() method when passing false into absolute param', function () {
+        assert.equal(
+            "/posts",
+            route('posts.index', [], false).relativeUrl()
+        );
+    });
+
 
     it('Should return URL without domain when passing false into absolute param.', function() {
         assert.equal(
