@@ -242,7 +242,8 @@ return [
 ];
 ```
 
-### Using with Vue components
+## Using with Vue
+### components
 
 If you want to use the `route` helper within a Vue component, you'll need to add this to your `app.js` file:
 
@@ -259,6 +260,49 @@ Then, use the method in your Vue components like so:
 `<a class="nav-link" :href="route('home')">Home</a>`
 
 Thanks to [Archer70](https://github.com/tightenco/ziggy/issues/70#issuecomment-369129032) for this solution.
+
+### Using with Vue-Router
+Since vue router accepts only relative urls, a **relative()** method exists that returns a relative url from the normal absolute url
+got from route() method. So you can simply chain it.
+*NB* As a precaution, colons get encoded to **%3A** when urls are generated with route(), so it would be a good idea to pass *true*
+to the relative method. Behind the scenes, the decodeURIComponen gets called and ensured that the collon is returned.
+```js
+// routes.js
+
+// (Similar to Laravel's route('users/{username}'))
+route('users.show', ':username').relative(true)
+//              /users/:username         => relative(true)
+//              /users/%3Ausername       => relative()
+
+// (Similar to Laravel's route('users/{id}/edit'))
+route('users.show', ':id').relative(true)
+//              /users/:id         => relative(true)
+//              /users/%3Aid       => relative()
+
+
+var routes = [
+
+    { path: route('users.index').relative(true), component: UsersIndex },
+
+    // other routes
+]
+
+export const routes;
+
+
+
+// ssers/Index.vue    component
+export default {
+
+    methods: {
+        view(user)
+        {
+            // no need to pass true in relative()
+            return this.$router.push(route('users.show', user.username).relative());
+        },
+    }
+}
+```
 
 ### Using with `laravel-haml` (and other custom Blade compilers)
 
@@ -277,6 +321,7 @@ This pattern is not limited to laravel-haml; it can be used to initialize any cu
 
 To get started contributing to Ziggy, check out [the contribution guide](CONTRIBUTING.md).
 
+- [Lexx YungCarter](https://twitter.com/UnderscoreLexx)
 - [Daniel Coulbourne](https://twitter.com/DCoulbourne)
 - [Matt Stauffer](https://twitter.com/stauffermatt)
 
