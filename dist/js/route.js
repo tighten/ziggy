@@ -317,10 +317,7 @@ var route_Router = function (_String) {
     }, {
         key: 'relativeUrl',
         value: function relativeUrl() {
-            var url = this.url(); // http://domain.com/foo/1/bar
-            // strip the https and domain via regex and replace()
-            url = url.replace('/^(https?:|)\/\//', ''); // domain.com/foo/1/bar
-            this.return = url.replace(this.ziggy.baseUrl, '/'); // /foo/1/bar
+            this.return = this.url().replace('/^(https?:|)\/\//', '').replace(this.ziggy.baseUrl, '/');
             return this.return;
         }
     }, {
