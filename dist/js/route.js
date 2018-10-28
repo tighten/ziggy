@@ -315,6 +315,15 @@ var route_Router = function (_String) {
             return this.return;
         }
     }, {
+        key: 'relativeUrl',
+        value: function relativeUrl() {
+            var url = this.url(); // http://domain.com/foo/1/bar
+            // strip the https and domain via regex and replace()
+            url = url.replace('/^(https?:|)\/\//', ''); // domain.com/foo/1/bar
+            this.return = url.replace(this.ziggy.baseUrl, '/'); // /foo/1/bar
+            return this.return;
+        }
+    }, {
         key: 'toString',
         value: function toString() {
             return this.url();
