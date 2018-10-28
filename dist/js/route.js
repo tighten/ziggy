@@ -309,15 +309,27 @@ var route_Router = function (_String) {
             this.return = this.hydrateUrl() + this.constructQuery();
         }
     }, {
+        key: 'parseRelative',
+        value: function parseRelative() {
+            this.return = this.url().replace('/^(https?:|)\/\//', '').replace(this.ziggy.baseUrl, '/');
+        }
+    }, {
         key: 'url',
         value: function url() {
             this.parse();
             return this.return;
         }
     }, {
-        key: 'relativeUrl',
-        value: function relativeUrl() {
-            this.return = this.url().replace('/^(https?:|)\/\//', '').replace(this.ziggy.baseUrl, '/');
+        key: 'relative',
+        value: function relative() {
+            this.parseRelative();
+            return this.return;
+        }
+    }, {
+        key: 'vueRouter',
+        value: function vueRouter() {
+            this.parseRelative();
+            this.return = decodeURIComponent(this.return);
             return this.return;
         }
     }, {

@@ -128,13 +128,23 @@ class Router extends String {
         this.return = this.hydrateUrl() + this.constructQuery();
     }
 
+    parseRelative() {
+        this.return = this.url().replace('/^(https?:|)\/\//', '').replace(this.ziggy.baseUrl, '/');
+    }
+
     url() {
         this.parse();
         return this.return;
     }
 
-    relativeUrl() {
-        this.return = this.url().replace('/^(https?:|)\/\//', '').replace(this.ziggy.baseUrl, '/');
+    relative() {
+        this.parseRelative();
+        return this.return;
+    }
+
+    vueRouter() {
+        this.parseRelative();
+        this.return = decodeURIComponent(this.return)
         return this.return;
     }
 
