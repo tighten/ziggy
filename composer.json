@@ -1,11 +1,15 @@
 {
-    "name": "tightenco/ziggy",
+    "name": "lexxyungcarter/ziggy",
     "description": "Generates a Blade directive exporting all of your named Laravel routes. Also provides a nice route() helper function in JavaScript.",
     "require": {
         "laravel/framework": "~5.4"
     },
     "license": "MIT",
     "authors": [
+        {
+            "name": "Lexx YungCarter",
+            "email": "lexxyungcarter@gmail.com"
+        },
         {
             "name": "Daniel Coulbourne",
             "email": "daniel@tighten.co"
