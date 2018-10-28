@@ -322,14 +322,11 @@ var route_Router = function (_String) {
     }, {
         key: 'relative',
         value: function relative() {
+            var decodeURIComponent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
             this.parseRelative();
-            return this.return;
-        }
-    }, {
-        key: 'vueRouter',
-        value: function vueRouter() {
-            this.parseRelative();
-            this.return = decodeURIComponent(this.return);
+
+            if (decodeURIComponent) this.return = window.decodeURIComponent(this.return);
             return this.return;
         }
     }, {

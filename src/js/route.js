@@ -137,14 +137,11 @@ class Router extends String {
         return this.return;
     }
 
-    relative() {
+    relative(decodeURIComponent = false) {
         this.parseRelative();
-        return this.return;
-    }
 
-    vueRouter() {
-        this.parseRelative();
-        this.return = decodeURIComponent(this.return)
+        if (decodeURIComponent)
+            this.return = window.decodeURIComponent(this.return)
         return this.return;
     }
 
