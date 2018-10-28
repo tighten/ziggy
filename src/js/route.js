@@ -133,6 +133,13 @@ class Router extends String {
         return this.return;
     }
 
+    relativeUrl() {
+        let url = this.parse(); // http://domain.com/foo/1/bar
+        // strip the https and domain via regex and replace()
+        url = url.replace('/^(https?:|)\/\//', ''); // domain.com/foo/1/bar
+        return url.replace(this.ziggy.baseUrl, '/'); // /foo/1/bar
+    }
+
     toString() {
         return this.url();
     }
