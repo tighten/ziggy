@@ -8,7 +8,7 @@ Ziggy creates a Blade directive which you can include in your views. This will e
 
 ## Installation
 
-1. Add Ziggy to your Composer file: `composer require tightenco/ziggy`
+1. Add Ziggy to your Composer file: `composer require lexxyungcarter/ziggy`
 
 2. (if Laravel 5.4) Add `Tightenco\Ziggy\ZiggyServiceProvider::class` to the `providers` array in your `config/app.php`.
 
