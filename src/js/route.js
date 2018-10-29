@@ -114,6 +114,10 @@ class Router extends String {
         let routeNames = Object.keys(this.ziggy.namedRoutes);
 
         let currentRoute = routeNames.filter(name => {
+            if (this.ziggy.namedRoutes[name].methods.indexOf('GET') === -1) {
+                return false;
+            }
+
             return new Router(name, undefined, undefined, this.ziggy).matchUrl();
         })[0];
 

@@ -21,7 +21,7 @@ class RoutePayload
 
     public function applyFilters($group)
     {
-        if ($group && config()->has("ziggy.groups.{$group}")) {
+        if ($group) {
             return $this->group($group);
         }
 
@@ -43,7 +43,19 @@ class RoutePayload
 
     public function group($group)
     {
-        return $this->filter(config("ziggy.groups.{$group}"), true);
+        if(is_array($group)) {
+            $filters = [];
+            foreach($group as $groupName) {
+              $filters = array_merge($filters, config("ziggy.groups.{$groupName}"));
+            }
+
+            return is_array($filters)? $this->filter($filters, true) : $this->routes;
+        }
+        else if(config()->has("ziggy.groups.{$group}")) {
+            return $this->filter(config("ziggy.groups.{$group}"), true);
+        }
+        
+        return $this->routes;
     }
 
     public function blacklist()
