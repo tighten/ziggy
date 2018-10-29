@@ -41,14 +41,14 @@ global.Ziggy = {
             "methods": ["GET", "HEAD"],
             "domain": null
         },
-        "posts.show": {
-            "uri": "posts/{post}",
-            "methods": ["GET", "HEAD"],
-            "domain": null
-        },
         "posts.update": {
             "uri": "posts/{post}",
             "methods": ["PUT"],
+            "domain": null
+        },
+        "posts.show": {
+            "uri": "posts/{post}",
+            "methods": ["GET", "HEAD"],
             "domain": null
         },
         "posts.store": {
@@ -512,6 +512,39 @@ describe('route()', function() {
         assert.equal(
             false,
             route().current("events.venues.index")
+        );
+
+        global.Ziggy.baseUrl = orgBaseUrl;
+        global.Ziggy.baseDomain = orgBaseDomain;
+        global.Ziggy.basePort = orgBasePort;
+    });
+
+    it('Should return correct route name for current() when a route responds to multiple request methods.', function() {
+        let orgBaseUrl = Ziggy.baseUrl;
+        let orgBaseDomain = Ziggy.baseDomain;
+        let orgBasePort = Ziggy.basePort;
+
+        global.Ziggy.baseUrl = 'http://myapp.dev:81/';
+        global.Ziggy.baseDomain = 'myapp.dev';
+        global.Ziggy.basePort = 81;
+
+        global.window = {
+            location: {
+                hostname: "myapp.dev",
+                pathname: "/posts/1",
+                port: "81",
+                protocol: "http:"
+            }
+        };
+
+        assert.equal(
+            'posts.show',
+            route().current()
+        );
+
+        assert.equal(
+            false,
+            route().current('posts.update')
         );
 
         global.Ziggy.baseUrl = orgBaseUrl;

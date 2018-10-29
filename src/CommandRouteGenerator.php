@@ -44,7 +44,7 @@ class CommandRouteGenerator extends Command
         $this->prepareDomain();
 
         $json = $this->getRoutePayload($group)->toJson();
-        
+
         $defaultParameters = method_exists(app('url'), 'getDefaultParameters') ? json_encode(app('url')->getDefaultParameters()) : '[]';
 
         return <<<EOT
@@ -56,6 +56,12 @@ class CommandRouteGenerator extends Command
         basePort: {$this->basePort},
         defaultParameters: $defaultParameters
     };
+
+    if (typeof window.Ziggy !== 'undefined') {
+        for (var name in window.Ziggy.namedRoutes) {
+            Ziggy.namedRoutes[name] = window.Ziggy.namedRoutes[name];
+        }
+    }
 
     export {
         Ziggy
