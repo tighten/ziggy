@@ -121,7 +121,12 @@ class Router extends String {
             return new Router(name, undefined, undefined, this.ziggy).matchUrl();
         })[0];
 
-        return name ? (name == currentRoute) : currentRoute;
+        if (name) {
+            const pattern = new RegExp(name.replace('*', '.*').replace('.', '\.'), 'i');
+            return pattern.test(currentRoute);
+        }
+
+        return currentRoute;
     }
 
     parse() {

@@ -123,6 +123,7 @@ describe('route()', function() {
         );
     });
 
+    // FAIL
     it('Should return URL without domain when passing false into absolute param , with default params.', function() {
         assert.equal(
             "/en/posts",
@@ -512,6 +513,31 @@ describe('route()', function() {
         assert.equal(
             false,
             route().current("events.venues.index")
+        );
+
+        assert.equal(
+            true,
+            route().current("events.venues.*")
+        );
+
+        assert.equal(
+            false,
+            route().current("events.users.*")
+        );
+
+        assert.equal(
+            true,
+            route().current("events.*.show")
+        );
+
+        assert.equal(
+            true,
+            route().current("*.venues.show")
+        );
+
+        assert.equal(
+            false,
+            route().current("*.users.show")
         );
 
         global.Ziggy.baseUrl = orgBaseUrl;
