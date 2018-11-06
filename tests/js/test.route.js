@@ -735,4 +735,83 @@ describe('route()', function() {
 
         global.Ziggy = orgZiggy;
     });
+
+    it('Should remove all curly brackets and question marks from a dynamic parameter', function() {
+        assert(
+            route().trimParam('optional'),
+            'optional'
+        );
+
+        assert(
+            route().trimParam('{id}'),
+            'id'
+        );
+
+        assert(
+            route().trimParam('{slug?}'),
+            'slug'
+        );
+    });
+
+    it('Should extract dynamic params from a URI based on a given template and delimiter', function() {
+        assert.deepStrictEqual(
+            route().extractParams('', '', '/'),
+            {}
+        );
+
+        assert.deepStrictEqual(
+            route().extractParams('posts', 'posts', '/'),
+            {}
+        );
+
+        assert.deepStrictEqual(
+            route().extractParams('users/1', 'users/{id}', '/'),
+            { id: '1' }
+        );
+
+        assert.deepStrictEqual(
+            route().extractParams('events/1/venues/2', 'events/{event}/venues/{venue}', '/'),
+            { event: '1', venue: '2' }
+        );
+
+        assert.deepStrictEqual(
+            route().extractParams('optional/123', 'optional/{id}/{slug?}', '/'),
+            { id: '123' }
+        );
+
+        assert.deepStrictEqual(
+            route().extractParams('optional/123/news', 'optional/{id}/{slug?}', '/'),
+            { id: '123', slug: 'news' }
+        );
+
+        assert.deepStrictEqual(
+            route().extractParams('tighten.myapp.dev', '{team}.myapp.dev', '.'),
+            { team: 'tighten' }
+        );
+    });
+
+    it('Should combine dynamic params from the domain and the URI', function() {
+        global.window.location.hostname = 'tighten.myapp.dev';
+        global.window.location.pathname = '/users/1';
+
+        assert.deepStrictEqual(
+            route().params,
+            { team: 'tighten', id: '1' }
+        );
+
+        global.window.location.hostname = global.Ziggy.baseDomain;
+        global.window.location.pathname = '/posts/1';
+
+        assert.deepStrictEqual(
+            route().params,
+            { post: '1' }
+        );
+
+        global.window.location.pathname = '/events/1/venues/2';
+
+        assert.deepStrictEqual(
+            route().params,
+            { event: '1', venue: '2' }
+        );
+    });
 });
