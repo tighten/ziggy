@@ -1,343 +1,385 @@
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define("route", [], factory);
-	else if(typeof exports === 'object')
-		exports["route"] = factory();
-	else
-		root["route"] = factory();
-})(this, function() {
-return /******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global.route = factory());
+}(this, (function () { 'use strict';
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
+  function _typeof(obj) {
+    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+      _typeof = function (obj) {
+        return typeof obj;
+      };
+    } else {
+      _typeof = function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+      };
+    }
 
-// CONCATENATED MODULE: ./src/js/UrlBuilder.js
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+    return _typeof(obj);
+  }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
 
-var UrlBuilder = function () {
-    function UrlBuilder(name, absolute, ziggyObject) {
-        _classCallCheck(this, UrlBuilder);
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
 
-        this.name = name;
-        this.ziggy = ziggyObject;
-        this.route = this.ziggy.namedRoutes[this.name];
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
 
-        if (typeof this.name === 'undefined') {
-            throw new Error('Ziggy Error: You must provide a route name');
-        } else if (typeof this.route === 'undefined') {
-            throw new Error('Ziggy Error: route \'' + this.name + '\' is not found in the route list');
+  function _extends() {
+    _extends = Object.assign || function (target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];
+
+        for (var key in source) {
+          if (Object.prototype.hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
         }
+      }
 
-        this.absolute = typeof absolute === 'undefined' ? true : absolute;
-        this.domain = this.setDomain();
-        this.path = this.route.uri.replace(/^\//, '');
+      return target;
+    };
+
+    return _extends.apply(this, arguments);
+  }
+
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+      throw new TypeError("Super expression must either be null or a function");
+    }
+
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        writable: true,
+        configurable: true
+      }
+    });
+    if (superClass) _setPrototypeOf(subClass, superClass);
+  }
+
+  function _getPrototypeOf(o) {
+    _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+      return o.__proto__ || Object.getPrototypeOf(o);
+    };
+    return _getPrototypeOf(o);
+  }
+
+  function _setPrototypeOf(o, p) {
+    _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+      o.__proto__ = p;
+      return o;
+    };
+
+    return _setPrototypeOf(o, p);
+  }
+
+  function isNativeReflectConstruct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
+
+    try {
+      Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function _construct(Parent, args, Class) {
+    if (isNativeReflectConstruct()) {
+      _construct = Reflect.construct;
+    } else {
+      _construct = function _construct(Parent, args, Class) {
+        var a = [null];
+        a.push.apply(a, args);
+        var Constructor = Function.bind.apply(Parent, a);
+        var instance = new Constructor();
+        if (Class) _setPrototypeOf(instance, Class.prototype);
+        return instance;
+      };
+    }
+
+    return _construct.apply(null, arguments);
+  }
+
+  function _isNativeFunction(fn) {
+    return Function.toString.call(fn).indexOf("[native code]") !== -1;
+  }
+
+  function _wrapNativeSuper(Class) {
+    var _cache = typeof Map === "function" ? new Map() : undefined;
+
+    _wrapNativeSuper = function _wrapNativeSuper(Class) {
+      if (Class === null || !_isNativeFunction(Class)) return Class;
+
+      if (typeof Class !== "function") {
+        throw new TypeError("Super expression must either be null or a function");
+      }
+
+      if (typeof _cache !== "undefined") {
+        if (_cache.has(Class)) return _cache.get(Class);
+
+        _cache.set(Class, Wrapper);
+      }
+
+      function Wrapper() {
+        return _construct(Class, arguments, _getPrototypeOf(this).constructor);
+      }
+
+      Wrapper.prototype = Object.create(Class.prototype, {
+        constructor: {
+          value: Wrapper,
+          enumerable: false,
+          writable: true,
+          configurable: true
+        }
+      });
+      return _setPrototypeOf(Wrapper, Class);
+    };
+
+    return _wrapNativeSuper(Class);
+  }
+
+  function _assertThisInitialized(self) {
+    if (self === void 0) {
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+
+    return self;
+  }
+
+  function _possibleConstructorReturn(self, call) {
+    if (call && (typeof call === "object" || typeof call === "function")) {
+      return call;
+    }
+
+    return _assertThisInitialized(self);
+  }
+
+  var UrlBuilder =
+  /*#__PURE__*/
+  function () {
+    function UrlBuilder(name, absolute, ziggyObject) {
+      _classCallCheck(this, UrlBuilder);
+
+      this.name = name;
+      this.ziggy = ziggyObject;
+      this.route = this.ziggy.namedRoutes[this.name];
+
+      if (typeof this.name === 'undefined') {
+        throw new Error('Ziggy Error: You must provide a route name');
+      } else if (typeof this.route === 'undefined') {
+        throw new Error("Ziggy Error: route '".concat(this.name, "' is not found in the route list"));
+      }
+
+      this.absolute = typeof absolute === 'undefined' ? true : absolute;
+      this.domain = this.setDomain();
+      this.path = this.route.uri.replace(/^\//, '');
     }
 
     _createClass(UrlBuilder, [{
-        key: 'setDomain',
-        value: function setDomain() {
-            if (!this.absolute) return '/';
-
-            if (!this.route.domain) return this.ziggy.baseUrl.replace(/\/?$/, '/');
-
-            var host = (this.route.domain || this.ziggy.baseDomain).replace(/\/+$/, '');
-
-            if (this.ziggy.basePort && host.replace(/\/+$/, '') === this.ziggy.baseDomain.replace(/\/+$/, '')) host = this.ziggy.baseDomain + ':' + this.ziggy.basePort;
-
-            return this.ziggy.baseProtocol + '://' + host + '/';
-        }
+      key: "setDomain",
+      value: function setDomain() {
+        if (!this.absolute) return '/';
+        if (!this.route.domain) return this.ziggy.baseUrl.replace(/\/?$/, '/');
+        var host = (this.route.domain || this.ziggy.baseDomain).replace(/\/+$/, '');
+        if (this.ziggy.basePort && host.replace(/\/+$/, '') === this.ziggy.baseDomain.replace(/\/+$/, '')) host = this.ziggy.baseDomain + ':' + this.ziggy.basePort;
+        return this.ziggy.baseProtocol + '://' + host + '/';
+      }
     }, {
-        key: 'construct',
-        value: function construct() {
-            return this.domain + this.path;
-        }
+      key: "construct",
+      value: function construct() {
+        return this.domain + this.path;
+      }
     }]);
 
     return UrlBuilder;
-}();
+  }();
 
-/* harmony default export */ var js_UrlBuilder = (UrlBuilder);
-// CONCATENATED MODULE: ./src/js/route.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return route; });
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var route_createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function route_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-var route_Router = function (_String) {
+  var Router =
+  /*#__PURE__*/
+  function (_String) {
     _inherits(Router, _String);
 
     function Router(name, params, absolute) {
-        var customZiggy = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+      var _this;
 
-        route_classCallCheck(this, Router);
+      var customZiggy = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 
-        var _this = _possibleConstructorReturn(this, (Router.__proto__ || Object.getPrototypeOf(Router)).call(this));
+      _classCallCheck(this, Router);
 
-        _this.name = name;
-        _this.absolute = absolute;
-        _this.ziggy = customZiggy ? customZiggy : Ziggy;
-        _this.template = _this.name ? new js_UrlBuilder(name, absolute, _this.ziggy).construct() : '', _this.urlParams = _this.normalizeParams(params);
-        _this.queryParams = _this.normalizeParams(params);
-        return _this;
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Router).call(this));
+      _this.name = name;
+      _this.absolute = absolute;
+      _this.ziggy = customZiggy ? customZiggy : Ziggy;
+      _this.template = _this.name ? new UrlBuilder(name, absolute, _this.ziggy).construct() : '', _this.urlParams = _this.normalizeParams(params);
+      _this.queryParams = _this.normalizeParams(params);
+      return _this;
     }
 
-    route_createClass(Router, [{
-        key: 'normalizeParams',
-        value: function normalizeParams(params) {
-            if (typeof params === 'undefined') return {};
+    _createClass(Router, [{
+      key: "normalizeParams",
+      value: function normalizeParams(params) {
+        if (typeof params === 'undefined') return {}; // If you passed in a string or integer, wrap it in an array
 
-            // If you passed in a string or integer, wrap it in an array
-            params = (typeof params === 'undefined' ? 'undefined' : _typeof(params)) !== 'object' ? [params] : params;
+        params = _typeof(params) !== 'object' ? [params] : params; // If the tags object contains an ID and there isn't an ID param in the
+        // url template, they probably passed in a single model object and we should
+        // wrap this in an array. This could be slightly dangerous and I want to find
+        // a better solution for this rare case.
 
-            // If the tags object contains an ID and there isn't an ID param in the
-            // url template, they probably passed in a single model object and we should
-            // wrap this in an array. This could be slightly dangerous and I want to find
-            // a better solution for this rare case.
+        if (params.hasOwnProperty('id') && this.template.indexOf('{id}') == -1) {
+          params = [params.id];
+        }
 
-            if (params.hasOwnProperty('id') && this.template.indexOf('{id}') == -1) {
-                params = [params.id];
+        this.numericParamIndices = Array.isArray(params);
+        return _extends({}, params);
+      }
+    }, {
+      key: "with",
+      value: function _with(params) {
+        this.urlParams = this.normalizeParams(params);
+        return this;
+      }
+    }, {
+      key: "withQuery",
+      value: function withQuery(params) {
+        _extends(this.queryParams, params);
+
+        return this;
+      }
+    }, {
+      key: "hydrateUrl",
+      value: function hydrateUrl() {
+        var _this2 = this;
+
+        var tags = this.urlParams,
+            paramsArrayKey = 0,
+            params = this.template.match(/{([^}]+)}/gi),
+            needDefaultParams = false;
+
+        if (params && params.length != Object.keys(tags).length) {
+          needDefaultParams = true;
+        }
+
+        return this.template.replace(/{([^}]+)}/gi, function (tag, i) {
+          var keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
+              key = _this2.numericParamIndices ? paramsArrayKey : keyName,
+              defaultParameter = _this2.ziggy.defaultParameters[keyName];
+
+          if (defaultParameter && needDefaultParams) {
+            if (_this2.numericParamIndices) {
+              tags = Object.values(tags);
+              tags.splice(key, 0, defaultParameter);
+            } else {
+              tags[key] = defaultParameter;
             }
+          }
 
-            this.numericParamIndices = Array.isArray(params);
-            return _extends({}, params);
-        }
+          paramsArrayKey++;
+
+          if (typeof tags[key] !== 'undefined') {
+            delete _this2.queryParams[key];
+            return tags[key].id || encodeURIComponent(tags[key]);
+          }
+
+          if (tag.indexOf('?') === -1) {
+            throw new Error("Ziggy Error: '".concat(keyName, "' key is required for route '").concat(_this2.name, "'"));
+          } else {
+            return '';
+          }
+        });
+      }
     }, {
-        key: 'with',
-        value: function _with(params) {
-            this.urlParams = this.normalizeParams(params);
-            return this;
-        }
+      key: "matchUrl",
+      value: function matchUrl() {
+        var tags = this.urlParams;
+        var windowUrl = window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
+        var searchTemplate = this.template.replace(/(\{[^\}]*\})/gi, '[^\/\?]+').split('://')[1];
+        var urlWithTrailingSlash = windowUrl.replace(/\/?$/, '/');
+        return new RegExp("^" + searchTemplate + "\/$").test(urlWithTrailingSlash);
+      }
     }, {
-        key: 'withQuery',
-        value: function withQuery(params) {
-            _extends(this.queryParams, params);
-            return this;
-        }
+      key: "constructQuery",
+      value: function constructQuery() {
+        if (Object.keys(this.queryParams).length === 0) return '';
+        var queryString = '?';
+        Object.keys(this.queryParams).forEach(function (key, i) {
+          if (this.queryParams[key] !== undefined && this.queryParams[key] !== null) {
+            queryString = i === 0 ? queryString : queryString + '&';
+            queryString += key + '=' + encodeURIComponent(this.queryParams[key]);
+          }
+        }.bind(this));
+        return queryString;
+      }
     }, {
-        key: 'hydrateUrl',
-        value: function hydrateUrl() {
-            var _this2 = this;
+      key: "current",
+      value: function current() {
+        var _this3 = this;
 
-            var tags = this.urlParams,
-                paramsArrayKey = 0,
-                params = this.template.match(/{([^}]+)}/gi),
-                needDefaultParams = false;
+        var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+        var routeNames = Object.keys(this.ziggy.namedRoutes);
+        var currentRoute = routeNames.filter(function (name) {
+          if (_this3.ziggy.namedRoutes[name].methods.indexOf('GET') === -1) {
+            return false;
+          }
 
-            if (params && params.length != Object.keys(tags).length) {
-                needDefaultParams = true;
-            }
+          return new Router(name, undefined, undefined, _this3.ziggy).matchUrl();
+        })[0];
 
-            return this.template.replace(/{([^}]+)}/gi, function (tag, i) {
-                var keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
-                    key = _this2.numericParamIndices ? paramsArrayKey : keyName,
-                    defaultParameter = _this2.ziggy.defaultParameters[keyName];
-
-                if (defaultParameter && needDefaultParams) {
-                    if (_this2.numericParamIndices) {
-                        tags = Object.values(tags);
-                        tags.splice(key, 0, defaultParameter);
-                    } else {
-                        tags[key] = defaultParameter;
-                    }
-                }
-
-                paramsArrayKey++;
-                if (typeof tags[key] !== 'undefined') {
-                    delete _this2.queryParams[key];
-                    return tags[key].id || encodeURIComponent(tags[key]);
-                }
-                if (tag.indexOf('?') === -1) {
-                    throw new Error('Ziggy Error: \'' + keyName + '\' key is required for route \'' + _this2.name + '\'');
-                } else {
-                    return '';
-                }
-            });
+        if (name) {
+          var pattern = new RegExp(name.replace('*', '.*').replace('.', '\.'), 'i');
+          return pattern.test(currentRoute);
         }
+
+        return currentRoute;
+      }
     }, {
-        key: 'matchUrl',
-        value: function matchUrl() {
-            var tags = this.urlParams,
-                paramsArrayKey = 0;
-
-            var windowUrl = window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
-
-            var searchTemplate = this.template.replace(/(\{[^\}]*\})/gi, '[^\/\?]+').split('://')[1];
-            var urlWithTrailingSlash = windowUrl.replace(/\/?$/, '/');
-
-            return new RegExp("^" + searchTemplate + "\/$").test(urlWithTrailingSlash);
-        }
+      key: "parse",
+      value: function parse() {
+        this.return = this.hydrateUrl() + this.constructQuery();
+      }
     }, {
-        key: 'constructQuery',
-        value: function constructQuery() {
-            if (Object.keys(this.queryParams).length === 0) return '';
-
-            var queryString = '?';
-
-            Object.keys(this.queryParams).forEach(function (key, i) {
-                if (this.queryParams[key] !== undefined && this.queryParams[key] !== null) {
-                    queryString = i === 0 ? queryString : queryString + '&';
-                    queryString += key + '=' + encodeURIComponent(this.queryParams[key]);
-                }
-            }.bind(this));
-
-            return queryString;
-        }
+      key: "url",
+      value: function url() {
+        this.parse();
+        return this.return;
+      }
     }, {
-        key: 'current',
-        value: function current() {
-            var _this3 = this;
-
-            var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-            var routeNames = Object.keys(this.ziggy.namedRoutes);
-
-            var currentRoute = routeNames.filter(function (name) {
-                if (_this3.ziggy.namedRoutes[name].methods.indexOf('GET') === -1) {
-                    return false;
-                }
-
-                return new Router(name, undefined, undefined, _this3.ziggy).matchUrl();
-            })[0];
-
-            if (name) {
-                var pattern = new RegExp(name.replace('*', '.*').replace('.', '\.'), 'i');
-                return pattern.test(currentRoute);
-            }
-
-            return currentRoute;
-        }
+      key: "toString",
+      value: function toString() {
+        return this.url();
+      }
     }, {
-        key: 'parse',
-        value: function parse() {
-            this.return = this.hydrateUrl() + this.constructQuery();
-        }
-    }, {
-        key: 'url',
-        value: function url() {
-            this.parse();
-            return this.return;
-        }
-    }, {
-        key: 'toString',
-        value: function toString() {
-            return this.url();
-        }
-    }, {
-        key: 'valueOf',
-        value: function valueOf() {
-            return this.url();
-        }
+      key: "valueOf",
+      value: function valueOf() {
+        return this.url();
+      }
     }]);
 
     return Router;
-}(String);
+  }(_wrapNativeSuper(String));
 
-function route(name, params, absolute, customZiggy) {
-    return new route_Router(name, params, absolute, customZiggy);
-};
+  function route(name, params, absolute, customZiggy) {
+    return new Router(name, params, absolute, customZiggy);
+  }
 
-/***/ })
-/******/ ])["default"];
-});
+  return route;
+
+})));

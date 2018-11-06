@@ -2,7 +2,7 @@
   "name": "ziggy",
   "version": "0.5.0",
   "description": "Generates a Blade directive exporting all of your named Laravel routes. Also provides a nice route() helper function in JavaScript.",
-  "main": "src/js/route.js",
+  "main": "dist/js/route.js",
   "directories": {
     "test": "tests/js"
   },
@@ -15,25 +15,22 @@
   "bugs": {
     "url": "https://github.com/tightenco/ziggy/issues"
   },
-  "homepage": "https://github.com/tightenco/ziggy#readme",
+  "homepage": "https://github.com/tightenco/ziggy",
   "scripts": {
-    "build": "NODE_ENV=production webpack --progress",
-    "build:watch": "npm run build -- --watch",
-    "test": "NODE_ENV=test mocha-webpack 'tests/js/**/*.js'",
-    "test:watch": "npm run test -- --watch"
+    "build": "rollup -c",
+    "build:watch": "rollup -c -w",
+    "test": "npm run build && mocha 'tests/js/**/*.js'"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-transform-object-assign": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
     "axios": "^0.18.0",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-plugin-transform-object-assign": "^6.22.0",
-    "babel-preset-env": "^1.7.0",
     "mocha": "^5.2.0",
-    "mocha-webpack": "^2.0.0-beta.0",
     "moxios": "^0.4.0",
-    "unminified-webpack-plugin": "^2.0.0",
-    "webpack": "^4.16.5",
-    "webpack-command": "^0.4.1"
+    "rollup": "^0.67.0",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-uglify": "^6.0.0"
   },
   "dependencies": {},
   "engines": {

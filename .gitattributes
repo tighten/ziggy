@@ -12,4 +12,4 @@ CONTRIBUTING.md export-ignore
 package.json export-ignore
 package-lock.json export-ignore
 phpunit.xml.dist export-ignore
-webpack.config.js export-ignore
+rollup.config.js export-ignore
