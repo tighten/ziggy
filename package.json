@@ -22,14 +22,11 @@
     "test": "npm run build && mocha 'tests/js/**/*.js'"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/plugin-transform-object-assign": "^7.0.0",
-    "@babel/preset-env": "^7.1.0",
     "axios": "^0.18.0",
     "mocha": "^5.2.0",
     "moxios": "^0.4.0",
     "rollup": "^0.67.0",
-    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-buble": "^0.19.4",
     "rollup-plugin-uglify": "^6.0.0"
   },
   "dependencies": {},

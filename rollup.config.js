@@ -1,4 +1,4 @@
-import babel from 'rollup-plugin-babel';
+import buble from 'rollup-plugin-buble';
 import {uglify} from "rollup-plugin-uglify";
 
 export default [
@@ -13,8 +13,9 @@ export default [
             sourcemap: false,
         },
         plugins: [
-            babel({
-                exclude: ['node_modules/**']
+            buble({
+                exclude: ['node_modules/**'],
+                objectAssign: 'Object.assign',
             }),
         ]
     },
@@ -29,8 +30,9 @@ export default [
             sourcemap: false,
         },
         plugins: [
-            babel({
-                exclude: ['node_modules/**']
+            buble({
+                exclude: ['node_modules/**'],
+                objectAssign: 'Object.assign',
             }),
             uglify({
                 sourcemap: false
