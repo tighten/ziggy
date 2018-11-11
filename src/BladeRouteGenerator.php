@@ -54,7 +54,7 @@ EOT;
     private function getRouteFilePath()
     {
         $isMin = app()->isLocal() ? '' : '.min';
-        return __DIR__ . "/../dist/js/route{$isMin}.js";
+        return __DIR__ . "/../dist/js/route{$isMin}.umd.js";
     }
 
     private function getRouteFunction()

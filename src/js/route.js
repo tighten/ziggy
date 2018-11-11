@@ -1,5 +1,12 @@
 import UrlBuilder from './UrlBuilder';
 
+let extend = Object.assign || function(target, source) {
+    for (let key in source) {
+        target[key] = source[key];
+    }
+    return target;
+};
+
 class Router extends String {
     constructor(name, params, absolute, customZiggy=null) {
         super();
@@ -13,7 +20,7 @@ class Router extends String {
     }
 
     normalizeParams(params) {
-	if (typeof params === 'undefined')
+        if (typeof params === 'undefined')
             return {};
 
         // If you passed in a string or integer, wrap it in an array
@@ -29,7 +36,7 @@ class Router extends String {
         }
 
         this.numericParamIndices = Array.isArray(params);
-        return Object.assign({}, params);
+        return extend({}, params);
     }
 
     with(params) {
@@ -38,7 +45,7 @@ class Router extends String {
     }
 
     withQuery(params) {
-        Object.assign(this.queryParams, params);
+        extend(this.queryParams, params);
         return this;
     }
 
@@ -55,13 +62,13 @@ class Router extends String {
         return this.template.replace(
             /{([^}]+)}/gi,
             (tag, i) => {
-		 let keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
+                let keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
                     key = this.numericParamIndices ? paramsArrayKey : keyName,
                     defaultParameter = this.ziggy.defaultParameters[keyName];
 
                 if (defaultParameter && needDefaultParams) {
                     if (this.numericParamIndices) {
-                        tags = Object.values(tags)
+                        tags = Object.keys(tags).map(x => tags[x])
                         tags.splice(key, 0, defaultParameter)
                     } else {
                         tags[key] = defaultParameter
@@ -83,9 +90,6 @@ class Router extends String {
     }
 
     matchUrl() {
-        let tags = this.urlParams,
-            paramsArrayKey = 0;
-
         let windowUrl = window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
 
         let searchTemplate = this.template.replace(/(\{[^\}]*\})/gi, '[^\/\?]+').split('://')[1];

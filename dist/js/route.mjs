@@ -25,6 +25,7 @@ UrlBuilder.prototype.construct = function construct () {
     return this.domain + this.path;
 };
 
+
 var extend = Object.assign || function (target, source) {
     for (var key in source) {
         target[key] = source[key];
@@ -144,4 +145,5 @@ function route(name, params, absolute, customZiggy) {
     return new Router(name, params, absolute, customZiggy);
 }
 
-module.exports = route;
+
+export default route;

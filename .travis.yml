@@ -3,7 +3,7 @@ php:
   - '7.1'
 git:
   depth: 10
-install: 
+install:
   - composer install --no-interaction --no-suggest
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
@@ -11,7 +11,6 @@ install:
   - npm ci
 script:
   - phpunit
-  - npm run build
   - npm test
 cache:
   directories:
