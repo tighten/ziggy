@@ -62,7 +62,7 @@ class Router extends String {
         return this.template.replace(
             /{([^}]+)}/gi,
             (tag, i) => {
-                let keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
+                let keyName = this.trimParam(tag),
                     key = this.numericParamIndices ? paramsArrayKey : keyName,
                     defaultParameter = this.ziggy.defaultParameters[keyName];
 
@@ -125,7 +125,32 @@ class Router extends String {
             return new Router(name, undefined, undefined, this.ziggy).matchUrl();
         })[0];
 
-        return name ? (name == currentRoute) : currentRoute;
+        if (name) {
+            const pattern = new RegExp(name.replace('*', '.*').replace('.', '\.'), 'i');
+            return pattern.test(currentRoute);
+        }
+
+        return currentRoute;
+    }
+
+    extractParams(uri, template, delimiter) {
+        const uriParts = uri.split(delimiter);
+        const templateParts = template.split(delimiter);
+
+        return templateParts.reduce((params, param, i) => (
+            param.indexOf('{') === 0 && param.indexOf('}') !== -1 && uriParts[i]
+                ? extend(params, { [this.trimParam(param)]: uriParts[i] })
+                : params
+        ), {});
+    }
+
+    get params() {
+        const namedRoute = this.ziggy.namedRoutes[this.current()];
+
+        return extend(
+            this.extractParams(window.location.hostname, namedRoute.domain || '', '.'),
+            this.extractParams(window.location.pathname.slice(1), namedRoute.uri, '/'),
+        );
     }
 
     parse() {
@@ -139,6 +164,10 @@ class Router extends String {
 
     toString() {
         return this.url();
+    }
+
+    trimParam(param) {
+        return param.replace(/{|}|\?/g, '');
     }
 
     valueOf() {

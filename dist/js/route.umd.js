@@ -52,6 +52,8 @@
         if ( String ) Router.__proto__ = String;
         Router.prototype = Object.create( String && String.prototype );
         Router.prototype.constructor = Router;
+
+        var prototypeAccessors = { params: { configurable: true } };
         Router.prototype.normalizeParams = function normalizeParams (params) {
             if (typeof params === 'undefined') 
                 { return {}; }
@@ -78,7 +80,7 @@
                 needDefaultParams = true;
             }
             return this.template.replace(/{([^}]+)}/gi, function (tag, i) {
-                var keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''), key = this$1.numericParamIndices ? paramsArrayKey : keyName, defaultParameter = this$1.ziggy.defaultParameters[keyName];
+                var keyName = this$1.trimParam(tag), key = this$1.numericParamIndices ? paramsArrayKey : keyName, defaultParameter = this$1.ziggy.defaultParameters[keyName];
                 if (defaultParameter && needDefaultParams) {
                     if (this$1.numericParamIndices) {
                         tags = Object.keys(tags).map(function (x) { return tags[x]; });
@@ -128,7 +130,26 @@
                 }
                 return new Router(name, undefined, undefined, this$1.ziggy).matchUrl();
             })[0];
-            return name ? name == currentRoute : currentRoute;
+            if (name) {
+                var pattern = new RegExp(name.replace('*', '.*').replace('.', '\.'), 'i');
+                return pattern.test(currentRoute);
+            }
+            return currentRoute;
+        };
+        Router.prototype.extractParams = function extractParams (uri, template, delimiter) {
+            var this$1 = this;
+
+            var uriParts = uri.split(delimiter);
+            var templateParts = template.split(delimiter);
+            return templateParts.reduce(function (params, param, i) {
+                var obj;
+
+                return param.indexOf('{') === 0 && param.indexOf('}') !== -1 && uriParts[i] ? extend(params, ( obj = {}, obj[this$1.trimParam(param)] = uriParts[i], obj )) : params;
+            }, {});
+        };
+        prototypeAccessors.params.get = function () {
+            var namedRoute = this.ziggy.namedRoutes[this.current()];
+            return extend(this.extractParams(window.location.hostname, namedRoute.domain || '', '.'), this.extractParams(window.location.pathname.slice(1), namedRoute.uri, '/'));
         };
         Router.prototype.parse = function parse () {
             this.return = this.hydrateUrl() + this.constructQuery();
@@ -140,9 +161,14 @@
         Router.prototype.toString = function toString () {
             return this.url();
         };
+        Router.prototype.trimParam = function trimParam (param) {
+            return param.replace(/{|}|\?/g, '');
+        };
         Router.prototype.valueOf = function valueOf () {
             return this.url();
         };
+
+        Object.defineProperties( Router.prototype, prototypeAccessors );
 
         return Router;
     }(String));

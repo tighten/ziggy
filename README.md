@@ -157,13 +157,20 @@ To get the name of the current route (based on the browser's `window.location`) 
 
 ```javascript
 route().current()
-// returns "home"
+// returns "events.index"
 ```
 
 To check that we are at a current route, pass the desired route in the only param:
 
 ```javascript
-route().current("home")
+route().current("events.index")
+// returns true
+```
+
+You can even use wildcards:
+
+```javascript
+route().current("events.*")
 // returns true
 ```
 

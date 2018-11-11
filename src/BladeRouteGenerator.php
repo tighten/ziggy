@@ -7,7 +7,7 @@ use function array_key_exists;
 
 class BladeRouteGenerator
 {
-
+    private static $generated;
     private $baseDomain;
     private $basePort;
     private $baseUrl;
@@ -27,13 +27,19 @@ class BladeRouteGenerator
 
     public function generate($group = false)
     {
-        $this->prepareDomain();
-
         $json = $this->getRoutePayload($group)->toJson();
+
+        if (static::$generated) {
+            return $this->generateMergeJavascript($json);
+        }
+
+        $this->prepareDomain();
 
         $routeFunction = $this->getRouteFunction();
 
         $defaultParameters = method_exists(app('url'), 'getDefaultParameters') ? json_encode(app('url')->getDefaultParameters()) : '[]';
+
+        static::$generated = true;
 
         return <<<EOT
 <script type="text/javascript">
@@ -47,6 +53,21 @@ class BladeRouteGenerator
     };
 
     $routeFunction
+</script>
+EOT;
+    }
+
+    private function generateMergeJavascript($json)
+    {
+        return <<<EOT
+<script type="text/javascript">
+    (function() {
+        var routes = $json;
+
+        for (var name in routes) {
+            Ziggy.namedRoutes[name] = routes[name];
+        }
+    })();
 </script>
 EOT;
     }
