@@ -75,7 +75,7 @@ Default values work out of the box for Laravel versions >= 5.5.29,
 for the previous versions you will need to set the default parameters
 by including this code somewhere in the same page as our Blade Directive (@routes)
 ```js
-Ziggy.defautParameters = {
+Ziggy.defaultParameters = {
     //example
     locale: "en"
 }
