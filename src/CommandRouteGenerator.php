@@ -10,7 +10,7 @@ use Tightenco\Ziggy\RoutePayload;
 
 class CommandRouteGenerator extends Command
 {
-    protected $signature = 'ziggy:generate {path=./resources/assets/js/ziggy.js} {--url=/}';
+    protected $signature = 'ziggy:generate {path=./resources/assets/js/ziggy.js} {--url=/} {--only-routes}';
 
     protected $description = 'Generate js file for including in build process';
 
@@ -41,9 +41,13 @@ class CommandRouteGenerator extends Command
 
     public function generate($group = false)
     {
-        $this->prepareDomain();
-
         $json = $this->getRoutePayload($group)->toJson();
+        
+        if ($this->option('only-routes')) {
+            return 'export default ' . $json;
+        }
+        
+        $this->prepareDomain();
 
         $defaultParameters = method_exists(app('url'), 'getDefaultParameters') ? json_encode(app('url')->getDefaultParameters()) : '[]';
 
