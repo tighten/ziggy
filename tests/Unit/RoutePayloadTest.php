@@ -33,10 +33,10 @@ class RoutePayloadTest extends TestCase
                ->name('postComments.index');
 
         $this->router->post('/posts', function () { return ''; })
-               ->name('posts.store');
+               ->name('posts.store')->middleware(['auth', 'role:admin']);
 
        $this->router->get('/admin/users', function () { return ''; })
-              ->name('admin.users.index');
+              ->name('admin.users.index')->middleware('role:admin');
 
         $this->router->getRoutes()->refreshNameLookups();
     }
@@ -265,6 +265,108 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'admin/users',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+            ],
+        ];
+
+        $this->assertEquals($expected, $routes->toArray());
+    }
+    
+    /** @test */
+    public function retrieves_middleware_if_config_is_set()
+    {
+        app()['config']->set('ziggy', [
+            'middleware' => true
+        ]);
+        
+        $routes = RoutePayload::compile($this->router);
+
+        $expected = [
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+                'domain' => null,
+                'middleware' => ['auth', 'role:admin'],
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => ['role:admin'],
+            ],
+        ];
+
+        $this->assertEquals($expected, $routes->toArray());
+    }
+    
+    /** @test */
+    public function retrieves_only_configured_middleware()
+    {
+        app()['config']->set('ziggy', [
+            'middleware' => ['auth']
+        ]);
+
+        $routes = RoutePayload::compile($this->router);
+
+        $expected = [
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+                'domain' => null,
+                'middleware' => ['auth'],
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
             ],
         ];
 

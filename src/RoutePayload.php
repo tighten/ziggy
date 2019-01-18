@@ -91,8 +91,18 @@ class RoutePayload
                     $this->appendRouteToList($route->getName(), 'whitelist');
                 }
 
-                return collect($route)->only(['uri', 'methods'])
+                $collection = collect($route)->only(['uri', 'methods'])
                     ->put('domain', $route->domain());
+                
+                if ($middleware = config('ziggy.middleware')) {
+                    if ($middleware === true) {
+                        $collection->put('middleware', $route->middleware());
+                    } elseif (is_array($middleware)) {
+                        $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values());
+                    }
+                }
+                
+                return $collection;
             });
     }
 
