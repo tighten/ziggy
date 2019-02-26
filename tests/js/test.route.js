@@ -75,11 +75,6 @@ global.Ziggy = {
             "uri": "optional/{id}/{slug?}",
             "methods": ["GET","HEAD"],
             "domain": null
-        },
-        "another-optional": {
-            "uri": "optional/{slug?}",
-            "methods": ["GET","HEAD"],
-            "domain": null
         }
     },
     baseUrl: 'http://myapp.dev/',
