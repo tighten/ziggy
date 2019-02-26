@@ -87,6 +87,7 @@ class Router extends String {
 
         // Strip out optional parameters
         let optionalTemplate = this.template.replace(/(\/\{[^\}]*\?\})/g, '/')
+            .replace(/(\{[^\}]*\})/gi, '[^\/\?]+')
             .replace(/\/?$/, '')
             .split('://')[1];
 
