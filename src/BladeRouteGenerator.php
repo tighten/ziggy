@@ -41,20 +41,15 @@ class BladeRouteGenerator
 
         static::$generated = true;
 
-        return <<<EOT
-<script type="text/javascript">
-    var Ziggy = {
-        namedRoutes: $json,
-        baseUrl: '{$this->baseUrl}',
-        baseProtocol: '{$this->baseProtocol}',
-        baseDomain: '{$this->baseDomain}',
-        basePort: {$this->basePort},
-        defaultParameters: $defaultParameters
-    };
-
-    $routeFunction
-</script>
-EOT;
+        return view('ziggy::javascript', [
+            'namedRoutes' => $json,
+            'baseUrl' => $this->baseUrl,
+            'baseProtocol' => $this->baseProtocol,
+            'baseDomain' => $this->baseDomain,
+            'basePort' => $this->basePort,
+            'defaultParameters' => $defaultParameters,
+            'routeFunction' => $routeFunction,
+        ])->render();
     }
 
     private function generateMergeJavascript($json)

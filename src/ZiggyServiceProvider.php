@@ -27,5 +27,7 @@ class ZiggyServiceProvider extends ServiceProvider
                 CommandRouteGenerator::class,
             ]);
         }
+
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'ziggy');
     }
 }
