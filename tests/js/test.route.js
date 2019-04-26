@@ -545,6 +545,62 @@ describe('route()', function() {
         global.Ziggy.basePort = orgBasePort;
     });
 
+    it('Should return correct route name for current() when a route has does not have optional parameters.', function() {
+        let orgBaseUrl = Ziggy.baseUrl;
+        let orgBaseDomain = Ziggy.baseDomain;
+        let orgBasePort = Ziggy.basePort;
+
+        global.Ziggy.baseUrl = 'http://myapp.dev:81/';
+        global.Ziggy.baseDomain = 'myapp.dev';
+        global.Ziggy.basePort = 81;
+
+        global.window = {
+            location: {
+                hostname: "myapp.dev",
+                pathname: "/optional/1",
+                port: "81",
+                protocol: "http:"
+            }
+        };
+
+        assert.equal(
+            true,
+            route().current('optional')
+        );
+
+        global.Ziggy.baseUrl = orgBaseUrl;
+        global.Ziggy.baseDomain = orgBaseDomain;
+        global.Ziggy.basePort = orgBasePort;
+    });
+
+    it('Should return correct route name for current() when a route has optional parameters.', function() {
+        let orgBaseUrl = Ziggy.baseUrl;
+        let orgBaseDomain = Ziggy.baseDomain;
+        let orgBasePort = Ziggy.basePort;
+
+        global.Ziggy.baseUrl = 'http://myapp.dev:81/';
+        global.Ziggy.baseDomain = 'myapp.dev';
+        global.Ziggy.basePort = 81;
+
+        global.window = {
+            location: {
+                hostname: "myapp.dev",
+                pathname: "/optional/1/2",
+                port: "81",
+                protocol: "http:"
+            }
+        };
+
+        assert.equal(
+            true,
+            route().current('optional')
+        );
+
+        global.Ziggy.baseUrl = orgBaseUrl;
+        global.Ziggy.baseDomain = orgBaseDomain;
+        global.Ziggy.basePort = orgBasePort;
+    });
+
     it('Should return correct route name for current() when a route responds to multiple request methods.', function() {
         let orgBaseUrl = Ziggy.baseUrl;
         let orgBaseDomain = Ziggy.baseDomain;
