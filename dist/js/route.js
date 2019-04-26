@@ -157,6 +157,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var route_createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function route_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -230,7 +232,7 @@ var route_Router = function (_String) {
             }
 
             return this.template.replace(/{([^}]+)}/gi, function (tag, i) {
-                var keyName = tag.replace(/\{|\}/gi, '').replace(/\?$/, ''),
+                var keyName = _this2.trimParam(tag),
                     key = _this2.numericParamIndices ? paramsArrayKey : keyName,
                     defaultParameter = _this2.ziggy.defaultParameters[keyName];
 
@@ -258,15 +260,18 @@ var route_Router = function (_String) {
     }, {
         key: 'matchUrl',
         value: function matchUrl() {
-            var tags = this.urlParams,
-                paramsArrayKey = 0;
-
             var windowUrl = window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
+
+            // Strip out optional parameters
+            var optionalTemplate = this.template.replace(/(\/\{[^\}]*\?\})/g, '/').replace(/(\{[^\}]*\})/gi, '[^\/\?]+').replace(/\/?$/, '').split('://')[1];
 
             var searchTemplate = this.template.replace(/(\{[^\}]*\})/gi, '[^\/\?]+').split('://')[1];
             var urlWithTrailingSlash = windowUrl.replace(/\/?$/, '/');
 
-            return new RegExp("^" + searchTemplate + "\/$").test(urlWithTrailingSlash);
+            var regularSearch = new RegExp("^" + searchTemplate + "\/$").test(urlWithTrailingSlash);
+            var optionalSearch = new RegExp("^" + optionalTemplate + "\/$").test(urlWithTrailingSlash);
+
+            return regularSearch || optionalSearch;
         }
     }, {
         key: 'constructQuery',
@@ -309,6 +314,18 @@ var route_Router = function (_String) {
             return currentRoute;
         }
     }, {
+        key: 'extractParams',
+        value: function extractParams(uri, template, delimiter) {
+            var _this4 = this;
+
+            var uriParts = uri.split(delimiter);
+            var templateParts = template.split(delimiter);
+
+            return templateParts.reduce(function (params, param, i) {
+                return param.indexOf('{') === 0 && param.indexOf('}') !== -1 && uriParts[i] ? _extends(params, _defineProperty({}, _this4.trimParam(param), uriParts[i])) : params;
+            }, {});
+        }
+    }, {
         key: 'parse',
         value: function parse() {
             this.return = this.hydrateUrl() + this.constructQuery();
@@ -325,9 +342,21 @@ var route_Router = function (_String) {
             return this.url();
         }
     }, {
+        key: 'trimParam',
+        value: function trimParam(param) {
+            return param.replace(/{|}|\?/g, '');
+        }
+    }, {
         key: 'valueOf',
         value: function valueOf() {
             return this.url();
+        }
+    }, {
+        key: 'params',
+        get: function get() {
+            var namedRoute = this.ziggy.namedRoutes[this.current()];
+
+            return _extends(this.extractParams(window.location.hostname, namedRoute.domain || '', '.'), this.extractParams(window.location.pathname.slice(1), namedRoute.uri, '/'));
         }
     }]);
 
