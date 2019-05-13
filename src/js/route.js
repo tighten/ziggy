@@ -69,7 +69,7 @@ class Router extends String {
                 }
 
                 paramsArrayKey++;
-                if (typeof tags[key] !== 'undefined') {
+                if (tags[key] && typeof tags[key] !== 'undefined') {
                     delete this.queryParams[key];
                     return tags[key].id || encodeURIComponent(tags[key]);
                 }
