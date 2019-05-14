@@ -540,6 +540,21 @@ describe('route()', function() {
             route().current("*.users.show")
         );
 
+        assert.equal(
+            false,
+            route().current("events")
+        );
+
+        assert.equal(
+            true,
+            route().current("events.*")
+        );
+
+        assert.equal(
+            false,
+            route().current("show")
+        );
+
         global.Ziggy.baseUrl = orgBaseUrl;
         global.Ziggy.baseDomain = orgBaseDomain;
         global.Ziggy.basePort = orgBasePort;

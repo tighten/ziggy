@@ -128,7 +128,7 @@ class Router extends String {
         })[0];
 
         if (name) {
-            const pattern = new RegExp(name.replace('*', '.*').replace('.', '\.'), 'i');
+            const pattern = new RegExp('^' + name.replace('*', '.*').replace('.', '\.') + '$', 'i');
             return pattern.test(currentRoute);
         }
 
