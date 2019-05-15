@@ -15,7 +15,7 @@ class RoutePayloadTest extends TestCase
 {
     protected $router;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
