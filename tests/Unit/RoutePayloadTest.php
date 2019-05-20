@@ -15,7 +15,7 @@ class RoutePayloadTest extends TestCase
 {
     protected $router;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
@@ -270,14 +270,14 @@ class RoutePayloadTest extends TestCase
 
         $this->assertEquals($expected, $routes->toArray());
     }
-    
+
     /** @test */
     public function retrieves_middleware_if_config_is_set()
     {
         app()['config']->set('ziggy', [
             'middleware' => true
         ]);
-        
+
         $routes = RoutePayload::compile($this->router);
 
         $expected = [
@@ -321,7 +321,7 @@ class RoutePayloadTest extends TestCase
 
         $this->assertEquals($expected, $routes->toArray());
     }
-    
+
     /** @test */
     public function retrieves_only_configured_middleware()
     {
