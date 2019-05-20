@@ -88,7 +88,8 @@ EOT;
 
     private function prepareDomain()
     {
-        $url = url('/');
+        $url = config('ziggy.base_url', null) ?? url('/');
+        dump([ $url ]);
         $parsedUrl = parse_url($url);
 
         $this->baseUrl = $url . '/';

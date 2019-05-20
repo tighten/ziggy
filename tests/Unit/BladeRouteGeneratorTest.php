@@ -97,4 +97,25 @@ class BladeRouteGeneratorTest extends TestCase
         $this->assertArrayHasKey('posts.store', $array);
         $this->assertArrayHasKey('postComments.index', $array);
     }
+
+    /** @test */
+    function generator_uses_provided_config_for_baseurl()
+    {
+        config([ 'ziggy.base_url' => '/new-base' ]);
+
+        $router = app('router');
+
+        // Named. Should end up in JSON
+        $router->get('/posts', function () { return ''; })
+            ->name('posts.index');
+        $router->get('/' . config('ziggy.base_url') . '/posts', function () { return ''; })
+            ->name('base.posts.index');
+
+        $router->getRoutes()->refreshNameLookups();
+
+        $generator = (new BladeRouteGenerator($router));
+
+        $result = $generator->generate();
+        $this->assertRegexp("|'/new-base/'|", $result);
+    }
 }
