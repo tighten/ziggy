@@ -116,6 +116,6 @@ class BladeRouteGeneratorTest extends TestCase
         $generator = (new BladeRouteGenerator($router));
 
         $result = $generator->generate();
-        $this->assertRegexp("|'/new-base/'|", $result);
+        $this->assertRegexp('"new-base\\/', $result);
     }
 }
