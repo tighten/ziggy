@@ -10,7 +10,7 @@ install:
   - nvm use stable
   - npm ci
 script:
-  - phpunit
+  - vendor/bin/phpunit
   - npm run build
   - npm test
 cache:
