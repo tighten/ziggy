@@ -17,7 +17,7 @@ class BladeRouteGeneratorTest extends TestCase
     {
         $generator = app(BladeRouteGenerator::class);
 
-        $this->assertStringContainsString("namedRoutes: []", $generator->generate());
+        $this->assertContains("namedRoutes: []", $generator->generate());
     }
 
     /** @test */
@@ -116,6 +116,6 @@ class BladeRouteGeneratorTest extends TestCase
         $generator = (new BladeRouteGenerator($router));
 
         $result = $generator->generate();
-        $this->assertStringContainsString('"base.posts.index":{"uri":"new-base', $generator->generate());
+        $this->assertRegexp('"new-base\\/', $result);
     }
 }
