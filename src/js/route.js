@@ -109,7 +109,15 @@ class Router extends String {
         Object.keys(this.queryParams).forEach(function(key, i) {
             if (this.queryParams[key] !== undefined && this.queryParams[key] !== null) {
                 queryString = i === 0 ? queryString : queryString + '&';
-                queryString += key + '=' + encodeURIComponent(this.queryParams[key]);
+
+                if (Array.isArray(this.queryParams[key])) {
+                    this.queryParams[key].forEach(function (e, i) {
+                        queryString = i === 0 ? queryString : queryString + '&';
+                        queryString += encodeURIComponent(key + '[]') + '=' + encodeURIComponent(e);
+                    });
+                } else {
+                    queryString += key + '=' + encodeURIComponent(this.queryParams[key]);
+                }
             }
         }.bind(this));
 

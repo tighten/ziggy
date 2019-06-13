@@ -433,6 +433,13 @@ describe('route()', function() {
         )
     });
 
+    it('Should accept queryString params as as array in param object', function () {
+        assert.equal(
+            'http://myapp.dev/?' + encodeURIComponent('ids[]') + '=1&' + encodeURIComponent('ids[]') + '=2',
+            route('home', { ids: [ 1, 2, ] }).url()
+        )
+    });
+
     it('Should accept queryString params as keyed values in withQuery object', function() {
         assert.equal(
             'http://myapp.dev/events/1/venues/2?search=rogers&page=2',
