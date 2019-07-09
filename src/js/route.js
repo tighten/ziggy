@@ -13,7 +13,7 @@ class Router extends String {
     }
 
     normalizeParams(params) {
-	if (typeof params === 'undefined')
+        if (typeof params === 'undefined')
             return {};
 
         // If you passed in a string or integer, wrap it in an array
@@ -55,7 +55,7 @@ class Router extends String {
         return this.template.replace(
             /{([^}]+)}/gi,
             (tag, i) => {
-		 let keyName = this.trimParam(tag),
+                let keyName = this.trimParam(tag),
                     key = this.numericParamIndices ? paramsArrayKey : keyName,
                     defaultParameter = this.ziggy.defaultParameters[keyName];
 
