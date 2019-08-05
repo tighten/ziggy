@@ -2,7 +2,6 @@
 .vscode/
 vendor/
 composer.lock
-package-lock.json
 yarn.lock
 phpunit.xml
 node_modules/
