@@ -90,14 +90,14 @@ describe('route()', function() {
     it('Should return URL when run without params on a route without params', function() {
         assert.equal(
             "http://myapp.dev/posts",
-            route('posts.index')
+            route('posts.index').url()
         );
     });
 
     it('Should return URL when run without params on a route without params , with default params', function() {
         assert.equal(
             "http://myapp.dev/en/posts",
-            route('translatePosts.index')
+            route('translatePosts.index').url()
         );
     });
 
@@ -119,7 +119,7 @@ describe('route()', function() {
     it('Should return URL without domain when passing false into absolute param.', function() {
         assert.equal(
             "/posts",
-            route('posts.index', [], false)
+            route('posts.index', [], false).url()
         );
     });
 
@@ -127,14 +127,14 @@ describe('route()', function() {
     it('Should return URL without domain when passing false into absolute param , with default params.', function() {
         assert.equal(
             "/en/posts",
-            route('translatePosts.index', [], false)
+            route('translatePosts.index', [], false).url()
         );
     });
 
     it('Should return missing params error when run with missing params on a route with required params', function() {
         assert.throws(
             function() {
-                route('posts.show').toString()
+                route('posts.show').toString().url()
             },
                 /'post' key is required/
         );
@@ -145,7 +145,7 @@ describe('route()', function() {
         global.Ziggy.defaultParameters = []
         assert.throws(
             function() {
-                route('translatePosts.index').toString()
+                route('translatePosts.index').toString().url()
             },
                 /'locale' key is required/
         );
@@ -155,7 +155,7 @@ describe('route()', function() {
     it('Should return missing params error when run with missing params on a route with required params and default params', function() {
         assert.throws(
             function() {
-                route('translatePosts.show').toString()
+                route('translatePosts.show').toString().url()
             },
                 /'id' key is required/
         );
@@ -164,117 +164,117 @@ describe('route()', function() {
     it('Should return URL when run with single non-array/object param on a route with required params', function() {
         assert.equal(
             "http://myapp.dev/posts/1",
-            route('posts.show', 1)
+            route('posts.show', 1).url()
         );
         assert.equal(
             "http://myapp.dev/posts/1",
-            route('posts.show').with(1)
+            route('posts.show').with(1).url()
         );
     });
 
     it('Should return URL when run with single non-array/object param on a route with required params and default params', function() {
         assert.equal(
             "http://myapp.dev/en/posts/1",
-            route('translatePosts.show', 1)
+            route('translatePosts.show', 1).url()
         );
         assert.equal(
             "http://myapp.dev/en/posts/1",
-            route('translatePosts.show').with(1)
+            route('translatePosts.show').with(1).url()
         );
     });
 
     it('Should return URL when run with single object param on a route with required params', function() {
         assert.equal(
             "http://myapp.dev/posts/1",
-            route('posts.show', { id: 1 })
+            route('posts.show', { id: 1 }).url()
         );
         assert.equal(
             "http://myapp.dev/posts/1",
-            route('posts.show').with({ id: 1 })
+            route('posts.show').with({ id: 1 }).url()
         );
     });
 
     it('Should return URL when run with multiple object params on a route with required params', () => {
 	assert.equal(
             'http://myapp.dev/events/1/venues/2',
-            route('events.venues.show', [{id: 1, title: 'Event'}, {id: 2, title: 'Venue'}])
+            route('events.venues.show', [{id: 1, title: 'Event'}, {id: 2, title: 'Venue'}]).url()
 	);
     });
 
     it('Should return URL when run with single object param on a route with required params and default params', function() {
         assert.equal(
             "http://myapp.dev/en/posts/1",
-            route('translatePosts.show', { id: 1 })
+            route('translatePosts.show', { id: 1 }).url()
         );
         assert.equal(
             "http://myapp.dev/en/posts/1",
-            route('translatePosts.show').with({ id: 1 })
+            route('translatePosts.show').with({ id: 1 }).url()
         );
     });
 
     it('Should return URL when run with single array param on a route with required params', function() {
         assert.equal(
             "http://myapp.dev/posts/1",
-            route('posts.show', [1])
+            route('posts.show', [1]).url()
         );
         assert.equal(
             "http://myapp.dev/posts/1",
-            route('posts.show').with([1])
+            route('posts.show').with([1]).url()
         );
     });
 
     it('Should return URL when run with single array param on a route with required params and default params', function() {
         assert.equal(
             "http://myapp.dev/en/posts/1",
-            route('translatePosts.show', [1])
+            route('translatePosts.show', [1]).url()
         );
         assert.equal(
             "http://myapp.dev/en/posts/1",
-            route('translatePosts.show').with([1])
+            route('translatePosts.show').with([1]).url()
         );
     });
 
     it('Should return URL when run with multiple object params on a route with required params', function() {
         assert.equal(
             "http://myapp.dev/events/1/venues/2",
-            route('events.venues.show', { event: 1, venue: 2 })
+            route('events.venues.show', { event: 1, venue: 2 }).url()
         );
         assert.equal(
             "http://myapp.dev/events/1/venues/2",
-            route('events.venues.show').with({ event: 1, venue: 2 })
+            route('events.venues.show').with({ event: 1, venue: 2 }).url()
         );
     });
 
     it('Should return URL when run with multiple object params on a route with required params and default params', function() {
         assert.equal(
             "http://myapp.dev/en/events/1/venues/2",
-            route('translateEvents.venues.show', { event: 1, venue: 2 })
+            route('translateEvents.venues.show', { event: 1, venue: 2 }).url()
         );
         assert.equal(
             "http://myapp.dev/en/events/1/venues/2",
-            route('translateEvents.venues.show').with({ event: 1, venue: 2 })
+            route('translateEvents.venues.show').with({ event: 1, venue: 2 }).url()
         );
     });
 
     it('Should return URL when run with multiple array params on a route with required params', function() {
         assert.equal(
             "http://myapp.dev/events/1/venues/2",
-            route('events.venues.show', [1, 2])
+            route('events.venues.show', [1, 2]).url()
         );
         assert.equal(
             "http://myapp.dev/events/1/venues/2",
-            route('events.venues.show').with([1, 2])
+            route('events.venues.show').with([1, 2]).url()
         );
     });
 
     it('Should return URL when run with multiple array params on a route with required params and default params', function() {
         assert.equal(
             "http://myapp.dev/en/events/1/venues/2",
-            route('translateEvents.venues.show', [1, 2])
+            route('translateEvents.venues.show', [1, 2]).url()
         );
         assert.equal(
             "http://myapp.dev/en/events/1/venues/2",
-            route('translateEvents.venues.show').with([1, 2])
+            route('translateEvents.venues.show').with([1, 2]).url()
         );
     });
 
@@ -284,11 +284,11 @@ describe('route()', function() {
 
         assert.equal(
             "http://myapp.dev/events/1/venues/2",
-            route('events.venues.show', [event, venue])
+            route('events.venues.show', [event, venue]).url()
         );
         assert.equal(
             "http://myapp.dev/events/1/venues/2",
-            route('events.venues.show').with([event, venue])
+            route('events.venues.show').with([event, venue]).url()
         );
     });
 
@@ -298,11 +298,11 @@ describe('route()', function() {
 
         assert.equal(
             "http://myapp.dev/en/events/1/venues/2",
-            route('translateEvents.venues.show', [event, venue])
+            route('translateEvents.venues.show', [event, venue]).url()
         );
         assert.equal(
             "http://myapp.dev/en/events/1/venues/2",
-            route('translateEvents.venues.show').with([event, venue])
+            route('translateEvents.venues.show').with([event, venue]).url()
         );
     });
 
@@ -311,11 +311,11 @@ describe('route()', function() {
 
         assert.equal(
             "http://myapp.dev/events/1/venues/2",
-            route('events.venues.show', [1, venue])
+            route('events.venues.show', [1, venue]).url()
         );
         assert.equal(
             "http://myapp.dev/events/1/venues/2",
-            route('events.venues.show').with([1, venue])
+            route('events.venues.show').with([1, venue]).url()
         );
     });
 
@@ -324,40 +324,40 @@ describe('route()', function() {
 
         assert.equal(
             "http://myapp.dev/en/events/1/venues/2",
-            route('translateEvents.venues.show', [1, venue])
+            route('translateEvents.venues.show', [1, venue]).url()
         );
         assert.equal(
             "http://myapp.dev/en/events/1/venues/2",
-            route('translateEvents.venues.show').with([1, venue])
+            route('translateEvents.venues.show').with([1, venue]).url()
         );
     });
 
     it('Should return correct URL when run with params on a route with required domain params', function() {
         assert.equal(
             "http://tighten.myapp.dev/users/1",
-            route('team.user.show', { team: "tighten", id: 1 })
+            route('team.user.show', { team: "tighten", id: 1 }).url()
         );
         assert.equal(
             "http://tighten.myapp.dev/users/1",
-            route('team.user.show').with({ team: "tighten", id: 1 })
+            route('team.user.show').with({ team: "tighten", id: 1 }).url()
         );
     });
 
     it('Should return correct URL when run with params and default params on a route with required domain params', function() {
         assert.equal(
             "http://tighten.myapp.dev/en/users/1",
-            route('translateTeam.user.show', { team: "tighten", id: 1 })
+            route('translateTeam.user.show', { team: "tighten", id: 1 }).url()
         );
         assert.equal(
             "http://tighten.myapp.dev/en/users/1",
-            route('translateTeam.user.show').with({ team: "tighten", id: 1 })
+            route('translateTeam.user.show').with({ team: "tighten", id: 1 }).url()
         );
     });
 
     it('Should return base url if path is "/"', function() {
         assert.equal(
             "http://myapp.dev/",
-            route('home')
+            route('home').url()
         );
     });
 
@@ -369,8 +369,7 @@ describe('route()', function() {
             responseText: "Worked!"
         });
 
-        axios
-            .get(route('posts.show', 1))
+        axios.get(route('posts.show', 1))
             .then(function(response) {
                 assert.equal(200, response.status)
             }).catch(function(error) {
@@ -403,16 +402,23 @@ describe('route()', function() {
         moxios.uninstall()
     });
 
-    it('Should skip the optional parameter `slug`', function() {
-      assert.equal(
-        route('optional', { id: 123 }),
-        'http://myapp.dev/optional/123/'
-      );
+    // it('Should skip the optional parameter `slug`', function() {
+    //   assert.equal(
+    //     route('optional', { id: 123 }),
+    //     'http://myapp.dev/optional/123/'
+    //   );
+    // });
+
+    it(' optional `slug` shouldn\'t ended with slash', function() {
+        assert.equal(
+          route('optional', { id: 123 }).url(),
+          'http://myapp.dev/optional/123'
+        );
     });
 
     it('Should accept the optional parameter `slug`', function() {
       assert.equal(
-        route('optional', { id: 123, slug: "news" }),
+        route('optional', { id: 123, slug: "news" }).url(),
         'http://myapp.dev/optional/123/news'
       );
     });
@@ -420,7 +426,7 @@ describe('route()', function() {
     it('Should return an error if route is not found in the route list', function() {
         assert.throws(
             function() {
-                route('unknown-route').toString()
+                route('unknown-route').toString().url()
             },
             /route 'unknown-route' is not found in the route list/
         );
@@ -429,14 +435,14 @@ describe('route()', function() {
     it('Should accept queryString params as keyed values in param object', function() {
         assert.equal(
             'http://myapp.dev/events/1/venues/2?search=rogers&page=2',
-            route('events.venues.show', {event: 1, venue: 2, search: 'rogers', page: 2})
+            route('events.venues.show', {event: 1, venue: 2, search: 'rogers', page: 2}).url()
         )
     });
 
     it('Should accept queryString params as keyed values in withQuery object', function() {
         assert.equal(
             'http://myapp.dev/events/1/venues/2?search=rogers&page=2',
-            route('events.venues.show', [1, 2]).withQuery({search: 'rogers', page: 2})
+            route('events.venues.show', [1, 2]).withQuery({search: 'rogers', page: 2}).url()
         )
     });
 
@@ -470,11 +476,11 @@ describe('route()', function() {
 
         assert.equal(
             "http://tighten.myapp.dev/users/1",
-            route('team.user.show', {team: "tighten", id: 1})
+            route('team.user.show', {team: "tighten", id: 1}).url()
         );
         assert.equal(
             "http://tighten.myapp.dev/users/1",
-            route('team.user.show').with({team: "tighten", id: 1})
+            route('team.user.show').with({team: "tighten", id: 1}).url()
         );
 
         global.Ziggy.baseUrl = orgBaseUrl;
@@ -668,7 +674,7 @@ describe('route()', function() {
 
         assert.equal(
             'http://test.thing/ab/cd/events/1/venues',
-            route('events.venues.index', 1)
+            route('events.venues.index', 1).url()
         );
 
         global.Ziggy.baseUrl = orgBaseUrl;
