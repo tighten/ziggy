@@ -193,6 +193,9 @@ var route_Router = function (_String) {
             // If you passed in a string or integer, wrap it in an array
             params = (typeof params === 'undefined' ? 'undefined' : _typeof(params)) !== 'object' ? [params] : params;
 
+            // If passed Param is Observable Object [Vue]
+            if (Object.keys(params).length < 1) return {};
+
             // If the tags object contains an ID and there isn't an ID param in the
             // url template, they probably passed in a single model object and we should
             // wrap this in an array. This could be slightly dangerous and I want to find
@@ -231,8 +234,15 @@ var route_Router = function (_String) {
                 needDefaultParams = true;
             }
 
-            return this.template.replace(/{([^}]+)}/gi, function (tag, i) {
-                var keyName = _this2.trimParam(tag),
+            /**
+             * include prefix slash to 'params' that we want to change
+             */
+            return this.template.replace(/\/{([^}]+)}/gi, function (tag, i) {
+                /**
+                 * change tag|Full Match to  Capturing Group
+                 * that will escape 'prefix slash' after Trimming
+                 */
+                var keyName = _this2.trimParam(i),
                     key = _this2.numericParamIndices ? paramsArrayKey : keyName,
                     defaultParameter = _this2.ziggy.defaultParameters[keyName];
 
@@ -248,7 +258,20 @@ var route_Router = function (_String) {
                 paramsArrayKey++;
                 if (typeof tags[key] !== 'undefined') {
                     delete _this2.queryParams[key];
-                    return tags[key].id || encodeURIComponent(tags[key]);
+                    /**
+                     * return params with id if Available
+                     */
+                    if (typeof tags[key].id !== 'undefined') {
+                        /**
+                         * without slash in params, 
+                         * we can save encode URI Component
+                         */
+                        return '/' + encodeURIComponent(tags[key].id);
+                    }
+                    /**
+                     * return params value when id unavailable
+                     */
+                    return '/' + encodeURIComponent(tags[key]);
                 }
                 if (tag.indexOf('?') === -1) {
                     throw new Error('Ziggy Error: \'' + keyName + '\' key is required for route \'' + _this2.name + '\'');
