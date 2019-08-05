@@ -17,9 +17,9 @@
   },
   "homepage": "https://github.com/tightenco/ziggy#readme",
   "scripts": {
-    "build": "NODE_ENV=production webpack --progress",
+    "build": "cross-env NODE_ENV=production webpack --progress",
     "build:watch": "npm run build -- --watch",
-    "test": "NODE_ENV=test mocha-webpack 'tests/js/**/*.js'",
+    "test": "cross-env NODE_ENV=test mocha-webpack 'tests/js/**/*.js'",
     "test:watch": "npm run test -- --watch"
   },
   "devDependencies": {
