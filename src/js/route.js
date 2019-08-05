@@ -13,11 +13,15 @@ class Router extends String {
     }
 
     normalizeParams(params) {
-	if (typeof params === 'undefined')
+	    if (typeof params === 'undefined')
             return {};
 
         // If you passed in a string or integer, wrap it in an array
         params = typeof params !== 'object' ? [params] : params;
+
+        // If passed Param is Observable Object [Vue]
+        if(Object.keys(params).length < 1)
+            return {};
 
         // If the tags object contains an ID and there isn't an ID param in the
         // url template, they probably passed in a single model object and we should
@@ -52,10 +56,17 @@ class Router extends String {
             needDefaultParams = true
         }
 
+        /**
+         * include prefix slash to 'params' that we want to change
+         */
         return this.template.replace(
-            /{([^}]+)}/gi,
+            /\/{([^}]+)}/gi,
             (tag, i) => {
-		 let keyName = this.trimParam(tag),
+                /**
+                 * change tag|Full Match to  Capturing Group
+                 * that will escape 'prefix slash' after Trimming
+                 */
+		        let keyName = this.trimParam(i),
                     key = this.numericParamIndices ? paramsArrayKey : keyName,
                     defaultParameter = this.ziggy.defaultParameters[keyName];
 
@@ -71,7 +82,20 @@ class Router extends String {
                 paramsArrayKey++;
                 if (typeof tags[key] !== 'undefined') {
                     delete this.queryParams[key];
-                    return tags[key].id || encodeURIComponent(tags[key]);
+                    /**
+                     * return params with id if Available
+                     */
+                    if(typeof tags[key].id !== 'undefined'){
+                        /**
+                         * without slash in params, 
+                         * we can save encode URI Component
+                         */
+                        return '/'+ encodeURIComponent(tags[key].id);
+                    }
+                    /**
+                     * return params value when id unavailable
+                     */
+                    return '/' + encodeURIComponent(tags[key]);
                 }
                 if (tag.indexOf('?') === -1) {
                     throw new Error(`Ziggy Error: '${keyName}' key is required for route '${this.name}'`);
