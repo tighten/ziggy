@@ -8,10 +8,9 @@ install:
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
+  - npm ci
 script:
-  - phpunit
-  - npm run build
-  - npm test
+  - npm run test
 cache:
   directories:
   - $HOME/.composer/cache
