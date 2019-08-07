@@ -8,7 +8,6 @@ install:
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
-  - yarn ci
   - yarn install
 script:
   - yarn run test
