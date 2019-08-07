@@ -8,9 +8,9 @@ install:
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
-  - npm ci
-script:
+  - yarn ci
   - yarn install
+script:
   - yarn run test
 cache:
   yarn: true
