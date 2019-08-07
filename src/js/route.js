@@ -59,8 +59,7 @@ class Router extends String {
         /**
          * include prefix slash to 'params' that we want to change
          */
-        return this.template.replace(
-            /\/{([^}]+)}/gi,
+        return this.template.replace(/\/{([^}]+)}/gi,
             (tag, i) => {
                 /**
                  * change tag|Full Match to  Capturing Group

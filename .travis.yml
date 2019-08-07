@@ -10,7 +10,7 @@ install:
   - nvm use stable
   - yarn install
 script:
-  - yarn run test
+  - yarn test
 cache:
   yarn: true
   directories:
