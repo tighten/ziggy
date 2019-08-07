@@ -3,8 +3,15 @@ php:
   - '7.1'
 git:
   depth: 10
+install: 
+  - composer install --no-interaction --no-suggest
+  - . $HOME/.nvm/nvm.sh
+  - nvm install stable
+  - nvm use stable
+  - npm ci
 script:
-  - yarn test
+  - yarn install
+  - yarn run test
 cache:
   yarn: true
   directories:
