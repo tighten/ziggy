@@ -108,16 +108,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var UrlBuilder = function () {
     function UrlBuilder(name, absolute, ziggyObject) {
+        var fixedURL = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
         _classCallCheck(this, UrlBuilder);
 
         this.name = name;
         this.ziggy = ziggyObject;
-        this.route = this.ziggy.namedRoutes[this.name];
+        this.route = fixedURL == false ? this.ziggy.namedRoutes[this.name] : {
+            "uri": name,
+            "methods": ["GET", "HEAD"],
+            "domain": null
+        };
 
         if (typeof this.name === 'undefined') {
             throw new Error('Ziggy Error: You must provide a route name');
         } else if (typeof this.route === 'undefined') {
-            throw new Error('Ziggy Error: route \'' + this.name + '\' is not found in the route list');
+            throw new Error("Ziggy Error: route '" + this.name + "' is not found in the route list");
         }
 
         this.absolute = typeof absolute === 'undefined' ? true : absolute;
@@ -126,7 +132,7 @@ var UrlBuilder = function () {
     }
 
     _createClass(UrlBuilder, [{
-        key: 'setDomain',
+        key: "setDomain",
         value: function setDomain() {
             if (!this.absolute) return '/';
 
@@ -139,7 +145,7 @@ var UrlBuilder = function () {
             return this.ziggy.baseProtocol + '://' + host + '/';
         }
     }, {
-        key: 'construct',
+        key: "construct",
         value: function construct() {
             return this.domain + this.path;
         }
@@ -180,7 +186,8 @@ var route_Router = function (_String) {
         _this.name = name;
         _this.absolute = absolute;
         _this.ziggy = customZiggy ? customZiggy : Ziggy;
-        _this.template = _this.name ? new js_UrlBuilder(name, absolute, _this.ziggy).construct() : '', _this.urlParams = _this.normalizeParams(params);
+        _this.template = _this.name ? new js_UrlBuilder(name, absolute, _this.ziggy).construct() : '';
+        _this.urlParams = _this.normalizeParams(params);
         _this.queryParams = _this.normalizeParams(params);
         return _this;
     }
@@ -311,6 +318,15 @@ var route_Router = function (_String) {
             }.bind(this));
 
             return queryString;
+        }
+    }, {
+        key: 'go',
+        value: function go(urlToGo, params) {
+            this.name = urlToGo;
+            this.template = new js_UrlBuilder(urlToGo, this.absolute, this.ziggy, true).construct();
+            this.urlParams = this.normalizeParams(params);
+            this.queryParams = this.normalizeParams(params);
+            return this;
         }
     }, {
         key: 'current',

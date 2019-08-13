@@ -87,6 +87,20 @@ global.Ziggy = {
 };
 
 describe('route()', function() {
+    it('Should return URL when run without route name', function() {
+        assert.equal(
+            "http://myapp.dev/posts/withou/named/routed",
+            route().go('posts/withou/named/routed').url()
+        );
+    });
+
+    it('Should return URL when run without route name, first slash should remove', function() {
+        assert.equal(
+            "http://myapp.dev/posts/withou/named/routed",
+            route().go('/posts/withou/named/routed').url()
+        );
+    });
+
     it('Should return URL when run without params on a route without params', function() {
         assert.equal(
             "http://myapp.dev/posts",

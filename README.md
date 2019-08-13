@@ -57,12 +57,27 @@ var venue = {id: 2, name: 'Rogers Centre'};
 route('events.venues.show', [event, venue]) // Returns '/events/1/venues/2'
 ```
 
-Practical AJAX example:
+If want to use unamed route like
+```php
+url('/url/want/to/go');
+```
+Ziggy privide `go` method:
+```js
+route().go('/url/want/to/go')
+```
 
+Practical AJAX example:
 ```js
 var post = {id: 1, title: 'Ziggy Stardust'};
 
 return axios.get(route('posts.show', post))
+    .then((response) => {
+        return response.data;
+    });
+```
+Ajax | Axios with unamed route
+```js
+return axios.get(route().go('/url/want/to/go'))
     .then((response) => {
         return response.data;
     });

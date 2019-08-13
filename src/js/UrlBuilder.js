@@ -1,9 +1,13 @@
 class UrlBuilder {
-    constructor(name, absolute, ziggyObject) {
+    constructor(name, absolute, ziggyObject, fixedURL=false) {
 
         this.name = name;
         this.ziggy = ziggyObject;
-        this.route = this.ziggy.namedRoutes[this.name];
+        this.route = fixedURL == false ? this.ziggy.namedRoutes[this.name] : {
+            "uri" : name,
+            "methods":["GET","HEAD"],
+            "domain":null
+        } ;
 
         if (typeof this.name === 'undefined') {
             throw new Error('Ziggy Error: You must provide a route name');
