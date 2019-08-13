@@ -2,7 +2,7 @@ let assert = require('assert');
 let axios = require('axios');
 let moxios = require('moxios');
 
-const route = require('../../dist/js/route.js');
+import route from '../../src/js/route.js';
 
 global.Ziggy = {
     namedRoutes: {
@@ -87,6 +87,20 @@ global.Ziggy = {
 };
 
 describe('route()', function() {
+    it('Should return URL when run without route name', function() {
+        assert.equal(
+            "http://myapp.dev/posts/withou/named/routed",
+            route().go('posts/withou/named/routed').url()
+        );
+    });
+
+    it('Should return URL when run without route name, first slash should remove', function() {
+        assert.equal(
+            "http://myapp.dev/posts/withou/named/routed",
+            route().go('/posts/withou/named/routed').url()
+        );
+    });
+
     it('Should return URL when run without params on a route without params', function() {
         assert.equal(
             "http://myapp.dev/posts",
