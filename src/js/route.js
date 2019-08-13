@@ -7,7 +7,7 @@ class Router extends String {
         this.name           = name;
         this.absolute       = absolute;
         this.ziggy          = customZiggy ? customZiggy : Ziggy;
-        this.template       = this.name ? new UrlBuilder(name, absolute, this.ziggy).construct() : '',
+        this.template       = this.name ? new UrlBuilder(name, absolute, this.ziggy).construct() : '';
         this.urlParams      = this.normalizeParams(params);
         this.queryParams    = this.normalizeParams(params);
     }
@@ -139,6 +139,14 @@ class Router extends String {
         return queryString;
     }
 
+    go(urlToGo, params){
+        this.name           = urlToGo;
+        this.template       = new UrlBuilder(urlToGo, this.absolute, this.ziggy, true).construct();
+        this.urlParams      = this.normalizeParams(params);
+        this.queryParams    = this.normalizeParams(params);
+        return this;
+    }
+
     current(name = null) {
         let routeNames = Object.keys(this.ziggy.namedRoutes);
 
@@ -200,6 +208,6 @@ class Router extends String {
     }
 }
 
-export default function route(name, params, absolute, customZiggy) {
+export default function route(name, params, absolute, customZiggy){
     return new Router(name, params, absolute, customZiggy);
 };
