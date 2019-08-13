@@ -1,27 +1,27 @@
 {
   "presets": [
     [
-      "@babel/env",
+      "env",
       {
         "modules": false,
         "targets": {
           "browsers": [
             "> 2%",
             "last 2 versions"
-          ]
-        },
-        "forceAllTransforms": true
+          ],
+          "uglify": true
+        }
       }
     ]
   ],
   "plugins": [
-    "@babel/plugin-transform-object-assign"
+    "transform-object-assign"
   ],
   "env": {
     "test": {
       "presets": [
         [
-          "@babel/env",
+          "env",
           {
             "targets": {
               "node": "current"
