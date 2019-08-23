@@ -31,6 +31,7 @@
     "mocha": "^5.2.0",
     "mocha-webpack": "^2.0.0-beta.0",
     "moxios": "^0.4.0",
+    "qs": "^6.8.0",
     "unminified-webpack-plugin": "^2.0.0",
     "webpack": "^4.16.5",
     "webpack-command": "^0.4.1"

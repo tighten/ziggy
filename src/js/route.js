@@ -1,4 +1,5 @@
 import UrlBuilder from './UrlBuilder';
+import { stringify } from 'qs';
 
 class Router extends String {
     constructor(name, params, absolute, customZiggy=null) {
@@ -106,12 +107,7 @@ class Router extends String {
 
         let queryString = '?';
 
-        Object.keys(this.queryParams).forEach(function(key, i) {
-            if (this.queryParams[key] !== undefined && this.queryParams[key] !== null) {
-                queryString = i === 0 ? queryString : queryString + '&';
-                queryString += key + '=' + encodeURIComponent(this.queryParams[key]);
-            }
-        }.bind(this));
+        queryString += stringify(this.queryParams, { encode: false });
 
         return queryString;
     }
