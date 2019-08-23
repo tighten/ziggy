@@ -105,9 +105,22 @@ class Router extends String {
         if (Object.keys(this.queryParams).length === 0)
             return '';
 
+        const removeEmpty = obj => {
+          let newObj = {};
+          Object.keys(obj).forEach(key => {
+            if (obj[key] && typeof obj[key] === "object") {
+              newObj[key] = removeEmpty(obj[key]);
+            } else if (obj[key] !== null) {
+              newObj[key] = obj[key];
+            }
+          });
+          return newObj;
+        };
+
+        const queryParams = removeEmpty(this.queryParams);
         let queryString = '?';
 
-        queryString += stringify(this.queryParams, { encodeValuesOnly: true });
+        queryString += stringify(queryParams, { encodeValuesOnly: true });
 
         return queryString;
     }

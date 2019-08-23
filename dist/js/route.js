@@ -1111,9 +1111,22 @@ var route_Router = function (_String) {
         value: function constructQuery() {
             if (Object.keys(this.queryParams).length === 0) return '';
 
+            var removeEmpty = function removeEmpty(obj) {
+                var newObj = {};
+                Object.keys(obj).forEach(function (key) {
+                    if (obj[key] && _typeof(obj[key]) === "object") {
+                        newObj[key] = removeEmpty(obj[key]);
+                    } else if (obj[key] !== null) {
+                        newObj[key] = obj[key];
+                    }
+                });
+                return newObj;
+            };
+
+            var queryParams = removeEmpty(this.queryParams);
             var queryString = '?';
 
-            queryString += Object(lib["stringify"])(this.queryParams, { encodeValuesOnly: true });
+            queryString += Object(lib["stringify"])(queryParams, { encodeValuesOnly: true });
 
             return queryString;
         }
