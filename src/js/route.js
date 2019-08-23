@@ -43,43 +43,49 @@ class Router extends String {
     }
 
     hydrateUrl() {
-        let tags = this.urlParams,
-            paramsArrayKey = 0,
-            params = this.template.match(/{([^}]+)}/gi),
-            needDefaultParams = false;
+        let params = this.template.match(/{([^}]+)}/gi);
 
-        if (params && params.length != Object.keys(tags).length) {
-            needDefaultParams = true
-        }
-
-        return this.template.replace(
+        let url = this.template.replace(
             /{([^}]+)}/gi,
             (tag, i) => {
-		 let keyName = this.trimParam(tag),
-                    key = this.numericParamIndices ? paramsArrayKey : keyName,
+                let keyName = this.trimParam(tag),
                     defaultParameter = this.ziggy.defaultParameters[keyName];
 
-                if (defaultParameter && needDefaultParams) {
-                    if (this.numericParamIndices) {
-                        tags = Object.values(tags)
-                        tags.splice(key, 0, defaultParameter)
+                // If a default parameter exists, and a value wasn't
+                // provided for it manually, use the default value
+                if (defaultParameter && !this.urlParams[keyName]) {
+                    delete this.urlParams[keyName];
+                    delete this.queryParams[keyName];
+                    return defaultParameter;
+                }
+
+                // We were passed an array, shift the value off the
+                // object and return that value to the route
+                if (this.numericParamIndices) {
+                    this.urlParams = Object.values(this.urlParams);
+                    return encodeURIComponent(this.urlParams.shift());
+                }
+
+                let tagValue = this.urlParams[keyName];
+                delete this.urlParams[keyName];
+                delete this.queryParams[keyName];
+
+                // The type of the value is undefined; is this param
+                // optional or not
+                if (typeof tagValue === 'undefined') {
+                    if (tag.indexOf('?') === -1) {
+                        throw new Error('Ziggy Error: \'' + keyName + '\' key is required for route \'' + this.name + '\'');
                     } else {
-                        tags[key] = defaultParameter
+                        return '';
                     }
                 }
 
-                paramsArrayKey++;
-                if (tags[key] && typeof tags[key] !== 'undefined') {
-                    delete this.queryParams[key];
-                    return tags[key].id || encodeURIComponent(tags[key]);
-                }
-                if (tag.indexOf('?') === -1) {
-                    throw new Error(`Ziggy Error: '${keyName}' key is required for route '${this.name}'`);
-                } else {
-                    return '';
-                }
+                // It's not undefined, so it's safe to return
+                return encodeURIComponent(tagValue);
             }
         );
+
+        return url;
     }
 
     matchUrl() {

@@ -131,6 +131,13 @@ describe('route()', function() {
         );
     });
 
+    it('Should allow parameters other than default to be passed as query params', function() {
+        assert.equal(
+            "http://myapp.dev/en/posts?someOtherKey=123",
+            route('translatePosts.index', { someOtherKey: 123 })
+        );
+    });
+
     it('Should return missing params error when run with missing params on a route with required params', function() {
         assert.throws(
             function() {
