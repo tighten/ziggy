@@ -1113,7 +1113,7 @@ var route_Router = function (_String) {
 
             var queryString = '?';
 
-            queryString += Object(lib["stringify"])(this.queryParams, { encode: false });
+            queryString += Object(lib["stringify"])(this.queryParams, { encodeValuesOnly: true });
 
             return queryString;
         }
