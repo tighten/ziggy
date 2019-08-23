@@ -107,7 +107,7 @@ class Router extends String {
 
         let queryString = '?';
 
-        queryString += stringify(this.queryParams, { encode: false });
+        queryString += stringify(this.queryParams, { encodeValuesOnly: true });
 
         return queryString;
     }
