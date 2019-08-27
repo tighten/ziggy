@@ -9,11 +9,11 @@ class Router extends String {
         this.ziggy          = customZiggy ? customZiggy : Ziggy;
         this.template       = this.name ? new UrlBuilder(name, absolute, this.ziggy).construct() : '',
         this.urlParams      = this.normalizeParams(params);
-        this.queryParams    = this.normalizeParams(params);
+        this.queryParams    = { };
     }
 
     normalizeParams(params) {
-	if (typeof params === 'undefined')
+        if (typeof params === 'undefined')
             return {};
 
         // If you passed in a string or integer, wrap it in an array
@@ -45,7 +45,7 @@ class Router extends String {
     hydrateUrl() {
         let params = this.template.match(/{([^}]+)}/gi);
 
-        let url = this.template.replace(
+        return this.template.replace(
             /{([^}]+)}/gi,
             (tag, i) => {
                 let keyName = this.trimParam(tag),
@@ -55,20 +55,21 @@ class Router extends String {
                 // provided for it manually, use the default value
                 if (defaultParameter && !this.urlParams[keyName]) {
                     delete this.urlParams[keyName];
-                    delete this.queryParams[keyName];
                     return defaultParameter;
                 }
+
+                let tagValue;
 
                 // We were passed an array, shift the value off the
                 // object and return that value to the route
                 if (this.numericParamIndices) {
                     this.urlParams = Object.values(this.urlParams);
-                    return encodeURIComponent(this.urlParams.shift());
-                }
 
-                let tagValue = this.urlParams[keyName];
-                delete this.urlParams[keyName];
-                delete this.queryParams[keyName];
+                    tagValue = this.urlParams.shift();
+                } else {
+                    tagValue = this.urlParams[keyName];
+                    delete this.urlParams[keyName];
+                }
 
                 // The type of the value is undefined; is this param
                 // optional or not
@@ -80,12 +81,14 @@ class Router extends String {
                     }
                 }
 
-                // It's not undefined, so it's safe to return
+                // If an object was passed and has an id, return it
+                if (tagValue.id) {
+                    return encodeURIComponent(tagValue.id);
+                }
+
                 return encodeURIComponent(tagValue);
             }
         );
-
-        return url;
     }
 
     matchUrl() {
@@ -107,15 +110,17 @@ class Router extends String {
     }
 
     constructQuery() {
-        if (Object.keys(this.queryParams).length === 0)
+        if (Object.keys(this.queryParams).length === 0 && Object.keys(this.urlParams).length === 0)
             return '';
+
+        let remainingParams = Object.assign(this.urlParams, this.queryParams);
 
         let queryString = '?';
 
-        Object.keys(this.queryParams).forEach(function(key, i) {
-            if (this.queryParams[key] !== undefined && this.queryParams[key] !== null) {
+        Object.keys(remainingParams).forEach(function(key, i) {
+            if (remainingParams[key] !== undefined && remainingParams[key] !== null) {
                 queryString = i === 0 ? queryString : queryString + '&';
-                queryString += key + '=' + encodeURIComponent(this.queryParams[key]);
+                queryString += key + '=' + encodeURIComponent(remainingParams[key]);
             }
         }.bind(this));
 

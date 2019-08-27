@@ -200,7 +200,7 @@ function (_String) {
     _this.absolute = absolute;
     _this.ziggy = customZiggy ? customZiggy : Ziggy;
     _this.template = _this.name ? new js_UrlBuilder(name, absolute, _this.ziggy).construct() : '', _this.urlParams = _this.normalizeParams(params);
-    _this.queryParams = _this.normalizeParams(params);
+    _this.queryParams = {};
     return _this;
   }
 
@@ -240,7 +240,7 @@ function (_String) {
       var _this2 = this;
 
       var params = this.template.match(/{([^}]+)}/gi);
-      var url = this.template.replace(/{([^}]+)}/gi, function (tag, i) {
+      return this.template.replace(/{([^}]+)}/gi, function (tag, i) {
         var keyName = _this2.trimParam(tag),
             defaultParameter = _this2.ziggy.defaultParameters[keyName]; // If a default parameter exists, and a value wasn't
         // provided for it manually, use the default value
@@ -248,21 +248,21 @@ function (_String) {
 
         if (defaultParameter && !_this2.urlParams[keyName]) {
           delete _this2.urlParams[keyName];
-          delete _this2.queryParams[keyName];
           return defaultParameter;
-        } // We were passed an array, shift the value off the
-        // object and return that value to the route
+        }
 
+        var tagValue; // We were passed an array, shift the value off the
+        // object and return that value to the route
 
         if (_this2.numericParamIndices) {
           _this2.urlParams = Object.values(_this2.urlParams);
-          return encodeURIComponent(_this2.urlParams.shift());
-        }
-
-        var tagValue = _this2.urlParams[keyName];
-        delete _this2.urlParams[keyName];
-        delete _this2.queryParams[keyName]; // The type of the value is undefined; is this param
+          tagValue = _this2.urlParams.shift();
+        } else {
+          tagValue = _this2.urlParams[keyName];
+          delete _this2.urlParams[keyName];
+        } // The type of the value is undefined; is this param
         // optional or not
+
 
         if (typeof tagValue === 'undefined') {
           if (tag.indexOf('?') === -1) {
@@ -270,12 +270,15 @@ function (_String) {
           } else {
             return '';
           }
-        } // It's not undefined, so it's safe to return
+        } // If an object was passed and has an id, return it
 
+
+        if (tagValue.id) {
+          return encodeURIComponent(tagValue.id);
+        }
 
         return encodeURIComponent(tagValue);
       });
-      return url;
     }
   }, {
     key: "matchUrl",
@@ -292,12 +295,15 @@ function (_String) {
   }, {
     key: "constructQuery",
     value: function constructQuery() {
-      if (Object.keys(this.queryParams).length === 0) return '';
+      if (Object.keys(this.queryParams).length === 0 && Object.keys(this.urlParams).length === 0) return '';
+
+      var remainingParams = _extends(this.urlParams, this.queryParams);
+
       var queryString = '?';
-      Object.keys(this.queryParams).forEach(function (key, i) {
-        if (this.queryParams[key] !== undefined && this.queryParams[key] !== null) {
+      Object.keys(remainingParams).forEach(function (key, i) {
+        if (remainingParams[key] !== undefined && remainingParams[key] !== null) {
           queryString = i === 0 ? queryString : queryString + '&';
-          queryString += key + '=' + encodeURIComponent(this.queryParams[key]);
+          queryString += key + '=' + encodeURIComponent(remainingParams[key]);
         }
       }.bind(this));
       return queryString;
