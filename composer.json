@@ -2,7 +2,7 @@
     "name": "tightenco/ziggy",
     "description": "Generates a Blade directive exporting all of your named Laravel routes. Also provides a nice route() helper function in JavaScript.",
     "require": {
-        "laravel/framework": ">=5.4@dev"
+        "laravel/framework": ">=5.4@dev|6.0.*@dev"
     },
     "license": "MIT",
     "authors": [
@@ -26,7 +26,7 @@
         }
     },
     "require-dev": {
-        "orchestra/testbench": "~3.6",
+        "orchestra/testbench": "~3.6|~3.9@dev",
         "mikey179/vfsstream": "^1.6"
     },
     "extra": {
@@ -35,5 +35,6 @@
                 "Tightenco\\Ziggy\\ZiggyServiceProvider"
             ]
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
