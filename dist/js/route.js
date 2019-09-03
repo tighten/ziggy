@@ -246,7 +246,7 @@ var route_Router = function (_String) {
                 }
 
                 paramsArrayKey++;
-                if (typeof tags[key] !== 'undefined') {
+                if (tags[key] && typeof tags[key] !== 'undefined') {
                     delete _this2.queryParams[key];
                     return tags[key].id || encodeURIComponent(tags[key]);
                 }
