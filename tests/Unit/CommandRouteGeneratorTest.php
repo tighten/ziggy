@@ -10,7 +10,7 @@ use org\bovigo\vfs\vfsStreamWrapper;
 
 class CommandRouteGeneratorTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
