@@ -9,11 +9,11 @@ class Router extends String {
         this.ziggy          = customZiggy ? customZiggy : Ziggy;
         this.template       = this.name ? new UrlBuilder(name, absolute, this.ziggy).construct() : '',
         this.urlParams      = this.normalizeParams(params);
-        this.queryParams    = this.normalizeParams(params);
+        this.queryParams    = { };
     }
 
     normalizeParams(params) {
-	if (typeof params === 'undefined')
+        if (typeof params === 'undefined')
             return {};
 
         // If you passed in a string or integer, wrap it in an array
@@ -43,41 +43,50 @@ class Router extends String {
     }
 
     hydrateUrl() {
-        let tags = this.urlParams,
-            paramsArrayKey = 0,
-            params = this.template.match(/{([^}]+)}/gi),
-            needDefaultParams = false;
-
-        if (params && params.length != Object.keys(tags).length) {
-            needDefaultParams = true
-        }
+        let params = this.template.match(/{([^}]+)}/gi);
 
         return this.template.replace(
             /{([^}]+)}/gi,
             (tag, i) => {
-		 let keyName = this.trimParam(tag),
-                    key = this.numericParamIndices ? paramsArrayKey : keyName,
+                let keyName = this.trimParam(tag),
                     defaultParameter = this.ziggy.defaultParameters[keyName];
 
-                if (defaultParameter && needDefaultParams) {
-                    if (this.numericParamIndices) {
-                        tags = Object.values(tags)
-                        tags.splice(key, 0, defaultParameter)
+                // If a default parameter exists, and a value wasn't
+                // provided for it manually, use the default value
+                if (defaultParameter && !this.urlParams[keyName]) {
+                    delete this.urlParams[keyName];
+                    return defaultParameter;
+                }
+
+                let tagValue;
+
+                // We were passed an array, shift the value off the
+                // object and return that value to the route
+                if (this.numericParamIndices) {
+                    this.urlParams = Object.values(this.urlParams);
+
+                    tagValue = this.urlParams.shift();
+                } else {
+                    tagValue = this.urlParams[keyName];
+                    delete this.urlParams[keyName];
+                }
+
+                // The type of the value is undefined; is this param
+                // optional or not
+                if (typeof tagValue === 'undefined') {
+                    if (tag.indexOf('?') === -1) {
+                        throw new Error('Ziggy Error: \'' + keyName + '\' key is required for route \'' + this.name + '\'');
                     } else {
-                        tags[key] = defaultParameter
+                        return '';
                     }
                 }
 
-                paramsArrayKey++;
-                if (tags[key] && typeof tags[key] !== 'undefined') {
-                    delete this.queryParams[key];
-                    return tags[key].id || encodeURIComponent(tags[key]);
+                // If an object was passed and has an id, return it
+                if (tagValue.id) {
+                    return encodeURIComponent(tagValue.id);
                 }
-                if (tag.indexOf('?') === -1) {
-                    throw new Error(`Ziggy Error: '${keyName}' key is required for route '${this.name}'`);
-                } else {
-                    return '';
-                }
+
+                return encodeURIComponent(tagValue);
             }
         );
     }
@@ -101,15 +110,17 @@ class Router extends String {
     }
 
     constructQuery() {
-        if (Object.keys(this.queryParams).length === 0)
+        if (Object.keys(this.queryParams).length === 0 && Object.keys(this.urlParams).length === 0)
             return '';
+
+        let remainingParams = Object.assign(this.urlParams, this.queryParams);
 
         let queryString = '?';
 
-        Object.keys(this.queryParams).forEach(function(key, i) {
-            if (this.queryParams[key] !== undefined && this.queryParams[key] !== null) {
+        Object.keys(remainingParams).forEach(function(key, i) {
+            if (remainingParams[key] !== undefined && remainingParams[key] !== null) {
                 queryString = i === 0 ? queryString : queryString + '&';
-                queryString += key + '=' + encodeURIComponent(this.queryParams[key]);
+                queryString += key + '=' + encodeURIComponent(remainingParams[key]);
             }
         }.bind(this));
 

@@ -131,6 +131,13 @@ describe('route()', function() {
         );
     });
 
+    it('Should allow parameters other than default to be passed as query params', function() {
+        assert.equal(
+            "http://myapp.dev/en/posts?someOtherKey=123",
+            route('translatePosts.index', { someOtherKey: 123 })
+        );
+    });
+
     it('Should return missing params error when run with missing params on a route with required params', function() {
         assert.throws(
             function() {
@@ -195,10 +202,10 @@ describe('route()', function() {
     });
 
     it('Should return URL when run with multiple object params on a route with required params', () => {
-	assert.equal(
+        assert.equal(
             'http://myapp.dev/events/1/venues/2',
             route('events.venues.show', [{id: 1, title: 'Event'}, {id: 2, title: 'Venue'}])
-	);
+        );
     });
 
     it('Should return URL when run with single object param on a route with required params and default params', function() {
