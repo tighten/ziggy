@@ -4,12 +4,13 @@ class Router extends String {
     constructor(name, params, absolute, customZiggy=null) {
         super();
 
-        this.name           = name;
-        this.absolute       = absolute;
-        this.ziggy          = customZiggy ? customZiggy : Ziggy;
-        this.template       = this.name ? new UrlBuilder(name, absolute, this.ziggy).construct() : '',
-        this.urlParams      = this.normalizeParams(params);
-        this.queryParams    = { };
+        this.name             = name;
+        this.absolute         = absolute;
+        this.ziggy            = customZiggy ? customZiggy : Ziggy;
+        this.template         = this.name ? new UrlBuilder(name, absolute, this.ziggy).construct() : '',
+        this.urlParams        = this.normalizeParams(params);
+        this.queryParams      = { };
+        this.hydrated         = '';
     }
 
     normalizeParams(params) {
@@ -43,11 +44,13 @@ class Router extends String {
     }
 
     hydrateUrl() {
-        let params = this.template.match(/{([^}]+)}/gi);
+        if (this.hydrated)
+            return this.hydrated;
 
-        return this.template.replace(
+        return this.hydrated = this.template.replace(
             /{([^}]+)}/gi,
             (tag, i) => {
+                console.log([ tag, i ]);
                 let keyName = this.trimParam(tag),
                     defaultParameter = this.ziggy.defaultParameters[keyName];
 
@@ -59,6 +62,7 @@ class Router extends String {
                 }
 
                 let tagValue;
+
 
                 // We were passed an array, shift the value off the
                 // object and return that value to the route
