@@ -75,6 +75,11 @@ global.Ziggy = {
             "uri": "optional/{id}/{slug?}",
             "methods": ["GET","HEAD"],
             "domain": null
+        },
+        "conversations.show": {
+            "uri": "subscribers/{subscriber}/conversations/{type}/{conversation_id?}",
+            "methods": ["GET","HEAD"],
+            "domain": null
         }
     },
     baseUrl: 'http://myapp.dev/',
@@ -120,6 +125,28 @@ describe('route()', function() {
         assert.equal(
             "/posts",
             route('posts.index', [], false)
+        );
+    });
+
+    it('Should not fail when optional parameters are provided a value', function() {
+        assert.equal(
+            "/subscribers/123/conversations/email/1234",
+            route('conversations.show', {
+                type: 'email',
+                subscriber: 123,
+                conversation_id: 1234,
+            }, false)
+        );
+    });
+
+    it('Should not fail when an absolute url with optional parameters are provided a value', function() {
+        assert.equal(
+            "http://myapp.dev/subscribers/123/conversations/email/1234",
+            route('conversations.show', {
+                type: 'email',
+                subscriber: 123,
+                conversation_id: 1234,
+            })
         );
     });
 
