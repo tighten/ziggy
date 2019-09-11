@@ -51,7 +51,8 @@ class Router extends String {
             /{([^}]+)}/gi,
             (tag, i) => {
                 let keyName = this.trimParam(tag),
-                    defaultParameter = this.ziggy.defaultParameters[keyName];
+                    defaultParameter = this.ziggy.defaultParameters[keyName],
+                    tagValue;
 
                 // If a default parameter exists, and a value wasn't
                 // provided for it manually, use the default value
@@ -59,9 +60,6 @@ class Router extends String {
                     delete this.urlParams[keyName];
                     return defaultParameter;
                 }
-
-                let tagValue;
-
 
                 // We were passed an array, shift the value off the
                 // object and return that value to the route

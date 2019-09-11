@@ -201,6 +201,7 @@ function (_String) {
     _this.ziggy = customZiggy ? customZiggy : Ziggy;
     _this.template = _this.name ? new js_UrlBuilder(name, absolute, _this.ziggy).construct() : '', _this.urlParams = _this.normalizeParams(params);
     _this.queryParams = {};
+    _this.hydrated = '';
     return _this;
   }
 
@@ -239,20 +240,20 @@ function (_String) {
     value: function hydrateUrl() {
       var _this2 = this;
 
-      var params = this.template.match(/{([^}]+)}/gi);
-      return this.template.replace(/{([^}]+)}/gi, function (tag, i) {
+      if (this.hydrated) return this.hydrated;
+      return this.hydrated = this.template.replace(/{([^}]+)}/gi, function (tag, i) {
         var keyName = _this2.trimParam(tag),
-            defaultParameter = _this2.ziggy.defaultParameters[keyName]; // If a default parameter exists, and a value wasn't
+            defaultParameter = _this2.ziggy.defaultParameters[keyName],
+            tagValue; // If a default parameter exists, and a value wasn't
         // provided for it manually, use the default value
 
 
         if (defaultParameter && !_this2.urlParams[keyName]) {
           delete _this2.urlParams[keyName];
           return defaultParameter;
-        }
-
-        var tagValue; // We were passed an array, shift the value off the
+        } // We were passed an array, shift the value off the
         // object and return that value to the route
+
 
         if (_this2.numericParamIndices) {
           _this2.urlParams = Object.values(_this2.urlParams);
