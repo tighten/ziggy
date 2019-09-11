@@ -50,7 +50,6 @@ class Router extends String {
         return this.hydrated = this.template.replace(
             /{([^}]+)}/gi,
             (tag, i) => {
-                console.log([ tag, i ]);
                 let keyName = this.trimParam(tag),
                     defaultParameter = this.ziggy.defaultParameters[keyName];
 
