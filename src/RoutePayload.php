@@ -3,6 +3,8 @@
 namespace Tightenco\Ziggy;
 
 use Illuminate\Routing\Router;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class RoutePayload
 {
@@ -54,7 +56,7 @@ class RoutePayload
         else if(config()->has("ziggy.groups.{$group}")) {
             return $this->filter(config("ziggy.groups.{$group}"), true);
         }
-        
+
         return $this->routes;
     }
 
@@ -72,7 +74,7 @@ class RoutePayload
     {
         return $this->routes->filter(function ($route, $name) use ($filters, $include) {
             foreach ($filters as $filter) {
-                if (str_is($filter, $name)) {
+                if (Str::is($filter, $name)) {
                     return $include;
                 }
             }
@@ -111,6 +113,6 @@ class RoutePayload
     protected function isListedAs($route, $list)
     {
         return (isset($route->listedAs) && $route->listedAs === $list)
-            || array_get($route->getAction(), 'listed_as', null) === $list;
+            || Arr::get($route->getAction(), 'listed_as', null) === $list;
     }
 }
