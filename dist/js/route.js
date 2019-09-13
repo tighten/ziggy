@@ -325,7 +325,7 @@ function (_String) {
       })[0];
 
       if (name) {
-        var pattern = new RegExp(name.replace('*', '.*').replace('.', '\.'), 'i');
+        var pattern = new RegExp('^' + name.replace('*', '.*').replace('.', '\.') + '$', 'i');
         return pattern.test(currentRoute);
       }
 
