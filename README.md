@@ -228,6 +228,52 @@ export {
 }
 ```
 
+### Importing the `route()` helper and generated `ziggy.js`
+
+```js
+// webpack.mix.js
+const path = require('path')
+...
+mix.webpackConfig({
+    resolve: {
+        alias: {
+            ...
+            ziggy: path.resolve('vendor/tightenco/ziggy/src/js/route.js'),
+        },
+    },
+})
+```
+
+```js
+// app.js
+
+import route from 'ziggy'
+import { Ziggy } from './ziggy'
+
+...
+```
+
+### Using with Vue components
+
+If you want to use the `route()` helper within a Vue component, import the helper and generated `ziggy.js` as above. Then you'll need to add this to your `app.js` file:
+
+```js
+// app.js
+import route from 'ziggy'
+import { Ziggy } from './ziggy'
+
+Vue.mixin({
+    methods: {
+        route: (name, params, absolute) => route(name, params, absolute, Ziggy),
+    }
+});
+```
+Then, use the method in your Vue components like so:
+
+`<a class="nav-link" :href="route('home')">Home</a>`
+
+Thanks to [Archer70](https://github.com/tightenco/ziggy/issues/70#issuecomment-369129032) for this solution.
+
 ## Environment-based loading of minified route helper file
 
 When loading the blade helper file, Ziggy will detect the current environment and minify the output if `APP_ENV` is not `local`.
@@ -247,24 +293,6 @@ return [
     'skip-route-function' => true
 ];
 ```
-
-### Using with Vue components
-
-If you want to use the `route` helper within a Vue component, you'll need to add this to your `app.js` file:
-
-```js
-Vue.mixin({
-    methods: {
-        route: route
-    }
-});
-```
-
-Then, use the method in your Vue components like so:
-
-`<a class="nav-link" :href="route('home')">Home</a>`
-
-Thanks to [Archer70](https://github.com/tightenco/ziggy/issues/70#issuecomment-369129032) for this solution.
 
 ### Using with `laravel-haml` (and other custom Blade compilers)
 
