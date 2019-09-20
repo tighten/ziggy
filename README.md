@@ -266,19 +266,6 @@ Then, use the method in your Vue components like so:
 
 Thanks to [Archer70](https://github.com/tightenco/ziggy/issues/70#issuecomment-369129032) for this solution.
 
-### Using with `laravel-haml` (and other custom Blade compilers)
-
-[laravel-haml](https://github.com/BKWLD/laravel-haml) provides HAML-based Blade templating. Because laravel-haml uses a separate `BladeCompiler` instance, custom directives (like `@route`) are not automatically imported. There is a [pull request](https://github.com/BKWLD/laravel-haml/pull/25) to fix that. In the mean time, simply place this code in your `./app/Providers/AppServiceProvider.php`'s `boot()` section:
-
-```php
-$customDirectives = $this->app['blade.compiler']->getCustomDirectives();
-foreach ($customDirectives as $name => $closure) {
-  $this->app['Bkwld\LaravelHaml\HamlBladeCompiler']->directive($name, $closure);
-}
-```
-
-This pattern is not limited to laravel-haml; it can be used to initialize any custom template compilers you may be using.
-
 ## Contributions & Credits
 
 To get started contributing to Ziggy, check out [the contribution guide](CONTRIBUTING.md).
