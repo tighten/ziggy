@@ -134,19 +134,18 @@ class Router extends String {
         if (
             Object.keys(this.queryParams).length === 0 &&
             Object.keys(this.urlParams).length === 0
-        )
+        ) {
             return '';
+        }
 
         let remainingParams = Object.assign(this.urlParams, this.queryParams);
 
-        const queryString = stringify(remainingParams, {
+        return stringify(remainingParams, {
             encodeValuesOnly: true,
             skipNulls: true,
             addQueryPrefix: true,
             arrayFormat: 'indices'
         });
-
-        return queryString;
     }
 
     current(name = null) {

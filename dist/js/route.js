@@ -1129,17 +1129,18 @@ function (_String) {
   }, {
     key: "constructQuery",
     value: function constructQuery() {
-      if (Object.keys(this.queryParams).length === 0 && Object.keys(this.urlParams).length === 0) return '';
+      if (Object.keys(this.queryParams).length === 0 && Object.keys(this.urlParams).length === 0) {
+        return '';
+      }
 
       var remainingParams = _extends(this.urlParams, this.queryParams);
 
-      var queryString = Object(lib["stringify"])(remainingParams, {
+      return Object(lib["stringify"])(remainingParams, {
         encodeValuesOnly: true,
         skipNulls: true,
         addQueryPrefix: true,
         arrayFormat: 'indices'
       });
-      return queryString;
     }
   }, {
     key: "current",
