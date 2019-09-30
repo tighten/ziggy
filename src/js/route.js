@@ -8,7 +8,8 @@ class Router extends String {
         this.name = name;
         this.absolute = absolute;
         this.ziggy = customZiggy ? customZiggy : Ziggy;
-        this.template = this.name ? new UrlBuilder(name, absolute, this.ziggy).construct() : '';
+        this.urlBuilder = this.name ? new UrlBuilder(name, absolute, this.ziggy) : null;
+        this.template = this.urlBuilder ? this.urlBuilder.construct() : '';
         this.urlParams = this.normalizeParams(params);
         this.queryParams = {};
         this.hydrated = '';
@@ -49,7 +50,7 @@ class Router extends String {
     hydrateUrl() {
         if (this.hydrated) return this.hydrated;
 
-        return (this.hydrated = this.template.replace(
+        let hydrated = this.template.replace(
             /{([^}]+)}/gi,
             (tag, i) => {
                 let keyName = this.trimParam(tag),
@@ -97,7 +98,15 @@ class Router extends String {
 
                 return encodeURIComponent(tagValue);
             }
-        ));
+        );
+
+        if (this.urlBuilder != null && this.urlBuilder.path !== '') {
+          hydrated = hydrated.replace(/\/+$/, '');
+        }
+
+        this.hydrated = hydrated;
+
+        return this.hydrated;
     }
 
     matchUrl() {

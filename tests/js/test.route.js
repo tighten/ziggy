@@ -413,7 +413,7 @@ describe('route()', function() {
     it('Should skip the optional parameter `slug`', function() {
         assert.equal(
             route('optional', { id: 123 }),
-            'http://myapp.dev/optional/123/'
+            'http://myapp.dev/optional/123'
         );
     });
 
