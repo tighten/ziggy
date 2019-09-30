@@ -55,8 +55,12 @@ class Router extends String {
             /{([^}]+)}/gi,
             (tag, i) => {
                 let keyName = this.trimParam(tag),
-                    defaultParameter = this.ziggy.defaultParameters[keyName],
+                    defaultParameter,
                     tagValue;
+
+                if (this.ziggy.defaultParameters.hasOwnProperty(keyName)) {
+                    defaultParameter = this.ziggy.defaultParameters[keyName];
+                }
 
                 // If a default parameter exists, and a value wasn't
                 // provided for it manually, use the default value
