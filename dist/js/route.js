@@ -1165,6 +1165,12 @@ function (_String) {
       return currentRoute;
     }
   }, {
+    key: "check",
+    value: function check(name) {
+      var routeNames = Object.keys(this.ziggy.namedRoutes);
+      return routeNames.includes(name);
+    }
+  }, {
     key: "extractParams",
     value: function extractParams(uri, template, delimiter) {
       var _this4 = this;

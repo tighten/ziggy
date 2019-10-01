@@ -175,6 +175,12 @@ class Router extends String {
         return currentRoute;
     }
 
+    check(name) {
+        let routeNames = Object.keys(this.ziggy.namedRoutes);
+
+        return routeNames.includes(name);
+    }
+
     extractParams(uri, template, delimiter) {
         const uriParts = uri.split(delimiter);
         const templateParts = template.split(delimiter);
