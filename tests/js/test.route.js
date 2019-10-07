@@ -76,6 +76,11 @@ global.Ziggy = {
             methods: ['GET', 'HEAD'],
             domain: null
         },
+        withOptionalFilter: {
+            uri: 'stuff/{filter?}',
+            methods: ['GET', 'HEAD'],
+            domain: null
+        },
         'conversations.show': {
             uri:
                 'subscribers/{subscriber}/conversations/{type}/{conversation_id?}',
@@ -169,6 +174,16 @@ describe('route()', function() {
         assert.throws(function() {
             route('translatePosts.index').toString();
         }, /'locale' key is required/);
+        global.Ziggy.defaultParameters = defaultParameters;
+    });
+
+    it('Should not use array filter property as default parameter for "filter"', function() {
+        let defaultParameters = global.Ziggy.defaultParameters;
+        global.Ziggy.defaultParameters = [];
+        assert.equal(
+            'http://myapp.dev/stuff/',
+            route('withOptionalFilter')
+        );
         global.Ziggy.defaultParameters = defaultParameters;
     });
 
