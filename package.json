@@ -1,42 +1,43 @@
 {
-  "name": "ziggy",
-  "version": "0.5.0",
-  "description": "Generates a Blade directive exporting all of your named Laravel routes. Also provides a nice route() helper function in JavaScript.",
-  "main": "src/js/route.js",
-  "directories": {
-    "test": "tests/js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tightenco/ziggy.git"
-  },
-  "author": "Daniel Coulbourne",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/tightenco/ziggy/issues"
-  },
-  "homepage": "https://github.com/tightenco/ziggy#readme",
-  "scripts": {
-    "build": "NODE_ENV=production webpack --progress",
-    "build:watch": "npm run build -- --watch",
-    "test": "NODE_ENV=test mocha-webpack 'tests/js/**/*.js'",
-    "test:watch": "npm run test -- --watch"
-  },
-  "devDependencies": {
-    "axios": "^0.18.0",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-plugin-transform-object-assign": "^6.22.0",
-    "babel-preset-env": "^1.7.0",
-    "mocha": "^5.2.0",
-    "mocha-webpack": "^2.0.0-beta.0",
-    "moxios": "^0.4.0",
-    "unminified-webpack-plugin": "^2.0.0",
-    "webpack": "^4.16.5",
-    "webpack-command": "^0.4.1"
-  },
-  "dependencies": {},
-  "engines": {
-    "node": ">= 6.11.0"
-  }
+    "name": "ziggy",
+    "version": "0.5.0",
+    "description": "Generates a Blade directive exporting all of your named Laravel routes. Also provides a nice route() helper function in JavaScript.",
+    "main": "src/js/route.js",
+    "directories": {
+        "test": "tests/js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tightenco/ziggy.git"
+    },
+    "author": "Daniel Coulbourne",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/tightenco/ziggy/issues"
+    },
+    "homepage": "https://github.com/tightenco/ziggy#readme",
+    "scripts": {
+        "build": "NODE_ENV=production webpack --progress",
+        "build:watch": "npm run build -- --watch",
+        "test": "NODE_ENV=test mocha-webpack 'tests/js/**/*.js'",
+        "test:watch": "npm run test -- --watch"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.5.5",
+        "@babel/plugin-transform-object-assign": "^7.2.0",
+        "@babel/preset-env": "^7.5.5",
+        "axios": "^0.19.0",
+        "babel-loader": "^8.0.6",
+        "mocha": "^6.2.0",
+        "mocha-webpack": "^2.0.0-beta.0",
+        "moxios": "^0.4.0",
+        "qs": "^6.8.0",
+        "unminified-webpack-plugin": "^2.0.0",
+        "webpack": "^4.39.3",
+        "webpack-cli": "^3.3.7"
+    },
+    "dependencies": {},
+    "engines": {
+        "node": ">= 8.9"
+    }
 }

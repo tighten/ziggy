@@ -3,14 +3,14 @@
 namespace Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
-use Tightenco\Tests\TestCase;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use org\bovigo\vfs\vfsStreamWrapper;
+use Tightenco\Tests\TestCase;
 
 class CommandRouteGeneratorTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -19,7 +19,7 @@ class CommandRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    function file_is_created_when_ziggy_generate_is_called()
+    public function file_is_created_when_ziggy_generate_is_called()
     {
         Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/ziggy.js')]);
 
@@ -27,11 +27,13 @@ class CommandRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    function file_is_created_with_the_expected_structure_when_named_routes_exist()
+    public function file_is_created_with_the_expected_structure_when_named_routes_exist()
     {
         $router = app('router');
 
-        $router->get('/posts/{post}/comments', function () { return ''; })
+        $router->get('/posts/{post}/comments', function () {
+            return '';
+        })
             ->name('postComments.index');
 
         $router->getRoutes()->refreshNameLookups();
@@ -42,11 +44,13 @@ class CommandRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    function file_is_created_with_a_custom_url()
+    public function file_is_created_with_a_custom_url()
     {
         $router = app('router');
 
-        $router->get('/posts/{post}/comments', function () { return ''; })
+        $router->get('/posts/{post}/comments', function () {
+            return '';
+        })
             ->name('postComments.index');
 
         $router->getRoutes()->refreshNameLookups();
