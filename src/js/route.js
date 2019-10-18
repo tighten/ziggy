@@ -8,10 +8,8 @@ class Router extends String {
         this.name = name;
         this.absolute = absolute;
         this.ziggy = customZiggy ? customZiggy : Ziggy;
-        (this.template = this.name
-            ? new UrlBuilder(name, absolute, this.ziggy).construct()
-            : ''),
-            (this.urlParams = this.normalizeParams(params));
+        this.template = this.name ? new UrlBuilder(name, absolute, this.ziggy).construct() : '';
+        this.urlParams = this.normalizeParams(params);
         this.queryParams = {};
         this.hydrated = '';
     }
