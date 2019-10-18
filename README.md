@@ -147,6 +147,13 @@ In the above example, you can see we have configured multiple whitelists for dif
 ```php
 @routes('author')
 ```
+
+Or if you want to expose multiple groups you can pass an array with the groups keys. Example:
+
+```php
+@routes(['admin', 'author'])
+```
+
 **Note: Using a group will always take precedence over the above mentioned `whitelist` and `blacklist` settings.**
 
 ### Other useful methods
