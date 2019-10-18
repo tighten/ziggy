@@ -399,14 +399,14 @@ var formats = __webpack_require__(1);
 var has = Object.prototype.hasOwnProperty;
 
 var arrayPrefixGenerators = {
-    brackets: function brackets(prefix) {
+    brackets: function brackets(prefix) { // eslint-disable-line func-name-matching
         return prefix + '[]';
     },
     comma: 'comma',
-    indices: function indices(prefix, key) {
+    indices: function indices(prefix, key) { // eslint-disable-line func-name-matching
         return prefix + '[' + key + ']';
     },
-    repeat: function repeat(prefix) {
+    repeat: function repeat(prefix) { // eslint-disable-line func-name-matching
         return prefix;
     }
 };
@@ -433,22 +433,22 @@ var defaults = {
     formatter: formats.formatters[defaultFormat],
     // deprecated
     indices: false,
-    serializeDate: function serializeDate(date) {
+    serializeDate: function serializeDate(date) { // eslint-disable-line func-name-matching
         return toISO.call(date);
     },
     skipNulls: false,
     strictNullHandling: false
 };
 
-var isNonNullishPrimitive = function isNonNullishPrimitive(v) {
+var isNonNullishPrimitive = function isNonNullishPrimitive(v) { // eslint-disable-line func-name-matching
     return typeof v === 'string'
         || typeof v === 'number'
         || typeof v === 'boolean'
         || typeof v === 'symbol'
-        || typeof v === 'bigint';
+        || typeof v === 'bigint'; // eslint-disable-line valid-typeof
 };
 
-var stringify = function stringify(
+var stringify = function stringify( // eslint-disable-line func-name-matching
     object,
     prefix,
     generateArrayPrefix,
@@ -474,7 +474,7 @@ var stringify = function stringify(
 
     if (obj === null) {
         if (strictNullHandling) {
-            return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder, charset, 'key') : prefix;
+            return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder, charset) : prefix;
         }
 
         obj = '';
@@ -482,8 +482,8 @@ var stringify = function stringify(
 
     if (isNonNullishPrimitive(obj) || utils.isBuffer(obj)) {
         if (encoder) {
-            var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset, 'key');
-            return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder, charset, 'value'))];
+            var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset);
+            return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder, charset))];
         }
         return [formatter(prefix) + '=' + formatter(String(obj))];
     }
@@ -752,11 +752,11 @@ var parseValues = function parseQueryStringValues(str, options) {
 
         var key, val;
         if (pos === -1) {
-            key = options.decoder(part, defaults.decoder, charset, 'key');
+            key = options.decoder(part, defaults.decoder, charset);
             val = options.strictNullHandling ? null : '';
         } else {
-            key = options.decoder(part.slice(0, pos), defaults.decoder, charset, 'key');
-            val = options.decoder(part.slice(pos + 1), defaults.decoder, charset, 'value');
+            key = options.decoder(part.slice(0, pos), defaults.decoder, charset);
+            val = options.decoder(part.slice(pos + 1), defaults.decoder, charset);
         }
 
         if (val && options.interpretNumericEntities && charset === 'iso-8859-1') {
@@ -1032,7 +1032,8 @@ function (_String) {
     _this.name = name;
     _this.absolute = absolute;
     _this.ziggy = customZiggy ? customZiggy : Ziggy;
-    _this.template = _this.name ? new js_UrlBuilder(name, absolute, _this.ziggy).construct() : '', _this.urlParams = _this.normalizeParams(params);
+    _this.template = _this.name ? new js_UrlBuilder(name, absolute, _this.ziggy).construct() : '';
+    _this.urlParams = _this.normalizeParams(params);
     _this.queryParams = {};
     _this.hydrated = '';
     return _this;
