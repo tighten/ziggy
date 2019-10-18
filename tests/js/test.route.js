@@ -639,6 +639,12 @@ describe('route()', function() {
         global.Ziggy.basePort = orgBasePort;
     });
 
+    it('Should be able check if a certain route exists and return a boolean.', function() {
+        assert.equal(true, route().check('posts.show'));
+
+        assert.equal(false, route().check('non.existing.route'));
+    })
+
     it('Should still work if paths are appended to baseUrl.', function() {
         let orgBaseUrl = Ziggy.baseUrl;
         global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
