@@ -181,7 +181,7 @@ describe('route()', function() {
         let defaultParameters = global.Ziggy.defaultParameters;
         global.Ziggy.defaultParameters = [];
         assert.equal(
-            'http://myapp.dev/stuff/',
+            'http://myapp.dev/stuff',
             route('withOptionalFilter')
         );
         global.Ziggy.defaultParameters = defaultParameters;
