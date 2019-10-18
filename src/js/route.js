@@ -1,20 +1,22 @@
 import UrlBuilder from './UrlBuilder';
+import { stringify } from 'qs';
 
 class Router extends String {
-    constructor(name, params, absolute, customZiggy=null) {
+    constructor(name, params, absolute, customZiggy = null) {
         super();
 
-        this.name           = name;
-        this.absolute       = absolute;
-        this.ziggy          = customZiggy ? customZiggy : Ziggy;
-        this.template       = this.name ? new UrlBuilder(name, absolute, this.ziggy).construct() : '',
-        this.urlParams      = this.normalizeParams(params);
-        this.queryParams    = this.normalizeParams(params);
+        this.name = name;
+        this.absolute = absolute;
+        this.ziggy = customZiggy ? customZiggy : Ziggy;
+        this.urlBuilder = this.name ? new UrlBuilder(name, absolute, this.ziggy) : null;
+        this.template = this.urlBuilder ? this.urlBuilder.construct() : '';
+        this.urlParams = this.normalizeParams(params);
+        this.queryParams = {};
+        this.hydrated = '';
     }
 
     normalizeParams(params) {
-	if (typeof params === 'undefined')
-            return {};
+        if (typeof params === 'undefined') return {};
 
         // If you passed in a string or integer, wrap it in an array
         params = typeof params !== 'object' ? [params] : params;
@@ -24,7 +26,10 @@ class Router extends String {
         // wrap this in an array. This could be slightly dangerous and I want to find
         // a better solution for this rare case.
 
-        if (params.hasOwnProperty('id') && this.template.indexOf('{id}') == -1) {
+        if (
+            params.hasOwnProperty('id') &&
+            this.template.indexOf('{id}') == -1
+        ) {
             params = [params.id];
         }
 
@@ -43,77 +48,111 @@ class Router extends String {
     }
 
     hydrateUrl() {
-        let tags = this.urlParams,
-            paramsArrayKey = 0,
-            params = this.template.match(/{([^}]+)}/gi),
-            needDefaultParams = false;
+        if (this.hydrated) return this.hydrated;
 
-        if (params && params.length != Object.keys(tags).length) {
-            needDefaultParams = true
-        }
-
-        return this.template.replace(
+        let hydrated = this.template.replace(
             /{([^}]+)}/gi,
             (tag, i) => {
-		 let keyName = this.trimParam(tag),
-                    key = this.numericParamIndices ? paramsArrayKey : keyName,
-                    defaultParameter = this.ziggy.defaultParameters[keyName];
+                let keyName = this.trimParam(tag),
+                    defaultParameter = this.ziggy.defaultParameters[keyName],
+                    tagValue;
 
-                if (defaultParameter && needDefaultParams) {
-                    if (this.numericParamIndices) {
-                        tags = Object.values(tags)
-                        tags.splice(key, 0, defaultParameter)
+                // If a default parameter exists, and a value wasn't
+                // provided for it manually, use the default value
+                if (defaultParameter && !this.urlParams[keyName]) {
+                    delete this.urlParams[keyName];
+                    return defaultParameter;
+                }
+
+                // We were passed an array, shift the value off the
+                // object and return that value to the route
+                if (this.numericParamIndices) {
+                    this.urlParams = Object.values(this.urlParams);
+
+                    tagValue = this.urlParams.shift();
+                } else {
+                    tagValue = this.urlParams[keyName];
+                    delete this.urlParams[keyName];
+                }
+
+                // The type of the value is undefined; is this param
+                // optional or not
+                if (typeof tagValue === 'undefined') {
+                    if (tag.indexOf('?') === -1) {
+                        throw new Error(
+                            "Ziggy Error: '" +
+                                keyName +
+                                "' key is required for route '" +
+                                this.name +
+                                "'"
+                        );
                     } else {
-                        tags[key] = defaultParameter
+                        return '';
                     }
                 }
 
-                paramsArrayKey++;
-                if (typeof tags[key] !== 'undefined') {
-                    delete this.queryParams[key];
-                    return tags[key].id || encodeURIComponent(tags[key]);
+                // If an object was passed and has an id, return it
+                if (tagValue.id) {
+                    return encodeURIComponent(tagValue.id);
                 }
-                if (tag.indexOf('?') === -1) {
-                    throw new Error(`Ziggy Error: '${keyName}' key is required for route '${this.name}'`);
-                } else {
-                    return '';
-                }
+
+                return encodeURIComponent(tagValue);
             }
         );
+
+        if (this.urlBuilder != null && this.urlBuilder.path !== '') {
+          hydrated = hydrated.replace(/\/+$/, '');
+        }
+
+        this.hydrated = hydrated;
+
+        return this.hydrated;
     }
 
     matchUrl() {
-        let windowUrl = window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname;
+        let windowUrl =
+            window.location.hostname +
+            (window.location.port ? ':' + window.location.port : '') +
+            window.location.pathname;
 
         // Strip out optional parameters
-        let optionalTemplate = this.template.replace(/(\/\{[^\}]*\?\})/g, '/')
-            .replace(/(\{[^\}]*\})/gi, '[^\/\?]+')
+        let optionalTemplate = this.template
+            .replace(/(\/\{[^\}]*\?\})/g, '/')
+            .replace(/(\{[^\}]*\})/gi, '[^/?]+')
             .replace(/\/?$/, '')
             .split('://')[1];
 
-        let searchTemplate = this.template.replace(/(\{[^\}]*\})/gi, '[^\/\?]+').split('://')[1];
+        let searchTemplate = this.template
+            .replace(/(\{[^\}]*\})/gi, '[^/?]+')
+            .split('://')[1];
         let urlWithTrailingSlash = windowUrl.replace(/\/?$/, '/');
 
-        const regularSearch = new RegExp("^" + searchTemplate + "\/$").test(urlWithTrailingSlash);
-        const optionalSearch = new RegExp("^" + optionalTemplate + "\/$").test(urlWithTrailingSlash);
+        const regularSearch = new RegExp('^' + searchTemplate + '/$').test(
+            urlWithTrailingSlash
+        );
+        const optionalSearch = new RegExp('^' + optionalTemplate + '/$').test(
+            urlWithTrailingSlash
+        );
 
         return regularSearch || optionalSearch;
     }
 
     constructQuery() {
-        if (Object.keys(this.queryParams).length === 0)
+        if (
+            Object.keys(this.queryParams).length === 0 &&
+            Object.keys(this.urlParams).length === 0
+        ) {
             return '';
+        }
 
-        let queryString = '?';
+        let remainingParams = Object.assign(this.urlParams, this.queryParams);
 
-        Object.keys(this.queryParams).forEach(function(key, i) {
-            if (this.queryParams[key] !== undefined && this.queryParams[key] !== null) {
-                queryString = i === 0 ? queryString : queryString + '&';
-                queryString += key + '=' + encodeURIComponent(this.queryParams[key]);
-            }
-        }.bind(this));
-
-        return queryString;
+        return stringify(remainingParams, {
+            encodeValuesOnly: true,
+            skipNulls: true,
+            addQueryPrefix: true,
+            arrayFormat: 'indices'
+        });
     }
 
     current(name = null) {
@@ -124,34 +163,62 @@ class Router extends String {
                 return false;
             }
 
-            return new Router(name, undefined, undefined, this.ziggy).matchUrl();
+            return new Router(
+                name,
+                undefined,
+                undefined,
+                this.ziggy
+            ).matchUrl();
         })[0];
 
         if (name) {
-            const pattern = new RegExp(name.replace('*', '.*').replace('.', '\.'), 'i');
+            const pattern = new RegExp(
+                '^' + name.replace('*', '.*').replace('.', '.') + '$',
+                'i'
+            );
             return pattern.test(currentRoute);
         }
 
         return currentRoute;
     }
 
+    check(name) {
+        let routeNames = Object.keys(this.ziggy.namedRoutes);
+
+        return routeNames.includes(name);
+    }
+
     extractParams(uri, template, delimiter) {
         const uriParts = uri.split(delimiter);
         const templateParts = template.split(delimiter);
 
-        return templateParts.reduce((params, param, i) => (
-            param.indexOf('{') === 0 && param.indexOf('}') !== -1 && uriParts[i]
-                ? Object.assign(params, { [this.trimParam(param)]: uriParts[i] })
-                : params
-        ), {});
+        return templateParts.reduce(
+            (params, param, i) =>
+                param.indexOf('{') === 0 &&
+                param.indexOf('}') !== -1 &&
+                uriParts[i]
+                    ? Object.assign(params, {
+                          [this.trimParam(param)]: uriParts[i]
+                      })
+                    : params,
+            {}
+        );
     }
 
     get params() {
         const namedRoute = this.ziggy.namedRoutes[this.current()];
 
         return Object.assign(
-            this.extractParams(window.location.hostname, namedRoute.domain || '', '.'),
-            this.extractParams(window.location.pathname.slice(1), namedRoute.uri, '/'),
+            this.extractParams(
+                window.location.hostname,
+                namedRoute.domain || '',
+                '.'
+            ),
+            this.extractParams(
+                window.location.pathname.slice(1),
+                namedRoute.uri,
+                '/'
+            )
         );
     }
 
@@ -179,4 +246,4 @@ class Router extends String {
 
 export default function route(name, params, absolute, customZiggy) {
     return new Router(name, params, absolute, customZiggy);
-};
+}

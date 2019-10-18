@@ -1,6 +1,7 @@
 language: php
 php:
-  - '7.1'
+  - '7.2'
+  - '7.3'
 git:
   depth: 10
 install: 
