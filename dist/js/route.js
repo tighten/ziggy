@@ -1078,8 +1078,12 @@ function (_String) {
       if (this.hydrated) return this.hydrated;
       var hydrated = this.template.replace(/{([^}]+)}/gi, function (tag, i) {
         var keyName = _this2.trimParam(tag),
-            defaultParameter = _this2.ziggy.defaultParameters[keyName],
-            tagValue; // If a default parameter exists, and a value wasn't
+            defaultParameter,
+            tagValue;
+
+        if (_this2.ziggy.defaultParameters.hasOwnProperty(keyName)) {
+          defaultParameter = _this2.ziggy.defaultParameters[keyName];
+        } // If a default parameter exists, and a value wasn't
         // provided for it manually, use the default value
 
 
