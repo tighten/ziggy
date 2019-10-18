@@ -81,7 +81,7 @@ global.Ziggy = {
                 'subscribers/{subscriber}/conversations/{type}/{conversation_id?}',
             methods: ['GET', 'HEAD'],
             domain: null
-        }
+        },
     },
     baseUrl: 'http://myapp.dev/',
     baseProtocol: 'http',
@@ -692,6 +692,13 @@ describe('route()', function() {
         assert.equal(
             'http://myapp.dev/posts?filled=filling',
             route('posts.index', { filled: 'filling', empty: null }).url()
+        );
+    });
+
+    it('Should pass param if its value is zero', function() {
+        assert.equal(
+            'http://myapp.dev/posts/0',
+            route('posts.update', 0).url()
         );
     });
 
