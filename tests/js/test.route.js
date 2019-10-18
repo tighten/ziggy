@@ -86,7 +86,7 @@ global.Ziggy = {
                 'subscribers/{subscriber}/conversations/{type}/{conversation_id?}',
             methods: ['GET', 'HEAD'],
             domain: null
-        }
+        },
     },
     baseUrl: 'http://myapp.dev/',
     baseProtocol: 'http',
@@ -428,7 +428,7 @@ describe('route()', function() {
     it('Should skip the optional parameter `slug`', function() {
         assert.equal(
             route('optional', { id: 123 }),
-            'http://myapp.dev/optional/123/'
+            'http://myapp.dev/optional/123'
         );
     });
 
@@ -654,6 +654,12 @@ describe('route()', function() {
         global.Ziggy.basePort = orgBasePort;
     });
 
+    it('Should be able check if a certain route exists and return a boolean.', function() {
+        assert.equal(true, route().check('posts.show'));
+
+        assert.equal(false, route().check('non.existing.route'));
+    })
+
     it('Should still work if paths are appended to baseUrl.', function() {
         let orgBaseUrl = Ziggy.baseUrl;
         global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
@@ -707,6 +713,13 @@ describe('route()', function() {
         assert.equal(
             'http://myapp.dev/posts?filled=filling',
             route('posts.index', { filled: 'filling', empty: null }).url()
+        );
+    });
+
+    it('Should pass param if its value is zero', function() {
+        assert.equal(
+            'http://myapp.dev/posts/0',
+            route('posts.update', 0).url()
         );
     });
 

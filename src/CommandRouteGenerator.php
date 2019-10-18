@@ -37,6 +37,8 @@ class CommandRouteGenerator extends Command
         $this->makeDirectory($path);
 
         $this->files->put($path, $generatedRoutes);
+        
+        $this->info('File generated!');
     }
 
     public function generate($group = false)
