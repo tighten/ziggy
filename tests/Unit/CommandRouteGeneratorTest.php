@@ -59,4 +59,38 @@ class CommandRouteGeneratorTest extends TestCase
 
         $this->assertFileEquals('./tests/assets/js/custom-url.js', vfsStream::url('testDir/ziggy.js'));
     }
+
+    /** @test */
+    public function file_is_created_with_the_expected_group()
+    {
+        app()['config']->set('ziggy', [
+            'blacklist' => ['admin.*'],
+
+            'groups' => [
+                'admin' => ['admin.*'],
+            ],
+        ]);
+
+        $router = app('router');
+
+        $router->get('/posts/{post}/comments', function () {
+            return '';
+        })
+            ->name('postComments.index');
+
+        $router->get('/admin', function () {
+            return '';
+        })
+            ->name('admin.dashboard');
+
+        $router->getRoutes()->refreshNameLookups();
+
+        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/ziggy.js')]);
+
+        $this->assertFileEquals('./tests/assets/js/ziggy.js', vfsStream::url('testDir/ziggy.js'));
+
+        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/admin.js'), '--group' => 'admin']);
+
+        $this->assertFileEquals('./tests/assets/js/admin.js', vfsStream::url('testDir/admin.js'));
+    }
 }
