@@ -71,7 +71,7 @@ class Router extends String {
                 // We were passed an array, shift the value off the
                 // object and return that value to the route
                 if (this.numericParamIndices) {
-                    this.urlParams = Object.values(this.urlParams);
+                    this.urlParams = Object.keys(this.urlParams).map(key => this.urlParams[key]);
 
                     tagValue = this.urlParams.shift();
                 } else {
