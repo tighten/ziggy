@@ -38,7 +38,7 @@ class CommandRouteGenerator extends Command
         $this->makeDirectory($path);
 
         $this->files->put($path, $generatedRoutes);
-        
+
         $this->info('File generated!');
     }
 
@@ -60,7 +60,7 @@ class CommandRouteGenerator extends Command
         defaultParameters: $defaultParameters
     };
 
-    if (typeof window.Ziggy !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
         for (var name in window.Ziggy.namedRoutes) {
             Ziggy.namedRoutes[name] = window.Ziggy.namedRoutes[name];
         }
