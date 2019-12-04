@@ -24,9 +24,12 @@ class Router extends String {
         // If the tags object contains an ID and there isn't an ID param in the
         // url template, they probably passed in a single model object and we should
         // wrap this in an array. This could be slightly dangerous and I want to find
-        // a better solution for this rare case.
+        // a better solution for this rare case. The object needs to contain at least
+        // 3 properties to be considered an object. This makes sure params like
+        // {type: 'Model', id: 1} still are valid.
 
         if (
+            params.length > 2 &&
             params.hasOwnProperty('id') &&
             this.template.indexOf('{id}') == -1
         ) {
