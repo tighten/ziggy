@@ -18,14 +18,25 @@ class ZiggyServiceProvider extends ServiceProvider
             return Macro::whitelist($this, $group);
         });
 
-        $this->app['blade.compiler']->directive('routes', function ($group) {
-            return "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>";
-        });
+        if ($this->app->resolved('blade.compiler')) {
+            $this->registerDirective($this->app['blade.compiler']);
+        } else {
+            $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
+                $this->registerDirective($bladeCompiler);
+            });
+        }
 
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CommandRouteGenerator::class,
             ]);
         }
+    }
+
+    protected function registerDirective(BladeCompiler $bladeCompiler)
+    {
+        $bladeCompiler->directive('routes', function ($group) {
+            return "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>";
+        });
     }
 }
