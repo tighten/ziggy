@@ -67,6 +67,9 @@ return axios.get(route('posts.show', post))
         return response.data;
     });
 ```
+
+_Note: If you are using Axios and making requests which require CSRF verification, use the `url()` method on the route (documented below). This will ensure that the `X-XSRF-TOKEN` header is sent with the request._
+
 ### Default Values
 See Laravel [documentation](https://laravel.com/docs/5.5/urls#default-values)
 
