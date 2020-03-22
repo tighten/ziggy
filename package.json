@@ -1,8 +1,9 @@
 {
-    "name": "ziggy",
+    "name": "laravel-ziggy",
     "version": "0.5.0",
     "description": "Generates a Blade directive exporting all of your named Laravel routes. Also provides a nice route() helper function in JavaScript.",
     "main": "src/js/route.js",
+    "browser": "dist/js/route.min.js",
     "directories": {
         "test": "tests/js"
     },
@@ -31,12 +32,13 @@
         "mocha": "^6.2.0",
         "mocha-webpack": "^2.0.0-beta.0",
         "moxios": "^0.4.0",
-        "qs": "^6.8.0",
         "unminified-webpack-plugin": "^2.0.0",
         "webpack": "^4.39.3",
         "webpack-cli": "^3.3.7"
     },
-    "dependencies": {},
+    "dependencies": {
+        "qs": "^6.8.0"
+    },
     "engines": {
         "node": ">= 8.9"
     }
