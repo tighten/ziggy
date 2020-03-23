@@ -26,7 +26,8 @@
         "build": "NODE_ENV=production webpack --progress",
         "build:watch": "npm run build -- --watch",
         "test": "NODE_ENV=test mocha-webpack 'tests/js/**/*.js'",
-        "test:watch": "npm run test -- --watch"
+        "test:watch": "npm run test -- --watch",
+        "prepublishOnly": "npm run build"
     },
     "devDependencies": {
         "@babel/core": "^7.5.5",
