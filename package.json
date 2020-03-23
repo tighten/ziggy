@@ -5,6 +5,10 @@
     "module": "src/js/route.js",
     "main": "dist/js/route.min.js",
     "browser": "dist/js/route.min.js",
+    "files": [
+        "src/js",
+        "dist"
+    ],
     "directories": {
         "test": "tests/js"
     },
