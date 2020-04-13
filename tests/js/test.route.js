@@ -432,6 +432,13 @@ describe('route()', function() {
         );
     });
 
+    it('Should skip the optional parameter `slug` when null', function() {
+        assert.equal(
+            route('optional', { id: 123, slug: null }),
+            'http://myapp.dev/optional/123'
+        );
+    });
+
     it('Should accept the optional parameter `slug`', function() {
         assert.equal(
             route('optional', { id: 123, slug: 'news' }),
