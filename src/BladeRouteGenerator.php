@@ -7,13 +7,15 @@ use function array_key_exists;
 
 class BladeRouteGenerator
 {
-    private static $generated;
+    public static $generated;
+    
+    public $routePayload;
+
     private $baseDomain;
     private $basePort;
     private $baseUrl;
     private $baseProtocol;
     private $router;
-    public  $routePayload;
 
     public function __construct(Router $router)
     {
