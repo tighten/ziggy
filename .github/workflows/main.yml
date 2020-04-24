@@ -8,13 +8,30 @@ on:
 
 jobs:
   test:
-    name: PHP ${{ matrix.php }}
+    name: PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }} - ${{ matrix.dependencies }}
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.2', '7.3', '7.4']
+        php: [7.2, 7.3, 7.4]
+        laravel: [5.4.*, 5.5.*, 5.6.*, 5.7.*, 5.8.*, 6.*, 7.*]
+        dependencies: [prefer-lowest, prefer-stable]
+        include:
+          - laravel: 5.4.*
+            testbench: 3.4.*
+          - laravel: 5.5.*
+            testbench: 3.5.*
+          - laravel: 5.6.*
+            testbench: 3.6.*
+          - laravel: 5.7.*
+            testbench: 3.7.*
+          - laravel: 5.8.*
+            testbench: 3.8.*
+          - laravel: 6.*
+            testbench: 4.*
+          - laravel: 7.*
+            testbench: 5.*
 
     steps:
       - name: Checkout
@@ -29,8 +46,8 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.composer/cache/files
-          key: php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: php-${{ matrix.php }}-composer-
+          key: php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-${{ matrix.dependencies }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-${{ matrix.dependencies }}-composer-
 
       - name: Cache npm dependencies
         uses: actions/cache@v1
@@ -41,7 +58,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer install --no-interaction --no-progress --no-suggest --no-scripts --prefer-dist
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-progress --no-suggest
           npm ci
 
       - name: Build
