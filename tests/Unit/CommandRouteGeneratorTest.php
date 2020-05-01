@@ -3,9 +3,6 @@
 namespace Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
-use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamDirectory;
-use org\bovigo\vfs\vfsStreamWrapper;
 use Tightenco\Tests\TestCase;
 
 class CommandRouteGeneratorTest extends TestCase
