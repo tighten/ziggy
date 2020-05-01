@@ -10,20 +10,23 @@ use Tightenco\Tests\TestCase;
 
 class CommandRouteGeneratorTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        vfsStreamWrapper::register();
-        vfsStreamWrapper::setRoot(new vfsStreamDirectory('testDir'));
-    }
-
     /** @test */
     public function file_is_created_when_ziggy_generate_is_called()
     {
-        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/ziggy.js')]);
+        Artisan::call('ziggy:generate');
 
-        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('ziggy.js'));
+        $this->assertFileExists(base_path('resources/assets/js/ziggy.js'));
+    }
+
+    /** @test */
+    public function file_is_created_when_ziggy_generate_is_called_from_outside_project_root()
+    {
+        chdir('..');
+        $this->assertNotEquals(base_path(), getcwd());
+
+        Artisan::call('ziggy:generate');
+
+        $this->assertFileExists(base_path('resources/assets/js/ziggy.js'));
     }
 
     /** @test */
@@ -38,9 +41,9 @@ class CommandRouteGeneratorTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/ziggy.js')]);
+        Artisan::call('ziggy:generate');
 
-        $this->assertFileEquals('./tests/assets/js/ziggy.js', vfsStream::url('testDir/ziggy.js'));
+        $this->assertFileEquals('./tests/assets/js/ziggy.js', base_path('resources/assets/js/ziggy.js'));
     }
 
     /** @test */
@@ -55,9 +58,9 @@ class CommandRouteGeneratorTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/ziggy.js'), '--url' => 'http://example.org']);
+        Artisan::call('ziggy:generate', ['--url' => 'http://example.org']);
 
-        $this->assertFileEquals('./tests/assets/js/custom-url.js', vfsStream::url('testDir/ziggy.js'));
+        $this->assertFileEquals('./tests/assets/js/custom-url.js', base_path('resources/assets/js/ziggy.js'));
     }
 
     /** @test */
@@ -85,12 +88,23 @@ class CommandRouteGeneratorTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/ziggy.js')]);
+        Artisan::call('ziggy:generate');
 
-        $this->assertFileEquals('./tests/assets/js/ziggy.js', vfsStream::url('testDir/ziggy.js'));
+        $this->assertFileEquals('./tests/assets/js/ziggy.js', base_path('resources/assets/js/ziggy.js'));
 
-        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/admin.js'), '--group' => 'admin']);
+        Artisan::call('ziggy:generate', ['path' => 'resources/assets/js/admin.js', '--group' => 'admin']);
 
-        $this->assertFileEquals('./tests/assets/js/admin.js', vfsStream::url('testDir/admin.js'));
+        $this->assertFileEquals('./tests/assets/js/admin.js', base_path('resources/assets/js/admin.js'));
+    }
+
+    protected function tearDown(): void
+    {
+        if (file_exists(base_path('resources/assets/js')) && is_dir(base_path('resources/assets/js'))) {
+            array_map(function ($file) {
+                unlink($file);
+            }, glob(base_path('resources/assets/js/*')));
+        }
+
+        parent::tearDown();
     }
 }
