@@ -23,6 +23,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npm ci
+          npm install
           npm --no-git-tag-version version $(git describe --tags) --allow-same-version
           npm publish --access public
