@@ -8,7 +8,7 @@ use Tightenco\Tests\TestCase;
 class CommandRouteGeneratorTest extends TestCase
 {
     /** @test */
-    public function file_is_created_when_ziggy_generate_is_called()
+    function file_is_created_when_ziggy_generate_is_called()
     {
         Artisan::call('ziggy:generate');
 
@@ -16,7 +16,7 @@ class CommandRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function file_is_created_when_ziggy_generate_is_called_from_outside_project_root()
+    function file_is_created_when_ziggy_generate_is_called_from_outside_project_root()
     {
         chdir('..');
         $this->assertNotEquals(base_path(), getcwd());
@@ -27,7 +27,7 @@ class CommandRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function file_is_created_with_the_expected_structure_when_named_routes_exist()
+    function file_is_created_with_the_expected_structure_when_named_routes_exist()
     {
         $router = app('router');
 
@@ -44,7 +44,7 @@ class CommandRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function file_is_created_with_a_custom_url()
+    function file_is_created_with_a_custom_url()
     {
         $router = app('router');
 
@@ -61,7 +61,7 @@ class CommandRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function file_is_created_with_the_expected_group()
+    function file_is_created_with_the_expected_group()
     {
         app()['config']->set('ziggy', [
             'blacklist' => ['admin.*'],
