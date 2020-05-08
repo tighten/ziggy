@@ -12,6 +12,27 @@ Ziggy creates a Blade directive that you can include in your views. It will expo
 
 Ziggy supports all versions of Laravel from `5.4` to `7.x`.
 
+## Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+    - [Examples](#examples)
+    - [Default Values](#default-values)
+- [Filtering Routes](#filtering-routes)
+    - [Basic Whitelisting & Blacklisting](#basic-whitelisting-blacklisting)
+    - [Basic Whitelisting & Blacklisting using Macros](#basic-whitelisting-blacklisting-using-macros)
+    - [Advanced Whitelisting using Groups](#advanced-whitelisting-blacklisting)
+- [Other Useful Methods](#other-useful-methods)
+    - [`current()`](#current)
+    - [`url()`](#url)
+- [Artisan Command](#artisan-command)
+- [Using with Vue Components](#using-with-vue-components)
+- [Other](#other)
+- [Contributing](#contributing)
+- [Credits](#credits)
+- [Security](#security)
+- [License](#license)
+
 ## Installation
 
 1. Install Ziggy using Composer: `composer require tightenco/ziggy`.
