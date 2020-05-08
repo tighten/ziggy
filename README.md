@@ -336,6 +336,7 @@ To get started contributing to Ziggy, check out [the contribution guide](CONTRIB
 - [Daniel Coulbourne](https://twitter.com/DCoulbourne)
 - [Jake Bathman](https://twitter.com/jakebathman)
 - [Matt Stauffer](https://twitter.com/stauffermatt)
+- [Jacob Baker-Kretzmar](https://twitter.com/bakerkretzmar)
 - [All contributors](https://github.com/tightenco/ziggy/contributors)
 
 Thanks to [Caleb Porzio](http://twitter.com/calebporzio), [Adam Wathan](http://twitter.com/adamwathan), and [Jeffrey Way](http://twitter.com/jeffrey_way) for help solidifying the idea.
