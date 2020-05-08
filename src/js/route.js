@@ -79,9 +79,9 @@ class Router extends String {
                     delete this.urlParams[keyName];
                 }
 
-                // The type of the value is undefined; is this param
+                // The value is null or defined; is this param
                 // optional or not
-                if (typeof tagValue === 'undefined') {
+                if (tagValue == null) {
                     if (tag.indexOf('?') === -1) {
                         throw new Error(
                             "Ziggy Error: '" +
