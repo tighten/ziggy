@@ -8,7 +8,7 @@ use function array_key_exists;
 class BladeRouteGenerator
 {
     public static $generated;
-    
+
     public $routePayload;
 
     private $baseDomain;
@@ -27,10 +27,10 @@ class BladeRouteGenerator
         return RoutePayload::compile($this->router, $group);
     }
 
-    public function generate($group = false, $nonce=false)
+    public function generate($group = false, $nonce = false)
     {
         $json = $this->getRoutePayload($group)->toJson();
-        $nonce = $nonce?" nonce='$nonce'":'';
+        $nonce = $nonce ? ' nonce="' . $nonce . '"' : '';
 
         if (static::$generated) {
             return $this->generateMergeJavascript($json, $nonce);
