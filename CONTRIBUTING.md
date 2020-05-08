@@ -29,6 +29,8 @@ Before submitting a pull request:
 
 Please write tests for any fixes or new features you contribute. We use [Orchestra Testbench](http://orchestraplatform.com/docs/latest/components/testbench/) as our base PHPUnit test for PHP and [Mocha](https://mochajs.org) for testing our JavaScript.
 
+You can run PHP tests with `vendor/bin/phpunit` and JavaScript tests with `npm run test`.
+
 If you need any help with this please don't hesitate to ask.
 
 ## Requirements
