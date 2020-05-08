@@ -3,7 +3,7 @@
     "version": "0.9.1",
     "description": "Generates a Blade directive exporting all of your named Laravel routes. Also provides a nice route() helper function in JavaScript.",
     "module": "src/js/route.js",
-    "main": "src/js/route.js",
+    "main": "dist/js/route.js",
     "browser": "dist/js/route.min.js",
     "files": [
         "src/js",
