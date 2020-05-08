@@ -1,27 +1,36 @@
-### Expected Behavior
-_If this is a new feature, give a usage example._
+### Expected behavior
 
-### Current Behavior
-_If this is a new feature, is it a modification of an existing feature? Otherwise – `none`_
+<!-- If this is a feature request/suggestion, please provide a usage example. -->
 
-## For bug reports only please provide
-### Currently installed Laravel version:
-`5.5.28`
+### Current behavior
 
-### Currently installed Ziggy version
-`0.6.0`
+<!-- If this is a feature request/suggestion, is it a modification of an existing feature? If not, leave this blank. -->
 
-### Example route from your Laravel Routes file.
-_i.e. -_
+
+<!-- For bug reports, please also fill out the section below: -->
+
+### Versions
+
+- **Laravel**: #.#.#
+- **Ziggy**: #.#.#
+
+### Route
+
+<!-- The route with the issue, from your Laravel routes file, or a similar example. -->
+
 ```php
 Route::get('/venues/{venue}', 'VenuesController@show')->name('venues.show');
 ```
-### Contents of Ziggy.namedRoutes
-_In dev tools type `Ziggy.namedRoutes` and copy the result here._
+
+### Contents of `Ziggy.namedRoutes`
+
+<!-- In your browser console/dev tools, type `Ziggy.namedRoutes` and paste the result here. -->
 
 ### Ziggy call in context
-_i.e. –_
+
+<!-- For example: -->
+
 ```javascript
 // Api client is a wrapper around Axios
-ApiClient.get(route('venues.show', {venue: 1}));
+ApiClient.get(route('venues.show', { venue: 1 }));
 ```

@@ -1,15 +1,12 @@
-# Auto detect text files and perform LF normalization
 * text=auto
 
-# Export ignores
-.github export-ignore
-tests export-ignore
+/tests export-ignore
 ziggy-banner.png export-ignore
 CONTRIBUTING.md export-ignore
-.gitattributes export-ignore
 .babelrc export-ignore
-.travis.yml export-ignore
-package.json export-ignore
-package-lock.json export-ignore
+.editorconfig export-ignore
+.gitattributes export-ignore
+.github export-ignore
+.gitignore export-ignore
 phpunit.xml.dist export-ignore
 webpack.config.js export-ignore
