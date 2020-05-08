@@ -226,7 +226,7 @@ route('home').url();
 
 Ziggy registers an Artisan console command to generate a `ziggy.js` routes file, which can be used as part of an asset pipeline such as [Laravel Mix](https://laravel.com/docs/mix).
 
-You can run `php artisan ziggy:generate` in your project to generate a static routes file in `resources/assets/js/ziggy.js`. You can optionally include a second parameter to override the path and file name (you must pass a complete path, including the file name):
+You can run `php artisan ziggy:generate` in your project to generate a static routes file in `resources/js/ziggy.js`. You can optionally include a second parameter to override the path and file name (you must pass a complete path, including the file name):
 
 ```sh
 php artisan ziggy:generate "resources/foo.js"

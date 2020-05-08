@@ -12,7 +12,7 @@ class CommandRouteGeneratorTest extends TestCase
     {
         Artisan::call('ziggy:generate');
 
-        $this->assertFileExists(base_path('resources/assets/js/ziggy.js'));
+        $this->assertFileExists(base_path('resources/js/ziggy.js'));
     }
 
     /** @test */
@@ -23,7 +23,7 @@ class CommandRouteGeneratorTest extends TestCase
 
         Artisan::call('ziggy:generate');
 
-        $this->assertFileExists(base_path('resources/assets/js/ziggy.js'));
+        $this->assertFileExists(base_path('resources/js/ziggy.js'));
     }
 
     /** @test */
@@ -40,7 +40,7 @@ class CommandRouteGeneratorTest extends TestCase
 
         Artisan::call('ziggy:generate');
 
-        $this->assertFileEquals('./tests/assets/js/ziggy.js', base_path('resources/assets/js/ziggy.js'));
+        $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
     }
 
     /** @test */
@@ -57,7 +57,7 @@ class CommandRouteGeneratorTest extends TestCase
 
         Artisan::call('ziggy:generate', ['--url' => 'http://example.org']);
 
-        $this->assertFileEquals('./tests/assets/js/custom-url.js', base_path('resources/assets/js/ziggy.js'));
+        $this->assertFileEquals('./tests/fixtures/custom-url.js', base_path('resources/js/ziggy.js'));
     }
 
     /** @test */
@@ -87,19 +87,19 @@ class CommandRouteGeneratorTest extends TestCase
 
         Artisan::call('ziggy:generate');
 
-        $this->assertFileEquals('./tests/assets/js/ziggy.js', base_path('resources/assets/js/ziggy.js'));
+        $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
 
-        Artisan::call('ziggy:generate', ['path' => 'resources/assets/js/admin.js', '--group' => 'admin']);
+        Artisan::call('ziggy:generate', ['path' => 'resources/js/admin.js', '--group' => 'admin']);
 
-        $this->assertFileEquals('./tests/assets/js/admin.js', base_path('resources/assets/js/admin.js'));
+        $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
     }
 
     protected function tearDown(): void
     {
-        if (file_exists(base_path('resources/assets/js')) && is_dir(base_path('resources/assets/js'))) {
+        if (file_exists(base_path('resources/js')) && is_dir(base_path('resources/js'))) {
             array_map(function ($file) {
                 unlink($file);
-            }, glob(base_path('resources/assets/js/*')));
+            }, glob(base_path('resources/js/*')));
         }
 
         parent::tearDown();
