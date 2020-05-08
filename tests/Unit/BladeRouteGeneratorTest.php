@@ -106,4 +106,15 @@ class BladeRouteGeneratorTest extends TestCase
         $this->assertArrayHasKey('posts.store', $array);
         $this->assertArrayHasKey('postComments.index', $array);
     }
+
+    /** @test */
+    function generator_can_set_csp_nonce()
+    {
+        $generator = app(BladeRouteGenerator::class);
+
+        $this->assertStringContainsString(
+            '<script type="text/javascript" nonce="supercalifragilisticexpialidocious">',
+            $generator->generate(false, 'supercalifragilisticexpialidocious')
+        );
+    }
 }
