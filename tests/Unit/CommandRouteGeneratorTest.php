@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tightenco\Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
 use Tightenco\Tests\TestCase;
