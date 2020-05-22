@@ -491,7 +491,7 @@ describe('route()', function() {
         global.Ziggy.basePort = orgBasePort;
     });
 
-    it('Should return correct URL without port when run with params on a route with required domain params', function() {
+    it('Should return correct URL with port when run with params on a route with required domain params', function() {
         let orgBaseUrl = Ziggy.baseUrl;
         let orgBaseDomain = Ziggy.baseDomain;
         let orgBasePort = Ziggy.basePort;
@@ -501,11 +501,11 @@ describe('route()', function() {
         global.Ziggy.basePort = 81;
 
         assert.equal(
-            'http://tighten.myapp.dev/users/1',
+            'http://tighten.myapp.dev:81/users/1',
             route('team.user.show', { team: 'tighten', id: 1 })
         );
         assert.equal(
-            'http://tighten.myapp.dev/users/1',
+            'http://tighten.myapp.dev:81/users/1',
             route('team.user.show').with({ team: 'tighten', id: 1 })
         );
 
