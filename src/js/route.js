@@ -177,7 +177,7 @@ class Router extends String {
 
         if (name) {
             const pattern = new RegExp(
-                '^' + name.replace('*', '.*').replace('.', '.') + '$',
+                '^' + name.replace('.', '\\.').replace('*', '.*') + '$',
                 'i'
             );
             return pattern.test(currentRoute);
