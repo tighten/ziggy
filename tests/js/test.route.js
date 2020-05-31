@@ -98,45 +98,44 @@ global.Ziggy = {
 };
 
 it('generate URL with no parameters', function() {
-    assert.equal('http://myapp.dev/posts', route('posts.index'));
+    assert.equal(route('posts.index'), 'http://myapp.dev/posts');
 });
 
 it('generate URL with default parameters', function() {
     assert.equal(
-        'http://myapp.dev/en/posts',
-        route('translatePosts.index')
+        route('translatePosts.index'),
+        'http://myapp.dev/en/posts'
     );
 });
 
 it('generate URL using .url() method', function() {
-    assert.equal('http://myapp.dev/posts', route('posts.index').url());
+    assert.equal(route('posts.index').url(), 'http://myapp.dev/posts');
 });
 
 it('generate URL with default parameters using .url() method', function() {
     assert.equal(
-        'http://myapp.dev/en/posts',
-        route('translatePosts.index').url()
+        route('translatePosts.index').url(),
+        'http://myapp.dev/en/posts'
     );
 });
 
 it('generate relative URL by passing `false` to `absolute` argument', function() {
-    assert.equal('/posts', route('posts.index', [], false));
+    assert.equal(route('posts.index', [], false), '/posts');
 });
 
 it('generate URL with provided optional parameters', function() {
     assert.equal(
-        'http://myapp.dev/subscribers/123/conversations/email/1234',
         route('conversations.show', {
             type: 'email',
             subscriber: 123,
             conversation_id: 1234
-        })
+        }),
+        'http://myapp.dev/subscribers/123/conversations/email/1234'
     );
 });
 
 it('generate relative URL with provided optional parameters', function() {
     assert.equal(
-        '/subscribers/123/conversations/email/1234',
         route(
             'conversations.show',
             {
@@ -145,18 +144,19 @@ it('generate relative URL with provided optional parameters', function() {
                 conversation_id: 1234
             },
             false
-        )
+        ),
+        '/subscribers/123/conversations/email/1234'
     );
 });
 
 it('generate relative URL with default parameters', function() {
-    assert.equal('/en/posts', route('translatePosts.index', [], false));
+    assert.equal(route('translatePosts.index', [], false), '/en/posts');
 });
 
 it('append extra provided named parameters as query parameters', function() {
     assert.equal(
-        'http://myapp.dev/en/posts?someOtherKey=123',
-        route('translatePosts.index', { someOtherKey: 123 })
+        route('translatePosts.index', { someOtherKey: 123 }),
+        'http://myapp.dev/en/posts?someOtherKey=123'
     );
 });
 
@@ -179,8 +179,8 @@ it('don’t use `Array.filter` as default value for parameter named "filter"', f
     let defaultParameters = global.Ziggy.defaultParameters;
     global.Ziggy.defaultParameters = [];
     assert.equal(
-        'http://myapp.dev/stuff',
-        route('withOptionalFilter')
+        route('withOptionalFilter'),
+        'http://myapp.dev/stuff'
     );
     global.Ziggy.defaultParameters = defaultParameters;
 });
@@ -192,110 +192,110 @@ it('error if required parameters not provided to route with default parameters',
 });
 
 it('generate URL using single scalar argument for route with required parameters', function() {
-    assert.equal('http://myapp.dev/posts/1', route('posts.show', 1));
-    assert.equal('http://myapp.dev/posts/1', route('posts.show').with(1));
+    assert.equal(route('posts.show', 1), 'http://myapp.dev/posts/1');
+    assert.equal(route('posts.show').with(1), 'http://myapp.dev/posts/1');
 });
 
 it('generate URL using single scalar paremeter for route with required and default parameters', function() {
     assert.equal(
-        'http://myapp.dev/en/posts/1',
-        route('translatePosts.show', 1)
+        route('translatePosts.show', 1),
+        'http://myapp.dev/en/posts/1'
     );
     assert.equal(
-        'http://myapp.dev/en/posts/1',
-        route('translatePosts.show').with(1)
+        route('translatePosts.show').with(1),
+        'http://myapp.dev/en/posts/1'
     );
 });
 
 it('generate URL using single parameter object for route with required parameters', function() {
     assert.equal(
-        'http://myapp.dev/posts/1',
-        route('posts.show', { id: 1 })
+        route('posts.show', { id: 1 }),
+        'http://myapp.dev/posts/1'
     );
     assert.equal(
-        'http://myapp.dev/posts/1',
-        route('posts.show').with({ id: 1 })
+        route('posts.show').with({ id: 1 }),
+        'http://myapp.dev/posts/1'
     );
 });
 
 it('generate URL using array of parameters objects for route with required parameters', () => {
     assert.equal(
-        'http://myapp.dev/events/1/venues/2',
         route('events.venues.show', [
             { id: 1, title: 'Event' },
             { id: 2, title: 'Venue' }
-        ])
+        ]),
+        'http://myapp.dev/events/1/venues/2'
     );
 });
 
 it('generate URL using parameters object for route with required and default parameters', function() {
     assert.equal(
-        'http://myapp.dev/en/posts/1',
-        route('translatePosts.show', { id: 1 })
+        route('translatePosts.show', { id: 1 }),
+        'http://myapp.dev/en/posts/1'
     );
     assert.equal(
-        'http://myapp.dev/en/posts/1',
-        route('translatePosts.show').with({ id: 1 })
+        route('translatePosts.show').with({ id: 1 }),
+        'http://myapp.dev/en/posts/1'
     );
 });
 
 it('generate URL using single parameter array for route with required parameters', function() {
-    assert.equal('http://myapp.dev/posts/1', route('posts.show', [1]));
-    assert.equal('http://myapp.dev/posts/1', route('posts.show').with([1]));
+    assert.equal(route('posts.show', [1]), 'http://myapp.dev/posts/1');
+    assert.equal(route('posts.show').with([1]), 'http://myapp.dev/posts/1');
 });
 
 it('generate URL using single parameter array for route with required and default parameters', function() {
     assert.equal(
-        'http://myapp.dev/en/posts/1',
-        route('translatePosts.show', [1])
+        route('translatePosts.show', [1]),
+        'http://myapp.dev/en/posts/1'
     );
     assert.equal(
-        'http://myapp.dev/en/posts/1',
-        route('translatePosts.show').with([1])
+        route('translatePosts.show').with([1]),
+        'http://myapp.dev/en/posts/1'
     );
 });
 
 it('generate URL using parameters object for route with required parameters', function() {
     assert.equal(
-        'http://myapp.dev/events/1/venues/2',
-        route('events.venues.show', { event: 1, venue: 2 })
+        route('events.venues.show', { event: 1, venue: 2 }),
+        'http://myapp.dev/events/1/venues/2'
     );
     assert.equal(
-        'http://myapp.dev/events/1/venues/2',
-        route('events.venues.show').with({ event: 1, venue: 2 })
+        route('events.venues.show').with({ event: 1, venue: 2 }),
+        'http://myapp.dev/events/1/venues/2'
     );
 });
 
 it('generate URL using parameters object for route with required and default parameters', function() {
     assert.equal(
-        'http://myapp.dev/en/events/1/venues/2',
-        route('translateEvents.venues.show', { event: 1, venue: 2 })
+        route('translateEvents.venues.show', { event: 1, venue: 2 }),
+        'http://myapp.dev/en/events/1/venues/2'
     );
     assert.equal(
-        'http://myapp.dev/en/events/1/venues/2',
-        route('translateEvents.venues.show').with({ event: 1, venue: 2 })
+        route('translateEvents.venues.show').with({ event: 1, venue: 2 }),
+        'http://myapp.dev/en/events/1/venues/2'
     );
 });
 
 it('generate URL using parameters array for route with required parameters', function() {
     assert.equal(
-        'http://myapp.dev/events/1/venues/2',
-        route('events.venues.show', [1, 2])
+        route('events.venues.show', [1, 2]),
+        'http://myapp.dev/events/1/venues/2'
     );
     assert.equal(
-        'http://myapp.dev/events/1/venues/2',
-        route('events.venues.show').with([1, 2])
+        route('events.venues.show').with([1, 2]),
+        'http://myapp.dev/events/1/venues/2'
     );
 });
 
 it('generate URL using parameters array for route with required and default parameters', function() {
     assert.equal(
-        'http://myapp.dev/en/events/1/venues/2',
-        route('translateEvents.venues.show', [1, 2])
+        route('translateEvents.venues.show', [1, 2]),
+        'http://myapp.dev/en/events/1/venues/2'
     );
     assert.equal(
-        'http://myapp.dev/en/events/1/venues/2',
-        route('translateEvents.venues.show').with([1, 2])
+        route('translateEvents.venues.show').with([1, 2]),
+        'http://myapp.dev/en/events/1/venues/2'
     );
 });
 
@@ -304,12 +304,12 @@ it('generate URL using array of objects for route with required parameters', fun
     let venue = { id: 2, name: 'Rogers Centre' };
 
     assert.equal(
-        'http://myapp.dev/events/1/venues/2',
-        route('events.venues.show', [event, venue])
+        route('events.venues.show', [event, venue]),
+        'http://myapp.dev/events/1/venues/2'
     );
     assert.equal(
-        'http://myapp.dev/events/1/venues/2',
-        route('events.venues.show').with([event, venue])
+        route('events.venues.show').with([event, venue]),
+        'http://myapp.dev/events/1/venues/2'
     );
 });
 
@@ -318,12 +318,12 @@ it('generate URL using array of objects for route with required and default para
     let venue = { id: 2, name: 'Rogers Centre' };
 
     assert.equal(
-        'http://myapp.dev/en/events/1/venues/2',
-        route('translateEvents.venues.show', [event, venue])
+        route('translateEvents.venues.show', [event, venue]),
+        'http://myapp.dev/en/events/1/venues/2'
     );
     assert.equal(
-        'http://myapp.dev/en/events/1/venues/2',
-        route('translateEvents.venues.show').with([event, venue])
+        route('translateEvents.venues.show').with([event, venue]),
+        'http://myapp.dev/en/events/1/venues/2'
     );
 });
 
@@ -331,12 +331,12 @@ it('generate URL using mixed array of objects and scalar parameters for route wi
     let venue = { id: 2, name: 'Rogers Centre' };
 
     assert.equal(
-        'http://myapp.dev/events/1/venues/2',
-        route('events.venues.show', [1, venue])
+        route('events.venues.show', [1, venue]),
+        'http://myapp.dev/events/1/venues/2'
     );
     assert.equal(
-        'http://myapp.dev/events/1/venues/2',
-        route('events.venues.show').with([1, venue])
+        route('events.venues.show').with([1, venue]),
+        'http://myapp.dev/events/1/venues/2'
     );
 });
 
@@ -344,39 +344,39 @@ it('generate URL using mixed array of objects and scalar parameters for route wi
     let venue = { id: 2, name: 'Rogers Centre' };
 
     assert.equal(
-        'http://myapp.dev/en/events/1/venues/2',
-        route('translateEvents.venues.show', [1, venue])
+        route('translateEvents.venues.show', [1, venue]),
+        'http://myapp.dev/en/events/1/venues/2'
     );
     assert.equal(
-        'http://myapp.dev/en/events/1/venues/2',
-        route('translateEvents.venues.show').with([1, venue])
+        route('translateEvents.venues.show').with([1, venue]),
+        'http://myapp.dev/en/events/1/venues/2'
     );
 });
 
 it('generate URL for route with required domain parameters', function() {
     assert.equal(
-        'http://tighten.myapp.dev/users/1',
-        route('team.user.show', { team: 'tighten', id: 1 })
+        route('team.user.show', { team: 'tighten', id: 1 }),
+        'http://tighten.myapp.dev/users/1'
     );
     assert.equal(
-        'http://tighten.myapp.dev/users/1',
-        route('team.user.show').with({ team: 'tighten', id: 1 })
+        route('team.user.show').with({ team: 'tighten', id: 1 }),
+        'http://tighten.myapp.dev/users/1'
     );
 });
 
 it('generate URL including default parameters for route with required domain parameters', function() {
     assert.equal(
-        'http://tighten.myapp.dev/en/users/1',
-        route('translateTeam.user.show', { team: 'tighten', id: 1 })
+        route('translateTeam.user.show', { team: 'tighten', id: 1 }),
+        'http://tighten.myapp.dev/en/users/1'
     );
     assert.equal(
-        'http://tighten.myapp.dev/en/users/1',
-        route('translateTeam.user.show').with({ team: 'tighten', id: 1 })
+        route('translateTeam.user.show').with({ team: 'tighten', id: 1 }),
+        'http://tighten.myapp.dev/en/users/1'
     );
 });
 
 it('return base URL if path is "/"', function() {
-    assert.equal('http://myapp.dev/', route('home'));
+    assert.equal(route('home'), 'http://myapp.dev/');
 });
 
 it('make axios call when route(...) passed as target', function() {
@@ -390,7 +390,7 @@ it('make axios call when route(...) passed as target', function() {
     axios
         .get(route('posts.show', 1))
         .then(function(response) {
-            assert.equal(200, response.status);
+            assert.equal(response.status, 200);
         })
         .catch(function(error) {
             throw error;
@@ -413,11 +413,10 @@ it('make axios call when route(...) with parameters passed as target', function(
             params: { thing: 'thing' }
         })
         .then(function(response) {
-            assert.equal(200, response.status);
+            assert.equal(response.status, 200);
         })
         .catch(function(error) {
-            console.log(error);
-            assert.equal(true, false);
+            throw error;
         });
 
     moxios.uninstall();
@@ -455,13 +454,13 @@ it('error if route name doesn’t exist', function() {
 // @todo duplicate
 it('accept query string parameters as keyed values in parameters object', function() {
     assert.equal(
-        'http://myapp.dev/events/1/venues/2?search=rogers&page=2',
         route('events.venues.show', {
             event: 1,
             venue: 2,
             search: 'rogers',
             page: 2
-        })
+        }),
+        'http://myapp.dev/events/1/venues/2?search=rogers&page=2'
     );
 });
 
@@ -485,7 +484,7 @@ it('generate URL with port for route without parameters', function() {
     global.Ziggy.baseDomain = 'myapp.dev';
     global.Ziggy.basePort = 81;
 
-    assert.equal('http://myapp.dev:81/posts', route('posts.index'));
+    assert.equal(route('posts.index'), 'http://myapp.dev:81/posts');
 
     global.Ziggy.baseUrl = orgBaseUrl;
     global.Ziggy.baseDomain = orgBaseDomain;
@@ -502,12 +501,12 @@ it('generate URL without port for route with required domain parameters', functi
     global.Ziggy.basePort = 81;
 
     assert.equal(
-        'http://tighten.myapp.dev/users/1',
-        route('team.user.show', { team: 'tighten', id: 1 })
+        route('team.user.show', { team: 'tighten', id: 1 }),
+        'http://tighten.myapp.dev/users/1'
     );
     assert.equal(
-        'http://tighten.myapp.dev/users/1',
-        route('team.user.show').with({ team: 'tighten', id: 1 })
+        route('team.user.show').with({ team: 'tighten', id: 1 }),
+        'http://tighten.myapp.dev/users/1'
     );
 
     global.Ziggy.baseUrl = orgBaseUrl;
@@ -534,27 +533,27 @@ it('get name of current route using .current() method / check if name of current
         }
     };
 
-    assert.equal('events.venues.show', route().current());
+    assert.equal(route().current(), 'events.venues.show');
 
-    assert.equal(true, route().current('events.venues.show'));
+    assert.equal(route().current('events.venues.show'), true);
 
-    assert.equal(false, route().current('events.venues.index'));
+    assert.equal(route().current('events.venues.index'), false);
 
-    assert.equal(true, route().current('events.venues.*'));
+    assert.equal(route().current('events.venues.*'), true);
 
-    assert.equal(false, route().current('events.users.*'));
+    assert.equal(route().current('events.users.*'), false);
 
-    assert.equal(true, route().current('events.*.show'));
+    assert.equal(route().current('events.*.show'), true);
 
-    assert.equal(true, route().current('*.venues.show'));
+    assert.equal(route().current('*.venues.show'), true);
 
-    assert.equal(false, route().current('*.users.show'));
+    assert.equal(route().current('*.users.show'), false);
 
-    assert.equal(false, route().current('events'));
+    assert.equal(route().current('events'), false);
 
-    assert.equal(true, route().current('events.*'));
+    assert.equal(route().current('events.*'), true);
 
-    assert.equal(false, route().current('show'));
+    assert.equal(route().current('show'), false);
 
     global.Ziggy.baseUrl = orgBaseUrl;
     global.Ziggy.baseDomain = orgBaseDomain;
@@ -579,7 +578,7 @@ it('get name of current route using .current() method for route without optional
         }
     };
 
-    assert.equal(true, route().current('optional'));
+    assert.equal(route().current('optional'), true);
 
     global.Ziggy.baseUrl = orgBaseUrl;
     global.Ziggy.baseDomain = orgBaseDomain;
@@ -604,7 +603,7 @@ it('get name of current route using .current() method for route with optional pa
         }
     };
 
-    assert.equal(true, route().current('optional'));
+    assert.equal(route().current('optional'), true);
 
     global.Ziggy.baseUrl = orgBaseUrl;
     global.Ziggy.baseDomain = orgBaseDomain;
@@ -629,9 +628,9 @@ it('get name of current route using .current() method for route without multiple
         }
     };
 
-    assert.equal('posts.show', route().current());
+    assert.equal(route().current(), 'posts.show');
 
-    assert.equal(false, route().current('posts.update'));
+    assert.equal(route().current('posts.update'), false);
 
     global.Ziggy.baseUrl = orgBaseUrl;
     global.Ziggy.baseDomain = orgBaseDomain;
@@ -657,7 +656,7 @@ it('ignore trailing slashes and query parameters in URL when getting name of cur
         }
     };
 
-    assert.equal('events.venues.index', route().current());
+    assert.equal(route().current(), 'events.venues.index');
 
     global.Ziggy.baseUrl = orgBaseUrl;
     global.Ziggy.baseDomain = orgBaseDomain;
@@ -665,9 +664,9 @@ it('ignore trailing slashes and query parameters in URL when getting name of cur
 });
 
 it('check if given named route exists', function() {
-    assert.equal(true, route().check('posts.show'));
+    assert.equal(route().check('posts.show'), true);
 
-    assert.equal(false, route().check('non.existing.route'));
+    assert.equal(route().check('non.existing.route'), false);
 })
 
 it('handle trailing paths in base URL', function() {
@@ -675,8 +674,8 @@ it('handle trailing paths in base URL', function() {
     global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
 
     assert.equal(
-        'http://test.thing/ab/cd/events/1/venues',
-        route('events.venues.index', 1)
+        route('events.venues.index', 1),
+        'http://test.thing/ab/cd/events/1/venues'
     );
 
     global.Ziggy.baseUrl = orgBaseUrl;
@@ -687,8 +686,8 @@ it('URL-encode named parameters', function() {
     global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
 
     assert.equal(
-        'http://test.thing/ab/cd/events/Fun%26Games/venues',
-        route('events.venues.index', { event: 'Fun&Games' }).url()
+        route('events.venues.index', { event: 'Fun&Games' }).url(),
+        'http://test.thing/ab/cd/events/Fun%26Games/venues'
     );
 
     global.Ziggy.baseUrl = orgBaseUrl;
@@ -710,11 +709,11 @@ it('URL-encode query parameters', function() {
     global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
 
     assert.equal(
-        'http://test.thing/ab/cd/events/Fun%26Games/venues?location=Brews%26Clues',
         route('events.venues.index', {
             event: 'Fun&Games',
             location: 'Brews&Clues'
-        }).url()
+        }).url(),
+        'http://test.thing/ab/cd/events/Fun%26Games/venues?location=Brews%26Clues'
     );
 
     global.Ziggy.baseUrl = orgBaseUrl;
@@ -722,15 +721,15 @@ it('URL-encode query parameters', function() {
 
 it('ignore query parameters explicitly set to `null`', function() {
     assert.equal(
-        'http://myapp.dev/posts?filled=filling',
-        route('posts.index', { filled: 'filling', empty: null }).url()
+        route('posts.index', { filled: 'filling', empty: null }).url(),
+        'http://myapp.dev/posts?filled=filling'
     );
 });
 
 it('don’t ignore parameter explicity set to `0`', function() {
     assert.equal(
-        'http://myapp.dev/posts/0',
-        route('posts.update', 0).url()
+        route('posts.update', 0).url(),
+        'http://myapp.dev/posts/0'
     );
 });
 
@@ -752,7 +751,7 @@ it('get name of current route using .current() method with missing protocol', fu
         }
     };
 
-    assert.equal('events.venues.index', route().current());
+    assert.equal(route().current(), 'events.venues.index');
 
     global.Ziggy.baseUrl = orgBaseUrl;
     global.Ziggy.baseDomain = orgBaseDomain;
@@ -778,13 +777,13 @@ it('accept custom Ziggy configuration object', function() {
     };
 
     assert.equal(
-        'http://notYourAverage.dev/tightenDev/1/packages',
         route(
             'tightenDev.packages.index',
             { dev: 1 },
             true,
             customZiggy
-        ).url()
+        ).url(),
+        'http://notYourAverage.dev/tightenDev/1/packages'
     );
 });
 
@@ -816,8 +815,8 @@ it('get name of current route using .current() method with missing global Ziggy 
     };
 
     assert.equal(
-        'events.index',
-        route(undefined, undefined, undefined, customZiggy).current()
+        route(undefined, undefined, undefined, customZiggy).current(),
+        'events.index'
     );
 
     global.Ziggy = orgZiggy;
