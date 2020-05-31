@@ -1,6 +1,7 @@
-let assert = require('assert');
-let axios = require('axios');
-let moxios = require('moxios');
+import assert from 'assert';
+import axios from 'axios';
+import moxios from 'moxios';
+import test from 'ava';
 
 import route from '../../src/js/route.js';
 
@@ -97,33 +98,33 @@ global.Ziggy = {
     }
 };
 
-it('generate URL with no parameters', function() {
+test('generate URL with no parameters', t => {
     assert.equal(route('posts.index'), 'http://myapp.dev/posts');
 });
 
-it('generate URL with default parameters', function() {
+test('generate URL with default parameters', t => {
     assert.equal(
         route('translatePosts.index'),
         'http://myapp.dev/en/posts'
     );
 });
 
-it('generate URL using .url() method', function() {
+test('generate URL using .url() method', t => {
     assert.equal(route('posts.index').url(), 'http://myapp.dev/posts');
 });
 
-it('generate URL with default parameters using .url() method', function() {
+test('generate URL with default parameters using .url() method', t => {
     assert.equal(
         route('translatePosts.index').url(),
         'http://myapp.dev/en/posts'
     );
 });
 
-it('generate relative URL by passing `false` to `absolute` argument', function() {
+test('generate relative URL by passing `false` to `absolute` argument', t => {
     assert.equal(route('posts.index', [], false), '/posts');
 });
 
-it('generate URL with provided optional parameters', function() {
+test('generate URL with provided optional parameters', t => {
     assert.equal(
         route('conversations.show', {
             type: 'email',
@@ -134,7 +135,7 @@ it('generate URL with provided optional parameters', function() {
     );
 });
 
-it('generate relative URL with provided optional parameters', function() {
+test('generate relative URL with provided optional parameters', t => {
     assert.equal(
         route(
             'conversations.show',
@@ -149,24 +150,24 @@ it('generate relative URL with provided optional parameters', function() {
     );
 });
 
-it('generate relative URL with default parameters', function() {
+test('generate relative URL with default parameters', t => {
     assert.equal(route('translatePosts.index', [], false), '/en/posts');
 });
 
-it('append extra provided named parameters as query parameters', function() {
+test('append extra provided named parameters as query parameters', t => {
     assert.equal(
         route('translatePosts.index', { someOtherKey: 123 }),
         'http://myapp.dev/en/posts?someOtherKey=123'
     );
 });
 
-it('error if required parameters not provided', function() {
+test('error if required parameters not provided', t => {
     assert.throws(function() {
         route('posts.show').toString();
     }, /'post' key is required/);
 });
 
-it('error if required parameters with defaults are missing default values', function() {
+test('error if required parameters with defaults are missing default values', t => {
     let defaultParameters = Ziggy.defaultParameters;
     global.Ziggy.defaultParameters = [];
     assert.throws(function() {
@@ -175,7 +176,7 @@ it('error if required parameters with defaults are missing default values', func
     global.Ziggy.defaultParameters = defaultParameters;
 });
 
-it('don’t use `Array.filter` as default value for parameter named "filter"', function() {
+test('don’t use `Array.filter` as default value for parameter named "filter"', t => {
     let defaultParameters = global.Ziggy.defaultParameters;
     global.Ziggy.defaultParameters = [];
     assert.equal(
@@ -185,18 +186,18 @@ it('don’t use `Array.filter` as default value for parameter named "filter"', f
     global.Ziggy.defaultParameters = defaultParameters;
 });
 
-it('error if required parameters not provided to route with default parameters', function() {
+test('error if required parameters not provided to route with default parameters', t => {
     assert.throws(function() {
         route('translatePosts.show').toString();
     }, /'id' key is required/);
 });
 
-it('generate URL using single scalar argument for route with required parameters', function() {
+test('generate URL using single scalar argument for route with required parameters', t => {
     assert.equal(route('posts.show', 1), 'http://myapp.dev/posts/1');
     assert.equal(route('posts.show').with(1), 'http://myapp.dev/posts/1');
 });
 
-it('generate URL using single scalar paremeter for route with required and default parameters', function() {
+test('generate URL using single scalar paremeter for route with required and default parameters', t => {
     assert.equal(
         route('translatePosts.show', 1),
         'http://myapp.dev/en/posts/1'
@@ -207,7 +208,7 @@ it('generate URL using single scalar paremeter for route with required and defau
     );
 });
 
-it('generate URL using single parameter object for route with required parameters', function() {
+test('generate URL using single parameter object for route with required parameters', t => {
     assert.equal(
         route('posts.show', { id: 1 }),
         'http://myapp.dev/posts/1'
@@ -218,7 +219,7 @@ it('generate URL using single parameter object for route with required parameter
     );
 });
 
-it('generate URL using array of parameters objects for route with required parameters', () => {
+test('generate URL using array of parameters objects for route with required parameters', t => {
     assert.equal(
         route('events.venues.show', [
             { id: 1, title: 'Event' },
@@ -228,7 +229,7 @@ it('generate URL using array of parameters objects for route with required param
     );
 });
 
-it('generate URL using parameters object for route with required and default parameters', function() {
+test('generate URL using parameter object for route with required and default parameters', t => {
     assert.equal(
         route('translatePosts.show', { id: 1 }),
         'http://myapp.dev/en/posts/1'
@@ -239,12 +240,12 @@ it('generate URL using parameters object for route with required and default par
     );
 });
 
-it('generate URL using single parameter array for route with required parameters', function() {
+test('generate URL using single parameter array for route with required parameters', t => {
     assert.equal(route('posts.show', [1]), 'http://myapp.dev/posts/1');
     assert.equal(route('posts.show').with([1]), 'http://myapp.dev/posts/1');
 });
 
-it('generate URL using single parameter array for route with required and default parameters', function() {
+test('generate URL using single parameter array for route with required and default parameters', t => {
     assert.equal(
         route('translatePosts.show', [1]),
         'http://myapp.dev/en/posts/1'
@@ -255,7 +256,7 @@ it('generate URL using single parameter array for route with required and defaul
     );
 });
 
-it('generate URL using parameters object for route with required parameters', function() {
+test('generate URL using parameters object for route with required parameters', t => {
     assert.equal(
         route('events.venues.show', { event: 1, venue: 2 }),
         'http://myapp.dev/events/1/venues/2'
@@ -266,7 +267,7 @@ it('generate URL using parameters object for route with required parameters', fu
     );
 });
 
-it('generate URL using parameters object for route with required and default parameters', function() {
+test('generate URL using parameters object for route with required and default parameters', t => {
     assert.equal(
         route('translateEvents.venues.show', { event: 1, venue: 2 }),
         'http://myapp.dev/en/events/1/venues/2'
@@ -277,7 +278,7 @@ it('generate URL using parameters object for route with required and default par
     );
 });
 
-it('generate URL using parameters array for route with required parameters', function() {
+test('generate URL using parameters array for route with required parameters', t => {
     assert.equal(
         route('events.venues.show', [1, 2]),
         'http://myapp.dev/events/1/venues/2'
@@ -288,7 +289,7 @@ it('generate URL using parameters array for route with required parameters', fun
     );
 });
 
-it('generate URL using parameters array for route with required and default parameters', function() {
+test('generate URL using parameters array for route with required and default parameters', t => {
     assert.equal(
         route('translateEvents.venues.show', [1, 2]),
         'http://myapp.dev/en/events/1/venues/2'
@@ -299,7 +300,7 @@ it('generate URL using parameters array for route with required and default para
     );
 });
 
-it('generate URL using array of objects for route with required parameters', function() {
+test('generate URL using array of objects for route with required parameters', t => {
     let event = { id: 1, name: 'World Series' };
     let venue = { id: 2, name: 'Rogers Centre' };
 
@@ -313,7 +314,7 @@ it('generate URL using array of objects for route with required parameters', fun
     );
 });
 
-it('generate URL using array of objects for route with required and default parameters', function() {
+test('generate URL using array of objects for route with required and default parameters', t => {
     let event = { id: 1, name: 'World Series' };
     let venue = { id: 2, name: 'Rogers Centre' };
 
@@ -327,7 +328,7 @@ it('generate URL using array of objects for route with required and default para
     );
 });
 
-it('generate URL using mixed array of objects and scalar parameters for route with required parameters', function() {
+test('generate URL using mixed array of objects and scalar parameters for route with required parameters', t => {
     let venue = { id: 2, name: 'Rogers Centre' };
 
     assert.equal(
@@ -340,7 +341,7 @@ it('generate URL using mixed array of objects and scalar parameters for route wi
     );
 });
 
-it('generate URL using mixed array of objects and scalar parameters for route with required and default parameters', function() {
+test('generate URL using mixed array of objects and scalar parameters for route with required and default parameters', t => {
     let venue = { id: 2, name: 'Rogers Centre' };
 
     assert.equal(
@@ -353,7 +354,7 @@ it('generate URL using mixed array of objects and scalar parameters for route wi
     );
 });
 
-it('generate URL for route with required domain parameters', function() {
+test('generate URL for route with required domain parameters', t => {
     assert.equal(
         route('team.user.show', { team: 'tighten', id: 1 }),
         'http://tighten.myapp.dev/users/1'
@@ -364,7 +365,7 @@ it('generate URL for route with required domain parameters', function() {
     );
 });
 
-it('generate URL including default parameters for route with required domain parameters', function() {
+test('generate URL including default parameters for route with required domain parameters', t => {
     assert.equal(
         route('translateTeam.user.show', { team: 'tighten', id: 1 }),
         'http://tighten.myapp.dev/en/users/1'
@@ -375,11 +376,11 @@ it('generate URL including default parameters for route with required domain par
     );
 });
 
-it('return base URL if path is "/"', function() {
+test('return base URL if path is "/"', t => {
     assert.equal(route('home'), 'http://myapp.dev/');
 });
 
-it('make axios call when route(...) passed as target', function() {
+test('make axios call when route(...) passed as target', t => {
     moxios.install();
 
     moxios.stubRequest('http://myapp.dev/posts/1', {
@@ -399,7 +400,7 @@ it('make axios call when route(...) passed as target', function() {
     moxios.uninstall();
 });
 
-it('make axios call when route(...) with parameters passed as target', function() {
+test('make axios call when route(...) with parameters passed as target', t => {
     moxios.install();
 
     moxios.stubRequest('http://myapp.dev/posts/1', {
@@ -423,14 +424,14 @@ it('make axios call when route(...) with parameters passed as target', function(
 });
 
 // @todo duplicate
-it('skip optional parameter `slug`', function() {
+test('skip optional parameter `slug`', t => {
     assert.equal(
         route('optional', { id: 123 }),
         'http://myapp.dev/optional/123'
     );
 });
 
-it('skip optional parameter `slug` explicitly set to `null`', function() {
+test('skip optional parameter `slug` explicitly set to `null`', t => {
     assert.equal(
         route('optional', { id: 123, slug: null }),
         'http://myapp.dev/optional/123'
@@ -438,21 +439,21 @@ it('skip optional parameter `slug` explicitly set to `null`', function() {
 });
 
 // @todo why?
-it('accept optional parameter `slug`', function() {
+test('accept optional parameter `slug`', t => {
     assert.equal(
         route('optional', { id: 123, slug: 'news' }),
         'http://myapp.dev/optional/123/news'
     );
 });
 
-it('error if route name doesn’t exist', function() {
+test('error if route name doesn’t exist', t => {
     assert.throws(function() {
         route('unknown-route').toString();
     }, /route 'unknown-route' is not found in the route list/);
 });
 
 // @todo duplicate
-it('accept query string parameters as keyed values in parameters object', function() {
+test('accept query string parameters as keyed values in parameters object', t => {
     assert.equal(
         route('events.venues.show', {
             event: 1,
@@ -464,7 +465,7 @@ it('accept query string parameters as keyed values in parameters object', functi
     );
 });
 
-it('accept query string parameters as keyed values using .withQuery() method', function() {
+test('accept query string parameters as keyed values using .withQuery() method', t => {
     let router = route('events.venues.show', [1, 2]).withQuery({
         search: 'rogers',
         page: 2
@@ -475,7 +476,7 @@ it('accept query string parameters as keyed values using .withQuery() method', f
     );
 });
 
-it('generate URL with port for route without parameters', function() {
+test('generate URL with port for route without parameters', t => {
     let orgBaseUrl = Ziggy.baseUrl;
     let orgBaseDomain = Ziggy.baseDomain;
     let orgBasePort = Ziggy.basePort;
@@ -491,7 +492,7 @@ it('generate URL with port for route without parameters', function() {
     global.Ziggy.basePort = orgBasePort;
 });
 
-it('generate URL without port for route with required domain parameters', function() {
+test('generate URL without port for route with required domain parameters', t => {
     let orgBaseUrl = Ziggy.baseUrl;
     let orgBaseDomain = Ziggy.baseDomain;
     let orgBasePort = Ziggy.basePort;
@@ -515,7 +516,7 @@ it('generate URL without port for route with required domain parameters', functi
 });
 
 // @todo should be 2 tests, one for getting and one for checking
-it('get name of current route using .current() method / check if name of current route matches pattern using .current() method', function() {
+test('get name of current route using .current() method / check if name of current route matches pattern using .current() method', t => {
     let orgBaseUrl = Ziggy.baseUrl;
     let orgBaseDomain = Ziggy.baseDomain;
     let orgBasePort = Ziggy.basePort;
@@ -533,34 +534,26 @@ it('get name of current route using .current() method / check if name of current
         }
     };
 
-    assert.equal(route().current(), 'events.venues.show');
+    t.is(route().current(), 'events.venues.show');
 
-    assert.equal(route().current('events.venues.show'), true);
+    t.true(route().current('events.venues.show'));
+    t.true(route().current('events.venues.*'));
+    t.true(route().current('events.*.show'));
+    t.true(route().current('*.venues.show'));
+    t.true(route().current('events.*'));
 
-    assert.equal(route().current('events.venues.index'), false);
-
-    assert.equal(route().current('events.venues.*'), true);
-
-    assert.equal(route().current('events.users.*'), false);
-
-    assert.equal(route().current('events.*.show'), true);
-
-    assert.equal(route().current('*.venues.show'), true);
-
-    assert.equal(route().current('*.users.show'), false);
-
-    assert.equal(route().current('events'), false);
-
-    assert.equal(route().current('events.*'), true);
-
-    assert.equal(route().current('show'), false);
+    t.false(route().current('events.venues.index'));
+    t.false(route().current('events.users.*'));
+    t.false(route().current('*.users.show'));
+    t.false(route().current('events'));
+    t.false(route().current('show'));
 
     global.Ziggy.baseUrl = orgBaseUrl;
     global.Ziggy.baseDomain = orgBaseDomain;
     global.Ziggy.basePort = orgBasePort;
 });
 
-it('get name of current route using .current() method for route without optional parameters', function() {
+test('get name of current route using .current() method for route without optional parameters', t => {
     let orgBaseUrl = Ziggy.baseUrl;
     let orgBaseDomain = Ziggy.baseDomain;
     let orgBasePort = Ziggy.basePort;
@@ -585,7 +578,7 @@ it('get name of current route using .current() method for route without optional
     global.Ziggy.basePort = orgBasePort;
 });
 
-it('get name of current route using .current() method for route with optional parameters', function() {
+test('get name of current route using .current() method for route with optional parameters', t => {
     let orgBaseUrl = Ziggy.baseUrl;
     let orgBaseDomain = Ziggy.baseDomain;
     let orgBasePort = Ziggy.basePort;
@@ -610,7 +603,7 @@ it('get name of current route using .current() method for route with optional pa
     global.Ziggy.basePort = orgBasePort;
 });
 
-it('get name of current route using .current() method for route without multiple allowed HTTP methods', function() {
+test('get name of current route using .current() method for route without multiple allowed HTTP methods', t => {
     let orgBaseUrl = Ziggy.baseUrl;
     let orgBaseDomain = Ziggy.baseDomain;
     let orgBasePort = Ziggy.basePort;
@@ -638,7 +631,7 @@ it('get name of current route using .current() method for route without multiple
 });
 
 // @todo this doesnt' check the query parameter part...
-it('ignore trailing slashes and query parameters in URL when getting name of current route', function() {
+test('ignore trailing slashes and query parameters in URL when getting name of current route', t => {
     let orgBaseUrl = Ziggy.baseUrl;
     let orgBaseDomain = Ziggy.baseDomain;
     let orgBasePort = Ziggy.basePort;
@@ -663,13 +656,13 @@ it('ignore trailing slashes and query parameters in URL when getting name of cur
     global.Ziggy.basePort = orgBasePort;
 });
 
-it('check if given named route exists', function() {
+test('check if given named route exists', t => {
     assert.equal(route().check('posts.show'), true);
 
     assert.equal(route().check('non.existing.route'), false);
 })
 
-it('handle trailing paths in base URL', function() {
+test('handle trailing paths in base URL', t => {
     let orgBaseUrl = Ziggy.baseUrl;
     global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
 
@@ -681,7 +674,7 @@ it('handle trailing paths in base URL', function() {
     global.Ziggy.baseUrl = orgBaseUrl;
 });
 
-it('URL-encode named parameters', function() {
+test('URL-encode named parameters', t => {
     let orgBaseUrl = Ziggy.baseUrl;
     global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
 
@@ -693,7 +686,7 @@ it('URL-encode named parameters', function() {
     global.Ziggy.baseUrl = orgBaseUrl;
 });
 
-it('accept and format array as query parameter', function() {
+test('accept and format array as query parameter', t => {
     assert.equal(
         route('events.venues.index', {
             event: 'test',
@@ -704,7 +697,7 @@ it('accept and format array as query parameter', function() {
 });
 
 // @todo combine with other URL-encoding test above
-it('URL-encode query parameters', function() {
+test('URL-encode query parameters', t => {
     let orgBaseUrl = Ziggy.baseUrl;
     global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
 
@@ -719,21 +712,21 @@ it('URL-encode query parameters', function() {
     global.Ziggy.baseUrl = orgBaseUrl;
 });
 
-it('ignore query parameters explicitly set to `null`', function() {
+test('ignore query parameters explicitly set to `null`', t => {
     assert.equal(
         route('posts.index', { filled: 'filling', empty: null }).url(),
         'http://myapp.dev/posts?filled=filling'
     );
 });
 
-it('don’t ignore parameter explicity set to `0`', function() {
+test('don’t ignore parameter explicity set to `0`', t => {
     assert.equal(
         route('posts.update', 0).url(),
         'http://myapp.dev/posts/0'
     );
 });
 
-it('get name of current route using .current() method with missing protocol', function() {
+test('get name of current route using .current() method with missing protocol', t => {
     let orgBaseUrl = Ziggy.baseUrl;
     let orgBaseDomain = Ziggy.baseDomain;
     let orgBasePort = Ziggy.basePort;
@@ -758,7 +751,7 @@ it('get name of current route using .current() method with missing protocol', fu
     global.Ziggy.basePort = orgBasePort;
 });
 
-it('accept custom Ziggy configuration object', function() {
+test('accept custom Ziggy configuration object', t => {
     const customZiggy = {
         namedRoutes: {
             'tightenDev.packages.index': {
@@ -787,7 +780,7 @@ it('accept custom Ziggy configuration object', function() {
     );
 });
 
-it('get name of current route using .current() method with missing global Ziggy object', function() {
+test('get name of current route using .current() method with missing global Ziggy object', t => {
     const orgZiggy = global.Ziggy;
 
     global.Ziggy = undefined;
@@ -822,7 +815,7 @@ it('get name of current route using .current() method with missing global Ziggy 
     global.Ziggy = orgZiggy;
 });
 
-it('remove braces and question marks from route parameter definition', function() {
+test('remove braces and question marks from route parameter definition', t => {
     assert(route().trimParam('optional'), 'optional');
 
     assert(route().trimParam('{id}'), 'id');
@@ -830,7 +823,7 @@ it('remove braces and question marks from route parameter definition', function(
     assert(route().trimParam('{slug?}'), 'slug');
 });
 
-it('extract named parameters from URL using given template and delimiter', function() {
+test('extract named parameters from URL using given template and delimiter', t => {
     assert.deepStrictEqual(route().extractParams('', '', '/'), {});
 
     assert.deepStrictEqual(
@@ -873,7 +866,7 @@ it('extract named parameters from URL using given template and delimiter', funct
 });
 
 // @todo why?
-it('merge named parameters extracted from domain and URL', function() {
+test('merge named parameters extracted from domain and URL', t => {
     global.window.location.hostname = 'tighten.myapp.dev';
     global.window.location.pathname = '/users/1';
 
