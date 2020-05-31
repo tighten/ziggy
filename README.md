@@ -24,6 +24,7 @@ Ziggy supports all versions of Laravel from `5.4` to `7.x`.
     - [Advanced Whitelisting using Groups](#advanced-whitelisting-using-groups)
 - [Other Useful Methods](#other-useful-methods)
     - [`current()`](#current)
+    - [`check()`](#check)
     - [`url()`](#url)
 - [Artisan Command](#artisan-command)
 - [Using with Vue Components](#using-with-vue-components)
@@ -209,6 +210,15 @@ You can even use wildcards to check if you're on any of the routes in a given 'g
 ```js
 route().current('events.*');
 // returns true
+```
+
+#### `check()`
+
+Ziggy can check if a given named route is defined:
+
+```js
+route().check('home');
+// returns true if a route name 'home' exists, false otherwise
 ```
 
 #### `url()`
