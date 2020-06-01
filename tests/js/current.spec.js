@@ -26,6 +26,10 @@ global.Ziggy = {
             uri: 'posts/{post}',
             methods: ['GET', 'HEAD'],
         },
+        'hosting-contacts.index': {
+            uri: 'hosting-contacts',
+            methods: ['GET'],
+        },
         optional: {
             uri: 'optional/{id}/{slug?}',
             methods: ['GET', 'HEAD'],
@@ -57,7 +61,14 @@ test('check if current route name matches pattern', t => {
     t.false(route().current('*.users.show'));
     t.false(route().current('events'));
     t.false(route().current('show'));
-})
+
+    global.window.location.pathname = '/hosting-contacts';
+
+    t.true(route().current('hosting-contacts.index'));
+    t.true(route().current('*.index'));
+    // https://github.com/tightenco/ziggy/pull/296
+    t.false(route().current('hosting.*'));
+});
 
 test('check current route name for route with omitted optional parameters', t => {
     global.window.location.pathname = '/optional/1';
@@ -75,7 +86,7 @@ test('get current route name for route with multiple HTTP methods', t => {
     global.window.location.pathname = '/posts/1';
 
     t.is(route().current(), 'posts.show');
-})
+});
 
 test('ignore routes without GET method when checking current route', t => {
     global.window.location.pathname = '/posts/1';
