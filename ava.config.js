@@ -1,4 +1,4 @@
 export default {
     failWithoutAssertions: false,
-    require: ['esm'],
+    require: ['esm', './tests/js/setup.js'],
 };

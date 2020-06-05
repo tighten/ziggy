@@ -1,17 +1,9 @@
 import test from 'ava';
 import route from '../../src/js/route.js';
 
-global.window = {
-    location: {
-        hostname: 'ziggy.dev',
-    },
-};
-
-global.Ziggy = {
-    baseUrl: 'https://ziggy.dev',
-    namedRoutes: {
-        'events.venues.show': {
-            uri: 'events/{event}/venues/{venue}',
+global.Ziggy.namedRoutes = {
+    'events.venues.show': {
+        uri: 'events/{event}/venues/{venue}',
             methods: ['GET', 'HEAD'],
         },
         'events.venues.index': {
@@ -31,9 +23,8 @@ global.Ziggy = {
             methods: ['GET'],
         },
         optional: {
-            uri: 'optional/{id}/{slug?}',
-            methods: ['GET', 'HEAD'],
-        },
+        uri: 'optional/{id}/{slug?}',
+        methods: ['GET', 'HEAD'],
     },
 };
 
