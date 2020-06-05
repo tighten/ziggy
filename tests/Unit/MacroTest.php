@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use Tightenco\Ziggy\RoutePayload;
-use Tightenco\Ziggy\ZiggyServiceProvider;
 
 class MacroTest extends TestCase
 {
