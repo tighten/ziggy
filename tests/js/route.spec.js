@@ -470,12 +470,6 @@ test('generate URL without port for route with required domain parameters', t =>
     global.Ziggy.basePort = orgBasePort;
 });
 
-test('check if given named route exists', t => {
-    assert.equal(route().check('posts.show'), true);
-
-    assert.equal(route().check('non.existing.route'), false);
-})
-
 test('handle trailing paths in base URL', t => {
     let orgBaseUrl = Ziggy.baseUrl;
     global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
