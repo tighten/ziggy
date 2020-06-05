@@ -503,11 +503,11 @@ test('generate URL without port for route with required domain parameters', t =>
 
     assert.equal(
         route('team.user.show', { team: 'tighten', id: 1 }),
-        'http://tighten.myapp.dev/users/1'
+        'http://tighten.myapp.dev:81/users/1'
     );
     assert.equal(
         route('team.user.show').with({ team: 'tighten', id: 1 }),
-        'http://tighten.myapp.dev/users/1'
+        'http://tighten.myapp.dev:81/users/1'
     );
 
     global.Ziggy.baseUrl = orgBaseUrl;
