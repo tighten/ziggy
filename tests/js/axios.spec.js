@@ -3,18 +3,6 @@ import route from '../../src/js/route.js';
 import axios from 'axios';
 import moxios from 'moxios';
 
-global.Ziggy.namedRoutes = {
-    'posts.index': {
-        uri: 'posts',
-        methods: ['GET', 'HEAD'],
-        domain: null
-    },
-    'posts.show': {
-        uri: 'posts/{post}',
-        methods: ['GET', 'HEAD'],
-    },
-};
-
 test.beforeEach(t => moxios.install());
 test.afterEach(t => moxios.uninstall());
 
