@@ -63,7 +63,7 @@ jobs:
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit --testdox --colors=always
 
-      - name: Run Mocha tests
+      - name: Run Ava tests
         run: npm test
 
 

@@ -36,7 +36,7 @@
     "scripts": {
         "build": "NODE_ENV=production webpack --progress",
         "build:watch": "npm run build -- --watch",
-        "test": "ava tests/js/*.js",
+        "test": "ava tests/js/*.spec.js",
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {
