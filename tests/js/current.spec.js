@@ -37,10 +37,6 @@ global.Ziggy = {
     },
 };
 
-test.beforeEach(t => {
-    global.window.location.pathname = '';
-});
-
 test('get name of current route', t => {
     global.window.location.pathname = '/events/1/venues/2';
 
