@@ -25,8 +25,9 @@ class UrlBuilder {
 
         let host = (this.route.domain || this.ziggy.baseDomain).replace(/\/+$/, '');
 
-        if (this.ziggy.basePort && (host.replace(/\/+$/, '') === this.ziggy.baseDomain.replace(/\/+$/, '')))
-            host = this.ziggy.baseDomain + ':' + this.ziggy.basePort;
+        if (this.ziggy.basePort) {
+            host = `${host}:${this.ziggy.basePort}`;
+        }
 
         return this.ziggy.baseProtocol + '://' + host + '/';
     }
