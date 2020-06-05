@@ -1,6 +1,4 @@
 import assert from 'assert';
-import axios from 'axios';
-import moxios from 'moxios';
 import test from 'ava';
 
 import route from '../../src/js/route.js';
@@ -378,49 +376,6 @@ test('generate URL including default parameters for route with required domain p
 
 test('return base URL if path is "/"', t => {
     assert.equal(route('home'), 'http://myapp.dev/');
-});
-
-test('make axios call when route(...) passed as target', t => {
-    moxios.install();
-
-    moxios.stubRequest('http://myapp.dev/posts/1', {
-        status: 200,
-        responseText: 'Worked!'
-    });
-
-    axios
-        .get(route('posts.show', 1))
-        .then(function(response) {
-            assert.equal(response.status, 200);
-        })
-        .catch(function(error) {
-            throw error;
-        });
-
-    moxios.uninstall();
-});
-
-test('make axios call when route(...) with parameters passed as target', t => {
-    moxios.install();
-
-    moxios.stubRequest('http://myapp.dev/posts/1', {
-        status: 200,
-        responseText: 'Worked!'
-    });
-
-    axios
-        .get(route('posts.index'), {
-            page: 2,
-            params: { thing: 'thing' }
-        })
-        .then(function(response) {
-            assert.equal(response.status, 200);
-        })
-        .catch(function(error) {
-            throw error;
-        });
-
-    moxios.uninstall();
 });
 
 // @todo duplicate
