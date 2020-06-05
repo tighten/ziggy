@@ -1,6 +1,6 @@
 <?php
 
-namespace Tightenco\Tests;
+namespace Tests;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

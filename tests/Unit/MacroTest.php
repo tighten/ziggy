@@ -1,8 +1,8 @@
 <?php
 
-namespace Tightenco\Tests\Unit;
+namespace Tests\Unit;
 
-use Tightenco\Tests\TestCase;
+use Tests\TestCase;
 use Tightenco\Ziggy\RoutePayload;
 use Tightenco\Ziggy\ZiggyServiceProvider;
 

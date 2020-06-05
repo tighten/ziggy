@@ -24,7 +24,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tightenco\\Tests\\": "tests/"
+            "Tests\\": "tests/"
         }
     },
     "require-dev": {

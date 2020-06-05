@@ -1,9 +1,9 @@
 <?php
 
-namespace Tightenco\Tests\Unit;
+namespace Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
-use Tightenco\Tests\TestCase;
+use Tests\TestCase;
 
 class CommandRouteGeneratorTest extends TestCase
 {
