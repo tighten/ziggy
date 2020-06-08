@@ -19,9 +19,9 @@ Ziggy supports all versions of Laravel from `5.4` to `7.x`.
     - [Examples](#examples)
     - [Default Values](#default-values)
 - [Filtering Routes](#filtering-routes)
-    - [Basic Whitelisting & Blacklisting](#basic-whitelisting--blacklisting)
-    - [Basic Whitelisting & Blacklisting using Macros](#basic-whitelisting--blacklisting-using-macros)
-    - [Advanced Whitelisting using Groups](#advanced-whitelisting-using-groups)
+    - [Basic Includes & Excludes](#basic-includes--excludes)
+    - [Basic Includes & Excludes using Macros](#basic-includes--excludes-using-macros)
+    - [Advanced Includes using Groups](#advanced-includes-using-groups)
 - [Other Useful Methods](#other-useful-methods)
     - [`current()`](#current)
     - [`check()`](#check)
@@ -114,50 +114,50 @@ Ziggy.defaultParameters = {
 
 Filtering routes is _completely optional_. If you want to pass all of your routes to your JavaScript by default, you can carry on using Ziggy as described above.
 
-#### Basic Whitelisting & Blacklisting
+#### Basic Includes & Excludes
 
-To take advantage of basic whitelisting or blacklisting of routes, you will first need to create a config file in your Laravel app at `config/ziggy.php` and define **either** a `whitelist` or `blacklist` setting as an array of route name patterns.
+To take advantage of basic including or excluding of routes, you will first need to create a config file in your Laravel app at `config/ziggy.php` and define **either** an `include` or `exclude` setting as an array of route name patterns.
 
-**Note: You have to choose one or the other. Setting `whitelist` and `blacklist` will disable filtering altogether and simply return the default list of routes.**
+**Note: You have to choose one or the other. Setting both `include` and `exclude` will disable filtering altogether and simply return the default list of routes.**
 
 Example `config/ziggy.php`:
 
 ```php
 return [
-    // 'whitelist' => ['home', 'api.*'],
-    'blacklist' => ['debugbar.*', 'horizon.*', 'admin.*'],
+    // 'include' => ['home', 'api.*'],
+    'exclude' => ['debugbar.*', 'horizon.*', 'admin.*'],
 ];
 ```
 
 As shown in the example above, Ziggy can use asterisks as wildcards in route filter patterns. `home` will only match the route named `home`, whereas `api.*` will match any route whose name begins with `api.`, such as `api.posts.index` and `api.users.show`.
 
-#### Basic Whitelisting & Blacklisting using Macros
+#### Basic Includes & Excludes using Macros
 
-Whitelisting and blacklisting can also be achieved using the following macros.
+Including and excluding can also be achieved using the following macros.
 
-Example whitelisting:
+Example including:
 
 ```php
-Route::whitelist(function () {
+Route::include(function () {
     Route::get('...')->name('posts');
 });
 
-Route::whitelist()->get('...')->name('posts');
+Route::include()->get('...')->name('posts');
 ```
 
-Example blacklisting:
+Example excluding:
 
 ```php
-Route::blacklist(function () {
+Route::exclude(function () {
     Route::get('...')->name('posts');
 });
 
-Route::blacklist()->get('...')->name('posts');
+Route::exclude()->get('...')->name('posts');
 ```
 
-#### Advanced Whitelisting using Groups
+#### Advanced Includes using Groups
 
-You may also optionally define multiple whitelists using a `groups` key in your `config/ziggy.php`:
+You may also optionally define multiple groups of includes using a `groups` key in your `config/ziggy.php`:
 
 ```php
 return [
@@ -173,7 +173,7 @@ return [
 ];
 ```
 
-In the above example, you can see we have configured multiple whitelists for different user roles. You may expose a specific whitelist group by passing the group key into the `@routes` directive in your Blade view:
+In the above example, you can see we have configured multiple includes for different user roles. You may expose a specific include group by passing the group key into the `@routes` directive in your Blade view:
 
 ```php
 @routes('author')
@@ -185,7 +185,7 @@ If you want to expose multiple groups you can pass an array of group names:
 @routes(['admin', 'author'])
 ```
 
-**Note: Passing group names to the `@routes` directive will always take precedence over your other `whitelist` and `blacklist` settings.**
+**Note: Passing group names to the `@routes` directive will always take precedence over your other `include` and `exclude` settings.**
 
 ## Other Useful Methods
 

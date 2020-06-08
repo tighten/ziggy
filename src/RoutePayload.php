@@ -28,16 +28,16 @@ class RoutePayload
         }
 
         // return unfiltered routes if user set both config options.
-        if (config()->has('ziggy.blacklist') && config()->has('ziggy.whitelist')) {
+        if (config()->has('ziggy.exclude') && config()->has('ziggy.include')) {
             return $this->routes;
         }
 
-        if (config()->has('ziggy.blacklist')) {
-            return $this->blacklist();
+        if (config()->has('ziggy.exclude')) {
+            return $this->exclude();
         }
 
-        if (config()->has('ziggy.whitelist')) {
-            return $this->whitelist();
+        if (config()->has('ziggy.include')) {
+            return $this->include();
         }
 
         return $this->routes;
@@ -60,14 +60,14 @@ class RoutePayload
         return $this->routes;
     }
 
-    public function blacklist()
+    public function exclude()
     {
-        return $this->filter(config('ziggy.blacklist'), false);
+        return $this->filter(config('ziggy.exclude'), false);
     }
 
-    public function whitelist()
+    public function include()
     {
-        return $this->filter(config('ziggy.whitelist'), true);
+        return $this->filter(config('ziggy.include'), true);
     }
 
     public function filter($filters = [], $include = true)
@@ -87,10 +87,10 @@ class RoutePayload
     {
         return collect($this->router->getRoutes()->getRoutesByName())
             ->map(function ($route) {
-                if ($this->isListedAs($route, 'blacklist')) {
-                    $this->appendRouteToList($route->getName(), 'blacklist');
-                } elseif ($this->isListedAs($route, 'whitelist')) {
-                    $this->appendRouteToList($route->getName(), 'whitelist');
+                if ($this->isListedAs($route, 'exclude')) {
+                    $this->appendRouteToList($route->getName(), 'exclude');
+                } elseif ($this->isListedAs($route, 'include')) {
+                    $this->appendRouteToList($route->getName(), 'include');
                 }
 
                 return collect($route)->only(['uri', 'methods'])
