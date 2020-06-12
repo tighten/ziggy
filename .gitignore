@@ -1,6 +1,6 @@
-.idea/
-vendor/
-composer.lock
-phpunit.xml
 node_modules/
+vendor/
 *.log
+composer.lock
+package-lock.json
+phpunit.xml

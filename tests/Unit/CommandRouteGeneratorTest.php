@@ -1,50 +1,33 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tightenco\Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
-use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamDirectory;
-use org\bovigo\vfs\vfsStreamWrapper;
 use Tightenco\Tests\TestCase;
 
 class CommandRouteGeneratorTest extends TestCase
 {
-    public function setUp(): void
+    /** @test */
+    function file_is_created_when_ziggy_generate_is_called()
     {
-        parent::setUp();
+        Artisan::call('ziggy:generate');
 
-        vfsStreamWrapper::register();
-        vfsStreamWrapper::setRoot(new vfsStreamDirectory('testDir'));
+        $this->assertFileExists(base_path('resources/js/ziggy.js'));
     }
 
     /** @test */
-    public function file_is_created_when_ziggy_generate_is_called()
+    function file_is_created_when_ziggy_generate_is_called_from_outside_project_root()
     {
-        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/ziggy.js')]);
+        chdir('..');
+        $this->assertNotEquals(base_path(), getcwd());
 
-        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('ziggy.js'));
+        Artisan::call('ziggy:generate');
+
+        $this->assertFileExists(base_path('resources/js/ziggy.js'));
     }
 
     /** @test */
-    public function file_is_created_with_the_expected_structure_when_named_routes_exist()
-    {
-        $router = app('router');
-
-        $router->get('/posts/{post}/comments', function () {
-            return '';
-        })
-            ->name('postComments.index');
-
-        $router->getRoutes()->refreshNameLookups();
-
-        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/ziggy.js')]);
-
-        $this->assertFileEquals('./tests/assets/js/ziggy.js', vfsStream::url('testDir/ziggy.js'));
-    }
-
-    /** @test */
-    public function file_is_created_with_a_custom_url()
+    function file_is_created_with_the_expected_structure_when_named_routes_exist()
     {
         $router = app('router');
 
@@ -55,13 +38,30 @@ class CommandRouteGeneratorTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/ziggy.js'), '--url' => 'http://example.org']);
+        Artisan::call('ziggy:generate');
 
-        $this->assertFileEquals('./tests/assets/js/custom-url.js', vfsStream::url('testDir/ziggy.js'));
+        $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
     }
 
     /** @test */
-    public function file_is_created_with_the_expected_group()
+    function file_is_created_with_a_custom_url()
+    {
+        $router = app('router');
+
+        $router->get('/posts/{post}/comments', function () {
+            return '';
+        })
+            ->name('postComments.index');
+
+        $router->getRoutes()->refreshNameLookups();
+
+        Artisan::call('ziggy:generate', ['--url' => 'http://example.org']);
+
+        $this->assertFileEquals('./tests/fixtures/custom-url.js', base_path('resources/js/ziggy.js'));
+    }
+
+    /** @test */
+    function file_is_created_with_the_expected_group()
     {
         app()['config']->set('ziggy', [
             'blacklist' => ['admin.*'],
@@ -85,12 +85,23 @@ class CommandRouteGeneratorTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/ziggy.js')]);
+        Artisan::call('ziggy:generate');
 
-        $this->assertFileEquals('./tests/assets/js/ziggy.js', vfsStream::url('testDir/ziggy.js'));
+        $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
 
-        Artisan::call('ziggy:generate', ['path' => vfsStream::url('testDir/admin.js'), '--group' => 'admin']);
+        Artisan::call('ziggy:generate', ['path' => 'resources/js/admin.js', '--group' => 'admin']);
 
-        $this->assertFileEquals('./tests/assets/js/admin.js', vfsStream::url('testDir/admin.js'));
+        $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
+    }
+
+    protected function tearDown(): void
+    {
+        if (file_exists(base_path('resources/js')) && is_dir(base_path('resources/js'))) {
+            array_map(function ($file) {
+                unlink($file);
+            }, glob(base_path('resources/js/*')));
+        }
+
+        parent::tearDown();
     }
 }

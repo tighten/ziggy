@@ -964,7 +964,11 @@ function () {
       if (!this.absolute) return '/';
       if (!this.route.domain) return this.ziggy.baseUrl.replace(/\/?$/, '/');
       var host = (this.route.domain || this.ziggy.baseDomain).replace(/\/+$/, '');
-      if (this.ziggy.basePort && host.replace(/\/+$/, '') === this.ziggy.baseDomain.replace(/\/+$/, '')) host = this.ziggy.baseDomain + ':' + this.ziggy.basePort;
+
+      if (this.ziggy.basePort) {
+        host = "".concat(host, ":").concat(this.ziggy.basePort);
+      }
+
       return this.ziggy.baseProtocol + '://' + host + '/';
     }
   }, {
@@ -1100,11 +1104,11 @@ function (_String) {
         } else {
           tagValue = _this2.urlParams[keyName];
           delete _this2.urlParams[keyName];
-        } // The type of the value is undefined; is this param
+        } // The value is null or defined; is this param
         // optional or not
 
 
-        if (typeof tagValue === 'undefined') {
+        if (tagValue == null) {
           if (tag.indexOf('?') === -1) {
             throw new Error("Ziggy Error: '" + keyName + "' key is required for route '" + _this2.name + "'");
           } else {

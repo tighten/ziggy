@@ -80,9 +80,9 @@ class Router extends String {
                     delete this.urlParams[keyName];
                 }
 
-                // The type of the value is undefined; is this param
+                // The value is null or defined; is this param
                 // optional or not
-                if (typeof tagValue === 'undefined') {
+                if (tagValue == null) {
                     if (tag.indexOf('?') === -1) {
                         throw new Error(
                             "Ziggy Error: '" +
@@ -178,7 +178,7 @@ class Router extends String {
 
         if (name) {
             const pattern = new RegExp(
-                '^' + name.replace('*', '.*').replace('.', '.') + '$',
+                '^' + name.replace('.', '\\.').replace('*', '.*') + '$',
                 'i'
             );
             return pattern.test(currentRoute);
