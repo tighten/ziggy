@@ -1,258 +1,159 @@
 import assert from 'assert';
 import test from 'ava';
-
 import route from '../../src/js/route.js';
 
-global.Ziggy = {
-    namedRoutes: {
-        'translateTeam.user.show': {
-            uri: '{locale}/users/{id}',
-            methods: ['GET', 'HEAD'],
-            domain: '{team}.myapp.dev'
-        },
-        'translateEvents.venues.show': {
-            uri: '{locale}/events/{event}/venues/{venue}',
-            methods: ['GET', 'HEAD'],
-            domain: null
-        },
-        'translatePosts.index': {
-            uri: '{locale}/posts',
-            methods: ['GET', 'HEAD'],
-            domain: null
-        },
-        'translatePosts.show': {
-            uri: '{locale}/posts/{id}',
-            methods: ['GET', 'HEAD'],
-            domain: null
-        },
-        home: {
-            uri: '/',
-            methods: ['GET', 'HEAD'],
-            domain: null
-        },
-        'team.user.show': {
-            uri: 'users/{id}',
-            methods: ['GET', 'HEAD'],
-            domain: '{team}.myapp.dev'
-        },
-        'posts.index': {
-            uri: 'posts',
-            methods: ['GET', 'HEAD'],
-            domain: null
-        },
-        'posts.update': {
-            uri: 'posts/{post}',
-            methods: ['PUT'],
-            domain: null
-        },
-        'posts.show': {
-            uri: 'posts/{post}',
-            methods: ['GET', 'HEAD'],
-            domain: null
-        },
-        'posts.store': {
-            uri: 'posts',
-            methods: ['POST'],
-            domain: null
-        },
-        'posts.destroy': {
-            uri: 'posts/{id}',
-            methods: ['DELETE'],
-            domain: null
-        },
-        'events.venues.show': {
-            uri: 'events/{event}/venues/{venue}',
-            methods: ['GET', 'HEAD'],
-            domain: null
-        },
-        'events.venues.index': {
-            uri: 'events/{event}/venues',
-            methods: ['GET', 'HEAD'],
-            domain: null
-        },
-        optional: {
-            uri: 'optional/{id}/{slug?}',
-            methods: ['GET', 'HEAD'],
-            domain: null
-        },
-        withOptionalFilter: {
-            uri: 'stuff/{filter?}',
-            methods: ['GET', 'HEAD'],
-            domain: null
-        },
-        'conversations.show': {
-            uri:
-                'subscribers/{subscriber}/conversations/{type}/{conversation_id?}',
-            methods: ['GET', 'HEAD'],
-            domain: null
-        },
-        optionalId: {
-            uri: 'optionalId/{type}/{id?}',
-            methods: ['GET', 'HEAD'],
-            domain: null
-        },
-    },
-    baseUrl: 'http://myapp.dev/',
-    baseProtocol: 'http',
-    baseDomain: 'myapp.dev',
-    basePort: false,
-    defaultParameters: {
-        locale: 'en'
-    }
-};
+// global.Ziggy = {
+//     namedRoutes: {
+//         'translateTeam.user.show': {
+//             uri: '{locale}/users/{id}',
+//             methods: ['GET', 'HEAD'],
+//             domain: '{team}.myapp.dev'
+//         },
+//         'translateEvents.venues.show': {
+//             uri: '{locale}/events/{event}/venues/{venue}',
+//             methods: ['GET', 'HEAD'],
+//         },
+//         'translatePosts.show': {
+//             uri: '{locale}/posts/{id}',
+//             methods: ['GET', 'HEAD'],
+//         },
+//         home: {
+//             uri: '/',
+//             methods: ['GET', 'HEAD'],
+//         },
+//         'team.user.show': {
+//             uri: 'users/{id}',
+//             methods: ['GET', 'HEAD'],
+//             domain: '{team}.myapp.dev'
+//         },
+//         'posts.store': {
+//             uri: 'posts',
+//             methods: ['POST'],
+//         },
+//         'posts.destroy': {
+//             uri: 'posts/{id}',
+//             methods: ['DELETE'],
+//         },
+//         withOptionalFilter: {
+//             uri: 'stuff/{filter?}',
+//             methods: ['GET', 'HEAD'],
+//         },
+//         optionalId: {
+//             uri: 'optionalId/{type}/{id?}',
+//             methods: ['GET', 'HEAD'],
+//         },
+//     },
+// };
 
-test('generate URL with no parameters', t => {
-    assert.equal(route('posts.index'), 'http://myapp.dev/posts');
+test.before(t => t.context.globalZiggy = { ...global.Ziggy });
+
+test('generate a URL with no parameters', t => {
+    t.is(route('posts.index').url(), 'https://ziggy.dev/posts');
 });
 
-test('generate URL with default parameters', t => {
-    assert.equal(
-        route('translatePosts.index'),
-        'http://myapp.dev/en/posts'
-    );
+test('generate a URL with default parameters', t => {
+    t.is(route('translatePosts.index').url(), 'https://ziggy.dev/en/posts');
 });
 
-test('generate URL using .url() method', t => {
-    assert.equal(route('posts.index').url(), 'http://myapp.dev/posts');
+test('generate a string URL using .url()', t => {
+    t.is(route('posts.index').url(), 'https://ziggy.dev/posts');
 });
 
-test('generate URL with default parameters using .url() method', t => {
-    assert.equal(
-        route('translatePosts.index').url(),
-        'http://myapp.dev/en/posts'
-    );
+test('generate a relative URL by passing absolute = false', t => {
+    t.is(route('posts.index', [], false).url(), '/posts');
 });
 
-test('generate relative URL by passing `false` to `absolute` argument', t => {
-    assert.equal(route('posts.index', [], false), '/posts');
-});
-
-test('generate URL with provided optional parameters', t => {
-    assert.equal(
+test('generate a URL with provided optional parameters', t => {
+    t.is(
         route('conversations.show', {
             type: 'email',
             subscriber: 123,
-            conversation_id: 1234
-        }),
-        'http://myapp.dev/subscribers/123/conversations/email/1234'
+            conversation_id: 1234,
+        }).url(),
+        'https://ziggy.dev/subscribers/123/conversations/email/1234'
     );
 });
 
-test('generate relative URL with provided optional parameters', t => {
-    assert.equal(
-        route(
-            'conversations.show',
-            {
-                type: 'email',
-                subscriber: 123,
-                conversation_id: 1234
-            },
-            false
-        ),
+test('generate a relative URL with provided optional parameters', t => {
+    t.is(
+        route('conversations.show', {
+            type: 'email',
+            subscriber: 123,
+            conversation_id: 1234,
+        }, false).url(),
         '/subscribers/123/conversations/email/1234'
     );
 });
 
-test('generate relative URL with default parameters', t => {
-    assert.equal(route('translatePosts.index', [], false), '/en/posts');
+test('generate a relative URL with default parameters', t => {
+    t.is(route('translatePosts.index', [], false).url(), '/en/posts');
 });
 
-test('append extra provided named parameters as query parameters', t => {
-    assert.equal(
-        route('translatePosts.index', { someOtherKey: 123 }),
-        'http://myapp.dev/en/posts?someOtherKey=123'
+test('error if a required parameter is not provided', t => {
+    t.throws(() => route('posts.show').url(), { message: /'post' key is required/ });
+});
+
+test('error if a required parameter is not provided to a route with default parameters', t => {
+    t.throws(() => route('translatePosts.show').url(), { message: /'id' key is required/ });
+});
+
+test('error if a required parameter with a default has no default value', t => {
+    global.Ziggy.defaultParameters = {};
+
+    t.throws(
+        () => route('translatePosts.index').url(),
+        { message: /'locale' key is required/ }
     );
+
+    global.Ziggy = t.context.globalZiggy;
 });
 
-test('error if required parameters not provided', t => {
-    assert.throws(function() {
-        route('posts.show').toString();
-    }, /'post' key is required/);
+test('generate a URL using an integer for a route with required parameters', t => {
+    t.is(route('posts.show', 1).url(), 'https://ziggy.dev/posts/1');
+    t.is(route('posts.show').with(1).url(), 'https://ziggy.dev/posts/1');
 });
 
-test('error if required parameters with defaults are missing default values', t => {
-    let defaultParameters = Ziggy.defaultParameters;
-    global.Ziggy.defaultParameters = [];
-    assert.throws(function() {
-        route('translatePosts.index').toString();
-    }, /'locale' key is required/);
-    global.Ziggy.defaultParameters = defaultParameters;
+test('generate a URL using an integer for a route with required and default parameters', t => {
+    t.is(route('translatePosts.show', 1).url(), 'https://ziggy.dev/en/posts/1');
+    t.is(route('translatePosts.show').with(1).url(), 'https://ziggy.dev/en/posts/1');
 });
 
-test('don’t use `Array.filter` as default value for parameter named "filter"', t => {
-    let defaultParameters = global.Ziggy.defaultParameters;
-    global.Ziggy.defaultParameters = [];
-    assert.equal(
-        route('withOptionalFilter'),
-        'http://myapp.dev/stuff'
-    );
-    global.Ziggy.defaultParameters = defaultParameters;
+test('generate a URL using an object for a route with required parameters', t => {
+    t.is(route('posts.show', { id: 1 }).url(), 'https://ziggy.dev/posts/1');
+    t.is(route('posts.show').with({ id: 1 }).url(), 'https://ziggy.dev/posts/1');
 });
 
-test('error if required parameters not provided to route with default parameters', t => {
-    assert.throws(function() {
-        route('translatePosts.show').toString();
-    }, /'id' key is required/);
-});
-
-test('generate URL using single scalar argument for route with required parameters', t => {
-    assert.equal(route('posts.show', 1), 'http://myapp.dev/posts/1');
-    assert.equal(route('posts.show').with(1), 'http://myapp.dev/posts/1');
-});
-
-test('generate URL using single scalar paremeter for route with required and default parameters', t => {
-    assert.equal(
-        route('translatePosts.show', 1),
-        'http://myapp.dev/en/posts/1'
-    );
-    assert.equal(
-        route('translatePosts.show').with(1),
-        'http://myapp.dev/en/posts/1'
-    );
-});
-
-test('generate URL using single parameter object for route with required parameters', t => {
-    assert.equal(
-        route('posts.show', { id: 1 }),
-        'http://myapp.dev/posts/1'
-    );
-    assert.equal(
-        route('posts.show').with({ id: 1 }),
-        'http://myapp.dev/posts/1'
-    );
-});
-
-test('generate URL using single parameter object for route with optional parameters', t => {
+test('generate a URL using an object for a route with optional parameters', t => {
     t.is(
-        route('optionalId', { type: 'model', id: 1}),
-        'http://myapp.dev/optionalId/model/1'
+        route('optionalId', { type: 'model', id: 1 }).url(),
+        'https://ziggy.dev/optionalId/model/1'
     );
-})
+});
 
-test('generate URL using array of parameters objects for route with required parameters', t => {
-    assert.equal(
+test('generate a URL using an array of objects for a route with required parameters', t => {
+    t.is(
         route('events.venues.show', [
             { id: 1, title: 'Event' },
-            { id: 2, title: 'Venue' }
-        ]),
-        'http://myapp.dev/events/1/venues/2'
+            { id: 2, title: 'Venue' },
+        ]).url(),
+        'https://ziggy.dev/events/1/venues/2'
     );
 });
 
-test('generate URL using parameter object for route with required and default parameters', t => {
-    assert.equal(
-        route('translatePosts.show', { id: 1 }),
-        'http://myapp.dev/en/posts/1'
-    );
-    assert.equal(
-        route('translatePosts.show').with({ id: 1 }),
-        'http://myapp.dev/en/posts/1'
-    );
+test('generate a URL using an object for a route with required and default parameters', t => {
+    t.is(route('translatePosts.show', { id: 1 }).url(), 'https://ziggy.dev/en/posts/1');
+    t.is(route('translatePosts.show').with({ id: 1 }).url(), 'https://ziggy.dev/en/posts/1');
 });
 
-test('generate URL using single parameter array for route with required parameters', t => {
-    assert.equal(route('posts.show', [1]), 'http://myapp.dev/posts/1');
-    assert.equal(route('posts.show').with([1]), 'http://myapp.dev/posts/1');
+test('generate a URL using a single parameter array for a route with required parameters', t => {
+    t.is(route('posts.show', [1]).url(), 'https://ziggy.dev/posts/1');
+    t.is(route('posts.show').with([1]).url(), 'https://ziggy.dev/posts/1');
+});
+
+test('generate a URL using a single parameter array for a route with required and default parameters', t => {
+    t.is(route('translatePosts.show', [1]).url(), 'https://ziggy.dev/en/posts/1');
+    t.is(route('translatePosts.show').with([1]).url(), 'https://ziggy.dev/en/posts/1');
+});
 });
 
 test('generate URL using single parameter array for route with required and default parameters', t => {

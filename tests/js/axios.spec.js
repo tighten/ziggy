@@ -6,7 +6,7 @@ import moxios from 'moxios';
 test.beforeEach(t => moxios.install());
 test.afterEach(t => moxios.uninstall());
 
-test('make axios call using route()', t => {
+test('make an axios call using route()', t => {
     moxios.stubRequest('https://ziggy.dev/posts/1', { status: 200 });
 
     axios.get(route('posts.show', 1))
@@ -14,7 +14,7 @@ test('make axios call using route()', t => {
         .catch(error => { throw error; });
 });
 
-test('make axios call using route() and passing parameters', t => {
+test('make an axios call using route() and passing parameters', t => {
     moxios.stubRequest('https://ziggy.dev/posts', { status: 200 });
 
     axios.get(route('posts.index'), {

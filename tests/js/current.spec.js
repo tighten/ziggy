@@ -2,20 +2,20 @@ import test from 'ava';
 import route from '../../src/js/route.js';
 
 global.Ziggy.namedRoutes = {
+    ... global.Ziggy.namedRoutes,
     'hosting-contacts.index': {
         uri: 'hosting-contacts',
         methods: ['GET'],
     },
-    ... global.Ziggy.namedRoutes,
 };
 
-test('get name of current route', t => {
+test('get the current route name', t => {
     global.window.location.pathname = '/events/1/venues/2';
 
     t.is(route().current(), 'events.venues.show');
 });
 
-test('check if current route name matches pattern', t => {
+test('check the current route name against a pattern', t => {
     global.window.location.pathname = '/events/1/venues/2';
 
     t.true(route().current('events.venues.show'));
@@ -38,37 +38,37 @@ test('check if current route name matches pattern', t => {
     t.false(route().current('hosting.*'));
 });
 
-test('check current route name for route with omitted optional parameters', t => {
+test('check the current route name on a route with omitted optional parameters', t => {
     global.window.location.pathname = '/optional/1';
 
     t.true(route().current('optional'));
 });
 
-test('check current route name for route with provided optional parameters', t => {
+test('check the current route name on a route with provided optional parameters', t => {
     global.window.location.pathname = '/optional/1/foo';
 
     t.true(route().current('optional'));
 });
 
-test('get current route name for route with multiple HTTP methods', t => {
+test('get the current route name on a route with multiple allowed HTTP methods', t => {
     global.window.location.pathname = '/posts/1';
 
     t.is(route().current(), 'posts.show');
 });
 
-test('ignore routes without GET method when checking current route', t => {
+test('ignore routes that dont allow GET requests', t => {
     global.window.location.pathname = '/posts/1';
 
     t.false(route().current('posts.update'));
 });
 
-test('ignore trailing slashes when checking current route', t => {
+test('ignore trailing slashes', t => {
     global.window.location.pathname = '/events/1/venues/';
 
     t.is(route().current(), 'events.venues.index');
 });
 
-// test('ignore query parameters when checking current route', t => {
+// test('ignore query parameters', t => {
 //     global.window.location.pathname = '/events/1/venues?foo=2';
 
 //     t.is(route().current(), 'events.venues.index');
