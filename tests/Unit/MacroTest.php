@@ -7,147 +7,110 @@ use Tightenco\Ziggy\RoutePayload;
 
 class MacroTest extends TestCase
 {
-    /** @test */
-    function only_matching_routes_excluded_with_blacklist_group_are_filtered()
-    {
-        $router = app('router');
+    protected $router;
 
-        $router->blacklist(function ($router) {
-            $router->get('/posts', function () { return ''; });
-            $router->get('/posts/show', function () { return ''; })
-                ->name('posts.show');
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->router = app('router');
+    }
+
+    /** @test */
+    public function only_matching_routes_excluded_with_blacklist_group_are_filtered()
+    {
+        $this->router->blacklist(function ($router) {
+            $router->get('posts', fn () => '');
+            $router->get('posts/show', fn () => '')->name('posts.show');
         });
+        $this->router->get('tags/{tag}', fn () => '')->name('tags.show');
 
-        $router->get('/tags/{tag}', function () { return ''; })
-                ->name('tags.show');
+        $this->router->getRoutes()->refreshNameLookups();
 
-        $router->getRoutes()->refreshNameLookups();
+        $payload = RoutePayload::compile($this->router);
 
-        $payload = RoutePayload::compile($router);
-
-        $this->assertEquals(['tags.show'], array_keys($payload->toArray()));
+        $this->assertSame(['tags.show'], array_keys($payload->toArray()));
     }
 
     /** @test */
-    function only_matching_routes_excluded_with_blacklist_fluent_method_are_filtered()
+    public function only_matching_routes_excluded_with_blacklist_fluent_method_are_filtered()
     {
-        $router = app('router');
+        $this->router->get('/', fn () => '');
+        $this->router->blacklist()->get('pages', fn () => '')->name('pages.index');
+        $this->router->get('pages/{slug}', fn () => '')->name('pages.show');
 
-        $router->get('/', function () { return ''; });
+        $this->router->getRoutes()->refreshNameLookups();
 
-        $router->blacklist()
-            ->get('/pages', function () { return ''; })
-            ->name('pages.index');
+        $payload = RoutePayload::compile($this->router);
 
-        $router->get('/pages/{slug}', function () { return ''; })
-            ->name('pages.show');
-
-        $router->getRoutes()->refreshNameLookups();
-
-        $payload = RoutePayload::compile($router);
-
-        $this->assertEquals(['pages.show'], array_keys($payload->toArray()));
+        $this->assertSame(['pages.show'], array_keys($payload->toArray()));
     }
 
     /** @test */
-    function only_matching_routes_excluded_with_blacklist_fluent_method_and_group_are_filtered()
+    public function only_matching_routes_excluded_with_blacklist_fluent_method_and_group_are_filtered()
     {
-        $router = app('router');
-
-        $router->get('/', function () { return ''; });
-
-        $router->blacklist(function ($router) {
-            $router->get('/posts', function () { return ''; });
-            $router->get('/posts/show', function () { return ''; })
-                ->name('posts.show');
+        $this->router->get('/', fn () => '');
+        $this->router->blacklist(function ($router) {
+            $router->get('posts', fn () => '');
+            $router->get('posts/show', fn () => '')->name('posts.show');
         });
+        $this->router->get('tags/{tag}', fn () => '')->name('tags.show');
+        $this->router->blacklist()->get('pages', fn () => '')->name('pages.index');
+        $this->router->get('pages/{slug}', fn () => '')->name('pages.show');
 
-        $router->get('/tags/{tag}', function () { return ''; })
-                ->name('tags.show');
+        $this->router->getRoutes()->refreshNameLookups();
 
-        $router->blacklist()
-            ->get('/pages', function () { return ''; })
-            ->name('pages.index');
+        $payload = RoutePayload::compile($this->router);
 
-        $router->get('/pages/{slug}', function () { return ''; })
-            ->name('pages.show');
-
-        $router->getRoutes()->refreshNameLookups();
-
-        $payload = RoutePayload::compile($router);
-
-        $this->assertEquals(['tags.show', 'pages.show'], array_keys($payload->toArray()));
+        $this->assertSame(['tags.show', 'pages.show'], array_keys($payload->toArray()));
     }
 
     /** @test */
-    function only_matching_routes_included_with_whitelist_fluent_method_are_filtered()
+    public function only_matching_routes_included_with_whitelist_fluent_method_are_filtered()
     {
-        $router = app('router');
+        $this->router->get('tags/{tag}', fn () => '')->name('tags.show');
+        $this->router->whitelist()->get('pages', fn () => '')->name('pages.index');
 
-        $router->get('/tags/{tag}', function () { return ''; })
-                ->name('tags.show');
+        $this->router->getRoutes()->refreshNameLookups();
 
-        $router->whitelist()
-            ->get('/pages', function () { return ''; })
-            ->name('pages.index');
+        $payload = RoutePayload::compile($this->router);
 
-        $router->getRoutes()->refreshNameLookups();
-
-        $payload = RoutePayload::compile($router);
-
-        $this->assertEquals(['pages.index'], array_keys($payload->toArray()));
+        $this->assertSame(['pages.index'], array_keys($payload->toArray()));
     }
 
     /** @test */
-    function only_matching_routes_included_with_whitelist_group_method_are_filtered()
+    public function only_matching_routes_included_with_whitelist_group_method_are_filtered()
     {
-        $router = app('router');
-
-        $router->get('/', function () { return ''; });
-
-        $router->whitelist(function ($router) {
-            $router->get('/posts', function () { return ''; });
-            $router->get('/posts/show', function () { return ''; })
-                ->name('posts.show');
+        $this->router->get('/', fn () => '');
+        $this->router->whitelist(function ($router) {
+            $router->get('posts', fn () => '');
+            $router->get('posts/show', fn () => '')->name('posts.show');
         });
+        $this->router->get('tags/{tag}', fn () => '')->name('tags.show');
 
-        $router->get('/tags/{tag}', function () { return ''; })
-                ->name('tags.show');
+        $this->router->getRoutes()->refreshNameLookups();
 
-        $router->getRoutes()->refreshNameLookups();
+        $payload = RoutePayload::compile($this->router);
 
-        $payload = RoutePayload::compile($router);
-
-        $this->assertEquals(['posts.show'], array_keys($payload->toArray()));
+        $this->assertSame(['posts.show'], array_keys($payload->toArray()));
     }
 
     /** @test */
-    function only_matching_routes_included_with_whitelist_group_and_fluent_method_are_filtered()
+    public function only_matching_routes_included_with_whitelist_group_and_fluent_method_are_filtered()
     {
-        $router = app('router');
-
-        $router->get('/', function () { return ''; });
-
-        $router->whitelist(function ($router) {
-            $router->get('/posts', function () { return ''; });
-            $router->get('/posts/show', function () { return ''; })
-                ->name('posts.show');
+        $this->router->get('/', fn () => '');
+        $this->router->whitelist(function ($router) {
+            $router->get('posts', fn () => '');
+            $router->get('posts/show', fn () => '')->name('posts.show');
         });
+        $this->router->get('tags/{tag}', fn () => '')->name('tags.show');
+        $this->router->whitelist()->get('pages', fn () => '')->name('pages.index');
+        $this->router->get('pages/{slug}', fn () => '')->name('pages.show');
 
-        $router->get('/tags/{tag}', function () { return ''; })
-                ->name('tags.show');
+        $this->router->getRoutes()->refreshNameLookups();
 
-        $router->whitelist()
-            ->get('/pages', function () { return ''; })
-            ->name('pages.index');
+        $payload = RoutePayload::compile($this->router);
 
-        $router->get('/pages/{slug}', function () { return ''; })
-            ->name('pages.show');
-
-        $router->getRoutes()->refreshNameLookups();
-
-        $payload = RoutePayload::compile($router);
-
-        $this->assertEquals(['posts.show', 'pages.index'], array_keys($payload->toArray()));
+        $this->assertSame(['posts.show', 'pages.index'], array_keys($payload->toArray()));
     }
 }
