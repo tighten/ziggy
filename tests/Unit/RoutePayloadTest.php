@@ -72,7 +72,7 @@ class RoutePayloadTest extends TestCase
     /** @test */
     public function existence_of_whitelist_config_causes_routes_to_whitelist()
     {
-        app()['config']->set('ziggy', [
+        app('config')->set('ziggy', [
             'whitelist' => ['posts.s*', 'home'],
         ]);
 
@@ -96,13 +96,13 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray());
     }
 
     /** @test */
     public function existence_of_blacklist_config_causes_routes_to_blacklist()
     {
-        app()['config']->set('ziggy', [
+        app('config')->set('ziggy', [
             'blacklist' => ['posts.s*', 'home', 'admin.*'],
         ]);
 
@@ -121,13 +121,13 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray());
     }
 
     /** @test */
     public function existence_of_both_configs_returns_unfiltered_routes()
     {
-        app()['config']->set('ziggy', [
+        app('config')->set('ziggy', [
             'blacklist' => ['posts.s*'],
             'whitelist' => ['home'],
         ]);
@@ -135,23 +135,23 @@ class RoutePayloadTest extends TestCase
         $routes = RoutePayload::compile($this->router);
 
         $expected = [
-            'posts.index' => [
-                'uri' => 'posts',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-            ],
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-            ],
             'home' => [
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
@@ -167,13 +167,13 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray());
     }
 
     /** @test */
     public function only_matching_routes_included_with_group_enabled()
     {
-        app()['config']->set('ziggy', [
+        app('config')->set('ziggy', [
             'groups' => [
                 'authors' => ['home', 'posts.*'],
             ],
@@ -204,32 +204,33 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray());
     }
 
+    // can_compile_route_payload
     /** @test */
     public function non_existence_of_group_returns_unfiltered_routes()
     {
         $routes = RoutePayload::compile($this->router, 'authors');
 
         $expected = [
-            'posts.index' => [
-                'uri' => 'posts',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-            ],
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-            ],
             'home' => [
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
@@ -245,39 +246,39 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray());
     }
 
     /** @test */
     public function retrieves_middleware_if_config_is_set()
     {
-        app()['config']->set('ziggy', [
+        app('config')->set('ziggy', [
             'middleware' => true,
         ]);
 
         $routes = RoutePayload::compile($this->router);
 
         $expected = [
-            'posts.index' => [
-                'uri' => 'posts',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'middleware' => [],
-            ],
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'middleware' => [],
-            ],
             'home' => [
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
                 'middleware' => [],
             ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
                 'middleware' => [],
@@ -296,39 +297,39 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray());
     }
 
     /** @test */
     public function retrieves_only_configured_middleware()
     {
-        app()['config']->set('ziggy', [
+        app('config')->set('ziggy', [
             'middleware' => ['auth'],
         ]);
 
         $routes = RoutePayload::compile($this->router);
 
         $expected = [
-            'posts.index' => [
-                'uri' => 'posts',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'middleware' => [],
-            ],
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'middleware' => [],
-            ],
             'home' => [
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
                 'middleware' => [],
             ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
                 'middleware' => [],
@@ -347,6 +348,6 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray());
     }
 }
