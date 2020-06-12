@@ -9,41 +9,12 @@ class RoutePayloadTest extends TestCase
 {
     protected $router;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->router = app('router');
-        $this->router->get('/home', function () {
-            return '';
-        })
-            ->name('home');
-
-        $this->router->get('/posts', function () {
-            return '';
-        })
-            ->name('posts.index');
-
-        $this->router->get('/posts/{post}', function () {
-            return '';
-        })
-            ->name('posts.show');
-
-        $this->router->get('/posts/{post}/comments', function () {
-            return '';
-        })
-            ->name('postComments.index');
-
-        $this->router->post('/posts', function () {
-            return '';
-        })
-            ->name('posts.store')->middleware(['auth', 'role:admin']);
-
-        $this->router->get('/admin/users', function () {
-            return '';
-        })
-            ->name('admin.users.index')->middleware('role:admin');
-
+        $this->router->group([], __DIR__ . '/../fixtures/routes.php');
         $this->router->getRoutes()->refreshNameLookups();
     }
 
