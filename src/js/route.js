@@ -212,6 +212,10 @@ class Router extends String {
     get params() {
         const namedRoute = this.ziggy.namedRoutes[this.current()];
 
+        let baseUrlPathname = this.ziggy.baseUrl.split(this.ziggy.baseDomain)[1];
+        let hrefPathname = window.location.href.split(this.ziggy.baseDomain)[1];
+        let pathname = hrefPathname.replace(baseUrlPathname, '');
+
         return Object.assign(
             this.extractParams(
                 window.location.hostname,
@@ -219,7 +223,7 @@ class Router extends String {
                 '.'
             ),
             this.extractParams(
-                window.location.pathname.slice(1),
+                pathname,
                 namedRoute.uri,
                 '/'
             )
