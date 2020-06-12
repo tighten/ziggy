@@ -870,16 +870,19 @@ describe('route()', function() {
     });
 
     it('Should combine dynamic params from the domain and the URI', function() {
+        global.window.location.href = 'http://tighten.myapp.dev/users/1';
         global.window.location.hostname = 'tighten.myapp.dev';
         global.window.location.pathname = '/users/1';
 
         assert.deepStrictEqual(route().params, { team: 'tighten', id: '1' });
 
+        global.window.location.href = 'http://' + global.Ziggy.baseDomain + '/posts/1';
         global.window.location.hostname = global.Ziggy.baseDomain;
         global.window.location.pathname = '/posts/1';
 
         assert.deepStrictEqual(route().params, { post: '1' });
 
+        global.window.location.href = 'http://myapp.dev/events/1/venues/2';
         global.window.location.pathname = '/events/1/venues/2';
 
         assert.deepStrictEqual(route().params, { event: '1', venue: '2' });
