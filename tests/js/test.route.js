@@ -227,8 +227,8 @@ describe('route()', function() {
 
     it('Should return URL when run with single object param on a route with optional params', function() {
         assert.equal(
-            'http://myapp.dev/optionalId/model/1',
-            route('optionalId', { type: 'model', id: 1 })
+            route('optionalId', { type: 'model', id: 1 }),
+            'http://myapp.dev/optionalId/model/1'
         );
     });
 
