@@ -86,6 +86,11 @@ global.Ziggy = {
             methods: ['GET', 'HEAD'],
             domain: null
         },
+        optionalId: {
+            uri: 'optionalId/{type}/{id?}',
+            methods: ['GET', 'HEAD'],
+            domain: null
+        },
     },
     baseUrl: 'http://myapp.dev/',
     baseProtocol: 'http',
@@ -216,6 +221,13 @@ test('generate URL using single parameter object for route with required paramet
         'http://myapp.dev/posts/1'
     );
 });
+
+test('generate URL using single parameter object for route with optional parameters', t => {
+    t.is(
+        route('optionalId', { type: 'model', id: 1}),
+        'http://myapp.dev/optionalId/model/1'
+    );
+})
 
 test('generate URL using array of parameters objects for route with required parameters', t => {
     assert.equal(
