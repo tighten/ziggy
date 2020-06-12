@@ -87,6 +87,11 @@ global.Ziggy = {
             methods: ['GET', 'HEAD'],
             domain: null
         },
+        'products.show': {
+            uri: '{country?}/{language?}/products/{id}',
+            methods: ['GET', 'HEAD'],
+            domain: null
+        },
     },
     baseUrl: 'http://myapp.dev/',
     baseProtocol: 'http',
@@ -100,6 +105,29 @@ global.Ziggy = {
 describe('route()', function() {
     it('Should return URL when run without params on a route without params', function() {
         assert.equal('http://myapp.dev/posts', route('posts.index'));
+    });
+
+    it('Can handle routing for apps in a subfolder', function() {
+        let orgBaseUrl = Ziggy.baseUrl;
+        let orgBaseDomain = Ziggy.baseDomain;
+        let orgWindow = global.window;
+
+        global.Ziggy.baseUrl = 'http://domain.com/subfolder/';
+        global.Ziggy.baseDomain = 'domain.com';
+
+        global.window = {
+            location: {
+                href: 'http://domain.com/subfolder/ph/en/products/4',
+                hostname: 'domain.com',
+                pathname: '/subfolder/ph/en/products/4',
+            },
+        };
+
+        assert.deepStrictEqual(route().params, { country: 'ph', language: 'en', id: '4' });
+
+        global.Ziggy.baseUrl = orgBaseUrl;
+        global.Ziggy.baseDomain = orgBaseDomain;
+        global.window = orgWindow;
     });
 
     it('Should return URL when run without params on a route without params , with default params', function() {
