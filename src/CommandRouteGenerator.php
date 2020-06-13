@@ -50,27 +50,25 @@ class CommandRouteGenerator extends Command
 
         $defaultParameters = method_exists(app('url'), 'getDefaultParameters') ? json_encode(app('url')->getDefaultParameters()) : '[]';
 
-        return <<<EOT
-    var Ziggy = {
-        namedRoutes: $json,
-        baseUrl: '{$this->baseUrl}',
-        baseProtocol: '{$this->baseProtocol}',
-        baseDomain: '{$this->baseDomain}',
-        basePort: {$this->basePort},
-        defaultParameters: $defaultParameters
-    };
+        return <<<JAVASCRIPT
+var Ziggy = {
+    namedRoutes: {$json},
+    baseUrl: '{$this->baseUrl}',
+    baseProtocol: '{$this->baseProtocol}',
+    baseDomain: '{$this->baseDomain}',
+    basePort: {$this->basePort},
+    defaultParameters: {$defaultParameters},
+};
 
-    if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
-        for (var name in window.Ziggy.namedRoutes) {
-            Ziggy.namedRoutes[name] = window.Ziggy.namedRoutes[name];
-        }
+if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
+    for (var name in window.Ziggy.namedRoutes) {
+        Ziggy.namedRoutes[name] = window.Ziggy.namedRoutes[name];
     }
+}
 
-    export {
-        Ziggy
-    }
+export { Ziggy };
 
-EOT;
+JAVASCRIPT;
     }
 
     private function prepareDomain()

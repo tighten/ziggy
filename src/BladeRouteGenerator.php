@@ -44,35 +44,35 @@ class BladeRouteGenerator
 
         static::$generated = true;
 
-        return <<<EOT
+        return <<<HTML
 <script type="text/javascript"{$nonce}>
     var Ziggy = {
-        namedRoutes: $json,
+        namedRoutes: {$json},
         baseUrl: '{$this->baseUrl}',
         baseProtocol: '{$this->baseProtocol}',
         baseDomain: '{$this->baseDomain}',
         basePort: {$this->basePort},
-        defaultParameters: $defaultParameters
+        defaultParameters: {$defaultParameters},
     };
 
     $routeFunction
 </script>
-EOT;
+HTML;
     }
 
     private function generateMergeJavascript($json, $nonce)
     {
-        return <<<EOT
+        return <<<HTML
 <script type="text/javascript"{$nonce}>
     (function() {
-        var routes = $json;
+        var routes = {$json};
 
         for (var name in routes) {
             Ziggy.namedRoutes[name] = routes[name];
         }
     })();
 </script>
-EOT;
+HTML;
     }
 
     private function getRouteFilePath()
