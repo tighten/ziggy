@@ -1,8 +1,8 @@
     var Ziggy = {
         namedRoutes: {"admin.dashboard":{"uri":"admin","methods":["GET","HEAD"],"domain":null}},
-        baseUrl: 'http://myapp.com/',
-        baseProtocol: 'http',
-        baseDomain: 'myapp.com',
+        baseUrl: 'https://ziggy.dev/',
+        baseProtocol: 'https',
+        baseDomain: 'ziggy.dev',
         basePort: false,
         defaultParameters: []
     };

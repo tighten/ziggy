@@ -1,8 +1,8 @@
     var Ziggy = {
         namedRoutes: {"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null}},
-        baseUrl: 'http://myapp.com/',
-        baseProtocol: 'http',
-        baseDomain: 'myapp.com',
+        baseUrl: 'https://ziggy.dev/',
+        baseProtocol: 'https',
+        baseDomain: 'ziggy.dev',
         basePort: false,
         defaultParameters: []
     };
