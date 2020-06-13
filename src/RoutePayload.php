@@ -5,8 +5,9 @@ namespace Tightenco\Ziggy;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use JsonSerializable;
 
-class RoutePayload
+class RoutePayload implements JsonSerializable
 {
     protected $routes;
 
@@ -103,6 +104,32 @@ class RoutePayload
                         return $collection->put('middleware', $route->middleware());
                     });
             });
+    }
+
+    /**
+     * Convert this Ziggy instance to an array.
+     */
+    public function toArray(): array
+    {
+        return [];
+    }
+
+    /**
+     * Convert this Ziggy instance into something JSON serializable.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * Convert this Ziggy instance to JSON.
+     */
+    public function toJson(int $options = 0): string
+    {
+        return json_encode($this->jsonSerialize(), $options);
     }
 
     protected function appendRouteToList($name, $list)
