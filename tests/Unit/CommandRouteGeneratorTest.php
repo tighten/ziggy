@@ -31,7 +31,6 @@ class CommandRouteGeneratorTest extends TestCase
     {
         $router = app('router');
         $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate');
@@ -44,7 +43,6 @@ class CommandRouteGeneratorTest extends TestCase
     {
         $router = app('router');
         $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate', ['--url' => 'http://example.org']);
@@ -61,11 +59,9 @@ class CommandRouteGeneratorTest extends TestCase
                 'admin' => ['admin.*'],
             ],
         ]);
-
         $router = app('router');
         $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
         $router->get('admin', fn () => '')->name('admin.dashboard');
-
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate');

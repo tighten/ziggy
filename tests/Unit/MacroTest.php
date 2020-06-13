@@ -24,7 +24,6 @@ class MacroTest extends TestCase
             $router->get('posts/show', fn () => '')->name('posts.show');
         });
         $this->router->get('tags/{tag}', fn () => '')->name('tags.show');
-
         $this->router->getRoutes()->refreshNameLookups();
 
         $payload = RoutePayload::compile($this->router);
@@ -38,7 +37,6 @@ class MacroTest extends TestCase
         $this->router->get('/', fn () => '');
         $this->router->blacklist()->get('pages', fn () => '')->name('pages.index');
         $this->router->get('pages/{slug}', fn () => '')->name('pages.show');
-
         $this->router->getRoutes()->refreshNameLookups();
 
         $payload = RoutePayload::compile($this->router);
@@ -57,7 +55,6 @@ class MacroTest extends TestCase
         $this->router->get('tags/{tag}', fn () => '')->name('tags.show');
         $this->router->blacklist()->get('pages', fn () => '')->name('pages.index');
         $this->router->get('pages/{slug}', fn () => '')->name('pages.show');
-
         $this->router->getRoutes()->refreshNameLookups();
 
         $payload = RoutePayload::compile($this->router);
@@ -70,7 +67,6 @@ class MacroTest extends TestCase
     {
         $this->router->get('tags/{tag}', fn () => '')->name('tags.show');
         $this->router->whitelist()->get('pages', fn () => '')->name('pages.index');
-
         $this->router->getRoutes()->refreshNameLookups();
 
         $payload = RoutePayload::compile($this->router);
@@ -87,7 +83,6 @@ class MacroTest extends TestCase
             $router->get('posts/show', fn () => '')->name('posts.show');
         });
         $this->router->get('tags/{tag}', fn () => '')->name('tags.show');
-
         $this->router->getRoutes()->refreshNameLookups();
 
         $payload = RoutePayload::compile($this->router);
@@ -106,7 +101,6 @@ class MacroTest extends TestCase
         $this->router->get('tags/{tag}', fn () => '')->name('tags.show');
         $this->router->whitelist()->get('pages', fn () => '')->name('pages.index');
         $this->router->get('pages/{slug}', fn () => '')->name('pages.show');
-
         $this->router->getRoutes()->refreshNameLookups();
 
         $payload = RoutePayload::compile($this->router);
