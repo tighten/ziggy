@@ -28,7 +28,8 @@ class Router extends String {
 
         if (
             params.hasOwnProperty('id') &&
-            this.template.indexOf('{id}') == -1
+            this.template.indexOf('{id}') === -1 &&
+            this.template.indexOf('{id?}') === -1
         ) {
             params = [params.id];
         }

@@ -1076,7 +1076,7 @@ var route_Router = /*#__PURE__*/function (_String) {
       // wrap this in an array. This could be slightly dangerous and I want to find
       // a better solution for this rare case.
 
-      if (params.hasOwnProperty('id') && this.template.indexOf('{id}') == -1) {
+      if (params.hasOwnProperty('id') && this.template.indexOf('{id}') === -1 && this.template.indexOf('{id?}') === -1) {
         params = [params.id];
       }
 

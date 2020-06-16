@@ -87,6 +87,11 @@ global.Ziggy = {
             methods: ['GET', 'HEAD'],
             domain: null
         },
+        optionalId: {
+            uri: 'optionalId/{type}/{id?}',
+            methods: ['GET', 'HEAD'],
+            domain: null
+        },
         'products.show': {
             uri: '{country?}/{language?}/products/{id}',
             methods: ['GET', 'HEAD'],
@@ -245,6 +250,13 @@ describe('route()', function() {
         assert.equal(
             'http://myapp.dev/posts/1',
             route('posts.show').with({ id: 1 })
+        );
+    });
+
+    it('Should return URL when run with single object param on a route with optional params', function() {
+        assert.equal(
+            route('optionalId', { type: 'model', id: 1 }),
+            'http://myapp.dev/optionalId/model/1'
         );
     });
 
