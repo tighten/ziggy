@@ -9,11 +9,30 @@ use JsonSerializable;
 
 class RoutePayload implements JsonSerializable
 {
+    protected $domain;
+    protected $group;
+    protected $port;
+    protected $protocol;
+    protected $router;
     protected $routes;
+    protected $url;
 
-    public function __construct(Router $router)
+    /**
+     * Create a new Ziggy instance.
+     */
+    public function __construct(Router $router, string $group = null, string $url = null)
     {
         $this->router = $router;
+        $this->group = $group;
+
+        $this->url = Str::finish($url ?? url('/'), '/');
+
+        tap(parse_url($this->url), function ($url) {
+            $this->protocol = $url['scheme'] ?? 'https';
+            $this->domain = $url['host'] ?? '';
+            $this->port = $url['port'] ?? 'false';
+        });
+
         $this->routes = $this->nameKeyedRoutes();
     }
 
@@ -111,15 +130,23 @@ class RoutePayload implements JsonSerializable
      */
     public function toArray(): array
     {
-        return [];
+        return [
+            'url' => $this->url,
+            'protocol' => $this->protocol,
+            'domain' => $this->domain,
+            'port' => $this->port,
+            'defaultParameters' => method_exists(app('url'), 'getDefaultParameters')
+                ? app('url')->getDefaultParameters()
+                : [],
+            'bindings' => [],
+            'routes' => static::compile($this->router, $this->group ?? false)->toArray(),
+        ];
     }
 
     /**
      * Convert this Ziggy instance into something JSON serializable.
-     *
-     * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

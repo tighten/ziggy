@@ -378,4 +378,83 @@ class RoutePayloadTest extends TestCase
 
         $this->assertEquals($expected, $routes->toArray());
     }
+
+    /** @test */
+    public function route_payload_can_array_itself()
+    {
+        $ziggy = new RoutePayload($this->router);
+
+        $expected = [
+            'url' => 'http://myapp.com/',
+            'protocol' => 'http',
+            'domain' => 'myapp.com',
+            'port' => 'false',
+            'defaultParameters' => [],
+            'bindings' => [],
+            'routes' => [
+                'home' => [
+                    'uri' => 'home',
+                    'methods' => ['GET', 'HEAD'],
+                    'domain' => null,
+                ],
+                'posts.index' => [
+                    'uri' => 'posts',
+                    'methods' => ['GET', 'HEAD'],
+                    'domain' => null,
+                ],
+                'posts.show' => [
+                    'uri' => 'posts/{post}',
+                    'methods' => ['GET', 'HEAD'],
+                    'domain' => null,
+                ],
+                'postComments.index' => [
+                    'uri' => 'posts/{post}/comments',
+                    'methods' => ['GET', 'HEAD'],
+                    'domain' => null,
+                ],
+                'posts.store' => [
+                    'uri' => 'posts',
+                    'methods' => ['POST'],
+                    'domain' => null,
+                ],
+                'admin.users.index' => [
+                    'uri' => 'admin/users',
+                    'methods' => ['GET', 'HEAD'],
+                    'domain' => null,
+                ],
+            ],
+        ];
+
+        $this->assertSame($expected, $ziggy->toArray());
+        $this->assertSame($expected, $ziggy->jsonSerialize());
+    }
+
+    /** @test */
+    public function route_payload_can_json_itself()
+    {
+        app('config')->set('ziggy', ['whitelist' => ['postComments.*']]);
+        $ziggy = new RoutePayload($this->router);
+
+        $expected = [
+            'url' => 'http://myapp.com/',
+            'protocol' => 'http',
+            'domain' => 'myapp.com',
+            'port' => 'false',
+            'defaultParameters' => [],
+            'bindings' => [],
+            'routes' => [
+                'postComments.index' => [
+                    'uri' => 'posts/{post}/comments',
+                    'methods' => ['GET', 'HEAD'],
+                    'domain' => null,
+                ],
+            ],
+        ];
+
+        $json = '{"url":"http:\/\/myapp.com\/","protocol":"http","domain":"myapp.com","port":"false","defaultParameters":[],"bindings":[],"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null}}}';
+
+        $this->assertSame($expected, json_decode(json_encode($ziggy), true));
+        $this->assertSame($json, json_encode($ziggy));
+        $this->assertSame($json, $ziggy->toJson());
+    }
 }
