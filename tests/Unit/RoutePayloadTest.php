@@ -457,4 +457,18 @@ class RoutePayloadTest extends TestCase
         $this->assertSame($json, json_encode($ziggy));
         $this->assertSame($json, $ziggy->toJson());
     }
+
+    /** @test */
+    public function route_payload_can_automatically_json_itself_as_part_of_a_response()
+    {
+        app('config')->set('ziggy', ['whitelist' => ['postComments.*']]);
+        $this->router->get('json', function () {
+            return response()->json(new RoutePayload(app('router')));
+        });
+
+        $response = $this->get('json');
+
+        $response->assertSuccessful();
+        $this->assertSame((new RoutePayload($this->router))->toJson(), $response->getContent());
+    }
 }
