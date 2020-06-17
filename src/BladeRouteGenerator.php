@@ -29,31 +29,20 @@ class BladeRouteGenerator
 
     public function generate($group = false, $nonce = false)
     {
-        $json = $this->getRoutePayload($group)->toJson();
+        $payload = (new RoutePayload($this->router, $group))->toJson();
         $nonce = $nonce ? ' nonce="' . $nonce . '"' : '';
 
         if (static::$generated) {
-            return $this->generateMergeJavascript($json, $nonce);
+            return $this->generateMergeJavascript($payload, $nonce);
         }
 
-        $this->prepareDomain();
-
         $routeFunction = $this->getRouteFunction();
-
-        $defaultParameters = method_exists(app('url'), 'getDefaultParameters') ? json_encode(app('url')->getDefaultParameters()) : '[]';
 
         static::$generated = true;
 
         return <<<EOT
 <script type="text/javascript"{$nonce}>
-    var Ziggy = {
-        namedRoutes: $json,
-        baseUrl: '{$this->baseUrl}',
-        baseProtocol: '{$this->baseProtocol}',
-        baseDomain: '{$this->baseDomain}',
-        basePort: {$this->basePort},
-        defaultParameters: $defaultParameters
-    };
+    var Ziggy = {$payload};
 
     $routeFunction
 </script>
@@ -87,16 +76,5 @@ EOT;
             return '';
         }
         return file_get_contents($this->getRouteFilePath());
-    }
-
-    private function prepareDomain()
-    {
-        $url = url('/');
-        $parsedUrl = parse_url($url);
-
-        $this->baseUrl = $url . '/';
-        $this->baseProtocol = array_key_exists('scheme', $parsedUrl) ? $parsedUrl['scheme'] : 'http';
-        $this->baseDomain = array_key_exists('host', $parsedUrl) ? $parsedUrl['host'] : '';
-        $this->basePort = array_key_exists('port', $parsedUrl) ? $parsedUrl['port'] : 'false';
     }
 }
