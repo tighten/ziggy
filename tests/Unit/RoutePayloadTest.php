@@ -388,7 +388,7 @@ class RoutePayloadTest extends TestCase
             'url' => 'http://myapp.com/',
             'protocol' => 'http',
             'domain' => 'myapp.com',
-            'port' => 'false',
+            'port' => false,
             'defaultParameters' => [],
             'bindings' => [],
             'routes' => [
@@ -439,7 +439,7 @@ class RoutePayloadTest extends TestCase
             'url' => 'http://myapp.com/',
             'protocol' => 'http',
             'domain' => 'myapp.com',
-            'port' => 'false',
+            'port' => false,
             'defaultParameters' => [],
             'bindings' => [],
             'routes' => [
@@ -451,7 +451,7 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        $json = '{"url":"http:\/\/myapp.com\/","protocol":"http","domain":"myapp.com","port":"false","defaultParameters":[],"bindings":[],"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null}}}';
+        $json = '{"url":"http:\/\/myapp.com\/","protocol":"http","domain":"myapp.com","port":false,"defaultParameters":[],"bindings":[],"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null}}}';
 
         $this->assertSame($expected, json_decode(json_encode($ziggy), true));
         $this->assertSame($json, json_encode($ziggy));
