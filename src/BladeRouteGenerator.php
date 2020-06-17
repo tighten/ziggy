@@ -3,7 +3,6 @@
 namespace Tightenco\Ziggy;
 
 use Illuminate\Routing\Router;
-use function array_key_exists;
 
 class BladeRouteGenerator
 {
