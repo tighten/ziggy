@@ -2,6 +2,7 @@
 
 namespace Tightenco\Tests\Unit;
 
+use Illuminate\Support\Str;
 use Tightenco\Tests\TestCase;
 use Tightenco\Ziggy\BladeRouteGenerator;
 
@@ -30,13 +31,13 @@ class BladeRouteGeneratorTest extends TestCase
 
         $generator = (new BladeRouteGenerator($router));
 
-        $this->assertEquals([
+        $this->assertStringContainsString(json_encode([
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
-        ], $generator->getRoutePayload()->toArray());
+        ]), $generator->generate());
     }
 
     /** @test */
@@ -56,13 +57,13 @@ class BladeRouteGeneratorTest extends TestCase
 
         $generator = (new BladeRouteGenerator($router));
 
-        $this->assertEquals([
+        $this->assertStringContainsString(json_encode([
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => '{account}.myapp.com',
             ],
-        ], $generator->getRoutePayload()->toArray());
+        ]), $generator->generate());
     }
 
     /** @test */
@@ -97,14 +98,15 @@ class BladeRouteGeneratorTest extends TestCase
 
         $generator = (new BladeRouteGenerator($router));
 
-        $array = $generator->getRoutePayload()->toArray();
+        $payload = $generator->generate();
+        $array = json_decode(Str::between($payload, ' = ', ";\n\n"), true);
 
-        $this->assertCount(4, $array);
+        $this->assertCount(4, $array['namedRoutes']);
 
-        $this->assertArrayHasKey('posts.index', $array);
-        $this->assertArrayHasKey('posts.show', $array);
-        $this->assertArrayHasKey('posts.store', $array);
-        $this->assertArrayHasKey('postComments.index', $array);
+        $this->assertArrayHasKey('posts.index', $array['namedRoutes']);
+        $this->assertArrayHasKey('posts.show', $array['namedRoutes']);
+        $this->assertArrayHasKey('posts.store', $array['namedRoutes']);
+        $this->assertArrayHasKey('postComments.index', $array['namedRoutes']);
     }
 
     /** @test */

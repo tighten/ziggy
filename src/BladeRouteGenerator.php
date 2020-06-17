@@ -8,22 +8,11 @@ class BladeRouteGenerator
 {
     public static $generated;
 
-    public $routePayload;
-
-    private $baseDomain;
-    private $basePort;
-    private $baseUrl;
-    private $baseProtocol;
     private $router;
 
     public function __construct(Router $router)
     {
         $this->router = $router;
-    }
-
-    public function getRoutePayload($group = false)
-    {
-        return RoutePayload::compile($this->router, $group);
     }
 
     public function generate($group = false, $nonce = false)
