@@ -1,4 +1,4 @@
-    var Ziggy = {"url":"http:\/\/example.org\/","protocol":"http","domain":"example.org","port":false,"defaultParameters":[],"bindings":[],"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null}}};
+    var Ziggy = {"baseUrl":"http:\/\/example.org\/","baseProtocol":"http","baseDomain":"example.org","basePort":false,"defaultParameters":[],"namedRoutes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null}}};
 
     if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
         for (var name in window.Ziggy.namedRoutes) {

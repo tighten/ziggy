@@ -12,7 +12,7 @@ class BladeRouteGeneratorTest extends TestCase
     {
         $generator = app(BladeRouteGenerator::class);
 
-        $this->assertStringContainsString('"routes":[]', $generator->generate());
+        $this->assertStringContainsString('"namedRoutes":[]', $generator->generate());
     }
 
     /** @test */

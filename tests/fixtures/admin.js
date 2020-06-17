@@ -1,4 +1,4 @@
-    var Ziggy = {"url":"http:\/\/myapp.com\/","protocol":"http","domain":"myapp.com","port":false,"defaultParameters":[],"bindings":[],"routes":{"admin.dashboard":{"uri":"admin","methods":["GET","HEAD"],"domain":null}}};
+    var Ziggy = {"baseUrl":"http:\/\/myapp.com\/","baseProtocol":"http","baseDomain":"myapp.com","basePort":false,"defaultParameters":[],"namedRoutes":{"admin.dashboard":{"uri":"admin","methods":["GET","HEAD"],"domain":null}}};
 
     if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
         for (var name in window.Ziggy.namedRoutes) {

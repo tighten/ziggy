@@ -385,13 +385,12 @@ class RoutePayloadTest extends TestCase
         $ziggy = new RoutePayload($this->router);
 
         $expected = [
-            'url' => 'http://myapp.com/',
-            'protocol' => 'http',
-            'domain' => 'myapp.com',
-            'port' => false,
+            'baseUrl' => 'http://myapp.com/',
+            'baseProtocol' => 'http',
+            'baseDomain' => 'myapp.com',
+            'basePort' => false,
             'defaultParameters' => [],
-            'bindings' => [],
-            'routes' => [
+            'namedRoutes' => [
                 'home' => [
                     'uri' => 'home',
                     'methods' => ['GET', 'HEAD'],
@@ -436,13 +435,12 @@ class RoutePayloadTest extends TestCase
         $ziggy = new RoutePayload($this->router);
 
         $expected = [
-            'url' => 'http://myapp.com/',
-            'protocol' => 'http',
-            'domain' => 'myapp.com',
-            'port' => false,
+            'baseUrl' => 'http://myapp.com/',
+            'baseProtocol' => 'http',
+            'baseDomain' => 'myapp.com',
+            'basePort' => false,
             'defaultParameters' => [],
-            'bindings' => [],
-            'routes' => [
+            'namedRoutes' => [
                 'postComments.index' => [
                     'uri' => 'posts/{post}/comments',
                     'methods' => ['GET', 'HEAD'],
@@ -451,7 +449,7 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        $json = '{"url":"http:\/\/myapp.com\/","protocol":"http","domain":"myapp.com","port":false,"defaultParameters":[],"bindings":[],"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null}}}';
+        $json = '{"baseUrl":"http:\/\/myapp.com\/","baseProtocol":"http","baseDomain":"myapp.com","basePort":false,"defaultParameters":[],"namedRoutes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null}}}';
 
         $this->assertSame($expected, json_decode(json_encode($ziggy), true));
         $this->assertSame($json, json_encode($ziggy));
