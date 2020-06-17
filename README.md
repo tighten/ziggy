@@ -40,6 +40,15 @@ Ziggy supports all versions of Laravel from `5.4` to `7.x`.
 1. If using Laravel 5.4, add `Tightenco\Ziggy\ZiggyServiceProvider::class` to the `providers` array in your `config/app.php`.
 1. Include our Blade directive (`@routes`) somewhere in your template before your main application JavaScript is loaded—likely in the header somewhere.
 
+Ziggy is also available as an NPM package, `ziggy-js`, that exposes the `route()` function for use in frontend apps that are not using Blade or Composer. You can install the NPM package with `npm install ziggy-js` or load it from a CDN:
+
+```html
+<!-- Load the Ziggy routes object first -->
+<script defer src="https://unpkg.com/ziggy-js@0.9.x/dist/js/route.min.js"></script>
+```
+
+Note that you still have to generate your routes file with `php artisan ziggy:generate` and make it available to your frontend app.
+
 ## Usage
 
 This package uses the `@routes` directive to inject a JavaScript object containing all of your application's routes, keyed by their names. This collection is available at `Ziggy.namedRoutes`.
