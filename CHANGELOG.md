@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
-Breaking changes marked with ⚠️.
+Breaking changes are marked with ⚠️.
 
 **Added**
 
@@ -14,7 +14,6 @@ Breaking changes marked with ⚠️.
 
 **Changed**
 
-<!-- - ⚠️ Update the default URL protocol from `http` to `https` -->
 - ⚠️ Update `ziggy:generate` output path for Laravel 5.7+ `resources` directory structure, thanks [@Somethingideally](https://github.com/Somethingideally)! ([#269](https://github.com/tightenco/ziggy/pull/269))
 
 **Fixed**
