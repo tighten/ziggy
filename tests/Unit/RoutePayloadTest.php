@@ -99,10 +99,10 @@ class RoutePayloadTest extends TestCase
     }
 
     /** @test */
-    public function existence_of_include_config_causes_routes_to_be_included()
+    public function existence_of_only_config_causes_routes_to_be_included()
     {
         app()['config']->set('ziggy', [
-            'include' => ['posts.s*', 'home'],
+            'only' => ['posts.s*', 'home'],
         ]);
 
         $routes = RoutePayload::compile($this->router);
@@ -129,10 +129,10 @@ class RoutePayloadTest extends TestCase
     }
 
     /** @test */
-    public function existence_of_exclude_config_causes_routes_to_be_excluded()
+    public function existence_of_except_config_causes_routes_to_be_excluded()
     {
         app()['config']->set('ziggy', [
-            'exclude' => ['posts.s*', 'home', 'admin.*'],
+            'except' => ['posts.s*', 'home', 'admin.*'],
         ]);
 
         $routes = RoutePayload::compile($this->router);
@@ -157,8 +157,8 @@ class RoutePayloadTest extends TestCase
     public function existence_of_both_configs_returns_unfiltered_routes()
     {
         app()['config']->set('ziggy', [
-            'exclude' => ['posts.s*'],
-            'include' => ['home'],
+            'except' => ['posts.s*'],
+            'only' => ['home'],
         ]);
 
         $routes = RoutePayload::compile($this->router);

@@ -28,16 +28,16 @@ class RoutePayload
         }
 
         // return unfiltered routes if user set both config options.
-        if (config()->has('ziggy.exclude') && config()->has('ziggy.include')) {
+        if (config()->has('ziggy.except') && config()->has('ziggy.only')) {
             return $this->routes;
         }
 
-        if (config()->has('ziggy.exclude')) {
-            return $this->exclude();
+        if (config()->has('ziggy.except')) {
+            return $this->except();
         }
 
-        if (config()->has('ziggy.include')) {
-            return $this->include();
+        if (config()->has('ziggy.only')) {
+            return $this->only();
         }
 
         return $this->routes;
@@ -60,14 +60,14 @@ class RoutePayload
         return $this->routes;
     }
 
-    public function exclude()
+    public function except()
     {
-        return $this->filter(config('ziggy.exclude'), false);
+        return $this->filter(config('ziggy.except'), false);
     }
 
-    public function include()
+    public function only()
     {
-        return $this->filter(config('ziggy.include'), true);
+        return $this->filter(config('ziggy.only'), true);
     }
 
     public function filter($filters = [], $include = true)
@@ -87,10 +87,10 @@ class RoutePayload
     {
         return collect($this->router->getRoutes()->getRoutesByName())
             ->map(function ($route) {
-                if ($this->isListedAs($route, 'exclude')) {
-                    $this->appendRouteToList($route->getName(), 'exclude');
-                } elseif ($this->isListedAs($route, 'include')) {
-                    $this->appendRouteToList($route->getName(), 'include');
+                if ($this->isListedAs($route, 'except')) {
+                    $this->appendRouteToList($route->getName(), 'except');
+                } elseif ($this->isListedAs($route, 'only')) {
+                    $this->appendRouteToList($route->getName(), 'only');
                 }
 
                 return collect($route)->only(['uri', 'methods'])

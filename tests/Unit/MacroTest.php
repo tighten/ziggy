@@ -9,11 +9,11 @@ use Tightenco\Ziggy\ZiggyServiceProvider;
 class MacroTest extends TestCase
 {
     /** @test */
-    function only_matching_routes_excluded_with_exclude_group_are_filtered()
+    function only_matching_routes_excluded_with_except_group_are_filtered()
     {
         $router = app('router');
 
-        $router->exclude(function ($router) {
+        $router->except(function ($router) {
             $router->get('/posts', function () { return ''; });
             $router->get('/posts/show', function () { return ''; })
                 ->name('posts.show');
@@ -30,13 +30,13 @@ class MacroTest extends TestCase
     }
 
     /** @test */
-    function only_matching_routes_excluded_with_exclude_fluent_method_are_filtered()
+    function only_matching_routes_excluded_with_except_fluent_method_are_filtered()
     {
         $router = app('router');
 
         $router->get('/', function () { return ''; });
 
-        $router->exclude()
+        $router->except()
             ->get('/pages', function () { return ''; })
             ->name('pages.index');
 
@@ -51,13 +51,13 @@ class MacroTest extends TestCase
     }
 
     /** @test */
-    function only_matching_routes_excluded_with_exclude_fluent_method_and_group_are_filtered()
+    function only_matching_routes_excluded_with_except_fluent_method_and_group_are_filtered()
     {
         $router = app('router');
 
         $router->get('/', function () { return ''; });
 
-        $router->exclude(function ($router) {
+        $router->except(function ($router) {
             $router->get('/posts', function () { return ''; });
             $router->get('/posts/show', function () { return ''; })
                 ->name('posts.show');
@@ -66,7 +66,7 @@ class MacroTest extends TestCase
         $router->get('/tags/{tag}', function () { return ''; })
                 ->name('tags.show');
 
-        $router->exclude()
+        $router->except()
             ->get('/pages', function () { return ''; })
             ->name('pages.index');
 
@@ -81,14 +81,14 @@ class MacroTest extends TestCase
     }
 
     /** @test */
-    function only_matching_routes_included_with_include_fluent_method_are_filtered()
+    function only_matching_routes_included_with_only_fluent_method_are_filtered()
     {
         $router = app('router');
 
         $router->get('/tags/{tag}', function () { return ''; })
                 ->name('tags.show');
 
-        $router->include()
+        $router->only()
             ->get('/pages', function () { return ''; })
             ->name('pages.index');
 
@@ -100,13 +100,13 @@ class MacroTest extends TestCase
     }
 
     /** @test */
-    function only_matching_routes_included_with_include_group_method_are_filtered()
+    function only_matching_routes_included_with_only_group_method_are_filtered()
     {
         $router = app('router');
 
         $router->get('/', function () { return ''; });
 
-        $router->include(function ($router) {
+        $router->only(function ($router) {
             $router->get('/posts', function () { return ''; });
             $router->get('/posts/show', function () { return ''; })
                 ->name('posts.show');
@@ -123,13 +123,13 @@ class MacroTest extends TestCase
     }
 
     /** @test */
-    function only_matching_routes_included_with_include_group_and_fluent_method_are_filtered()
+    function only_matching_routes_included_with_only_group_and_fluent_method_are_filtered()
     {
         $router = app('router');
 
         $router->get('/', function () { return ''; });
 
-        $router->include(function ($router) {
+        $router->only(function ($router) {
             $router->get('/posts', function () { return ''; });
             $router->get('/posts/show', function () { return ''; })
                 ->name('posts.show');
@@ -138,7 +138,7 @@ class MacroTest extends TestCase
         $router->get('/tags/{tag}', function () { return ''; })
                 ->name('tags.show');
 
-        $router->include()
+        $router->only()
             ->get('/pages', function () { return ''; })
             ->name('pages.index');
 

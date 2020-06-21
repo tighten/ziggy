@@ -6,8 +6,8 @@ use Illuminate\Routing\Router;
 
 class Macro
 {
-    const EXCLUDE = 'exclude';
-    const INCLUDE = 'include';
+    const EXCEPT = 'except';
+    const ONLY = 'only';
 
     public function __construct(Router $router, $list, $group = null)
     {
@@ -25,14 +25,14 @@ class Macro
         return $this;
     }
 
-    public static function include(Router $router, $group = null)
+    public static function only(Router $router, $group = null)
     {
-        return (new static($router, static::INCLUDE, $group))->compile();
+        return (new static($router, static::ONLY, $group))->compile();
     }
 
-    public static function exclude(Router $router, $group = null)
+    public static function except(Router $router, $group = null)
     {
-        return (new static($router, static::EXCLUDE, $group))->compile();
+        return (new static($router, static::EXCEPT, $group))->compile();
     }
 
     public function __call($method, $parameters)
@@ -40,11 +40,11 @@ class Macro
         $route = call_user_func_array([$this->router, $method], $parameters);
 
         switch ($this->list) {
-            case static::EXCLUDE:
-                $route->listedAs = 'exclude';
+            case static::EXCEPT:
+                $route->listedAs = 'except';
                 break;
-            case static::INCLUDE:
-                $route->listedAs = 'include';
+            case static::ONLY:
+                $route->listedAs = 'only';
                 break;
         }
 

@@ -64,7 +64,7 @@ class CommandRouteGeneratorTest extends TestCase
     function file_is_created_with_the_expected_group()
     {
         app()['config']->set('ziggy', [
-            'exclude' => ['admin.*'],
+            'except' => ['admin.*'],
 
             'groups' => [
                 'admin' => ['admin.*'],
