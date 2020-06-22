@@ -11,6 +11,10 @@ global.Ziggy = {
     basePort: false,
     defaultParameters: { locale: 'en' },
     namedRoutes: {
+        'home': {
+            uri: '/',
+            methods: ['GET', 'HEAD'],
+        },
         'posts.index': {
             uri: 'posts',
             methods: ['GET', 'HEAD'],
@@ -39,6 +43,10 @@ global.Ziggy = {
             uri: 'events/{event}/venues/{venue}',
             methods: ['GET', 'HEAD'],
         },
+        'translateEvents.venues.show': {
+            uri: '{locale}/events/{event}/venues/{venue}',
+            methods: ['GET', 'HEAD'],
+        },
         'conversations.show': {
             uri: 'subscribers/{subscriber}/conversations/{type}/{conversation_id?}',
             methods: ['GET', 'HEAD'],
@@ -50,6 +58,16 @@ global.Ziggy = {
         'optionalId': {
             uri: 'optionalId/{type}/{id?}',
             methods: ['GET', 'HEAD'],
+        },
+        'team.user.show': {
+            uri: 'users/{id}',
+            methods: ['GET', 'HEAD'],
+            domain: '{team}.ziggy.dev'
+        },
+        'translateTeam.user.show': {
+            uri: '{locale}/users/{id}',
+            methods: ['GET', 'HEAD'],
+            domain: '{team}.ziggy.dev'
         },
     },
 };
