@@ -310,18 +310,33 @@ test('extract named parameters from a URL using a template and delimiter', t => 
     );
 });
 
+test('generate URL for an app installed in a subfolder', t => {
+    global.Ziggy.baseUrl = 'https://ziggy.dev/subfolder/';
+
+    global.window.location.href = 'http://ziggy.dev/subfolder/ph/en/products/4';
+    global.window.location.hostname = 'ziggy.dev';
+    global.window.location.pathname = '/subfolder/ph/en/products/4';
+
+    t.deepEqual(route().params, { country: 'ph', language: 'en', id: '4' });
+
+    global.Ziggy = t.context.globalZiggy;
+});
+
 // @todo why?
 test('merge named parameters extracted from the domain and the URL', t => {
+    global.window.location.href = 'http://tighten.ziggy.dev/users/1';
     global.window.location.hostname = 'tighten.ziggy.dev';
     global.window.location.pathname = '/users/1';
 
     t.deepEqual(route().params, { team: 'tighten', id: '1' });
 
+    global.window.location.href = `https://${global.Ziggy.baseDomain}/posts/1`;
     global.window.location.hostname = global.Ziggy.baseDomain;
     global.window.location.pathname = '/posts/1';
 
     t.deepEqual(route().params, { post: '1' });
 
+    global.window.location.href = 'https://ziggy.dev/events/1/venues/2';
     global.window.location.pathname = '/events/1/venues/2';
 
     t.deepEqual(route().params, { event: '1', venue: '2' });

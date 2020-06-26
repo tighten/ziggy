@@ -62,12 +62,16 @@ global.Ziggy = {
         'team.user.show': {
             uri: 'users/{id}',
             methods: ['GET', 'HEAD'],
-            domain: '{team}.ziggy.dev'
+            domain: '{team}.ziggy.dev',
         },
         'translateTeam.user.show': {
             uri: '{locale}/users/{id}',
             methods: ['GET', 'HEAD'],
-            domain: '{team}.ziggy.dev'
+            domain: '{team}.ziggy.dev',
+        },
+        'products.show': {
+            uri: '{country?}/{language?}/products/{id}',
+            methods: ['GET', 'HEAD'],
         },
     },
 };
