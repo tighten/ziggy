@@ -502,16 +502,28 @@ describe('route()', function() {
                 page: 2
             })
         );
+
+        assert.equal(
+            route('events.venues.show', {
+                id: 2,
+                event: 1,
+                venue: 2,
+                search: 'rogers',
+            }),
+            'http://myapp.dev/events/1/venues/2?id=2&search=rogers'
+        );
     });
 
     it('Should accept queryString params as keyed values in withQuery object', function() {
         let router = route('events.venues.show', [1, 2]).withQuery({
             search: 'rogers',
-            page: 2
+            page: 2,
+            id: 20,
         });
+
         assert.equal(
-            router,
-            'http://myapp.dev/events/1/venues/2?search=rogers&page=2'
+            'http://myapp.dev/events/1/venues/2?search=rogers&page=2&id=20',
+            router
         );
     });
 
