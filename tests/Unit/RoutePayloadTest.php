@@ -8,13 +8,10 @@ use Tightenco\Ziggy\RoutePayload;
 class RoutePayloadTest extends TestCase
 {
     protected $router;
-    protected $laravel7;
 
     public function setUp(): void
     {
         parent::setUp();
-
-        $this->laravel7 = (int) head(explode('.', app()->version())) >= 7;
 
         $this->router = app('router');
         $this->router->get('/home', function () {
@@ -47,7 +44,7 @@ class RoutePayloadTest extends TestCase
         })
             ->name('admin.users.index')->middleware('role:admin');
 
-        if ($this->laravel7) {
+        if ($this->laravelVersion(7)) {
             $this->router->get('/posts/{post}/comments/{comment:uuid}', function () {
                 return '';
             })->name('postComments.show');
@@ -81,7 +78,7 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        if ($this->laravel7) {
+        if ($this->laravelVersion(7)) {
             foreach ($expected as $key => $route) {
                 $expected[$key]['bindings'] = [];
             }
@@ -110,7 +107,7 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        if ($this->laravel7) {
+        if ($this->laravelVersion(7)) {
             foreach ($expected as $key => $route) {
                 $expected[$key]['bindings'] = [];
             }
@@ -155,7 +152,7 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        if ($this->laravel7) {
+        if ($this->laravelVersion(7)) {
             foreach ($expected as $key => $route) {
                 $expected[$key]['bindings'] = [];
             }
@@ -186,7 +183,7 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        if ($this->laravel7) {
+        if ($this->laravelVersion(7)) {
             foreach ($expected as $key => $route) {
                 $expected[$key]['bindings'] = [];
             }
@@ -247,7 +244,7 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        if ($this->laravel7) {
+        if ($this->laravelVersion(7)) {
             foreach ($expected as $key => $route) {
                 $expected[$key]['bindings'] = [];
             }
@@ -299,7 +296,7 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        if ($this->laravel7) {
+        if ($this->laravelVersion(7)) {
             foreach ($expected as $key => $route) {
                 $expected[$key]['bindings'] = [];
             }
@@ -346,7 +343,7 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        if ($this->laravel7) {
+        if ($this->laravelVersion(7)) {
             foreach ($expected as $key => $route) {
                 $expected[$key]['bindings'] = [];
             }
@@ -412,7 +409,7 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        if ($this->laravel7) {
+        if ($this->laravelVersion(7)) {
             foreach ($expected as $key => $route) {
                 $expected[$key]['bindings'] = [];
             }
@@ -479,7 +476,7 @@ class RoutePayloadTest extends TestCase
             ],
         ];
 
-        if ($this->laravel7) {
+        if ($this->laravelVersion(7)) {
             foreach ($expected as $key => $route) {
                 $expected[$key]['bindings'] = [];
             }

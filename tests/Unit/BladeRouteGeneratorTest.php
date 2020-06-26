@@ -30,14 +30,19 @@ class BladeRouteGeneratorTest extends TestCase
 
         $generator = (new BladeRouteGenerator($router));
 
-        $this->assertEquals([
+        $expected = [
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
-        ], $generator->getRoutePayload()->toArray());
+        ];
+
+        if ($this->laravelVersion(7)) {
+            $expected['postComments.index']['bindings'] = [];
+        }
+
+        $this->assertEquals($expected, $generator->getRoutePayload()->toArray());
     }
 
     /** @test */
@@ -57,14 +62,19 @@ class BladeRouteGeneratorTest extends TestCase
 
         $generator = (new BladeRouteGenerator($router));
 
-        $this->assertEquals([
+        $expected = [
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => '{account}.myapp.com',
-                'bindings' => [],
             ],
-        ], $generator->getRoutePayload()->toArray());
+        ];
+
+        if ($this->laravelVersion(7)) {
+            $expected['postComments.index']['bindings'] = [];
+        }
+
+        $this->assertEquals($expected, $generator->getRoutePayload()->toArray());
     }
 
     /** @test */
