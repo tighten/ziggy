@@ -10,12 +10,12 @@ use JsonSerializable;
 class RoutePayload implements JsonSerializable
 {
     protected $baseDomain;
-    protected $group;
     protected $basePort;
     protected $baseProtocol;
+    protected $baseUrl;
+    protected $group;
     protected $router;
     protected $routes;
-    protected $baseUrl;
 
     public function __construct(Router $router, string $group = null, string $url = null)
     {
@@ -25,7 +25,7 @@ class RoutePayload implements JsonSerializable
         $this->baseUrl = Str::finish($url ?? url('/'), '/');
 
         tap(parse_url($this->baseUrl), function ($url) {
-            $this->baseProtocol = $url['scheme'] ?? 'https';
+            $this->baseProtocol = $url['scheme'] ?? 'http';
             $this->baseDomain = $url['host'] ?? '';
             $this->basePort = $url['port'] ?? null;
         });
@@ -60,17 +60,22 @@ class RoutePayload implements JsonSerializable
         return $this->routes;
     }
 
+    /**
+     * Filter routes by group.
+     */
     public function group($group)
     {
-        if(is_array($group)) {
+        if (is_array($group)) {
             $filters = [];
-            foreach($group as $groupName) {
-              $filters = array_merge($filters, config("ziggy.groups.{$groupName}"));
+
+            foreach ($group as $groupName) {
+                $filters = array_merge($filters, config("ziggy.groups.{$groupName}"));
             }
 
-            return is_array($filters)? $this->filter($filters, true) : $this->routes;
+            return is_array($filters) ? $this->filter($filters, true) : $this->routes;
         }
-        else if(config()->has("ziggy.groups.{$group}")) {
+
+        if (config()->has("ziggy.groups.{$group}")) {
             return $this->filter(config("ziggy.groups.{$group}"), true);
         }
 
@@ -87,6 +92,9 @@ class RoutePayload implements JsonSerializable
         return $this->filter(config('ziggy.whitelist'), true);
     }
 
+    /**
+     * Filter routes by name using the given patterns.
+     */
     public function filter($filters = [], $include = true)
     {
         return $this->routes->filter(function ($route, $name) use ($filters, $include) {
@@ -100,6 +108,9 @@ class RoutePayload implements JsonSerializable
         });
     }
 
+    /**
+     * Get a list of the application's named routes, keyed by their names.
+     */
     protected function nameKeyedRoutes()
     {
         return collect($this->router->getRoutes()->getRoutesByName())
@@ -155,11 +166,17 @@ class RoutePayload implements JsonSerializable
         return json_encode($this->jsonSerialize(), $options);
     }
 
+    /**
+     * Add the given route name to the current list of routes.
+     */
     protected function appendRouteToList($name, $list)
     {
         config()->push("ziggy.{$list}", $name);
     }
 
+    /**
+     * Check if the given route name is present in the given list.
+     */
     protected function isListedAs($route, $list)
     {
         return (isset($route->listedAs) && $route->listedAs === $list)

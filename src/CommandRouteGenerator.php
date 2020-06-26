@@ -63,6 +63,7 @@ EOT;
         if (! $this->files->isDirectory(dirname(base_path($path)))) {
             $this->files->makeDirectory(dirname(base_path($path)), 0777, true, true);
         }
+
         return $path;
     }
 }

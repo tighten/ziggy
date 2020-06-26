@@ -54,8 +54,7 @@ EOT;
 
     private function getRouteFilePath()
     {
-        $isMin = app()->isLocal() ? '' : '.min';
-        return __DIR__ . "/../dist/js/route{$isMin}.js";
+        return __DIR__ . '/../dist/js/route' . (app()->isLocal() ? '' : '.min') . '.js';
     }
 
     private function getRouteFunction()
@@ -63,6 +62,7 @@ EOT;
         if (config()->get('ziggy.skip-route-function')) {
             return '';
         }
+
         return file_get_contents($this->getRouteFilePath());
     }
 }
