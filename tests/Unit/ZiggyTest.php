@@ -105,7 +105,7 @@ class ZiggyTest extends TestCase
             'whitelist' => ['posts.s*', 'home'],
         ]);
 
-        $routes = Ziggy::compile($this->router);
+        $routes = (new Ziggy($this->router))->toArray()['namedRoutes'];
 
         $expected = [
             'home' => [
@@ -125,7 +125,7 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */
@@ -135,7 +135,7 @@ class ZiggyTest extends TestCase
             'blacklist' => ['posts.s*', 'home', 'admin.*'],
         ]);
 
-        $routes = Ziggy::compile($this->router);
+        $routes = (new Ziggy($this->router))->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -150,7 +150,7 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */
@@ -161,7 +161,7 @@ class ZiggyTest extends TestCase
             'whitelist' => ['home'],
         ]);
 
-        $routes = Ziggy::compile($this->router);
+        $routes = (new Ziggy($this->router))->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -196,7 +196,7 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */
@@ -208,7 +208,7 @@ class ZiggyTest extends TestCase
             ],
         ]);
 
-        $routes = Ziggy::compile($this->router, 'authors');
+        $routes = (new Ziggy($this->router, 'authors'))->toArray()['namedRoutes'];
 
         $expected = [
             'home' => [
@@ -233,13 +233,13 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */
     public function non_existence_of_group_returns_unfiltered_routes()
     {
-        $routes = Ziggy::compile($this->router, 'authors');
+        $routes = (new Ziggy($this->router, 'authors'))->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -274,7 +274,7 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */
@@ -284,7 +284,7 @@ class ZiggyTest extends TestCase
             'middleware' => true,
         ]);
 
-        $routes = Ziggy::compile($this->router);
+        $routes = (new Ziggy($this->router))->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -325,7 +325,7 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */
@@ -335,7 +335,7 @@ class ZiggyTest extends TestCase
             'middleware' => ['auth'],
         ]);
 
-        $routes = Ziggy::compile($this->router);
+        $routes = (new Ziggy($this->router))->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -376,7 +376,7 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */

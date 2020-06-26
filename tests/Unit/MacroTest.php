@@ -24,9 +24,9 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = Ziggy::compile($router);
+        $payload = (new Ziggy($router))->toArray()['namedRoutes'];
 
-        $this->assertEquals(['tags.show'], array_keys($payload->toArray()));
+        $this->assertEquals(['tags.show'], array_keys($payload));
     }
 
     /** @test */
@@ -45,9 +45,9 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = Ziggy::compile($router);
+        $payload = (new Ziggy($router))->toArray()['namedRoutes'];
 
-        $this->assertEquals(['pages.show'], array_keys($payload->toArray()));
+        $this->assertEquals(['pages.show'], array_keys($payload));
     }
 
     /** @test */
@@ -75,9 +75,9 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = Ziggy::compile($router);
+        $payload = (new Ziggy($router))->toArray()['namedRoutes'];
 
-        $this->assertEquals(['tags.show', 'pages.show'], array_keys($payload->toArray()));
+        $this->assertEquals(['tags.show', 'pages.show'], array_keys($payload));
     }
 
     /** @test */
@@ -94,9 +94,9 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = Ziggy::compile($router);
+        $payload = (new Ziggy($router))->toArray()['namedRoutes'];
 
-        $this->assertEquals(['pages.index'], array_keys($payload->toArray()));
+        $this->assertEquals(['pages.index'], array_keys($payload));
     }
 
     /** @test */
@@ -117,9 +117,9 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = Ziggy::compile($router);
+        $payload = (new Ziggy($router))->toArray()['namedRoutes'];
 
-        $this->assertEquals(['posts.show'], array_keys($payload->toArray()));
+        $this->assertEquals(['posts.show'], array_keys($payload));
     }
 
     /** @test */
@@ -147,8 +147,8 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = Ziggy::compile($router);
+        $payload = (new Ziggy($router))->toArray()['namedRoutes'];
 
-        $this->assertEquals(['posts.show', 'pages.index'], array_keys($payload->toArray()));
+        $this->assertEquals(['posts.show', 'pages.index'], array_keys($payload));
     }
 }

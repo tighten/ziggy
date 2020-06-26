@@ -33,11 +33,6 @@ class Ziggy implements JsonSerializable
         $this->routes = $this->nameKeyedRoutes();
     }
 
-    public static function compile(Router $router, $group = false)
-    {
-        return (new static($router))->applyFilters($group);
-    }
-
     public function applyFilters($group)
     {
         if ($group) {
@@ -146,7 +141,7 @@ class Ziggy implements JsonSerializable
             'defaultParameters' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
                 : [],
-            'namedRoutes' => static::compile($this->router, $this->group ?? false)->toArray(),
+            'namedRoutes' => $this->applyFilters($this->group)->toArray(),
         ];
     }
 
