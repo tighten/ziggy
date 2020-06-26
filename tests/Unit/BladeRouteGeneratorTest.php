@@ -19,7 +19,7 @@ class BladeRouteGeneratorTest extends TestCase
     public function generator_outputs_non_domain_named_routes_with_expected_structure()
     {
         $router = app('router');
-        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         $router->getRoutes()->refreshNameLookups();
 
         $generator = (new BladeRouteGenerator($router));
@@ -38,7 +38,7 @@ class BladeRouteGeneratorTest extends TestCase
     {
         $router = app('router');
         $router->domain('{account}.myapp.com')->group(function () use ($router) {
-            $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+            $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         });
         $router->getRoutes()->refreshNameLookups();
 
@@ -57,11 +57,11 @@ class BladeRouteGeneratorTest extends TestCase
     public function generator_returns_only_named_routes()
     {
         $router = app('router');
-        $router->get('/', fn () => ''); // Not named, should not be included in JSON output
-        $router->get('posts', fn () => '')->name('posts.index');
-        $router->get('posts/{post}', fn () => '')->name('posts.show');
-        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-        $router->post('posts', fn () => '')->name('posts.store');
+        $router->get('/', $this->noop()); // Not named, should not be included in JSON output
+        $router->get('posts', $this->noop())->name('posts.index');
+        $router->get('posts/{post}', $this->noop())->name('posts.show');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->post('posts', $this->noop())->name('posts.store');
         $router->getRoutes()->refreshNameLookups();
 
         $generator = (new BladeRouteGenerator($router));

@@ -13,4 +13,11 @@ class TestCase extends OrchestraTestCase
             ZiggyServiceProvider::class,
         ];
     }
+
+    protected function noop()
+    {
+        return function () {
+            return '';
+        };
+    }
 }

@@ -30,7 +30,7 @@ class CommandRouteGeneratorTest extends TestCase
     public function file_is_created_with_the_expected_structure_when_named_routes_exist()
     {
         $router = app('router');
-        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate');
@@ -42,7 +42,7 @@ class CommandRouteGeneratorTest extends TestCase
     public function file_is_created_with_a_custom_url()
     {
         $router = app('router');
-        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate', ['--url' => 'http://example.org']);
@@ -60,8 +60,8 @@ class CommandRouteGeneratorTest extends TestCase
             ],
         ]);
         $router = app('router');
-        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-        $router->get('admin', fn () => '')->name('admin.dashboard');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->get('admin', $this->noop())->name('admin.dashboard');
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate');
