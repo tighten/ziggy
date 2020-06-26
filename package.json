@@ -40,9 +40,9 @@
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {
-        "@babel/core": "^7.5.5",
-        "@babel/plugin-transform-object-assign": "^7.2.0",
-        "@babel/preset-env": "^7.5.5",
+        "@babel/core": "^7.10.3",
+        "@babel/plugin-transform-object-assign": "^7.10.3",
+        "@babel/preset-env": "^7.10.3",
         "ava": "^3.8.2",
         "axios": "^0.19.0",
         "babel-loader": "^8.0.6",
@@ -50,7 +50,7 @@
         "moxios": "^0.4.0",
         "unminified-webpack-plugin": "^2.0.0",
         "webpack": "^4.39.3",
-        "webpack-cli": "^3.3.7"
+        "webpack-cli": "^3.3.12"
     },
     "dependencies": {
         "qs": "^6.8.0"
