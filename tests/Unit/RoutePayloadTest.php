@@ -8,10 +8,13 @@ use Tightenco\Ziggy\RoutePayload;
 class RoutePayloadTest extends TestCase
 {
     protected $router;
+    protected $laravel7;
 
     public function setUp(): void
     {
         parent::setUp();
+
+        $this->laravel7 = (int) head(explode('.', app()->version())) >= 7;
 
         $this->router = app('router');
         $this->router->get('/home', function () {
@@ -34,11 +37,6 @@ class RoutePayloadTest extends TestCase
         })
             ->name('postComments.index');
 
-        $this->router->get('/posts/{post}/comments/{comment:uuid}', function () {
-            return '';
-        })
-            ->name('postComments.show');
-
         $this->router->post('/posts', function () {
             return '';
         })
@@ -48,6 +46,12 @@ class RoutePayloadTest extends TestCase
             return '';
         })
             ->name('admin.users.index')->middleware('role:admin');
+
+        if ($this->laravel7) {
+            $this->router->get('/posts/{post}/comments/{comment:uuid}', function () {
+                return '';
+            })->name('postComments.show');
+        }
 
         $this->router->getRoutes()->refreshNameLookups();
     }
@@ -64,21 +68,24 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
             'posts.store' => [
                 'uri' => 'posts',
                 'methods' => ['POST'],
                 'domain' => null,
-                'bindings' => [],
             ],
         ];
+
+        if ($this->laravel7) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+        }
 
         $this->assertEquals($expected, $routes->toArray());
     }
@@ -95,23 +102,28 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
-            'postComments.show' => [
+        ];
+
+        if ($this->laravel7) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+
+            $expected['postComments.show'] = [
                 'uri' => 'posts/{post}/comments/{comment}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
                 'bindings' => [
                     'comment' => 'uuid',
                 ],
-            ],
-        ];
+            ];
+        }
 
         $this->assertEquals($expected, $routes->toArray());
     }
@@ -130,21 +142,24 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
             'posts.store' => [
                 'uri' => 'posts',
                 'methods' => ['POST'],
                 'domain' => null,
-                'bindings' => [],
             ],
         ];
+
+        if ($this->laravel7) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+        }
 
         $this->assertEquals($expected, $routes->toArray());
     }
@@ -163,23 +178,28 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
-            'postComments.show' => [
+        ];
+
+        if ($this->laravel7) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+
+            $expected['postComments.show'] = [
                 'uri' => 'posts/{post}/comments/{comment}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
                 'bindings' => [
                     'comment' => 'uuid',
                 ],
-            ],
-        ];
+            ];
+        }
 
         $this->assertEquals($expected, $routes->toArray());
     }
@@ -199,47 +219,48 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
-            'postComments.show' => [
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+                'domain' => null,
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+        ];
+
+        if ($this->laravel7) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+
+            $expected['postComments.show'] = [
                 'uri' => 'posts/{post}/comments/{comment}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
                 'bindings' => [
                     'comment' => 'uuid',
                 ],
-            ],
-            'home' => [
-                'uri' => 'home',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [],
-            ],
-            'posts.show' => [
-                'uri' => 'posts/{post}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [],
-            ],
-            'posts.store' => [
-                'uri' => 'posts',
-                'methods' => ['POST'],
-                'domain' => null,
-                'bindings' => [],
-            ],
-            'admin.users.index' => [
-                'uri' => 'admin/users',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [],
-            ],
-        ];
+            ];
+        }
 
         $this->assertEquals($expected, $routes->toArray());
     }
@@ -260,27 +281,29 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
             'posts.index' => [
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
             'posts.store' => [
                 'uri' => 'posts',
                 'methods' => ['POST'],
                 'domain' => null,
-                'bindings' => [],
             ],
         ];
+
+        if ($this->laravel7) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+        }
 
         $this->assertEquals($expected, $routes->toArray());
     }
@@ -295,47 +318,48 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
             ],
-            'postComments.show' => [
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+                'domain' => null,
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+        ];
+
+        if ($this->laravel7) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+
+            $expected['postComments.show'] = [
                 'uri' => 'posts/{post}/comments/{comment}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
                 'bindings' => [
                     'comment' => 'uuid',
                 ],
-            ],
-            'home' => [
-                'uri' => 'home',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [],
-            ],
-            'posts.show' => [
-                'uri' => 'posts/{post}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [],
-            ],
-            'posts.store' => [
-                'uri' => 'posts',
-                'methods' => ['POST'],
-                'domain' => null,
-                'bindings' => [],
-            ],
-            'admin.users.index' => [
-                'uri' => 'admin/users',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [],
-            ],
-        ];
+            ];
+        }
 
         $this->assertEquals($expected, $routes->toArray());
     }
@@ -354,17 +378,46 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
                 'middleware' => [],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
                 'middleware' => [],
             ],
-            'postComments.show' => [
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+                'domain' => null,
+                'middleware' => ['auth', 'role:admin'],
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => ['role:admin'],
+            ],
+        ];
+
+        if ($this->laravel7) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+
+            $expected['postComments.show'] = [
                 'uri' => 'posts/{post}/comments/{comment}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
@@ -372,36 +425,8 @@ class RoutePayloadTest extends TestCase
                 'bindings' => [
                     'comment' => 'uuid',
                 ],
-            ],
-            'home' => [
-                'uri' => 'home',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [],
-                'middleware' => [],
-            ],
-            'posts.show' => [
-                'uri' => 'posts/{post}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [],
-                'middleware' => [],
-            ],
-            'posts.store' => [
-                'uri' => 'posts',
-                'methods' => ['POST'],
-                'domain' => null,
-                'bindings' => [],
-                'middleware' => ['auth', 'role:admin'],
-            ],
-            'admin.users.index' => [
-                'uri' => 'admin/users',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [],
-                'middleware' => ['role:admin'],
-            ],
-        ];
+            ];
+        }
 
         $this->assertEquals($expected, $routes->toArray());
     }
@@ -420,17 +445,46 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
                 'middleware' => [],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
-                'bindings' => [],
                 'middleware' => [],
             ],
-            'postComments.show' => [
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+                'domain' => null,
+                'middleware' => ['auth'],
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+        ];
+
+        if ($this->laravel7) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+
+            $expected['postComments.show'] = [
                 'uri' => 'posts/{post}/comments/{comment}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
@@ -438,36 +492,8 @@ class RoutePayloadTest extends TestCase
                 'bindings' => [
                     'comment' => 'uuid',
                 ],
-            ],
-            'home' => [
-                'uri' => 'home',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [],
-                'middleware' => [],
-            ],
-            'posts.show' => [
-                'uri' => 'posts/{post}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [],
-                'middleware' => [],
-            ],
-            'posts.store' => [
-                'uri' => 'posts',
-                'methods' => ['POST'],
-                'domain' => null,
-                'bindings' => [],
-                'middleware' => ['auth'],
-            ],
-            'admin.users.index' => [
-                'uri' => 'admin/users',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [],
-                'middleware' => [],
-            ],
-        ];
+            ];
+        }
 
         $this->assertEquals($expected, $routes->toArray());
     }
