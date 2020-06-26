@@ -65,7 +65,17 @@ test('ignore trailing slashes', t => {
     t.is(route().current(), 'events.venues.index');
 });
 
+// @todo
+// test('check the current route name and parameters', t => {
+//     global.window.location.pathname = '/events/1/venues/2';
+
+//     t.true(route().current('events.venues.show', { event: 1, venue: 2 }));
+//     t.false(route().current('events.venues.show', { event: 4, venue: 2 }));
+//     t.false(route().current('events.venues.show', { event: 1, venue: 6 }));
+// });
+
 test('get the current route name with a missing protocol', t => {
+    global.window.location.pathname = '/events/1/venues/';
     global.window.location.protocol = '';
 
     t.is(route().current(), 'events.venues.index');
