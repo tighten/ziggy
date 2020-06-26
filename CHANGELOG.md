@@ -16,6 +16,9 @@ Breaking changes are marked with ⚠️.
 
 - ⚠️ Update `ziggy:generate` output path for Laravel 5.7+ `resources` directory structure, thanks [@Somethingideally](https://github.com/Somethingideally)! ([#269](https://github.com/tightenco/ziggy/pull/269))
 - ⚠️ Update automatic `id` parameter detection to check for higher priority named route parameters and allow passing `id` as a query parameter ([#301](https://github.com/tightenco/ziggy/pull/301))
+- ⚠️ Rename the `RoutePayload` class to `Ziggy` and remove its `compile` method in favour of constructing a new instance and calling `->toArray()` or `->toJson()` ([#tbd](#))
+    - Change the default value of `basePort` from `false` to `null`
+    - Remove the `getRoutePayload()` methods on the `BladeRouteGenerator` and `CommandRouteGenerator` classes
 
 **Fixed**
 
