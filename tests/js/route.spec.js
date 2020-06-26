@@ -144,6 +144,25 @@ test('generate a URL for a route with required domain parameters and default par
     t.is(route('translateTeam.user.show', { team: 'tighten', id: 1 }).url(), 'https://tighten.ziggy.dev/en/users/1');
 });
 
+// @todo #307
+// test('generate a URL for a route with a custom route model binding scope', t => {
+//     t.is(
+//         route('postComments.show', [
+//             { id: 1, title: 'Post' },
+//             { uuid: 12345, title: 'Comment' }
+//         ]).url(),
+//         'https://ziggy.dev/posts/1/comments/12345'
+//     );
+
+//     t.is(
+//         route('postComments.show', [
+//             { id: 1, post: 'Post' },
+//             { uuid: 12345, comment: 'Comment' }
+//         ]).url(),
+//         'https://ziggy.dev/posts/1/comments/12345'
+//     );
+// });
+
 test('return base URL if path is "/"', t => {
     t.is(route('home').url(), 'https://ziggy.dev/');
 });

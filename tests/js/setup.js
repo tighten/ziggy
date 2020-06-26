@@ -8,6 +8,8 @@ global.Ziggy = {
     baseUrl: 'https://ziggy.dev',
     baseProtocol: 'https',
     baseDomain: 'ziggy.dev',
+    // @todo #305
+    // basePort: null,
     basePort: false,
     defaultParameters: { locale: 'en' },
     namedRoutes: {
@@ -27,6 +29,14 @@ global.Ziggy = {
             uri: 'posts/{post}',
             methods: ['PUT'],
         },
+        // @todo #307
+        // 'postComments.show': {
+        //     uri: 'posts/{post}/comments/{comment}',
+        //     methods: ['GET', 'HEAD'],
+        //     bindings: {
+        //         comment: 'uuid',
+        //     },
+        // },
         'translatePosts.index': {
             uri: '{locale}/posts',
             methods: ['GET', 'HEAD'],
