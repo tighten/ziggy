@@ -68,6 +68,34 @@ test('ignore trailing slashes', t => {
     t.is(route().current(), 'events.venues.index');
 });
 
+test('get the current route name with a missing protocol', t => {
+    global.window.location.protocol = '';
+
+    t.is(route().current(), 'events.venues.index');
+});
+
+test('get the current route name with a missing global Ziggy object', t => {
+    global.Ziggy = undefined;
+
+    global.window.location.pathname = '/events/';
+
+    const customZiggy = {
+        baseUrl: 'https://ziggy.dev/',
+        baseProtocol: 'https',
+        baseDomain: 'ziggy.dev',
+        basePort: false,
+        namedRoutes: {
+            'events.index': {
+                uri: 'events',
+                methods: ['GET', 'HEAD'],
+            }
+        },
+    };
+
+    t.is(route(undefined, undefined, undefined, customZiggy).current(), 'events.index');
+});
+
+// @todo
 // test('ignore query parameters', t => {
 //     global.window.location.pathname = '/events/1/venues?foo=2';
 

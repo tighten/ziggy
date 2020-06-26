@@ -2,50 +2,7 @@ import assert from 'assert';
 import test from 'ava';
 import route from '../../src/js/route.js';
 
-// global.Ziggy = {
-//     namedRoutes: {
-//         'translateTeam.user.show': {
-//             uri: '{locale}/users/{id}',
-//             methods: ['GET', 'HEAD'],
-//             domain: '{team}.myapp.dev'
-//         },
-//         'translateEvents.venues.show': {
-//             uri: '{locale}/events/{event}/venues/{venue}',
-//             methods: ['GET', 'HEAD'],
-//         },
-//         'translatePosts.show': {
-//             uri: '{locale}/posts/{id}',
-//             methods: ['GET', 'HEAD'],
-//         },
-//         home: {
-//             uri: '/',
-//             methods: ['GET', 'HEAD'],
-//         },
-//         'team.user.show': {
-//             uri: 'users/{id}',
-//             methods: ['GET', 'HEAD'],
-//             domain: '{team}.myapp.dev'
-//         },
-//         'posts.store': {
-//             uri: 'posts',
-//             methods: ['POST'],
-//         },
-//         'posts.destroy': {
-//             uri: 'posts/{id}',
-//             methods: ['DELETE'],
-//         },
-//         withOptionalFilter: {
-//             uri: 'stuff/{filter?}',
-//             methods: ['GET', 'HEAD'],
-//         },
-//         optionalId: {
-//             uri: 'optionalId/{type}/{id?}',
-//             methods: ['GET', 'HEAD'],
-//         },
-//     },
-// };
-
-test.before(t => t.context.globalZiggy = { ...global.Ziggy });
+test.beforeEach(t => t.context.globalZiggy = { ...global.Ziggy });
 
 test('generate a URL with no parameters', t => {
     t.is(route('posts.index').url(), 'https://ziggy.dev/posts');
@@ -245,6 +202,8 @@ test('generate a URL with a port for a route without parameters', t => {
     global.Ziggy.basePort = 81;
 
     t.is(route('posts.index').url(), 'https://ziggy.dev:81/posts');
+
+    global.Ziggy = t.context.globalZiggy;
 });
 
 test('generate a URL with a port for a route with required domain parameters', t => {
@@ -254,212 +213,116 @@ test('generate a URL with a port for a route with required domain parameters', t
 
     t.is(route('team.user.show', { team: 'tighten', id: 1 }).url(), 'https://tighten.ziggy.dev:81/users/1');
     t.is(route('team.user.show').with({ team: 'tighten', id: 1 }).url(), 'https://tighten.ziggy.dev:81/users/1');
+
+    global.Ziggy = t.context.globalZiggy;
 });
 
 test('handle trailing path segments in the base URL', t => {
     global.Ziggy.baseUrl = 'https://test.thing/ab/cd/';
 
     t.is(route('events.venues.index', 1).url(), 'https://test.thing/ab/cd/events/1/venues');
+
+    global.Ziggy = t.context.globalZiggy;
 });
 
 test('URL-encode named parameters', t => {
     global.Ziggy.baseUrl = 'https://test.thing/ab/cd/';
 
     t.is(route('events.venues.index', { event: 'Fun&Games' }).url(), 'https://test.thing/ab/cd/events/Fun%26Games/venues');
+    t.is(
+        route('events.venues.index', {
+            event: 'Fun&Games',
+            location: 'Brews&Clues',
+        }).url(),
+        'https://test.thing/ab/cd/events/Fun%26Games/venues?location=Brews%26Clues'
+    );
+
+    global.Ziggy = t.context.globalZiggy;
 });
 
-// test('accept and format array as query parameter', t => {
-//     assert.equal(
-//         route('events.venues.index', {
-//             event: 'test',
-//             guests: ['a', 'b', 'c']
-//         }),
-//         'https://ziggy.dev/events/test/venues?guests[0]=a&guests[1]=b&guests[2]=c'
-//     );
-// });
+test('accept and format an array as a query parameter', t => {
+    t.is(
+        route('events.venues.index', {
+            event: 'test',
+            guests: ['a', 'b', 'c'],
+        }).url(),
+        'https://ziggy.dev/events/test/venues?guests[0]=a&guests[1]=b&guests[2]=c'
+    );
+});
 
-// // @todo combine with other URL-encoding test above
-// test('URL-encode query parameters', t => {
-//     let orgBaseUrl = Ziggy.baseUrl;
-//     global.Ziggy.baseUrl = 'http://test.thing/ab/cd/';
+test('ignore query parameters explicitly set to `null`', t => {
+    t.is(route('posts.index', { filled: 'filling', empty: null }).url(), 'https://ziggy.dev/posts?filled=filling');
+});
 
-//     assert.equal(
-//         route('events.venues.index', {
-//             event: 'Fun&Games',
-//             location: 'Brews&Clues'
-//         }).url(),
-//         'http://test.thing/ab/cd/events/Fun%26Games/venues?location=Brews%26Clues'
-//     );
+test('don’t ignore a parameter explicity set to `0`', t => {
+    t.is(route('posts.update', 0).url(), 'https://ziggy.dev/posts/0');
+});
 
-//     global.Ziggy.baseUrl = orgBaseUrl;
-// });
+test('accept a custom Ziggy configuration object', t => {
+    const customZiggy = {
+        baseUrl: 'http://notYourAverage.dev/',
+        baseProtocol: 'http',
+        baseDomain: 'notYourAverage.dev',
+        basePort: false,
+        defaultParameters: { locale: 'en' },
+        namedRoutes: {
+            'tightenDev.packages.index': {
+                uri: 'tightenDev/{dev}/packages',
+                methods: ['GET', 'HEAD'],
+            },
+        },
+    };
 
-// test('ignore query parameters explicitly set to `null`', t => {
-//     assert.equal(
-//         route('posts.index', { filled: 'filling', empty: null }).url(),
-//         'https://ziggy.dev/posts?filled=filling'
-//     );
-// });
+    t.is(
+        route('tightenDev.packages.index', { dev: 1 }, true, customZiggy).url(),
+        'http://notYourAverage.dev/tightenDev/1/packages'
+    );
+});
 
-// test('don’t ignore parameter explicity set to `0`', t => {
-//     assert.equal(
-//         route('posts.update', 0).url(),
-//         'https://ziggy.dev/posts/0'
-//     );
-// });
+test('remove braces and question marks from route parameter definitions', t => {
+    t.is(route().trimParam('optional'), 'optional');
+    t.is(route().trimParam('{id}'), 'id');
+    t.is(route().trimParam('{id?}'), 'id');
+    t.is(route().trimParam('{slug?}'), 'slug');
+});
 
-// test('get name of current route using .current() method with missing protocol', t => {
-//     let orgBaseUrl = Ziggy.baseUrl;
-//     let orgBaseDomain = Ziggy.baseDomain;
-//     let orgBasePort = Ziggy.basePort;
+test('extract named parameters from a URL using a template and delimiter', t => {
+    t.deepEqual(route().extractParams('', '', '/'), {});
+    t.deepEqual(route().extractParams('posts', 'posts', '/'), {});
 
-//     global.Ziggy.baseUrl = 'https://ziggy.dev:81/';
-//     global.Ziggy.baseDomain = 'myapp.dev';
-//     global.Ziggy.basePort = 81;
+    t.deepEqual(route().extractParams('users/1', 'users/{id}', '/'), { id: '1' });
+    t.deepEqual(
+        route().extractParams('events/1/venues/2', 'events/{event}/venues/{venue}', '/'),
+        { event: '1', venue: '2' }
+    );
+    t.deepEqual(
+        route().extractParams('optional/123', 'optional/{id}/{slug?}', '/'),
+        { id: '123' }
+    );
+    t.deepEqual(
+        route().extractParams('optional/123/news', 'optional/{id}/{slug?}', '/'),
+        { id: '123', slug: 'news' }
+    );
 
-//     global.window = {
-//         location: {
-//             hostname: 'myapp.dev',
-//             pathname: '/events/1/venues/',
-//             port: '81',
-//             protocol: ''
-//         }
-//     };
+    t.deepEqual(
+        route().extractParams('tighten.myapp.dev', '{team}.myapp.dev', '.'),
+        { team: 'tighten' }
+    );
+});
 
-//     assert.equal(route().current(), 'events.venues.index');
+// @todo why?
+test('merge named parameters extracted from the domain and the URL', t => {
+    global.window.location.hostname = 'tighten.ziggy.dev';
+    global.window.location.pathname = '/users/1';
 
-//     global.Ziggy.baseUrl = orgBaseUrl;
-//     global.Ziggy.baseDomain = orgBaseDomain;
-//     global.Ziggy.basePort = orgBasePort;
-// });
+    t.deepEqual(route().params, { team: 'tighten', id: '1' });
 
-// test('accept custom Ziggy configuration object', t => {
-//     const customZiggy = {
-//         namedRoutes: {
-//             'tightenDev.packages.index': {
-//                 uri: 'tightenDev/{dev}/packages',
-//                 methods: ['GET', 'HEAD'],
-//                 domain: null
-//             }
-//         },
-//         baseUrl: 'http://notYourAverage.dev/',
-//         baseProtocol: 'http',
-//         baseDomain: 'notYourAverage.dev',
-//         basePort: false,
-//         defaultParameters: {
-//             locale: 'en'
-//         }
-//     };
+    global.window.location.hostname = global.Ziggy.baseDomain;
+    global.window.location.pathname = '/posts/1';
 
-//     assert.equal(
-//         route(
-//             'tightenDev.packages.index',
-//             { dev: 1 },
-//             true,
-//             customZiggy
-//         ).url(),
-//         'http://notYourAverage.dev/tightenDev/1/packages'
-//     );
-// });
+    t.deepEqual(route().params, { post: '1' });
 
-// test('get name of current route using .current() method with missing global Ziggy object', t => {
-//     const orgZiggy = global.Ziggy;
+    global.window.location.pathname = '/events/1/venues/2';
 
-//     global.Ziggy = undefined;
-
-//     global.window = {
-//         location: {
-//             hostname: 'myapp.dev',
-//             pathname: '/events/',
-//             protocol: ''
-//         }
-//     };
-
-//     const customZiggy = {
-//         namedRoutes: {
-//             'events.index': {
-//                 uri: 'events',
-//                 methods: ['GET', 'HEAD'],
-//                 domain: null
-//             }
-//         },
-//         baseUrl: 'https://ziggy.dev/',
-//         baseProtocol: 'http',
-//         baseDomain: 'myapp.dev',
-//         basePort: false
-//     };
-
-//     assert.equal(
-//         route(undefined, undefined, undefined, customZiggy).current(),
-//         'events.index'
-//     );
-
-//     global.Ziggy = orgZiggy;
-// });
-
-// test('remove braces and question marks from route parameter definition', t => {
-//     assert(route().trimParam('optional'), 'optional');
-
-//     assert(route().trimParam('{id}'), 'id');
-
-//     assert(route().trimParam('{slug?}'), 'slug');
-// });
-
-// test('extract named parameters from URL using given template and delimiter', t => {
-//     assert.deepStrictEqual(route().extractParams('', '', '/'), {});
-
-//     assert.deepStrictEqual(
-//         route().extractParams('posts', 'posts', '/'),
-//         {}
-//     );
-
-//     assert.deepStrictEqual(
-//         route().extractParams('users/1', 'users/{id}', '/'),
-//         { id: '1' }
-//     );
-
-//     assert.deepStrictEqual(
-//         route().extractParams(
-//             'events/1/venues/2',
-//             'events/{event}/venues/{venue}',
-//             '/'
-//         ),
-//         { event: '1', venue: '2' }
-//     );
-
-//     assert.deepStrictEqual(
-//         route().extractParams('optional/123', 'optional/{id}/{slug?}', '/'),
-//         { id: '123' }
-//     );
-
-//     assert.deepStrictEqual(
-//         route().extractParams(
-//             'optional/123/news',
-//             'optional/{id}/{slug?}',
-//             '/'
-//         ),
-//         { id: '123', slug: 'news' }
-//     );
-
-//     assert.deepStrictEqual(
-//         route().extractParams('tighten.myapp.dev', '{team}.myapp.dev', '.'),
-//         { team: 'tighten' }
-//     );
-// });
-
-// // @todo why?
-// test('merge named parameters extracted from domain and URL', t => {
-//     global.window.location.hostname = 'tighten.myapp.dev';
-//     global.window.location.pathname = '/users/1';
-
-//     assert.deepStrictEqual(route().params, { team: 'tighten', id: '1' });
-
-//     global.window.location.hostname = global.Ziggy.baseDomain;
-//     global.window.location.pathname = '/posts/1';
-
-//     assert.deepStrictEqual(route().params, { post: '1' });
-
-//     global.window.location.pathname = '/events/1/venues/2';
-
-//     assert.deepStrictEqual(route().params, { event: '1', venue: '2' });
-// });
+    t.deepEqual(route().params, { event: '1', venue: '2' });
+});
