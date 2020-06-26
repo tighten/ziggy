@@ -91,7 +91,12 @@ global.Ziggy = {
             uri: 'optionalId/{type}/{id?}',
             methods: ['GET', 'HEAD'],
             domain: null
-        }
+        },
+        'products.show': {
+            uri: '{country?}/{language?}/products/{id}',
+            methods: ['GET', 'HEAD'],
+            domain: null
+        },
     },
     baseUrl: 'http://myapp.dev/',
     baseProtocol: 'http',
@@ -105,6 +110,29 @@ global.Ziggy = {
 describe('route()', function() {
     it('Should return URL when run without params on a route without params', function() {
         assert.equal('http://myapp.dev/posts', route('posts.index'));
+    });
+
+    it('Can handle routing for apps in a subfolder', function() {
+        let orgBaseUrl = Ziggy.baseUrl;
+        let orgBaseDomain = Ziggy.baseDomain;
+        let orgWindow = global.window;
+
+        global.Ziggy.baseUrl = 'http://domain.com/subfolder/';
+        global.Ziggy.baseDomain = 'domain.com';
+
+        global.window = {
+            location: {
+                href: 'http://domain.com/subfolder/ph/en/products/4',
+                hostname: 'domain.com',
+                pathname: '/subfolder/ph/en/products/4',
+            },
+        };
+
+        assert.deepStrictEqual(route().params, { country: 'ph', language: 'en', id: '4' });
+
+        global.Ziggy.baseUrl = orgBaseUrl;
+        global.Ziggy.baseDomain = orgBaseDomain;
+        global.window = orgWindow;
     });
 
     it('Should return URL when run without params on a route without params , with default params', function() {
@@ -474,16 +502,28 @@ describe('route()', function() {
                 page: 2
             })
         );
+
+        assert.equal(
+            route('events.venues.show', {
+                id: 2,
+                event: 1,
+                venue: 2,
+                search: 'rogers',
+            }),
+            'http://myapp.dev/events/1/venues/2?id=2&search=rogers'
+        );
     });
 
     it('Should accept queryString params as keyed values in withQuery object', function() {
         let router = route('events.venues.show', [1, 2]).withQuery({
             search: 'rogers',
-            page: 2
+            page: 2,
+            id: 20,
         });
+
         assert.equal(
-            router,
-            'http://myapp.dev/events/1/venues/2?search=rogers&page=2'
+            'http://myapp.dev/events/1/venues/2?search=rogers&page=2&id=20',
+            router
         );
     });
 
@@ -882,16 +922,19 @@ describe('route()', function() {
     });
 
     it('Should combine dynamic params from the domain and the URI', function() {
+        global.window.location.href = 'http://tighten.myapp.dev/users/1';
         global.window.location.hostname = 'tighten.myapp.dev';
         global.window.location.pathname = '/users/1';
 
         assert.deepStrictEqual(route().params, { team: 'tighten', id: '1' });
 
+        global.window.location.href = 'http://' + global.Ziggy.baseDomain + '/posts/1';
         global.window.location.hostname = global.Ziggy.baseDomain;
         global.window.location.pathname = '/posts/1';
 
         assert.deepStrictEqual(route().params, { post: '1' });
 
+        global.window.location.href = 'http://myapp.dev/events/1/venues/2';
         global.window.location.pathname = '/events/1/venues/2';
 
         assert.deepStrictEqual(route().params, { event: '1', venue: '2' });
