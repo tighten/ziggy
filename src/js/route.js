@@ -21,19 +21,6 @@ class Router extends String {
         // If you passed in a string or integer, wrap it in an array
         params = typeof params !== 'object' ? [params] : params;
 
-        // If the tags object contains an ID and there isn't an ID param in the
-        // url template, they probably passed in a single model object and we should
-        // wrap this in an array. This could be slightly dangerous and I want to find
-        // a better solution for this rare case.
-
-        if (
-            params.hasOwnProperty('id') &&
-            this.template.indexOf('{id}') === -1 &&
-            this.template.indexOf('{id?}') === -1
-        ) {
-            params = [params.id];
-        }
-
         this.numericParamIndices = Array.isArray(params);
         return Object.assign({}, params);
     }
@@ -80,7 +67,18 @@ class Router extends String {
                     delete this.urlParams[keyName];
                 }
 
-                // The value is null or defined; is this param
+                // If a value wasn't provided for this named parameter explicitly,
+                // but the object that was passed contains an ID, that object
+                // was probably a model, so we use the ID.
+                // Note that we are not explicitly ensuring here that the template
+                // doesn't have an ID param (`this.template.indexOf('{id}') == -1`)
+                // because we don't need to - if it does, we won't get this far.
+                if (!tagValue && !this.urlParams[keyName] && this.urlParams['id']) {
+                    tagValue = this.urlParams['id']
+                    delete this.urlParams['id'];
+                }
+
+                // The value is null or undefined; is this param
                 // optional or not
                 if (tagValue == null) {
                     if (tag.indexOf('?') === -1) {
@@ -213,6 +211,10 @@ class Router extends String {
     get params() {
         const namedRoute = this.ziggy.namedRoutes[this.current()];
 
+        let pathname = window.location.pathname
+            .replace(this.ziggy.baseUrl.split('://')[1].split('/')[1], '')
+            .replace(/^\/+/, '');
+
         return Object.assign(
             this.extractParams(
                 window.location.hostname,
@@ -220,7 +222,7 @@ class Router extends String {
                 '.'
             ),
             this.extractParams(
-                window.location.pathname.slice(1),
+                pathname,
                 namedRoute.uri,
                 '/'
             )
