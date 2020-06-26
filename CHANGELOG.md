@@ -11,6 +11,7 @@ Breaking changes are marked with ⚠️.
 **Added**
 
 - Document the `check()` method ([#294](https://github.com/tightenco/ziggy/pull/294)) and how to install and use Ziggy via `npm` and over a CDN ([#299](https://github.com/tightenco/ziggy/pull/299))
+- Add support for [custom scoped route model bindings](https://laravel.com/docs/7.x/routing#implicit-binding), e.g. `/users/{user}/posts/{post:slug}` ([#307](https://github.com/tightenco/ziggy/pull/307))
 
 **Changed**
 
