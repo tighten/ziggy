@@ -5,7 +5,7 @@ namespace Tightenco\Ziggy;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
-use Tightenco\Ziggy\RoutePayload;
+use Tightenco\Ziggy\Ziggy;
 
 class CommandRouteGenerator extends Command
 {
@@ -40,7 +40,7 @@ class CommandRouteGenerator extends Command
 
     public function generate($group = false)
     {
-        $payload = (new RoutePayload($this->router, $group, url($this->option('url'))))->toJson();
+        $payload = (new Ziggy($this->router, $group, url($this->option('url'))))->toJson();
 
         return <<<EOT
     var Ziggy = {$payload};

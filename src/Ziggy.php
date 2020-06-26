@@ -7,7 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use JsonSerializable;
 
-class RoutePayload implements JsonSerializable
+class Ziggy implements JsonSerializable
 {
     protected $baseDomain;
     protected $basePort;

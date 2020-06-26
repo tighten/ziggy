@@ -17,7 +17,7 @@ class BladeRouteGenerator
 
     public function generate($group = false, $nonce = false)
     {
-        $payload = (new RoutePayload($this->router, $group))->toJson();
+        $payload = (new Ziggy($this->router, $group))->toJson();
         $nonce = $nonce ? ' nonce="' . $nonce . '"' : '';
 
         if (static::$generated) {
