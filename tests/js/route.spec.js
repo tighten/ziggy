@@ -184,6 +184,16 @@ test('accept query string parameters as keyed values in a parameters object', t 
         }).url(),
         'https://ziggy.dev/events/1/venues/2?search=rogers&page=2'
     );
+
+    t.is(
+        route('events.venues.show', {
+            id: 2,
+            event: 1,
+            venue: 2,
+            search: 'rogers',
+        }).url(),
+        'https://ziggy.dev/events/1/venues/2?id=2&search=rogers'
+    );
 });
 
 test('accept query string parameters as keyed values using .withQuery()', t => {
@@ -191,8 +201,9 @@ test('accept query string parameters as keyed values using .withQuery()', t => {
         route('events.venues.show', [1, 2]).withQuery({
             search: 'rogers',
             page: 2,
+            id: 20,
         }).url(),
-        'https://ziggy.dev/events/1/venues/2?search=rogers&page=2'
+        'https://ziggy.dev/events/1/venues/2?search=rogers&page=2&id=20'
     );
 });
 
