@@ -29,7 +29,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $generator = (new BladeRouteGenerator($router));
+        $generator = (new BladeRouteGenerator);
 
         $this->assertStringContainsString(json_encode([
             'postComments.index' => [
@@ -55,7 +55,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $generator = (new BladeRouteGenerator($router));
+        $generator = (new BladeRouteGenerator);
 
         $this->assertStringContainsString(json_encode([
             'postComments.index' => [
@@ -96,7 +96,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $generator = (new BladeRouteGenerator($router));
+        $generator = (new BladeRouteGenerator);
 
         $payload = $generator->generate();
         $array = json_decode(Str::between($payload, ' = ', ";\n\n"), true);

@@ -4,7 +4,6 @@ namespace Tightenco\Ziggy;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Routing\Router;
 use Tightenco\Ziggy\Ziggy;
 
 class CommandRouteGenerator extends Command
@@ -14,13 +13,11 @@ class CommandRouteGenerator extends Command
     protected $description = 'Generate js file for including in build process';
 
     protected $files;
-    protected $router;
 
-    public function __construct(Router $router, Filesystem $files)
+    public function __construct(Filesystem $files)
     {
         parent::__construct();
 
-        $this->router = $router;
         $this->files = $files;
     }
 
@@ -40,7 +37,7 @@ class CommandRouteGenerator extends Command
 
     public function generate($group = false)
     {
-        $payload = (new Ziggy($this->router, $group, url($this->option('url'))))->toJson();
+        $payload = (new Ziggy($group, url($this->option('url'))))->toJson();
 
         return <<<EOT
 var Ziggy = {$payload};

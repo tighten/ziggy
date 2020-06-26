@@ -2,7 +2,6 @@
 
 namespace Tightenco\Ziggy;
 
-use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use JsonSerializable;
@@ -14,12 +13,10 @@ class Ziggy implements JsonSerializable
     protected $baseProtocol;
     protected $baseUrl;
     protected $group;
-    protected $router;
     protected $routes;
 
-    public function __construct(Router $router, string $group = null, string $url = null)
+    public function __construct(string $group = null, string $url = null)
     {
-        $this->router = $router;
         $this->group = $group;
 
         $this->baseUrl = Str::finish($url ?? url('/'), '/');
@@ -108,7 +105,7 @@ class Ziggy implements JsonSerializable
      */
     protected function nameKeyedRoutes()
     {
-        return collect($this->router->getRoutes()->getRoutesByName())
+        return collect(app('router')->getRoutes()->getRoutesByName())
             ->map(function ($route) {
                 if ($this->isListedAs($route, 'blacklist')) {
                     $this->appendRouteToList($route->getName(), 'blacklist');

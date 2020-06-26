@@ -2,22 +2,13 @@
 
 namespace Tightenco\Ziggy;
 
-use Illuminate\Routing\Router;
-
 class BladeRouteGenerator
 {
     public static $generated;
 
-    private $router;
-
-    public function __construct(Router $router)
-    {
-        $this->router = $router;
-    }
-
     public function generate($group = false, $nonce = false)
     {
-        $payload = (new Ziggy($this->router, $group))->toJson();
+        $payload = (new Ziggy($group))->toJson();
         $nonce = $nonce ? ' nonce="' . $nonce . '"' : '';
 
         if (static::$generated) {

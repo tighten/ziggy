@@ -2,42 +2,39 @@
 
 namespace Tightenco\Ziggy;
 
-use Illuminate\Routing\Router;
-
 class Macro
 {
     const BLACKLIST = 'blacklist';
     const WHITELIST = 'whitelist';
 
-    public function __construct(Router $router, $list, $group = null)
+    public function __construct($list, $group = null)
     {
         $this->list = $list;
-        $this->router = $router;
         $this->group = $group;
     }
 
     public function compile()
     {
         if (is_callable($this->group)) {
-            $this->router->group(['listed_as' => $this->list], $this->group);
+            app('router')->group(['listed_as' => $this->list], $this->group);
         }
 
         return $this;
     }
 
-    public static function whitelist(Router $router, $group = null)
+    public static function whitelist($group = null)
     {
-        return (new static($router, static::WHITELIST, $group))->compile();
+        return (new static(static::WHITELIST, $group))->compile();
     }
 
-    public static function blacklist(Router $router, $group = null)
+    public static function blacklist($group = null)
     {
-        return (new static($router, static::BLACKLIST, $group))->compile();
+        return (new static(static::BLACKLIST, $group))->compile();
     }
 
     public function __call($method, $parameters)
     {
-        $route = call_user_func_array([$this->router, $method], $parameters);
+        $route = call_user_func_array([app('router'), $method], $parameters);
 
         switch ($this->list) {
             case static::BLACKLIST:

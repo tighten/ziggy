@@ -24,7 +24,7 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = (new Ziggy($router))->toArray()['namedRoutes'];
+        $payload = (new Ziggy)->toArray()['namedRoutes'];
 
         $this->assertEquals(['tags.show'], array_keys($payload));
     }
@@ -45,7 +45,7 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = (new Ziggy($router))->toArray()['namedRoutes'];
+        $payload = (new Ziggy)->toArray()['namedRoutes'];
 
         $this->assertEquals(['pages.show'], array_keys($payload));
     }
@@ -75,7 +75,7 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = (new Ziggy($router))->toArray()['namedRoutes'];
+        $payload = (new Ziggy)->toArray()['namedRoutes'];
 
         $this->assertEquals(['tags.show', 'pages.show'], array_keys($payload));
     }
@@ -94,7 +94,7 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = (new Ziggy($router))->toArray()['namedRoutes'];
+        $payload = (new Ziggy)->toArray()['namedRoutes'];
 
         $this->assertEquals(['pages.index'], array_keys($payload));
     }
@@ -117,7 +117,7 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = (new Ziggy($router))->toArray()['namedRoutes'];
+        $payload = (new Ziggy)->toArray()['namedRoutes'];
 
         $this->assertEquals(['posts.show'], array_keys($payload));
     }
@@ -147,7 +147,7 @@ class MacroTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $payload = (new Ziggy($router))->toArray()['namedRoutes'];
+        $payload = (new Ziggy)->toArray()['namedRoutes'];
 
         $this->assertEquals(['posts.show', 'pages.index'], array_keys($payload));
     }

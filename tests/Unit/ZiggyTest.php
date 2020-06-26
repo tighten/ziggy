@@ -50,7 +50,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function only_matching_routes_included_with_whitelist_enabled()
     {
-        $routePayload = new Ziggy($this->router);
+        $routePayload = new Ziggy;
         $filters = ['posts.s*', 'home'];
         $routes = $routePayload->filter($filters, true);
 
@@ -78,7 +78,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function only_matching_routes_excluded_with_blacklist_enabled()
     {
-        $routePayload = new Ziggy($this->router);
+        $routePayload = new Ziggy;
         $filters = ['posts.s*', 'home', 'admin.*'];
         $routes = $routePayload->filter($filters, false);
 
@@ -105,7 +105,7 @@ class ZiggyTest extends TestCase
             'whitelist' => ['posts.s*', 'home'],
         ]);
 
-        $routes = (new Ziggy($this->router))->toArray()['namedRoutes'];
+        $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
             'home' => [
@@ -135,7 +135,7 @@ class ZiggyTest extends TestCase
             'blacklist' => ['posts.s*', 'home', 'admin.*'],
         ]);
 
-        $routes = (new Ziggy($this->router))->toArray()['namedRoutes'];
+        $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -161,7 +161,7 @@ class ZiggyTest extends TestCase
             'whitelist' => ['home'],
         ]);
 
-        $routes = (new Ziggy($this->router))->toArray()['namedRoutes'];
+        $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -208,7 +208,7 @@ class ZiggyTest extends TestCase
             ],
         ]);
 
-        $routes = (new Ziggy($this->router, 'authors'))->toArray()['namedRoutes'];
+        $routes = (new Ziggy('authors'))->toArray()['namedRoutes'];
 
         $expected = [
             'home' => [
@@ -239,7 +239,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function non_existence_of_group_returns_unfiltered_routes()
     {
-        $routes = (new Ziggy($this->router, 'authors'))->toArray()['namedRoutes'];
+        $routes = (new Ziggy('authors'))->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -284,7 +284,7 @@ class ZiggyTest extends TestCase
             'middleware' => true,
         ]);
 
-        $routes = (new Ziggy($this->router))->toArray()['namedRoutes'];
+        $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -335,7 +335,7 @@ class ZiggyTest extends TestCase
             'middleware' => ['auth'],
         ]);
 
-        $routes = (new Ziggy($this->router))->toArray()['namedRoutes'];
+        $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -382,7 +382,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function route_payload_can_array_itself()
     {
-        $ziggy = new Ziggy($this->router);
+        $ziggy = new Ziggy;
 
         $expected = [
             'baseUrl' => 'http://myapp.com/',
@@ -432,7 +432,7 @@ class ZiggyTest extends TestCase
     public function route_payload_can_json_itself()
     {
         app('config')->set('ziggy', ['whitelist' => ['postComments.*']]);
-        $ziggy = new Ziggy($this->router);
+        $ziggy = new Ziggy;
 
         $expected = [
             'baseUrl' => 'http://myapp.com/',
@@ -461,12 +461,12 @@ class ZiggyTest extends TestCase
     {
         app('config')->set('ziggy', ['whitelist' => ['postComments.*']]);
         $this->router->get('json', function () {
-            return response()->json(new Ziggy(app('router')));
+            return response()->json(new Ziggy);
         });
 
         $response = $this->get('json');
 
         $response->assertSuccessful();
-        $this->assertSame((new Ziggy($this->router))->toJson(), $response->getContent());
+        $this->assertSame((new Ziggy)->toJson(), $response->getContent());
     }
 }
