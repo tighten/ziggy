@@ -128,6 +128,14 @@ describe('route()', function() {
             ]),
             'http://myapp.dev/posts/1/comments/12345'
         );
+
+        assert.equal(
+            route('postComments.show', [
+                { id: 1, post: 'Post' },
+                { uuid: 12345, comment: 'Comment' }
+            ]),
+            'http://myapp.dev/posts/1/comments/12345'
+        );
     });
 
     it('Can handle routing for apps in a subfolder', function() {
