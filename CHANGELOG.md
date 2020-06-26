@@ -17,6 +17,10 @@ Breaking changes are marked with ⚠️.
 - ⚠️ Update `ziggy:generate` output path for Laravel 5.7+ `resources` directory structure, thanks [@Somethingideally](https://github.com/Somethingideally)! ([#269](https://github.com/tightenco/ziggy/pull/269))
 - ⚠️ Update automatic `id` parameter detection to check for higher priority named route parameters and allow passing `id` as a query parameter ([#301](https://github.com/tightenco/ziggy/pull/301))
 
+**Removed**
+
+- ⚠️ Remove `Route` Facade macros `Route::only()` and `Route::except()` (previously `Route::whitelist()` and `Route::blacklist()`) ([#306](https://github.com/tightenco/ziggy/pull/306))
+
 **Fixed**
 
 - Fix automatic `id` parameter detection by also excluding routes with an _optional_ `id` parameter (`{id?}`), thanks [@Livijn](https://github.com/Livijn)! ([#263](https://github.com/tightenco/ziggy/pull/263))
