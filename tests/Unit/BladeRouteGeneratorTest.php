@@ -99,7 +99,7 @@ class BladeRouteGeneratorTest extends TestCase
         $generator = (new BladeRouteGenerator);
 
         $payload = $generator->generate();
-        $array = json_decode(Str::between($payload, ' = ', ";\n\n"), true);
+        $array = json_decode(Str::after(Str::before($payload, ";\n\n"), ' = '), true);
 
         $this->assertCount(4, $array['namedRoutes']);
 
