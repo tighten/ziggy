@@ -431,7 +431,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function route_payload_can_json_itself()
     {
-        app('config')->set('ziggy', ['whitelist' => ['postComments.*']]);
+        app('config')->set('ziggy', ['only' => ['postComments.*']]);
         $ziggy = new Ziggy;
 
         $expected = [
@@ -459,7 +459,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function route_payload_can_automatically_json_itself_as_part_of_a_response()
     {
-        app('config')->set('ziggy', ['whitelist' => ['postComments.*']]);
+        app('config')->set('ziggy', ['only' => ['postComments.*']]);
         $this->router->get('json', function () {
             return response()->json(new Ziggy);
         });
