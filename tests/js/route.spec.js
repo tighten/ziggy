@@ -16,6 +16,14 @@ test('generate a string URL using .url()', t => {
     t.is(route('posts.index').url(), 'https://ziggy.dev/posts');
 });
 
+test('pass parameters using .with()', t => {
+    t.deepEqual(route('posts.show', [1]), route('posts.show').with([1]));
+    t.is(route('posts.show', [1]).url(), route('posts.show').with([1]).url());
+
+    t.deepEqual(route('events.venues.show', { event: 1, venue: 2 }), route('events.venues.show').with({ event: 1, venue: 2 }));
+    t.is(route('events.venues.show', { event: 1, venue: 2 }).url(), route('events.venues.show').with({ event: 1, venue: 2 }).url());
+});
+
 test('generate a relative URL by passing absolute = false', t => {
     t.is(route('posts.index', [], false).url(), '/posts');
 });
@@ -67,19 +75,15 @@ test('error if a required parameter with a default has no default value', t => {
 
 test('generate a URL using an integer for a route with required parameters', t => {
     t.is(route('posts.show', 1).url(), 'https://ziggy.dev/posts/1');
-    t.is(route('posts.show').with(1).url(), 'https://ziggy.dev/posts/1');
 });
 
 test('generate a URL using an integer for a route with required and default parameters', t => {
     t.is(route('translatePosts.show', 1).url(), 'https://ziggy.dev/en/posts/1');
-    t.is(route('translatePosts.show').with(1).url(), 'https://ziggy.dev/en/posts/1');
 });
 
 test('generate a URL using an object for a route with required parameters', t => {
     t.is(route('posts.show', { id: 1 }).url(), 'https://ziggy.dev/posts/1');
-    t.is(route('posts.show').with({ id: 1 }).url(), 'https://ziggy.dev/posts/1');
     t.is(route('events.venues.show', { event: 1, venue: 2 }).url(), 'https://ziggy.dev/events/1/venues/2');
-    t.is(route('events.venues.show').with({ event: 1, venue: 2 }).url(), 'https://ziggy.dev/events/1/venues/2');
 });
 
 test('generate a URL using an object for a route with optional parameters', t => {
@@ -88,27 +92,22 @@ test('generate a URL using an object for a route with optional parameters', t =>
 
 test('generate a URL using a single parameter array for a route with required parameters', t => {
     t.is(route('posts.show', [1]).url(), 'https://ziggy.dev/posts/1');
-    t.is(route('posts.show').with([1]).url(), 'https://ziggy.dev/posts/1');
 });
 
 test('generate a URL using a single parameter array for a route with required and default parameters', t => {
     t.is(route('translatePosts.show', [1]).url(), 'https://ziggy.dev/en/posts/1');
-    t.is(route('translatePosts.show').with([1]).url(), 'https://ziggy.dev/en/posts/1');
 });
 
 test('generate a URL using an object for a route with required and default parameters', t => {
     t.is(route('translateEvents.venues.show', { event: 1, venue: 2 }).url(), 'https://ziggy.dev/en/events/1/venues/2');
-    t.is(route('translateEvents.venues.show').with({ event: 1, venue: 2 }).url(), 'https://ziggy.dev/en/events/1/venues/2');
 });
 
 test('generate a URL using an array for a route with required parameters', t => {
     t.is(route('events.venues.show', [1, 2]).url(),'https://ziggy.dev/events/1/venues/2');
-    t.is(route('events.venues.show').with([1, 2]).url(),'https://ziggy.dev/events/1/venues/2');
 });
 
 test('generate a URL using an array for a route with required and default parameters', t => {
     t.is(route('translateEvents.venues.show', [1, 2]).url(), 'https://ziggy.dev/en/events/1/venues/2');
-    t.is(route('translateEvents.venues.show').with([1, 2]).url(), 'https://ziggy.dev/en/events/1/venues/2');
 });
 
 test('generate a URL using an array of objects for a route with required parameters', t => {
@@ -116,7 +115,6 @@ test('generate a URL using an array of objects for a route with required paramet
     let venue = { id: 2, name: 'Rogers Centre' };
 
     t.is(route('events.venues.show', [event, venue]).url(), 'https://ziggy.dev/events/1/venues/2');
-    t.is(route('events.venues.show').with([event, venue]).url(), 'https://ziggy.dev/events/1/venues/2');
 });
 
 test('generate a URL using an array of objects for a route with required and default parameters', t => {
@@ -124,31 +122,26 @@ test('generate a URL using an array of objects for a route with required and def
     let venue = { id: 2, name: 'Rogers Centre' };
 
     t.is(route('translateEvents.venues.show', [event, venue]).url(), 'https://ziggy.dev/en/events/1/venues/2');
-    t.is(route('translateEvents.venues.show').with([event, venue]).url(), 'https://ziggy.dev/en/events/1/venues/2');
 });
 
 test('generate a URL using a mixed array of objects and scalar parameters for a route with required parameters', t => {
     let venue = { id: 2, name: 'Rogers Centre' };
 
     t.is(route('events.venues.show', [1, venue]).url(), 'https://ziggy.dev/events/1/venues/2');
-    t.is(route('events.venues.show').with([1, venue]).url(), 'https://ziggy.dev/events/1/venues/2');
 });
 
 test('generate a URL using a mixed array of objects and scalar parameters for a route with required and default parameters', t => {
     let venue = { id: 2, name: 'Rogers Centre' };
 
     t.is(route('translateEvents.venues.show', [1, venue]).url(), 'https://ziggy.dev/en/events/1/venues/2');
-    t.is(route('translateEvents.venues.show').with([1, venue]).url(), 'https://ziggy.dev/en/events/1/venues/2');
 });
 
 test('generate a URL for a route with required domain parameters', t => {
     t.is(route('team.user.show', { team: 'tighten', id: 1 }).url(), 'https://tighten.ziggy.dev/users/1');
-    t.is(route('team.user.show').with({ team: 'tighten', id: 1 }).url(), 'https://tighten.ziggy.dev/users/1');
 });
 
 test('generate a URL for a route with required domain parameters and default parameters', t => {
     t.is(route('translateTeam.user.show', { team: 'tighten', id: 1 }).url(), 'https://tighten.ziggy.dev/en/users/1');
-    t.is(route('translateTeam.user.show').with({ team: 'tighten', id: 1 }).url(), 'https://tighten.ziggy.dev/en/users/1');
 });
 
 test('return base URL if path is "/"', t => {
@@ -223,7 +216,6 @@ test('generate a URL with a port for a route with required domain parameters', t
     global.Ziggy.basePort = 81;
 
     t.is(route('team.user.show', { team: 'tighten', id: 1 }).url(), 'https://tighten.ziggy.dev:81/users/1');
-    t.is(route('team.user.show').with({ team: 'tighten', id: 1 }).url(), 'https://tighten.ziggy.dev:81/users/1');
 
     global.Ziggy = t.context.globalZiggy;
 });
