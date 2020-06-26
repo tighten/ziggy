@@ -34,6 +34,11 @@ class RoutePayloadTest extends TestCase
         })
             ->name('postComments.index');
 
+        $this->router->get('/posts/{post}/comments/{comment:uuid}', function () {
+            return '';
+        })
+            ->name('postComments.show');
+
         $this->router->post('/posts', function () {
             return '';
         })
@@ -59,16 +64,19 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'posts.store' => [
                 'uri' => 'posts',
                 'methods' => ['POST'],
                 'domain' => null,
+                'bindings' => [],
             ],
         ];
 
@@ -87,11 +95,21 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
+            ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
             ],
         ];
 
@@ -112,16 +130,19 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'posts.store' => [
                 'uri' => 'posts',
                 'methods' => ['POST'],
                 'domain' => null,
+                'bindings' => [],
             ],
         ];
 
@@ -142,11 +163,21 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
+            ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
             ],
         ];
 
@@ -168,31 +199,45 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
+            ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
             ],
             'home' => [
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'posts.store' => [
                 'uri' => 'posts',
                 'methods' => ['POST'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'admin.users.index' => [
                 'uri' => 'admin/users',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
         ];
 
@@ -215,21 +260,25 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'posts.index' => [
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'posts.store' => [
                 'uri' => 'posts',
                 'methods' => ['POST'],
                 'domain' => null,
+                'bindings' => [],
             ],
         ];
 
@@ -246,31 +295,45 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
+            ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
             ],
             'home' => [
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'posts.store' => [
                 'uri' => 'posts',
                 'methods' => ['POST'],
                 'domain' => null,
+                'bindings' => [],
             ],
             'admin.users.index' => [
                 'uri' => 'admin/users',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
         ];
 
@@ -291,36 +354,51 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
                 'middleware' => [],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
                 'middleware' => [],
+            ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
             ],
             'home' => [
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
                 'middleware' => [],
             ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
                 'middleware' => [],
             ],
             'posts.store' => [
                 'uri' => 'posts',
                 'methods' => ['POST'],
                 'domain' => null,
+                'bindings' => [],
                 'middleware' => ['auth', 'role:admin'],
             ],
             'admin.users.index' => [
                 'uri' => 'admin/users',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
                 'middleware' => ['role:admin'],
             ],
         ];
@@ -342,36 +420,51 @@ class RoutePayloadTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
                 'middleware' => [],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
                 'middleware' => [],
+            ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
             ],
             'home' => [
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
                 'middleware' => [],
             ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
                 'middleware' => [],
             ],
             'posts.store' => [
                 'uri' => 'posts',
                 'methods' => ['POST'],
                 'domain' => null,
+                'bindings' => [],
                 'middleware' => ['auth'],
             ],
             'admin.users.index' => [
                 'uri' => 'admin/users',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
                 'middleware' => [],
             ],
         ];

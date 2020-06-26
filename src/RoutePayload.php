@@ -95,6 +95,7 @@ class RoutePayload
 
                 return collect($route)->only(['uri', 'methods'])
                     ->put('domain', $route->domain())
+                    ->put('bindings', $route->bindingFields())
                     ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
                         if (is_array($middleware)) {
                             return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values());

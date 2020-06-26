@@ -35,6 +35,7 @@ class BladeRouteGeneratorTest extends TestCase
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
         ], $generator->getRoutePayload()->toArray());
     }
@@ -61,6 +62,7 @@ class BladeRouteGeneratorTest extends TestCase
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => '{account}.myapp.com',
+                'bindings' => [],
             ],
         ], $generator->getRoutePayload()->toArray());
     }
