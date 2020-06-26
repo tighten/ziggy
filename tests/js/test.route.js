@@ -97,6 +97,14 @@ global.Ziggy = {
             methods: ['GET', 'HEAD'],
             domain: null
         },
+        'postComments.show': {
+            uri: 'posts/{post}/comments/{comment}',
+            methods: ['GET', 'HEAD'],
+            domain: null,
+            bindings: {
+                comment: 'uuid',
+            },
+        },
     },
     baseUrl: 'http://myapp.dev/',
     baseProtocol: 'http',
@@ -110,6 +118,16 @@ global.Ziggy = {
 describe('route()', function() {
     it('Should return URL when run without params on a route without params', function() {
         assert.equal('http://myapp.dev/posts', route('posts.index'));
+    });
+
+    it('Can use custom route model binding keys', function() {
+        assert.equal(
+            route('postComments.show', [
+                { id: 1, title: 'Post' },
+                { uuid: 12345, title: 'Comment' }
+            ]),
+            'http://myapp.dev/posts/1/comments/12345'
+        );
     });
 
     it('Can handle routing for apps in a subfolder', function() {
