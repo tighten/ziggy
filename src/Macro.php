@@ -4,8 +4,8 @@ namespace Tightenco\Ziggy;
 
 class Macro
 {
-    const BLACKLIST = 'blacklist';
-    const WHITELIST = 'whitelist';
+    const EXCEPT = 'except';
+    const ONLY = 'only';
 
     public function __construct($list, $group = null)
     {
@@ -22,14 +22,14 @@ class Macro
         return $this;
     }
 
-    public static function whitelist($group = null)
+    public static function only($group = null)
     {
-        return (new static(static::WHITELIST, $group))->compile();
+        return (new static(static::ONLY, $group))->compile();
     }
 
-    public static function blacklist($group = null)
+    public static function except($group = null)
     {
-        return (new static(static::BLACKLIST, $group))->compile();
+        return (new static(static::EXCEPT, $group))->compile();
     }
 
     public function __call($method, $parameters)
@@ -37,11 +37,11 @@ class Macro
         $route = call_user_func_array([app('router'), $method], $parameters);
 
         switch ($this->list) {
-            case static::BLACKLIST:
-                $route->listedAs = 'blacklist';
+            case static::EXCEPT:
+                $route->listedAs = 'except';
                 break;
-            case static::WHITELIST:
-                $route->listedAs = 'whitelist';
+            case static::ONLY:
+                $route->listedAs = 'only';
                 break;
         }
 
