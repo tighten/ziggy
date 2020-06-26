@@ -27,7 +27,7 @@ class RoutePayload implements JsonSerializable
         tap(parse_url($this->baseUrl), function ($url) {
             $this->baseProtocol = $url['scheme'] ?? 'https';
             $this->baseDomain = $url['host'] ?? '';
-            $this->basePort = $url['port'] ?? false;
+            $this->basePort = $url['port'] ?? null;
         });
 
         $this->routes = $this->nameKeyedRoutes();
