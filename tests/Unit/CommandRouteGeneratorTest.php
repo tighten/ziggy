@@ -44,7 +44,7 @@ class CommandRouteGeneratorTest extends TestCase
             $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
         } else {
             $this->assertSame(
-                str_replace(',"bindings":[]', '', file_get_contents(__DIR__ . '/tests/fixtures/ziggy.js')),
+                str_replace(',"bindings":[]', '', file_get_contents(__DIR__ . '/../fixtures/ziggy.js')),
                 file_get_contents(base_path('resources/js/ziggy.js'))
             );
         }
@@ -68,7 +68,7 @@ class CommandRouteGeneratorTest extends TestCase
             $this->assertFileEquals('./tests/fixtures/custom-url.js', base_path('resources/js/ziggy.js'));
         } else {
             $this->assertSame(
-                str_replace(',"bindings":[]', '', file_get_contents(__DIR__ . '/tests/fixtures/custom-url.js')),
+                str_replace(',"bindings":[]', '', file_get_contents(__DIR__ . '/../fixtures/custom-url.js')),
                 file_get_contents(base_path('resources/js/ziggy.js'))
             );
         }
@@ -105,7 +105,7 @@ class CommandRouteGeneratorTest extends TestCase
             $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
         } else {
             $this->assertSame(
-                str_replace(',"bindings":[]', '', file_get_contents(__DIR__ . '/tests/fixtures/ziggy.js')),
+                str_replace(',"bindings":[]', '', file_get_contents(__DIR__ . '/../fixtures/ziggy.js')),
                 file_get_contents(base_path('resources/js/ziggy.js'))
             );
         }
@@ -116,7 +116,7 @@ class CommandRouteGeneratorTest extends TestCase
             $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
         } else {
             $this->assertSame(
-                str_replace(',"bindings":[]', '', file_get_contents(__DIR__ . '/tests/fixtures/admin.js')),
+                str_replace(',"bindings":[]', '', file_get_contents(__DIR__ . '/../fixtures/admin.js')),
                 file_get_contents(base_path('resources/js/admin.js'))
             );
         }
