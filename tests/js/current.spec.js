@@ -1,12 +1,9 @@
 import test from 'ava';
 import route from '../../src/js/route.js';
 
-global.Ziggy.namedRoutes = {
-    ... global.Ziggy.namedRoutes,
-    'hosting-contacts.index': {
-        uri: 'hosting-contacts',
-        methods: ['GET'],
-    },
+global.Ziggy.namedRoutes['hosting-contacts.index'] = {
+    uri: 'hosting-contacts',
+    methods: ['GET'],
 };
 
 test('get the current route name', t => {
