@@ -53,8 +53,8 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function file_is_created_with_the_expected_group()
     {
-        app('config')->set('ziggy', [
-            'blacklist' => ['admin.*'],
+        app()['config']->set('ziggy', [
+            'except' => ['admin.*'],
             'groups' => [
                 'admin' => ['admin.*'],
             ],
