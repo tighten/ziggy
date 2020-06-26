@@ -48,7 +48,7 @@ class RoutePayloadTest extends TestCase
     }
 
     /** @test */
-    public function only_matching_routes_included_with_whitelist_enabled()
+    public function only_matching_routes_included_with_include_enabled()
     {
         $routePayload = new RoutePayload($this->router);
         $filters = ['posts.s*', 'home'];
@@ -76,7 +76,7 @@ class RoutePayloadTest extends TestCase
     }
 
     /** @test */
-    public function only_matching_routes_excluded_with_blacklist_enabled()
+    public function only_matching_routes_excluded_with_exclude_enabled()
     {
         $routePayload = new RoutePayload($this->router);
         $filters = ['posts.s*', 'home', 'admin.*'];
@@ -99,10 +99,10 @@ class RoutePayloadTest extends TestCase
     }
 
     /** @test */
-    public function existence_of_whitelist_config_causes_routes_to_whitelist()
+    public function existence_of_only_config_causes_routes_to_be_included()
     {
         app()['config']->set('ziggy', [
-            'whitelist' => ['posts.s*', 'home'],
+            'only' => ['posts.s*', 'home'],
         ]);
 
         $routes = RoutePayload::compile($this->router);
@@ -129,10 +129,10 @@ class RoutePayloadTest extends TestCase
     }
 
     /** @test */
-    public function existence_of_blacklist_config_causes_routes_to_blacklist()
+    public function existence_of_except_config_causes_routes_to_be_excluded()
     {
         app()['config']->set('ziggy', [
-            'blacklist' => ['posts.s*', 'home', 'admin.*'],
+            'except' => ['posts.s*', 'home', 'admin.*'],
         ]);
 
         $routes = RoutePayload::compile($this->router);
@@ -157,8 +157,8 @@ class RoutePayloadTest extends TestCase
     public function existence_of_both_configs_returns_unfiltered_routes()
     {
         app()['config']->set('ziggy', [
-            'blacklist' => ['posts.s*'],
-            'whitelist' => ['home'],
+            'except' => ['posts.s*'],
+            'only' => ['home'],
         ]);
 
         $routes = RoutePayload::compile($this->router);

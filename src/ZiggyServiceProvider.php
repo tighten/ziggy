@@ -10,12 +10,12 @@ class ZiggyServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        Route::macro('blacklist', function ($group = null) {
-            return Macro::blacklist($this, $group);
+        Route::macro('except', function ($group = null) {
+            return Macro::except($this, $group);
         });
 
-        Route::macro('whitelist', function ($group = null) {
-            return Macro::whitelist($this, $group);
+        Route::macro('only', function ($group = null) {
+            return Macro::only($this, $group);
         });
 
         if ($this->app->resolved('blade.compiler')) {
