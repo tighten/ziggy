@@ -1250,7 +1250,8 @@ var route_Router = /*#__PURE__*/function (_String) {
     key: "params",
     get: function get() {
       var namedRoute = this.ziggy.namedRoutes[this.current()];
-      return _extends(this.extractParams(window.location.hostname, namedRoute.domain || '', '.'), this.extractParams(window.location.pathname.slice(1), namedRoute.uri, '/'));
+      var pathname = window.location.pathname.replace(this.ziggy.baseUrl.split('://')[1].split('/')[1], '').replace(/^\/+/, '');
+      return _extends(this.extractParams(window.location.hostname, namedRoute.domain || '', '.'), this.extractParams(pathname, namedRoute.uri, '/'));
     }
   }]);
 
