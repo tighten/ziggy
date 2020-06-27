@@ -20,8 +20,7 @@ Ziggy supports all versions of Laravel from `5.4` to `7.x`.
     - [Default Values](#default-values)
 - [Filtering Routes](#filtering-routes)
     - [Basic Filtering](#basic-filtering)
-    - [Basic Filtering using Macros](#basic-filtering-using-macros)
-    - [Advanced Filtering using Groups](#advanced-filtering-using-groups)
+    - [Filtering using Groups](#filtering-using-groups)
 - [Other Useful Methods](#other-useful-methods)
     - [`current()`](#current)
     - [`check()`](#check)
@@ -140,27 +139,7 @@ return [
 
 As shown in the example above, Ziggy can use asterisks as wildcards in route filter patterns. `home` will only match the route named `home`, whereas `api.*` will match any route whose name begins with `api.`, such as `api.posts.index` and `api.users.show`.
 
-#### Basic Filtering using Macros
-
-You can also filter routes using the following macros:
-
-```php
-Route::only(function () {
-    Route::get('...')->name('posts');
-});
-
-Route::only()->get('...')->name('posts');
-```
-
-```php
-Route::except(function () {
-    Route::get('...')->name('posts');
-});
-
-Route::except()->get('...')->name('posts');
-```
-
-#### Advanced Filtering using Groups
+#### Filtering using Groups
 
 You can also optionally define multiple groups of included routes using a `groups` key in your `config/ziggy.php`:
 
