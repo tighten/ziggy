@@ -64,7 +64,7 @@ class Ziggy implements JsonSerializable
                 $filters = array_merge($filters, config("ziggy.groups.{$groupName}"));
             }
 
-            return is_array($filters) ? $this->filter($filters, true) : $this->routes;
+            return $this->filter($filters, true);
         }
 
         if (config()->has("ziggy.groups.{$group}")) {
