@@ -4,7 +4,6 @@ namespace Tightenco\Tests\Unit;
 
 use Tightenco\Tests\TestCase;
 use Tightenco\Ziggy\Ziggy;
-use Tightenco\Ziggy\ZiggyServiceProvider;
 
 class MacroTest extends TestCase
 {
