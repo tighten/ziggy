@@ -43,7 +43,7 @@ class BladeRouteGeneratorTest extends TestCase
             $expected['postComments.index']['bindings'] = [];
         }
 
-        $this->assertEquals($expected, $generator->getRoutePayload()->toArray());
+        $this->assertStringContainsString(json_encode($expected), $generator->generate());
     }
 
     /** @test */
@@ -75,7 +75,7 @@ class BladeRouteGeneratorTest extends TestCase
             $expected['postComments.index']['bindings'] = [];
         }
 
-        $this->assertEquals($expected, $generator->getRoutePayload()->toArray());
+        $this->assertStringContainsString(json_encode($expected), $generator->generate());
     }
 
     /** @test */

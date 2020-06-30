@@ -540,6 +540,21 @@ class ZiggyTest extends TestCase
             ],
         ];
 
+        if ($this->laravelVersion(7)) {
+            foreach ($expected['namedRoutes'] as $key => $route) {
+                $expected['namedRoutes'][$key]['bindings'] = [];
+            }
+
+            $expected['namedRoutes']['postComments.show'] = [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ];
+        }
+
         $this->assertSame($expected, $ziggy->toArray());
         $this->assertSame($expected, $ziggy->jsonSerialize());
     }
@@ -565,7 +580,20 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $json = '{"baseUrl":"http:\/\/myapp.com\/","baseProtocol":"http","baseDomain":"myapp.com","basePort":null,"defaultParameters":[],"namedRoutes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null}}}';
+        if ($this->laravelVersion(7)) {
+            $expected['namedRoutes']['postComments.index']['bindings'] = [];
+
+            $expected['namedRoutes']['postComments.show'] = [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ];
+        }
+
+        $json = '{"baseUrl":"http:\/\/myapp.com\/","baseProtocol":"http","baseDomain":"myapp.com","basePort":null,"defaultParameters":[],"namedRoutes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null,"bindings":[]},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"domain":null,"bindings":{"comment":"uuid"}}}}';
 
         $this->assertSame($expected, json_decode(json_encode($ziggy), true));
         $this->assertSame($json, json_encode($ziggy));
