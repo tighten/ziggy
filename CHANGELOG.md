@@ -22,6 +22,10 @@ Breaking changes are marked with ⚠️.
     - Remove the `getRoutePayload()` methods on the `BladeRouteGenerator` and `CommandRouteGenerator` classes
 - ⚠️ Rename all `whitelist` and `blacklist` functionality to `only` and `except` ([#300](https://github.com/tightenco/ziggy/pull/300))
 
+**Removed**
+
+- ⚠️ Remove `Route` Facade macros `Route::only()` and `Route::except()` (previously `Route::whitelist()` and `Route::blacklist()`) ([#306](https://github.com/tightenco/ziggy/pull/306))
+
 **Fixed**
 
 - Fix automatic `id` parameter detection by also excluding routes with an _optional_ `id` parameter (`{id?}`), thanks [@Livijn](https://github.com/Livijn)! ([#263](https://github.com/tightenco/ziggy/pull/263))
