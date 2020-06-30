@@ -16,6 +16,13 @@ class TestCase extends OrchestraTestCase
         ];
     }
 
+    protected function laravelVersion(int $v = null)
+    {
+        $version = (int) head(explode('.', app()->version()));
+
+        return isset($v) ? $version >= $v : $version;
+    }
+
     protected function assertJsonContains(array $haystack, array $needle)
     {
         $actual = json_encode(Arr::sortRecursive(
