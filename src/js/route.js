@@ -67,13 +67,22 @@ class Router extends String {
                     delete this.urlParams[keyName];
                 }
 
+                // The block above is what requires us to assign tagValue below
+                // instead of returning - if multiple *objects* are passed as
+                // params, numericParamIndices will be true and each object will
+                // be assigned above, which means !tagValue will evaluate to
+                // false, skipping the block below.
+
                 // If a value wasn't provided for this named parameter explicitly,
                 // but the object that was passed contains an ID, that object
                 // was probably a model, so we use the ID.
-                // Note that we are not explicitly ensuring here that the template
-                // doesn't have an ID param (`this.template.indexOf('{id}') == -1`)
-                // because we don't need to - if it does, we won't get this far.
-                if (!tagValue && !this.urlParams[keyName] && this.urlParams['id']) {
+
+                let bindingKey = this.ziggy.namedRoutes[this.name]?.bindings?.[keyName];
+
+                if (bindingKey && !this.urlParams[keyName] && this.urlParams[bindingKey]) {
+                    tagValue = this.urlParams[bindingKey];
+                    delete this.urlParams[bindingKey];
+                } else if (!tagValue && !this.urlParams[keyName] && this.urlParams['id']) {
                     tagValue = this.urlParams['id']
                     delete this.urlParams['id'];
                 }
@@ -97,6 +106,8 @@ class Router extends String {
                 // If an object was passed and has an id, return it
                 if (tagValue.id) {
                     return encodeURIComponent(tagValue.id);
+                } else if (tagValue[bindingKey]) {
+                    return encodeURIComponent(tagValue[bindingKey])
                 }
 
                 return encodeURIComponent(tagValue);

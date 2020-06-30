@@ -44,6 +44,12 @@ class ZiggyTest extends TestCase
         })
             ->name('admin.users.index')->middleware('role:admin');
 
+        if ($this->laravelVersion(7)) {
+            $this->router->get('/posts/{post}/comments/{comment:uuid}', function () {
+                return '';
+            })->name('postComments.show');
+        }
+
         $this->router->getRoutes()->refreshNameLookups();
     }
 
@@ -72,6 +78,12 @@ class ZiggyTest extends TestCase
             ],
         ];
 
+        if ($this->laravelVersion(7)) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+        }
+
         $this->assertEquals($expected, $routes->toArray());
     }
 
@@ -94,6 +106,21 @@ class ZiggyTest extends TestCase
                 'domain' => null,
             ],
         ];
+
+        if ($this->laravelVersion(7)) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+
+            $expected['postComments.show'] = [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ];
+        }
 
         $this->assertEquals($expected, $routes->toArray());
     }
@@ -125,6 +152,12 @@ class ZiggyTest extends TestCase
             ],
         ];
 
+        if ($this->laravelVersion(7)) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+        }
+
         $this->assertEquals($expected, $routes);
     }
 
@@ -149,6 +182,21 @@ class ZiggyTest extends TestCase
                 'domain' => null,
             ],
         ];
+
+        if ($this->laravelVersion(7)) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+
+            $expected['postComments.show'] = [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ];
+        }
 
         $this->assertEquals($expected, $routes);
     }
@@ -196,6 +244,21 @@ class ZiggyTest extends TestCase
             ],
         ];
 
+        if ($this->laravelVersion(7)) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+
+            $expected['postComments.show'] = [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ];
+        }
+
         $this->assertEquals($expected, $routes);
     }
 
@@ -232,6 +295,12 @@ class ZiggyTest extends TestCase
                 'domain' => null,
             ],
         ];
+
+        if ($this->laravelVersion(7)) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+        }
 
         $this->assertEquals($expected, $routes);
     }
@@ -273,6 +342,21 @@ class ZiggyTest extends TestCase
                 'domain' => null,
             ],
         ];
+
+        if ($this->laravelVersion(7)) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+
+            $expected['postComments.show'] = [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ];
+        }
 
         $this->assertEquals($expected, $routes);
     }
@@ -325,6 +409,22 @@ class ZiggyTest extends TestCase
             ],
         ];
 
+        if ($this->laravelVersion(7)) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+
+            $expected['postComments.show'] = [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ];
+        }
+
         $this->assertEquals($expected, $routes);
     }
 
@@ -375,6 +475,22 @@ class ZiggyTest extends TestCase
                 'middleware' => [],
             ],
         ];
+
+        if ($this->laravelVersion(7)) {
+            foreach ($expected as $key => $route) {
+                $expected[$key]['bindings'] = [];
+            }
+
+            $expected['postComments.show'] = [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ];
+        }
 
         $this->assertEquals($expected, $routes);
     }

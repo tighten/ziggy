@@ -40,7 +40,14 @@ class CommandRouteGeneratorTest extends TestCase
 
         Artisan::call('ziggy:generate');
 
-        $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
+        if ($this->laravelVersion(7)) {
+            $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
+        } else {
+            $this->assertSame(
+                str_replace(',"bindings":[]', '', file_get_contents(__DIR__ . '/../fixtures/ziggy.js')),
+                file_get_contents(base_path('resources/js/ziggy.js'))
+            );
+        }
     }
 
     /** @test */
@@ -57,7 +64,14 @@ class CommandRouteGeneratorTest extends TestCase
 
         Artisan::call('ziggy:generate', ['--url' => 'http://example.org']);
 
-        $this->assertFileEquals('./tests/fixtures/custom-url.js', base_path('resources/js/ziggy.js'));
+        if ($this->laravelVersion(7)) {
+            $this->assertFileEquals('./tests/fixtures/custom-url.js', base_path('resources/js/ziggy.js'));
+        } else {
+            $this->assertSame(
+                str_replace(',"bindings":[]', '', file_get_contents(__DIR__ . '/../fixtures/custom-url.js')),
+                file_get_contents(base_path('resources/js/ziggy.js'))
+            );
+        }
     }
 
     /** @test */
@@ -87,11 +101,25 @@ class CommandRouteGeneratorTest extends TestCase
 
         Artisan::call('ziggy:generate');
 
-        $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
+        if ($this->laravelVersion(7)) {
+            $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
+        } else {
+            $this->assertSame(
+                str_replace(',"bindings":[]', '', file_get_contents(__DIR__ . '/../fixtures/ziggy.js')),
+                file_get_contents(base_path('resources/js/ziggy.js'))
+            );
+        }
 
         Artisan::call('ziggy:generate', ['path' => 'resources/js/admin.js', '--group' => 'admin']);
 
-        $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
+        if ($this->laravelVersion(7)) {
+            $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
+        } else {
+            $this->assertSame(
+                str_replace(',"bindings":[]', '', file_get_contents(__DIR__ . '/../fixtures/admin.js')),
+                file_get_contents(base_path('resources/js/admin.js'))
+            );
+        }
     }
 
     protected function tearDown(): void
