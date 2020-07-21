@@ -36,12 +36,13 @@
     "scripts": {
         "build": "NODE_ENV=production webpack --progress",
         "build:watch": "npm run build -- --watch",
-        "test": "ava tests/js/*.spec.js",
+        "test": "ava",
         "prepublishOnly": "npm run build"
     },
     "ava": {
         "require": [
-            "esm"
+            "esm",
+            "./tests/js/_setup.js"
         ]
     },
     "devDependencies": {

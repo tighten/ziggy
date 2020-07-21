@@ -1,8 +1,11 @@
-import assert from 'assert';
 import test from 'ava';
 import route from '../../src/js/route.js';
+import { win, zig } from './_setup2';
 
-test.beforeEach(t => t.context.globalZiggy = { ...global.Ziggy });
+test.beforeEach(t => {
+    global.Ziggy = { ...zig };
+    global.window = { ...win };
+});
 
 test('generate a URL with no parameters', t => {
     t.is(route('posts.index').url(), 'https://ziggy.dev/posts');
@@ -69,8 +72,6 @@ test('error if a required parameter with a default has no default value', t => {
         () => route('translatePosts.index').url(),
         { message: /'locale' key is required/ }
     );
-
-    global.Ziggy = t.context.globalZiggy;
 });
 
 test('generate a URL using an integer for a route with required parameters', t => {
@@ -225,8 +226,6 @@ test('generate a URL with a port for a route without parameters', t => {
     global.Ziggy.basePort = 81;
 
     t.is(route('posts.index').url(), 'https://ziggy.dev:81/posts');
-
-    global.Ziggy = t.context.globalZiggy;
 });
 
 test('generate a URL with a port for a route with required domain parameters', t => {
@@ -235,16 +234,12 @@ test('generate a URL with a port for a route with required domain parameters', t
     global.Ziggy.basePort = 81;
 
     t.is(route('team.user.show', { team: 'tighten', id: 1 }).url(), 'https://tighten.ziggy.dev:81/users/1');
-
-    global.Ziggy = t.context.globalZiggy;
 });
 
 test('handle trailing path segments in the base URL', t => {
     global.Ziggy.baseUrl = 'https://test.thing/ab/cd/';
 
     t.is(route('events.venues.index', 1).url(), 'https://test.thing/ab/cd/events/1/venues');
-
-    global.Ziggy = t.context.globalZiggy;
 });
 
 test('URL-encode named parameters', t => {
@@ -258,8 +253,6 @@ test('URL-encode named parameters', t => {
         }).url(),
         'https://test.thing/ab/cd/events/Fun%26Games/venues?location=Brews%26Clues'
     );
-
-    global.Ziggy = t.context.globalZiggy;
 });
 
 test('accept and format an array as a query parameter', t => {
@@ -340,8 +333,6 @@ test('generate URL for an app installed in a subfolder', t => {
     global.window.location.pathname = '/subfolder/ph/en/products/4';
 
     t.deepEqual(route().params, { country: 'ph', language: 'en', id: '4' });
-
-    global.Ziggy = t.context.globalZiggy;
 });
 
 // @todo why?
