@@ -1,0 +1,17 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "targets": "defaults, not IE 11",
+                "modules": false,
+                "forceAllTransforms": true
+            }
+        ]
+    ],
+    "env": {
+        "test": {
+            "plugins": ["@babel/plugin-transform-modules-commonjs"]
+        }
+    }
+}
