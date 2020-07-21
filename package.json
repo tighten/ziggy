@@ -39,10 +39,13 @@
         "test": "ava tests/js/*.spec.js",
         "prepublishOnly": "npm run build"
     },
+    "ava": {
+        "require": ["esm"]
+    },
     "devDependencies": {
-        "@babel/core": "^7.10.3",
-        "@babel/preset-env": "^7.10.3",
-        "ava": "^3.8.2",
+        "@babel/core": "^7.10.5",
+        "@babel/preset-env": "^7.10.4",
+        "ava": "^3.10.1",
         "axios": "^0.19.0",
         "babel-loader": "^8.0.6",
         "esm": "^3.2.25",
