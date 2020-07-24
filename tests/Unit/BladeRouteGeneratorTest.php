@@ -2,6 +2,7 @@
 
 namespace Tightenco\Tests\Unit;
 
+use Illuminate\Support\Str;
 use Tightenco\Tests\TestCase;
 use Tightenco\Ziggy\BladeRouteGenerator;
 
@@ -12,7 +13,7 @@ class BladeRouteGeneratorTest extends TestCase
     {
         $generator = app(BladeRouteGenerator::class);
 
-        $this->assertStringContainsString("namedRoutes: []", $generator->generate());
+        $this->assertStringContainsString('"namedRoutes":[]', $generator->generate());
     }
 
     /** @test */
@@ -28,7 +29,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $generator = (new BladeRouteGenerator($router));
+        $generator = (new BladeRouteGenerator);
 
         $expected = [
             'postComments.index' => [
@@ -42,7 +43,7 @@ class BladeRouteGeneratorTest extends TestCase
             $expected['postComments.index']['bindings'] = [];
         }
 
-        $this->assertEquals($expected, $generator->getRoutePayload()->toArray());
+        $this->assertStringContainsString(json_encode($expected), $generator->generate());
     }
 
     /** @test */
@@ -60,7 +61,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $generator = (new BladeRouteGenerator($router));
+        $generator = (new BladeRouteGenerator);
 
         $expected = [
             'postComments.index' => [
@@ -74,7 +75,7 @@ class BladeRouteGeneratorTest extends TestCase
             $expected['postComments.index']['bindings'] = [];
         }
 
-        $this->assertEquals($expected, $generator->getRoutePayload()->toArray());
+        $this->assertStringContainsString(json_encode($expected), $generator->generate());
     }
 
     /** @test */
@@ -107,16 +108,17 @@ class BladeRouteGeneratorTest extends TestCase
 
         $router->getRoutes()->refreshNameLookups();
 
-        $generator = (new BladeRouteGenerator($router));
+        $generator = (new BladeRouteGenerator);
 
-        $array = $generator->getRoutePayload()->toArray();
+        $payload = $generator->generate();
+        $array = json_decode(Str::after(Str::before($payload, ";\n\n"), ' = '), true);
 
-        $this->assertCount(4, $array);
+        $this->assertCount(4, $array['namedRoutes']);
 
-        $this->assertArrayHasKey('posts.index', $array);
-        $this->assertArrayHasKey('posts.show', $array);
-        $this->assertArrayHasKey('posts.store', $array);
-        $this->assertArrayHasKey('postComments.index', $array);
+        $this->assertArrayHasKey('posts.index', $array['namedRoutes']);
+        $this->assertArrayHasKey('posts.show', $array['namedRoutes']);
+        $this->assertArrayHasKey('posts.store', $array['namedRoutes']);
+        $this->assertArrayHasKey('postComments.index', $array['namedRoutes']);
     }
 
     /** @test */

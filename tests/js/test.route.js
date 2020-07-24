@@ -845,7 +845,7 @@ describe('route()', function() {
             baseUrl: 'http://notYourAverage.dev/',
             baseProtocol: 'http',
             baseDomain: 'notYourAverage.dev',
-            basePort: false,
+            basePort: null,
             defaultParameters: {
                 locale: 'en'
             }
@@ -886,7 +886,7 @@ describe('route()', function() {
             baseUrl: 'http://myapp.dev/',
             baseProtocol: 'http',
             baseDomain: 'myapp.dev',
-            basePort: false
+            basePort: null,
         };
 
         assert.equal(

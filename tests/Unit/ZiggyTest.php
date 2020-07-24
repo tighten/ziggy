@@ -3,9 +3,9 @@
 namespace Tightenco\Tests\Unit;
 
 use Tightenco\Tests\TestCase;
-use Tightenco\Ziggy\RoutePayload;
+use Tightenco\Ziggy\Ziggy;
 
-class RoutePayloadTest extends TestCase
+class ZiggyTest extends TestCase
 {
     protected $router;
 
@@ -56,7 +56,7 @@ class RoutePayloadTest extends TestCase
     /** @test */
     public function only_matching_routes_included_with_include_enabled()
     {
-        $routePayload = new RoutePayload($this->router);
+        $routePayload = new Ziggy;
         $filters = ['posts.s*', 'home'];
         $routes = $routePayload->filter($filters, true);
 
@@ -90,7 +90,7 @@ class RoutePayloadTest extends TestCase
     /** @test */
     public function only_matching_routes_excluded_with_exclude_enabled()
     {
-        $routePayload = new RoutePayload($this->router);
+        $routePayload = new Ziggy;
         $filters = ['posts.s*', 'home', 'admin.*'];
         $routes = $routePayload->filter($filters, false);
 
@@ -132,7 +132,7 @@ class RoutePayloadTest extends TestCase
             'only' => ['posts.s*', 'home'],
         ]);
 
-        $routes = RoutePayload::compile($this->router);
+        $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
             'home' => [
@@ -158,7 +158,7 @@ class RoutePayloadTest extends TestCase
             }
         }
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */
@@ -168,7 +168,7 @@ class RoutePayloadTest extends TestCase
             'except' => ['posts.s*', 'home', 'admin.*'],
         ]);
 
-        $routes = RoutePayload::compile($this->router);
+        $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -198,7 +198,7 @@ class RoutePayloadTest extends TestCase
             ];
         }
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */
@@ -209,7 +209,7 @@ class RoutePayloadTest extends TestCase
             'only' => ['home'],
         ]);
 
-        $routes = RoutePayload::compile($this->router);
+        $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -259,7 +259,7 @@ class RoutePayloadTest extends TestCase
             ];
         }
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */
@@ -271,7 +271,7 @@ class RoutePayloadTest extends TestCase
             ],
         ]);
 
-        $routes = RoutePayload::compile($this->router, 'authors');
+        $routes = (new Ziggy('authors'))->toArray()['namedRoutes'];
 
         $expected = [
             'home' => [
@@ -302,13 +302,13 @@ class RoutePayloadTest extends TestCase
             }
         }
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */
     public function non_existence_of_group_returns_unfiltered_routes()
     {
-        $routes = RoutePayload::compile($this->router, 'authors');
+        $routes = (new Ziggy('authors'))->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -358,7 +358,7 @@ class RoutePayloadTest extends TestCase
             ];
         }
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */
@@ -368,7 +368,7 @@ class RoutePayloadTest extends TestCase
             'middleware' => true,
         ]);
 
-        $routes = RoutePayload::compile($this->router);
+        $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -425,7 +425,7 @@ class RoutePayloadTest extends TestCase
             ];
         }
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
     }
 
     /** @test */
@@ -435,7 +435,7 @@ class RoutePayloadTest extends TestCase
             'middleware' => ['auth'],
         ]);
 
-        $routes = RoutePayload::compile($this->router);
+        $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
             'posts.index' => [
@@ -492,6 +492,125 @@ class RoutePayloadTest extends TestCase
             ];
         }
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertEquals($expected, $routes);
+    }
+
+    /** @test */
+    public function route_payload_can_array_itself()
+    {
+        $ziggy = new Ziggy;
+
+        $expected = [
+            'baseUrl' => 'http://myapp.com/',
+            'baseProtocol' => 'http',
+            'baseDomain' => 'myapp.com',
+            'basePort' => null,
+            'defaultParameters' => [],
+            'namedRoutes' => [
+                'home' => [
+                    'uri' => 'home',
+                    'methods' => ['GET', 'HEAD'],
+                    'domain' => null,
+                ],
+                'posts.index' => [
+                    'uri' => 'posts',
+                    'methods' => ['GET', 'HEAD'],
+                    'domain' => null,
+                ],
+                'posts.show' => [
+                    'uri' => 'posts/{post}',
+                    'methods' => ['GET', 'HEAD'],
+                    'domain' => null,
+                ],
+                'postComments.index' => [
+                    'uri' => 'posts/{post}/comments',
+                    'methods' => ['GET', 'HEAD'],
+                    'domain' => null,
+                ],
+                'posts.store' => [
+                    'uri' => 'posts',
+                    'methods' => ['POST'],
+                    'domain' => null,
+                ],
+                'admin.users.index' => [
+                    'uri' => 'admin/users',
+                    'methods' => ['GET', 'HEAD'],
+                    'domain' => null,
+                ],
+            ],
+        ];
+
+        if ($this->laravelVersion(7)) {
+            foreach ($expected['namedRoutes'] as $key => $route) {
+                $expected['namedRoutes'][$key]['bindings'] = [];
+            }
+
+            $expected['namedRoutes']['postComments.show'] = [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ];
+        }
+
+        $this->assertSame($expected, $ziggy->toArray());
+        $this->assertSame($expected, $ziggy->jsonSerialize());
+    }
+
+    /** @test */
+    public function route_payload_can_json_itself()
+    {
+        app('config')->set('ziggy', ['only' => ['postComments.*']]);
+        $ziggy = new Ziggy;
+
+        $expected = [
+            'baseUrl' => 'http://myapp.com/',
+            'baseProtocol' => 'http',
+            'baseDomain' => 'myapp.com',
+            'basePort' => null,
+            'defaultParameters' => [],
+            'namedRoutes' => [
+                'postComments.index' => [
+                    'uri' => 'posts/{post}/comments',
+                    'methods' => ['GET', 'HEAD'],
+                    'domain' => null,
+                ],
+            ],
+        ];
+
+        if ($this->laravelVersion(7)) {
+            $expected['namedRoutes']['postComments.index']['bindings'] = [];
+
+            $expected['namedRoutes']['postComments.show'] = [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ];
+        }
+
+        $json = '{"baseUrl":"http:\/\/myapp.com\/","baseProtocol":"http","baseDomain":"myapp.com","basePort":null,"defaultParameters":[],"namedRoutes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null' . ($this->laravelVersion(7) ? ',"bindings":[]},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"domain":null,"bindings":{"comment":"uuid"}' : '') . '}}}';
+
+        $this->assertSame($expected, json_decode(json_encode($ziggy), true));
+        $this->assertSame($json, json_encode($ziggy));
+        $this->assertSame($json, $ziggy->toJson());
+    }
+
+    /** @test */
+    public function route_payload_can_automatically_json_itself_as_part_of_a_response()
+    {
+        app('config')->set('ziggy', ['only' => ['postComments.*']]);
+        $this->router->get('json', function () {
+            return response()->json(new Ziggy);
+        });
+
+        $response = $this->get('json');
+
+        $response->assertSuccessful();
+        $this->assertSame((new Ziggy)->toJson(), $response->getContent());
     }
 }
