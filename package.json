@@ -35,7 +35,6 @@
     "homepage": "https://github.com/tightenco/ziggy#readme",
     "scripts": {
         "build": "NODE_ENV=production webpack --progress",
-        "build:watch": "npm run build -- --watch",
         "test": "jest",
         "prepublishOnly": "npm run build"
     },
