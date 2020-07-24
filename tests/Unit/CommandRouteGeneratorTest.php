@@ -10,7 +10,9 @@ class CommandRouteGeneratorTest extends TestCase
     protected function tearDown(): void
     {
         if (file_exists(base_path('resources/js')) && is_dir(base_path('resources/js'))) {
-            array_map(fn ($file) => unlink($file), glob(base_path('resources/js/*')));
+            array_map(function ($file) {
+                unlink($file);
+            }, glob(base_path('resources/js/*')));
         }
 
         parent::tearDown();
