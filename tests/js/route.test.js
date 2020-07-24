@@ -103,7 +103,7 @@ describe('string', () => {
         strictEqual(route('posts.index') + '', 'https://ziggy.dev/posts');
         strictEqual(String(route('posts.index')), 'https://ziggy.dev/posts');
         strictEqual(route('posts.index').toString(), 'https://ziggy.dev/posts');
-    })
+    });
 });
 
 describe('route()', () => {
@@ -123,8 +123,14 @@ describe('route()', () => {
         assert.deepEqual(route('posts.show', [1]), route('posts.show').with([1]));
         equal(route('posts.show', [1]).url(), route('posts.show').with([1]).url());
 
-        assert.deepEqual(route('events.venues.show', { event: 1, venue: 2 }), route('events.venues.show').with({ event: 1, venue: 2 }));
-        equal(route('events.venues.show', { event: 1, venue: 2 }).url(), route('events.venues.show').with({ event: 1, venue: 2 }).url());
+        assert.deepEqual(
+            route('events.venues.show', { event: 1, venue: 2 }),
+            route('events.venues.show').with({ event: 1, venue: 2 })
+        );
+        equal(
+            route('events.venues.show', { event: 1, venue: 2 }).url(),
+            route('events.venues.show').with({ event: 1, venue: 2 }).url()
+        );
     });
 
     test('generate a relative URL by passing absolute = false', () => {
@@ -202,11 +208,14 @@ describe('route()', () => {
     });
 
     test('generate a URL using an object for a route with required and default parameters', () => {
-        equal(route('translateEvents.venues.show', { event: 1, venue: 2 }).url(), 'https://ziggy.dev/en/events/1/venues/2');
+        equal(
+            route('translateEvents.venues.show', { event: 1, venue: 2 }).url(),
+            'https://ziggy.dev/en/events/1/venues/2'
+        );
     });
 
     test('generate a URL using an array for a route with required parameters', () => {
-        equal(route('events.venues.show', [1, 2]).url(),'https://ziggy.dev/events/1/venues/2');
+        equal(route('events.venues.show', [1, 2]).url(), 'https://ziggy.dev/events/1/venues/2');
     });
 
     test('generate a URL using an array for a route with required and default parameters', () => {
@@ -244,14 +253,17 @@ describe('route()', () => {
     });
 
     test('generate a URL for a route with required domain parameters and default parameters', () => {
-        equal(route('translateTeam.user.show', { team: 'tighten', id: 1 }).url(), 'https://tighten.ziggy.dev/en/users/1');
+        equal(
+            route('translateTeam.user.show', { team: 'tighten', id: 1 }).url(),
+            'https://tighten.ziggy.dev/en/users/1'
+        );
     });
 
     test('generate a URL for a route with a custom route model binding scope', () => {
         equal(
             route('postComments.show', [
                 { id: 1, title: 'Post' },
-                { uuid: 12345, title: 'Comment' }
+                { uuid: 12345, title: 'Comment' },
             ]).url(),
             'https://ziggy.dev/posts/1/comments/12345'
         );
@@ -259,7 +271,7 @@ describe('route()', () => {
         equal(
             route('postComments.show', [
                 { id: 1, post: 'Post' },
-                { uuid: 12345, comment: 'Comment' }
+                { uuid: 12345, comment: 'Comment' },
             ]).url(),
             'https://ziggy.dev/posts/1/comments/12345'
         );
@@ -290,11 +302,11 @@ describe('route()', () => {
     // @todo duplicate
     test('accept query string parameters as keyed values in a parameters object', () => {
         equal(
-             route('events.venues.show', {
+            route('events.venues.show', {
                 event: 1,
                 venue: 2,
                 search: 'rogers',
-                page: 2
+                page: 2,
             }).url(),
             'https://ziggy.dev/events/1/venues/2?search=rogers&page=2'
         );
@@ -352,7 +364,10 @@ describe('route()', () => {
     test('URL-encode named parameters', () => {
         global.Ziggy.baseUrl = 'https://test.thing/ab/cd/';
 
-        equal(route('events.venues.index', { event: 'Fun&Games' }).url(), 'https://test.thing/ab/cd/events/Fun%26Games/venues');
+        equal(
+            route('events.venues.index', { event: 'Fun&Games' }).url(),
+            'https://test.thing/ab/cd/events/Fun%26Games/venues'
+        );
         equal(
             route('events.venues.index', {
                 event: 'Fun&Games',
@@ -523,7 +538,7 @@ describe('current', () => {
                 'events.index': {
                     uri: 'events',
                     methods: ['GET', 'HEAD'],
-                }
+                },
             },
         };
 
