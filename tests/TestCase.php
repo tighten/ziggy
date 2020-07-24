@@ -14,6 +14,13 @@ class TestCase extends OrchestraTestCase
         ];
     }
 
+    protected function laravelVersion(int $v = null)
+    {
+        $version = (int) head(explode('.', app()->version()));
+
+        return isset($v) ? $version >= $v : $version;
+    }
+
     protected function noop()
     {
         return function () {

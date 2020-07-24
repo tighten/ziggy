@@ -2,7 +2,8 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
+use Illuminate\Support\Str;
+use Tightenco\Tests\TestCase;
 use Tightenco\Ziggy\BladeRouteGenerator;
 
 class BladeRouteGeneratorTest extends TestCase
@@ -12,7 +13,7 @@ class BladeRouteGeneratorTest extends TestCase
     {
         $generator = app(BladeRouteGenerator::class);
 
-        $this->assertStringContainsString('namedRoutes: []', $generator->generate());
+        $this->assertStringContainsString('"namedRoutes":[]', $generator->generate());
     }
 
     /** @test */
@@ -22,15 +23,21 @@ class BladeRouteGeneratorTest extends TestCase
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         $router->getRoutes()->refreshNameLookups();
 
-        $generator = (new BladeRouteGenerator($router));
+        $generator = (new BladeRouteGenerator);
 
-        $this->assertSame([
+        $expected = [
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
-        ], $generator->getRoutePayload()->toArray());
+        ];
+
+        if ($this->laravelVersion(7)) {
+            $expected['postComments.index']['bindings'] = [];
+        }
+
+        $this->assertStringContainsString(json_encode($expected), $generator->generate());
     }
 
     /** @test */
@@ -42,15 +49,21 @@ class BladeRouteGeneratorTest extends TestCase
         });
         $router->getRoutes()->refreshNameLookups();
 
-        $generator = (new BladeRouteGenerator($router));
+        $generator = (new BladeRouteGenerator);
 
-        $this->assertSame([
+        $expected = [
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => '{account}.myapp.com',
             ],
-        ], $generator->getRoutePayload()->toArray());
+        ];
+
+        if ($this->laravelVersion(7)) {
+            $expected['postComments.index']['bindings'] = [];
+        }
+
+        $this->assertStringContainsString(json_encode($expected), $generator->generate());
     }
 
     /** @test */
@@ -64,15 +77,17 @@ class BladeRouteGeneratorTest extends TestCase
         $router->post('posts', $this->noop())->name('posts.store');
         $router->getRoutes()->refreshNameLookups();
 
-        $generator = (new BladeRouteGenerator($router));
+        $generator = (new BladeRouteGenerator);
 
-        $routes = $generator->getRoutePayload()->toArray();
+        $payload = $generator->generate();
+        $array = json_decode(Str::after(Str::before($payload, ";\n\n"), ' = '), true);
 
-        $this->assertCount(4, $routes);
-        $this->assertArrayHasKey('posts.index', $routes);
-        $this->assertArrayHasKey('posts.show', $routes);
-        $this->assertArrayHasKey('posts.store', $routes);
-        $this->assertArrayHasKey('postComments.index', $routes);
+        $this->assertCount(4, $array['namedRoutes']);
+
+        $this->assertArrayHasKey('posts.index', $array['namedRoutes']);
+        $this->assertArrayHasKey('posts.show', $array['namedRoutes']);
+        $this->assertArrayHasKey('posts.store', $array['namedRoutes']);
+        $this->assertArrayHasKey('postComments.index', $array['namedRoutes']);
     }
 
     /** @test */

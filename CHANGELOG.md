@@ -11,11 +11,21 @@ Breaking changes are marked with ⚠️.
 **Added**
 
 - Document the `check()` method ([#294](https://github.com/tightenco/ziggy/pull/294)) and how to install and use Ziggy via `npm` and over a CDN ([#299](https://github.com/tightenco/ziggy/pull/299))
+- Add support for [custom scoped route model bindings](https://laravel.com/docs/7.x/routing#implicit-binding), e.g. `/users/{user}/posts/{post:slug}` ([#307](https://github.com/tightenco/ziggy/pull/307))
 
 **Changed**
 
 - ⚠️ Update `ziggy:generate` output path for Laravel 5.7+ `resources` directory structure, thanks [@Somethingideally](https://github.com/Somethingideally)! ([#269](https://github.com/tightenco/ziggy/pull/269))
 - ⚠️ Update automatic `id` parameter detection to check for higher priority named route parameters and allow passing `id` as a query parameter ([#301](https://github.com/tightenco/ziggy/pull/301))
+- ⚠️ Rename the `RoutePayload` class to `Ziggy` and remove its `compile` method in favour of constructing a new instance and calling `->toArray()` or `->toJson()` ([#305](https://github.com/tightenco/ziggy/pull/305))
+    - Resolve the application router instance internally instead of passing it into the constructor – `new Ziggy(...)` now takes only 2 arguments, `$group` and `$url`
+    - Change the default value of `basePort` from `false` to `null`
+    - Remove the `getRoutePayload()` methods on the `BladeRouteGenerator` and `CommandRouteGenerator` classes
+- ⚠️ Rename all `whitelist` and `blacklist` functionality to `only` and `except` ([#300](https://github.com/tightenco/ziggy/pull/300))
+
+**Removed**
+
+- ⚠️ Remove `Route` Facade macros `Route::only()` and `Route::except()` (previously `Route::whitelist()` and `Route::blacklist()`) ([#306](https://github.com/tightenco/ziggy/pull/306))
 
 **Fixed**
 

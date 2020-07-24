@@ -1,11 +1,4 @@
-var Ziggy = {
-    namedRoutes: {"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null}},
-    baseUrl: 'https://ziggy.dev/',
-    baseProtocol: 'https',
-    baseDomain: 'ziggy.dev',
-    basePort: false,
-    defaultParameters: [],
-};
+var Ziggy = {"baseUrl":"http:\/\/myapp.com\/","baseProtocol":"http","baseDomain":"myapp.com","basePort":null,"defaultParameters":[],"namedRoutes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null,"bindings":[]}}};
 
 if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
     for (var name in window.Ziggy.namedRoutes) {
