@@ -593,7 +593,7 @@ class ZiggyTest extends TestCase
             ];
         }
 
-        $json = '{"baseUrl":"http:\/\/myapp.com\/","baseProtocol":"http","baseDomain":"myapp.com","basePort":null,"defaultParameters":[],"namedRoutes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null' . ($this->laravelVersion(7) ? ',"bindings":[]' : '') . '},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"domain":null,"bindings":{"comment":"uuid"}}}}';
+        $json = '{"baseUrl":"http:\/\/myapp.com\/","baseProtocol":"http","baseDomain":"myapp.com","basePort":null,"defaultParameters":[],"namedRoutes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null' . ($this->laravelVersion(7) ? ',"bindings":[]},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"domain":null,"bindings":{"comment":"uuid"}}' : '') . '}}';
 
         $this->assertSame($expected, json_decode(json_encode($ziggy), true));
         $this->assertSame($json, json_encode($ziggy));
