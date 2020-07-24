@@ -346,15 +346,11 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        dump($expected);
-
         $this->addBindings($expected);
         $this->addPostCommentsRouteWithBindings($expected);
         if ($this->laravelVersion(7)) {
             $expected['postComments.show']['middleware'] = [];
         }
-
-        dump($expected);
 
         $this->assertEquals($expected, $routes);
     }
