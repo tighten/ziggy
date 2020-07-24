@@ -81,7 +81,7 @@ class Ziggy implements JsonSerializable
 
     public function only()
     {
-        return $this->filter(config('ziggy.only'), true);
+        return $this->filter(config('ziggy.only'));
     }
 
     /**
@@ -90,13 +90,7 @@ class Ziggy implements JsonSerializable
     public function filter($filters = [], $include = true)
     {
         return $this->routes->filter(function ($route, $name) use ($filters, $include) {
-            foreach ($filters as $filter) {
-                if (Str::is($filter, $name)) {
-                    return $include;
-                }
-            }
-
-            return ! $include;
+            return Str::is(Arr::wrap($filters), $name) ? $include : ! $include;
         });
     }
 
