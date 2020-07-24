@@ -90,28 +90,16 @@ const defaultZiggy = {
     },
 };
 
-delete window.location;
-window.location = {};
+beforeAll(() => {
+    delete window.location;
+    window.location = {};
+});
 
-window = { ...defaultWindow };
-global.window = { ...defaultWindow };
-global.Ziggy = { ...defaultZiggy };
-
-// beforeAll(() => {
-// });
-
-// beforeEach(() => {
-//     delete window.location;
-//     delete global.window;
-//     global.window = { ...defaultWindow };
-//     window = { ...defaultWindow };
-// });
-
-// afterEach(() => {
-//     global.Ziggy = { ...defaultZiggy };
-//     global.window = { ...defaultWindow };
-//     window = { ...defaultWindow };
-// });
+beforeEach(() => {
+    window.location = { ...defaultWindow.location };
+    global.window.location = { ...defaultWindow.location };
+    global.Ziggy = { ...defaultZiggy };
+});
 
 describe('string', () => {
     test('Router class is a string', () => {
@@ -189,8 +177,6 @@ describe('route()', () => {
             () => route('translatePosts.index').url(),
             /'locale' key is required/
         );
-
-        global.Ziggy = { ...defaultZiggy };
     });
 
     test('can generate a URL using an integer', () => {
@@ -314,16 +300,12 @@ describe('route()', () => {
         equal(route('posts.index'), 'https://ziggy.dev:81/posts');
         // route with required domain parameters
         equal(route('team.user.show', { team: 'tighten', id: 1 }), 'https://tighten.ziggy.dev:81/users/1');
-
-        global.Ziggy = { ...defaultZiggy };
     });
 
     test('can handle trailing path segments in the base URL', () => {
         global.Ziggy.baseUrl = 'https://test.thing/ab/cd/';
 
         equal(route('events.venues.index', 1), 'https://test.thing/ab/cd/events/1/venues');
-
-        global.Ziggy = { ...defaultZiggy };
     });
 
     test('can URL-encode named parameters', () => {
@@ -340,8 +322,6 @@ describe('route()', () => {
             }),
             'https://test.thing/ab/cd/events/Fun%26Games/venues?location=Blues%26Clues'
         );
-
-        global.Ziggy = { ...defaultZiggy };
     });
 
     test('can format an array of query parameters', () => {
@@ -418,19 +398,6 @@ describe('route()', () => {
         global.window.location.pathname = '/subfolder/ph/en/products/4';
 
         deepEqual(route().params, { country: 'ph', language: 'en', id: '4' });
-
-        global.window = { ...defaultWindow };
-        global.Ziggy = { ...defaultZiggy };
-    });
-
-    test('can extract domain parameters from the current URL', () => {
-        global.window.location.href = 'https://tighten.ziggy.dev/users/1';
-        global.window.location.hostname = 'tighten.ziggy.dev';
-        global.window.location.pathname = '/users/1';
-
-        deepEqual(route().params, { team: 'tighten', id: '1' });
-
-        global.window = { ...defaultWindow };
     });
 
     test('can extract named parameters from the current URL', () => {
@@ -444,8 +411,14 @@ describe('route()', () => {
         global.window.location.pathname = '/events/1/venues/2';
 
         deepEqual(route().params, { event: '1', venue: '2' });
+    });
 
-        global.window = { ...defaultWindow };
+    test('can extract domain parameters from the current URL', () => {
+        global.window.location.href = 'https://tighten.ziggy.dev/users/1';
+        global.window.location.hostname = 'tighten.ziggy.dev';
+        global.window.location.pathname = '/users/1';
+
+        deepEqual(route().params, { team: 'tighten', id: '1' });
     });
 });
 
@@ -461,16 +434,12 @@ describe('current', () => {
         global.window.location.pathname = '/events/1/venues/2';
 
         equal(route().current(), 'events.venues.show');
-
-        global.window = { ...defaultWindow };
     });
 
     test('can get the current route name on a route with multiple allowed HTTP methods', () => {
         global.window.location.pathname = '/posts/1';
 
         equal(route().current(), 'posts.show');
-
-        global.window = { ...defaultWindow };
     });
 
     test('can get the current route name with a missing protocol', () => {
@@ -478,8 +447,6 @@ describe('current', () => {
         global.window.location.protocol = '';
 
         equal(route().current(), 'events.venues.index');
-
-        global.window = { ...defaultWindow };
     });
 
     test('can get the current route name with a custom Ziggy object', () => {
@@ -500,9 +467,6 @@ describe('current', () => {
         };
 
         equal(route(undefined, undefined, undefined, customZiggy).current(), 'events.index');
-
-        global.Ziggy = { ...defaultZiggy };
-        global.window = { ...defaultWindow };
     });
 
     test('can check the current route name against a pattern', () => {
@@ -526,24 +490,18 @@ describe('current', () => {
         assert(route().current('*.index'));
         // https://github.com/tightenco/ziggy/pull/296
         assert(!route().current('hosting.*'));
-
-        global.window = { ...defaultWindow };
     });
 
     test('can check the current route name on a route with filled optional parameters', () => {
         global.window.location.pathname = '/optional/1/foo';
 
         assert(route().current('optional'));
-
-        global.window = { ...defaultWindow };
     });
 
     test('can check the current route name on a route with empty optional parameters', () => {
         global.window.location.pathname = '/optional/1';
 
         assert(route().current('optional'));
-
-        global.window = { ...defaultWindow };
     });
 
     test.todo('can check the current route name and parameters');
@@ -559,16 +517,12 @@ describe('current', () => {
         global.window.location.pathname = '/posts/1';
 
         assert(!route().current('posts.update'));
-
-        global.window = { ...defaultWindow };
     });
 
     test('can ignore trailing slashes', () => {
         global.window.location.pathname = '/events/1/venues/';
 
         equal(route().current(), 'events.venues.index');
-
-        global.window = { ...defaultWindow };
     });
 
     test.todo('can ignore query parameters');
