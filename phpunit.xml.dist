@@ -6,6 +6,6 @@
         </testsuite>
     </testsuites>
     <php>
-        <env name="APP_URL" value="https://ziggy.dev"/>
+        <env name="APP_URL" value="http://ziggy.dev"/>
     </php>
 </phpunit>

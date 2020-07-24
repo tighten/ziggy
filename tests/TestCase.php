@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Closure;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Tightenco\Ziggy\ZiggyServiceProvider;
 
@@ -9,9 +10,7 @@ class TestCase extends OrchestraTestCase
 {
     protected function getPackageProviders($app)
     {
-        return [
-            ZiggyServiceProvider::class,
-        ];
+        return [ZiggyServiceProvider::class];
     }
 
     protected function laravelVersion(int $v = null)
@@ -21,7 +20,7 @@ class TestCase extends OrchestraTestCase
         return isset($v) ? $version >= $v : $version;
     }
 
-    protected function noop()
+    protected function noop(): Closure
     {
         return function () {
             return '';

@@ -7,8 +7,17 @@ use Tests\TestCase;
 
 class CommandRouteGeneratorTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        if (file_exists(base_path('resources/js')) && is_dir(base_path('resources/js'))) {
+            array_map(fn ($file) => unlink($file), glob(base_path('resources/js/*')));
+        }
+
+        parent::tearDown();
+    }
+
     /** @test */
-    public function file_is_created_when_ziggy_generate_is_called()
+    public function can_create_file()
     {
         Artisan::call('ziggy:generate');
 
@@ -16,7 +25,7 @@ class CommandRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function file_is_created_when_ziggy_generate_is_called_from_outside_project_root()
+    public function can_create_file_in_correct_location_when_called_outside_project_root()
     {
         chdir('..');
         $this->assertNotEquals(base_path(), getcwd());
@@ -27,7 +36,7 @@ class CommandRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function file_is_created_with_the_expected_structure_when_named_routes_exist()
+    public function can_generate_file_with_named_routes()
     {
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
@@ -46,7 +55,7 @@ class CommandRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function file_is_created_with_a_custom_url()
+    public function can_generate_file_with_custom_url()
     {
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
@@ -65,17 +74,14 @@ class CommandRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function file_is_created_with_the_expected_group()
+    public function can_generate_file_with_config_applied()
     {
-        app()['config']->set('ziggy', [
+        config(['ziggy' => [
             'except' => ['admin.*'],
-            'groups' => [
-                'admin' => ['admin.*'],
-            ],
-        ]);
+        ]]);
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
-        $router->get('admin', $this->noop())->name('admin.dashboard');
+        $router->get('admin', $this->noop())->name('admin.dashboard'); // Excluded, should NOT be present in file
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate');
@@ -88,6 +94,21 @@ class CommandRouteGeneratorTest extends TestCase
                 file_get_contents(base_path('resources/js/ziggy.js'))
             );
         }
+    }
+
+    /** @test */
+    public function can_generate_file_for_specific_configured_route_group()
+    {
+        config(['ziggy' => [
+            'except' => ['admin.*'],
+            'groups' => [
+                'admin' => ['admin.*'],
+            ],
+        ]]);
+        $router = app('router');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->get('admin', $this->noop())->name('admin.dashboard');
+        $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate', ['path' => 'resources/js/admin.js', '--group' => 'admin']);
 
@@ -99,14 +120,5 @@ class CommandRouteGeneratorTest extends TestCase
                 file_get_contents(base_path('resources/js/admin.js'))
             );
         }
-    }
-
-    protected function tearDown(): void
-    {
-        if (file_exists(base_path('resources/js')) && is_dir(base_path('resources/js'))) {
-            array_map(fn ($file) => unlink($file), glob(base_path('resources/js/*')));
-        }
-
-        parent::tearDown();
     }
 }
