@@ -27,7 +27,7 @@ Before submitting a pull request:
 
 ## Tests
 
-Please write tests for any fixes or new features you contribute. We use [Orchestra Testbench](http://orchestraplatform.com/docs/latest/components/testbench/) as our base PHPUnit test for PHP and [AVA](https://github.com/avajs/ava) for testing our JavaScript.
+Please write tests for any fixes or new features you contribute. We use [Orchestra Testbench](http://orchestraplatform.com/docs/latest/components/testbench/) as our base PHPUnit test for PHP and [Jest](https://jestjs.io/) for testing our JavaScript.
 
 You can run PHP tests with `vendor/bin/phpunit` and JavaScript tests with `npm test`.
 

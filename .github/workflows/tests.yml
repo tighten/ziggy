@@ -60,10 +60,10 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Run PHPUnit tests
+      - name: Run PHP tests
         run: vendor/bin/phpunit --testdox --colors=always
 
-      - name: Run Ava tests
+      - name: Run Javascript tests
         run: npm test
 
 
