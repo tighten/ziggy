@@ -348,7 +348,9 @@ class ZiggyTest extends TestCase
 
         $this->addBindings($expected);
         $this->addPostCommentsRouteWithBindings($expected);
-        $expected['postComments.show']['middleware'] = [];
+        if ($this->laravelVersion(7)) {
+            $expected['postComments.show']['middleware'] = [];
+        }
 
         $this->assertEquals($expected, $routes);
     }
@@ -402,7 +404,9 @@ class ZiggyTest extends TestCase
 
         $this->addBindings($expected);
         $this->addPostCommentsRouteWithBindings($expected);
-        $expected['postComments.show']['middleware'] = [];
+        if ($this->laravelVersion(7)) {
+            $expected['postComments.show']['middleware'] = [];
+        }
 
         $this->assertEquals($expected, $routes);
     }
