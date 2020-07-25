@@ -85,7 +85,12 @@ class RoutePayload
 
     protected function nameKeyedRoutes()
     {
-        return collect($this->router->getRoutes()->getRoutesByName())
+        [$fallbacks, $routes] = collect($this->router->getRoutes()->getRoutesByName())
+            ->partition(function ($route) {
+                return $route->isFallback;
+            });
+
+        return $routes->merge($fallbacks)
             ->map(function ($route) {
                 if ($this->isListedAs($route, 'blacklist')) {
                     $this->appendRouteToList($route->getName(), 'blacklist');
