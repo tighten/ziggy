@@ -7,9 +7,12 @@
         "routes",
         "ziggy"
     ],
-    "module": "src/js/route.js",
-    "main": "dist/js/route.js",
-    "browser": "dist/js/route.min.js",
+    "source": "src/js/route.js",
+    "main": "dist/route.js",
+    "umd:main": "dist/route.js",
+    "unpkg": "dist/route.js",
+    "module": "dist/route.m.js",
+    "esmodule": "dist/route.es.js",
     "files": [
         "src/js",
         "dist"
@@ -34,7 +37,7 @@
     },
     "homepage": "https://github.com/tightenco/ziggy#readme",
     "scripts": {
-        "build": "NODE_ENV=production webpack --progress",
+        "build": "microbundle --name route --format modern,es,umd",
         "test": "jest",
         "prepublishOnly": "npm run build"
     },
@@ -45,6 +48,7 @@
         "babel-loader": "^8.0.6",
         "babel-preset-power-assert": "^3.0.0",
         "jest": "^26.1.0",
+        "microbundle": "^0.12.3",
         "power-assert": "^1.6.1",
         "unminified-webpack-plugin": "^2.0.0",
         "webpack": "^4.39.3",
