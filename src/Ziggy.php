@@ -99,7 +99,12 @@ class Ziggy implements JsonSerializable
      */
     protected function nameKeyedRoutes()
     {
-        return collect(app('router')->getRoutes()->getRoutesByName())
+        [$fallbacks, $routes] = collect(app('router')->getRoutes()->getRoutesByName())
+            ->partition(function ($route) {
+                return $route->isFallback;
+            });
+
+        return $routes->merge($fallbacks)
             ->map(function ($route) {
                 if ($this->isListedAs($route, 'except')) {
                     $this->appendRouteToList($route->getName(), 'except');

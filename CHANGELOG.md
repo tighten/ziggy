@@ -33,6 +33,7 @@ Breaking changes are marked with ⚠️.
 - Fix automatic `id` parameter detection by also excluding routes with an _optional_ `id` parameter (`{id?}`), thanks [@Livijn](https://github.com/Livijn)! ([#263](https://github.com/tightenco/ziggy/pull/263))
 - Fix port not being added to URL for routes with subdomains ([#293](https://github.com/tightenco/ziggy/pull/293))
 - Fix getting parameters of routes in apps installed in subfolders ([#302](https://github.com/tightenco/ziggy/pull/302))
+- Ensure fallback routes are always last, thanks [@davejamesmiller](https://github.com/davejamesmiller)! ([#310](https://github.com/tightenco/ziggy/pull/310))
 
 ## [0.9.4] - 2020-06-05
 

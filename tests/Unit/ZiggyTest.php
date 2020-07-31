@@ -82,7 +82,7 @@ class ZiggyTest extends TestCase
 
         $this->addBindings($expected);
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray());
     }
 
     /** @test */
@@ -107,7 +107,7 @@ class ZiggyTest extends TestCase
         $this->addBindings($expected);
         $this->addPostCommentsRouteWithBindings($expected);
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray());
     }
 
     /** @test */
@@ -138,7 +138,7 @@ class ZiggyTest extends TestCase
 
         $this->addBindings($expected);
 
-        $this->assertEquals($expected, $routes);
+        $this->assertSame($expected, $routes);
     }
 
     /** @test */
@@ -165,7 +165,7 @@ class ZiggyTest extends TestCase
         $this->addBindings($expected);
         $this->addPostCommentsRouteWithBindings($expected);
 
-        $this->assertEquals($expected, $routes);
+        $this->assertSame($expected, $routes);
     }
 
     /** @test */
@@ -213,7 +213,7 @@ class ZiggyTest extends TestCase
         $this->addBindings($expected);
         $this->addPostCommentsRouteWithBindings($expected);
 
-        $this->assertEquals($expected, $routes);
+        $this->assertSame($expected, $routes);
     }
 
     /** @test */
@@ -251,7 +251,7 @@ class ZiggyTest extends TestCase
 
         $this->addBindings($expected);
 
-        $this->assertEquals($expected, $routes);
+        $this->assertSame($expected, $routes);
     }
 
     /** @test */
@@ -296,7 +296,7 @@ class ZiggyTest extends TestCase
         $this->addBindings($expected);
         $this->addPostCommentsRouteWithBindings($expected);
 
-        $this->assertEquals($expected, $routes);
+        $this->assertSame($expected, $routes);
     }
 
     /** @test */
@@ -409,6 +409,73 @@ class ZiggyTest extends TestCase
         }
 
         $this->assertEquals($expected, $routes);
+    }
+
+    /** @test */
+    public function can_order_fallback_routes_last()
+    {
+        $ziggy = new Ziggy;
+        app('router')->fallback($this->noop())->name('fallback');
+        app('router')->get('/users', $this->noop())->name('users.index');
+
+        app('router')->getRoutes()->refreshNameLookups();
+        $routes = (new Ziggy)->toArray()['namedRoutes'];
+
+        $expected = [
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+                'domain' => null,
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+        ];
+
+        $this->addBindings($expected);
+        $this->addPostCommentsRouteWithBindings($expected);
+
+        $expected['users.index'] = [
+            'uri' => 'users',
+            'methods' => ['GET', 'HEAD'],
+            'domain' => null,
+        ];
+        if ($this->laravelVersion(7)) {
+            $expected['users.index']['bindings'] = [];
+        }
+
+        $expected['fallback'] = [
+            'uri' => '{fallbackPlaceholder}',
+            'methods' => ['GET', 'HEAD'],
+            'domain' => null,
+        ];
+        if ($this->laravelVersion(7)) {
+            $expected['fallback']['bindings'] = [];
+        }
+
+        $this->assertSame($expected, $routes);
     }
 
     /** @test */
