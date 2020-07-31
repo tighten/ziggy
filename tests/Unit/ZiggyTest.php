@@ -82,7 +82,7 @@ class ZiggyTest extends TestCase
 
         $this->addBindings($expected);
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray());
     }
 
     /** @test */
@@ -107,7 +107,7 @@ class ZiggyTest extends TestCase
         $this->addBindings($expected);
         $this->addPostCommentsRouteWithBindings($expected);
 
-        $this->assertEquals($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray());
     }
 
     /** @test */
@@ -138,7 +138,7 @@ class ZiggyTest extends TestCase
 
         $this->addBindings($expected);
 
-        $this->assertEquals($expected, $routes);
+        $this->assertSame($expected, $routes);
     }
 
     /** @test */
@@ -165,7 +165,7 @@ class ZiggyTest extends TestCase
         $this->addBindings($expected);
         $this->addPostCommentsRouteWithBindings($expected);
 
-        $this->assertEquals($expected, $routes);
+        $this->assertSame($expected, $routes);
     }
 
     /** @test */
@@ -213,7 +213,7 @@ class ZiggyTest extends TestCase
         $this->addBindings($expected);
         $this->addPostCommentsRouteWithBindings($expected);
 
-        $this->assertEquals($expected, $routes);
+        $this->assertSame($expected, $routes);
     }
 
     /** @test */
@@ -251,7 +251,7 @@ class ZiggyTest extends TestCase
 
         $this->addBindings($expected);
 
-        $this->assertEquals($expected, $routes);
+        $this->assertSame($expected, $routes);
     }
 
     /** @test */
@@ -296,7 +296,7 @@ class ZiggyTest extends TestCase
         $this->addBindings($expected);
         $this->addPostCommentsRouteWithBindings($expected);
 
-        $this->assertEquals($expected, $routes);
+        $this->assertSame($expected, $routes);
     }
 
     /** @test */
@@ -452,17 +452,18 @@ class ZiggyTest extends TestCase
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
-            'users.index' => [
-                'uri' => 'users',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-            ],
         ];
 
         $this->addBindings($expected);
         $this->addPostCommentsRouteWithBindings($expected);
+
+        $expected['users.index'] = [
+            'uri' => 'users',
+            'methods' => ['GET', 'HEAD'],
+            'domain' => null,
+        ];
         if ($this->laravelVersion(7)) {
-            $expected['postComments.show']['middleware'] = [];
+            $expected['users.index']['bindings'] = [];
         }
 
         $expected['fallback'] = [
@@ -470,6 +471,9 @@ class ZiggyTest extends TestCase
             'methods' => ['GET', 'HEAD'],
             'domain' => null,
         ];
+        if ($this->laravelVersion(7)) {
+            $expected['fallback']['bindings'] = [];
+        }
 
         $this->assertSame($expected, $routes);
     }
