@@ -24,5 +24,5 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npm install
-          npm --no-git-tag-version version $(git describe --tags) --allow-same-version
+          npm --no-git-tag-version version $(git for-each-ref --sort=-taggerdate --count=1 --format '%(tag)' refs/tags) --allow-same-version
           npm publish --access public

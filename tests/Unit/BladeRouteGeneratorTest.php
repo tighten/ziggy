@@ -1,15 +1,15 @@
 <?php
 
-namespace Tightenco\Tests\Unit;
+namespace Tests\Unit;
 
 use Illuminate\Support\Str;
-use Tightenco\Tests\TestCase;
+use Tests\TestCase;
 use Tightenco\Ziggy\BladeRouteGenerator;
 
 class BladeRouteGeneratorTest extends TestCase
 {
     /** @test */
-    function generator_at_least_vaguely_works_and_outputs_something_vaguely_right_ish()
+    public function can_resolve_generator_from_container()
     {
         $generator = app(BladeRouteGenerator::class);
 
@@ -17,19 +17,32 @@ class BladeRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    function generator_outputs_non_domain_named_routes_with_expected_structure()
+    public function can_generate_named_routes()
     {
         $router = app('router');
-
-        // Named. Should end up in JSON
-        $router->get('/posts/{post}/comments', function () {
-            return '';
-        })
-            ->name('postComments.index');
-
+        $router->get('/', $this->noop()); // Not named, should NOT be included in JSON output
+        $router->get('posts', $this->noop())->name('posts.index');
+        $router->get('posts/{post}', $this->noop())->name('posts.show');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->post('posts', $this->noop())->name('posts.store');
         $router->getRoutes()->refreshNameLookups();
 
-        $generator = (new BladeRouteGenerator);
+        $output = (new BladeRouteGenerator)->generate();
+        $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
+
+        $this->assertCount(4, $ziggy['namedRoutes']);
+        $this->assertArrayHasKey('posts.index', $ziggy['namedRoutes']);
+        $this->assertArrayHasKey('posts.show', $ziggy['namedRoutes']);
+        $this->assertArrayHasKey('posts.store', $ziggy['namedRoutes']);
+        $this->assertArrayHasKey('postComments.index', $ziggy['namedRoutes']);
+    }
+
+    /** @test */
+    public function can_generate_routes_for_default_domain()
+    {
+        $router = app('router');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->getRoutes()->refreshNameLookups();
 
         $expected = [
             'postComments.index' => [
@@ -43,25 +56,17 @@ class BladeRouteGeneratorTest extends TestCase
             $expected['postComments.index']['bindings'] = [];
         }
 
-        $this->assertStringContainsString(json_encode($expected), $generator->generate());
+        $this->assertStringContainsString(json_encode($expected), (new BladeRouteGenerator)->generate());
     }
 
     /** @test */
-    function generator_outputs_domain_as_defined()
+    public function can_generate_routes_for_custom_domain()
     {
         $router = app('router');
-
-        // Named. Should end up in JSON
         $router->domain('{account}.myapp.com')->group(function () use ($router) {
-            $router->get('/posts/{post}/comments', function () {
-                return '';
-            })
-                ->name('postComments.index');
+            $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         });
-
         $router->getRoutes()->refreshNameLookups();
-
-        $generator = (new BladeRouteGenerator);
 
         $expected = [
             'postComments.index' => [
@@ -75,60 +80,15 @@ class BladeRouteGeneratorTest extends TestCase
             $expected['postComments.index']['bindings'] = [];
         }
 
-        $this->assertStringContainsString(json_encode($expected), $generator->generate());
+        $this->assertStringContainsString(json_encode($expected), (new BladeRouteGenerator)->generate());
     }
 
     /** @test */
-    function generator_returns_only_named_routes()
+    public function can_set_csp_nonce()
     {
-        $router = app('router');
-
-        // Not named. Shouldn't end up in JSON
-        $router->get('/', function () {
-            return '';
-        });
-
-        // Named. Should end up in JSON
-        $router->get('/posts', function () {
-            return '';
-        })
-            ->name('posts.index');
-        $router->get('/posts/{post}', function () {
-            return '';
-        })
-            ->name('posts.show');
-        $router->get('/posts/{post}/comments', function () {
-            return '';
-        })
-            ->name('postComments.index');
-        $router->post('/posts', function () {
-            return '';
-        })
-            ->name('posts.store');
-
-        $router->getRoutes()->refreshNameLookups();
-
-        $generator = (new BladeRouteGenerator);
-
-        $payload = $generator->generate();
-        $array = json_decode(Str::after(Str::before($payload, ";\n\n"), ' = '), true);
-
-        $this->assertCount(4, $array['namedRoutes']);
-
-        $this->assertArrayHasKey('posts.index', $array['namedRoutes']);
-        $this->assertArrayHasKey('posts.show', $array['namedRoutes']);
-        $this->assertArrayHasKey('posts.store', $array['namedRoutes']);
-        $this->assertArrayHasKey('postComments.index', $array['namedRoutes']);
-    }
-
-    /** @test */
-    function generator_can_set_csp_nonce()
-    {
-        $generator = app(BladeRouteGenerator::class);
-
         $this->assertStringContainsString(
             '<script type="text/javascript" nonce="supercalifragilisticexpialidocious">',
-            $generator->generate(false, 'supercalifragilisticexpialidocious')
+            (new BladeRouteGenerator)->generate(false, 'supercalifragilisticexpialidocious')
         );
     }
 }

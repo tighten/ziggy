@@ -1,64 +1,66 @@
 <?php
 
-namespace Tightenco\Tests\Unit;
+namespace Tests\Unit;
 
-use Tightenco\Tests\TestCase;
+use Tests\TestCase;
 use Tightenco\Ziggy\Ziggy;
 
 class ZiggyTest extends TestCase
 {
-    protected $router;
-
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->router = app('router');
-        $this->router->get('/home', function () {
-            return '';
-        })
-            ->name('home');
+        $router = app('router');
 
-        $this->router->get('/posts', function () {
-            return '';
-        })
-            ->name('posts.index');
-
-        $this->router->get('/posts/{post}', function () {
-            return '';
-        })
-            ->name('posts.show');
-
-        $this->router->get('/posts/{post}/comments', function () {
-            return '';
-        })
-            ->name('postComments.index');
-
-        $this->router->post('/posts', function () {
-            return '';
-        })
-            ->name('posts.store')->middleware(['auth', 'role:admin']);
-
-        $this->router->get('/admin/users', function () {
-            return '';
-        })
-            ->name('admin.users.index')->middleware('role:admin');
+        $router->get('home', $this->noop())->name('home');
+        $router->get('posts', $this->noop())->name('posts.index');
+        $router->get('posts/{post}', $this->noop())->name('posts.show');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->post('posts', $this->noop())->middleware(['auth', 'role:admin'])->name('posts.store');
+        $router->get('admin/users', $this->noop())->middleware(['role:admin'])->name('admin.users.index');
 
         if ($this->laravelVersion(7)) {
-            $this->router->get('/posts/{post}/comments/{comment:uuid}', function () {
-                return '';
-            })->name('postComments.show');
+            $router->get('/posts/{post}/comments/{comment:uuid}', $this->noop())->name('postComments.show');
         }
 
-        $this->router->getRoutes()->refreshNameLookups();
+        $router->getRoutes()->refreshNameLookups();
+    }
+
+    /**
+     * If running Laravel 7 or higher, add a 'bindings' key to every route.
+     */
+    protected function addBindings(array &$routes): void
+    {
+        if ($this->laravelVersion(7)) {
+            $routes = array_map(function ($route) {
+                return array_merge($route, ['bindings' => []]);
+            }, $routes);
+        }
+    }
+
+    /**
+     * If running Laravel 7 or higher, the 'postComments.show' route.
+     */
+    protected function addPostCommentsRouteWithBindings(array &$routes): void
+    {
+        if ($this->laravelVersion(7)) {
+            $routes['postComments.show'] = [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ];
+        }
     }
 
     /** @test */
-    public function only_matching_routes_included_with_include_enabled()
+    public function can_filter_to_only_include_routes_matching_a_pattern()
     {
-        $routePayload = new Ziggy;
-        $filters = ['posts.s*', 'home'];
-        $routes = $routePayload->filter($filters, true);
+        $ziggy = new Ziggy;
+        $routes = $ziggy->filter(['posts.s*', 'home'], true);
 
         $expected = [
             'home' => [
@@ -78,21 +80,16 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        if ($this->laravelVersion(7)) {
-            foreach ($expected as $key => $route) {
-                $expected[$key]['bindings'] = [];
-            }
-        }
+        $this->addBindings($expected);
 
         $this->assertEquals($expected, $routes->toArray());
     }
 
     /** @test */
-    public function only_matching_routes_excluded_with_exclude_enabled()
+    public function can_filter_to_exclude_routes_matching_a_pattern()
     {
-        $routePayload = new Ziggy;
-        $filters = ['posts.s*', 'home', 'admin.*'];
-        $routes = $routePayload->filter($filters, false);
+        $ziggy = new Ziggy;
+        $routes = $ziggy->filter(['posts.s*', 'home', 'admin.*'], false);
 
         $expected = [
             'posts.index' => [
@@ -107,31 +104,18 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        if ($this->laravelVersion(7)) {
-            foreach ($expected as $key => $route) {
-                $expected[$key]['bindings'] = [];
-            }
-
-            $expected['postComments.show'] = [
-                'uri' => 'posts/{post}/comments/{comment}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [
-                    'comment' => 'uuid',
-                ],
-            ];
-        }
+        $this->addBindings($expected);
+        $this->addPostCommentsRouteWithBindings($expected);
 
         $this->assertEquals($expected, $routes->toArray());
     }
 
     /** @test */
-    public function existence_of_only_config_causes_routes_to_be_included()
+    public function can_set_included_routes_using_only_config()
     {
-        app()['config']->set('ziggy', [
+        config(['ziggy' => [
             'only' => ['posts.s*', 'home'],
-        ]);
-
+        ]]);
         $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
@@ -152,22 +136,17 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        if ($this->laravelVersion(7)) {
-            foreach ($expected as $key => $route) {
-                $expected[$key]['bindings'] = [];
-            }
-        }
+        $this->addBindings($expected);
 
         $this->assertEquals($expected, $routes);
     }
 
     /** @test */
-    public function existence_of_except_config_causes_routes_to_be_excluded()
+    public function can_set_excluded_routes_using_except_config()
     {
-        app()['config']->set('ziggy', [
+        config(['ziggy' => [
             'except' => ['posts.s*', 'home', 'admin.*'],
-        ]);
-
+        ]]);
         $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
@@ -183,52 +162,39 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        if ($this->laravelVersion(7)) {
-            foreach ($expected as $key => $route) {
-                $expected[$key]['bindings'] = [];
-            }
-
-            $expected['postComments.show'] = [
-                'uri' => 'posts/{post}/comments/{comment}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [
-                    'comment' => 'uuid',
-                ],
-            ];
-        }
+        $this->addBindings($expected);
+        $this->addPostCommentsRouteWithBindings($expected);
 
         $this->assertEquals($expected, $routes);
     }
 
     /** @test */
-    public function existence_of_both_configs_returns_unfiltered_routes()
+    public function returns_unfiltered_routes_when_both_only_and_except_configs_set()
     {
-        app()['config']->set('ziggy', [
+        config(['ziggy' => [
             'except' => ['posts.s*'],
             'only' => ['home'],
-        ]);
-
+        ]]);
         $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
-            'posts.index' => [
-                'uri' => 'posts',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-            ],
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-            ],
             'home' => [
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
@@ -244,33 +210,20 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        if ($this->laravelVersion(7)) {
-            foreach ($expected as $key => $route) {
-                $expected[$key]['bindings'] = [];
-            }
-
-            $expected['postComments.show'] = [
-                'uri' => 'posts/{post}/comments/{comment}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [
-                    'comment' => 'uuid',
-                ],
-            ];
-        }
+        $this->addBindings($expected);
+        $this->addPostCommentsRouteWithBindings($expected);
 
         $this->assertEquals($expected, $routes);
     }
 
     /** @test */
-    public function only_matching_routes_included_with_group_enabled()
+    public function can_set_included_routes_using_groups_config()
     {
-        app()['config']->set('ziggy', [
+        config(['ziggy' => [
             'groups' => [
                 'authors' => ['home', 'posts.*'],
             ],
-        ]);
-
+        ]]);
         $routes = (new Ziggy('authors'))->toArray()['namedRoutes'];
 
         $expected = [
@@ -296,38 +249,35 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        if ($this->laravelVersion(7)) {
-            foreach ($expected as $key => $route) {
-                $expected[$key]['bindings'] = [];
-            }
-        }
+        $this->addBindings($expected);
 
         $this->assertEquals($expected, $routes);
     }
 
     /** @test */
-    public function non_existence_of_group_returns_unfiltered_routes()
+    public function can_ignore_passed_group_not_set_in_config()
     {
+        // The 'authors' group doesn't exist
         $routes = (new Ziggy('authors'))->toArray()['namedRoutes'];
 
         $expected = [
-            'posts.index' => [
-                'uri' => 'posts',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-            ],
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-            ],
             'home' => [
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
             ],
@@ -343,54 +293,41 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        if ($this->laravelVersion(7)) {
-            foreach ($expected as $key => $route) {
-                $expected[$key]['bindings'] = [];
-            }
-
-            $expected['postComments.show'] = [
-                'uri' => 'posts/{post}/comments/{comment}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [
-                    'comment' => 'uuid',
-                ],
-            ];
-        }
+        $this->addBindings($expected);
+        $this->addPostCommentsRouteWithBindings($expected);
 
         $this->assertEquals($expected, $routes);
     }
 
     /** @test */
-    public function retrieves_middleware_if_config_is_set()
+    public function can_include_middleware()
     {
-        app()['config']->set('ziggy', [
+        config(['ziggy' => [
             'middleware' => true,
-        ]);
-
+        ]]);
         $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
-            'posts.index' => [
-                'uri' => 'posts',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'middleware' => [],
-            ],
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'middleware' => [],
-            ],
             'home' => [
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
                 'middleware' => [],
             ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
                 'middleware' => [],
@@ -409,55 +346,44 @@ class ZiggyTest extends TestCase
             ],
         ];
 
+        $this->addBindings($expected);
+        $this->addPostCommentsRouteWithBindings($expected);
         if ($this->laravelVersion(7)) {
-            foreach ($expected as $key => $route) {
-                $expected[$key]['bindings'] = [];
-            }
-
-            $expected['postComments.show'] = [
-                'uri' => 'posts/{post}/comments/{comment}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'middleware' => [],
-                'bindings' => [
-                    'comment' => 'uuid',
-                ],
-            ];
+            $expected['postComments.show']['middleware'] = [];
         }
 
         $this->assertEquals($expected, $routes);
     }
 
     /** @test */
-    public function retrieves_only_configured_middleware()
+    public function can_include_only_middleware_set_in_config()
     {
-        app()['config']->set('ziggy', [
+        config(['ziggy' => [
             'middleware' => ['auth'],
-        ]);
-
+        ]]);
         $routes = (new Ziggy)->toArray()['namedRoutes'];
 
         $expected = [
-            'posts.index' => [
-                'uri' => 'posts',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'middleware' => [],
-            ],
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'middleware' => [],
-            ],
             'home' => [
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
                 'middleware' => [],
             ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'middleware' => [],
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
                 'middleware' => [],
@@ -476,20 +402,10 @@ class ZiggyTest extends TestCase
             ],
         ];
 
+        $this->addBindings($expected);
+        $this->addPostCommentsRouteWithBindings($expected);
         if ($this->laravelVersion(7)) {
-            foreach ($expected as $key => $route) {
-                $expected[$key]['bindings'] = [];
-            }
-
-            $expected['postComments.show'] = [
-                'uri' => 'posts/{post}/comments/{comment}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'middleware' => [],
-                'bindings' => [
-                    'comment' => 'uuid',
-                ],
-            ];
+            $expected['postComments.show']['middleware'] = [];
         }
 
         $this->assertEquals($expected, $routes);
@@ -501,9 +417,9 @@ class ZiggyTest extends TestCase
         $ziggy = new Ziggy;
 
         $expected = [
-            'baseUrl' => 'http://myapp.com/',
+            'baseUrl' => 'http://ziggy.dev/',
             'baseProtocol' => 'http',
-            'baseDomain' => 'myapp.com',
+            'baseDomain' => 'ziggy.dev',
             'basePort' => null,
             'defaultParameters' => [],
             'namedRoutes' => [
@@ -540,20 +456,8 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        if ($this->laravelVersion(7)) {
-            foreach ($expected['namedRoutes'] as $key => $route) {
-                $expected['namedRoutes'][$key]['bindings'] = [];
-            }
-
-            $expected['namedRoutes']['postComments.show'] = [
-                'uri' => 'posts/{post}/comments/{comment}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [
-                    'comment' => 'uuid',
-                ],
-            ];
-        }
+        $this->addBindings($expected['namedRoutes']);
+        $this->addPostCommentsRouteWithBindings($expected['namedRoutes']);
 
         $this->assertSame($expected, $ziggy->toArray());
         $this->assertSame($expected, $ziggy->jsonSerialize());
@@ -562,13 +466,14 @@ class ZiggyTest extends TestCase
     /** @test */
     public function route_payload_can_json_itself()
     {
-        app('config')->set('ziggy', ['only' => ['postComments.*']]);
-        $ziggy = new Ziggy;
+        config(['ziggy' => [
+            'only' => ['postComments.*'],
+        ]]);
 
         $expected = [
-            'baseUrl' => 'http://myapp.com/',
+            'baseUrl' => 'http://ziggy.dev/',
             'baseProtocol' => 'http',
-            'baseDomain' => 'myapp.com',
+            'baseDomain' => 'ziggy.dev',
             'basePort' => null,
             'defaultParameters' => [],
             'namedRoutes' => [
@@ -580,31 +485,32 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        if ($this->laravelVersion(7)) {
-            $expected['namedRoutes']['postComments.index']['bindings'] = [];
+        $this->addBindings($expected['namedRoutes']);
+        $this->addPostCommentsRouteWithBindings($expected['namedRoutes']);
 
-            $expected['namedRoutes']['postComments.show'] = [
-                'uri' => 'posts/{post}/comments/{comment}',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => null,
-                'bindings' => [
-                    'comment' => 'uuid',
-                ],
-            ];
+        $json = '{"baseUrl":"http:\/\/ziggy.dev\/","baseProtocol":"http","baseDomain":"ziggy.dev","basePort":null,"defaultParameters":[],"namedRoutes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null}}}';
+
+        if ($this->laravelVersion(7)) {
+            $json = str_replace(
+                '"domain":null}',
+                '"domain":null,"bindings":[]},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"domain":null,"bindings":{"comment":"uuid"}}',
+                $json,
+            );
         }
 
-        $json = '{"baseUrl":"http:\/\/myapp.com\/","baseProtocol":"http","baseDomain":"myapp.com","basePort":null,"defaultParameters":[],"namedRoutes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null' . ($this->laravelVersion(7) ? ',"bindings":[]},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"domain":null,"bindings":{"comment":"uuid"}' : '') . '}}}';
-
-        $this->assertSame($expected, json_decode(json_encode($ziggy), true));
-        $this->assertSame($json, json_encode($ziggy));
-        $this->assertSame($json, $ziggy->toJson());
+        $this->assertSame($expected, json_decode(json_encode(new Ziggy), true));
+        $this->assertSame($json, json_encode(new Ziggy));
+        $this->assertSame($json, (new Ziggy)->toJson());
     }
 
     /** @test */
-    public function route_payload_can_automatically_json_itself_as_part_of_a_response()
+    public function route_payload_can_automatically_json_itself_in_a_response()
     {
-        app('config')->set('ziggy', ['only' => ['postComments.*']]);
-        $this->router->get('json', function () {
+        config(['ziggy' => [
+            'only' => ['postComments.*'],
+        ]]);
+
+        app('router')->get('json', function () {
             return response()->json(new Ziggy);
         });
 

@@ -12,21 +12,25 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      fail-fast: false
       matrix:
-        php: [7.2, 7.3, 7.4]
+        php: [7.3, 7.4]
         laravel: [5.6.*, 5.7.*, 5.8.*, 6.*, 7.*]
         include:
           - laravel: 5.6.*
             testbench: 3.6.*
+            phpunit: 7.*
           - laravel: 5.7.*
             testbench: 3.7.*
+            phpunit: 7.*
           - laravel: 5.8.*
             testbench: 3.8.*
+            phpunit: 8.*
           - laravel: 6.*
             testbench: 4.*
+            phpunit: 9.*
           - laravel: 7.*
             testbench: 5.*
+            phpunit: 9.*
 
     steps:
       - name: Checkout
@@ -53,17 +57,17 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "phpunit/phpunit:${{ matrix.phpunit }}" --no-interaction --no-update
           composer update --prefer-dist --no-interaction --no-progress --no-suggest
           npm install
 
       - name: Build
         run: npm run build
 
-      - name: Run PHPUnit tests
+      - name: Run PHP tests
         run: vendor/bin/phpunit --testdox --colors=always
 
-      - name: Run Mocha tests
+      - name: Run Javascript tests
         run: npm test
 
 

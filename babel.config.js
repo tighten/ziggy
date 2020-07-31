@@ -1,21 +1,18 @@
 module.exports = {
-  presets: [
-    [
-      '@babel/preset-env',
-      {
-        modules: false,
-        forceAllTransforms: true,
-        useBuiltIns: false,
-        targets: {
-          browsers: [
-            '> 2%',
-            'last 2 versions'
-          ]
-        }
-      }
-    ]
-  ],
-  plugins: [
-    '@babel/transform-object-assign'
-  ],
+    presets: [
+        [
+            '@babel/preset-env',
+            {
+                targets: 'defaults, not IE 11',
+                modules: false,
+                forceAllTransforms: true,
+            },
+        ],
+    ],
+    env: {
+        test: {
+            presets: ['power-assert'],
+            plugins: ['@babel/plugin-transform-modules-commonjs'],
+        },
+    },
 };

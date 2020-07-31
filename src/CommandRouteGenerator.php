@@ -39,7 +39,7 @@ class CommandRouteGenerator extends Command
     {
         $payload = (new Ziggy($group, url($this->option('url'))))->toJson();
 
-        return <<<EOT
+        return <<<JAVASCRIPT
 var Ziggy = {$payload};
 
 if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
@@ -48,11 +48,9 @@ if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
     }
 }
 
-export {
-    Ziggy
-}
+export { Ziggy };
 
-EOT;
+JAVASCRIPT;
     }
 
     protected function makeDirectory($path)
