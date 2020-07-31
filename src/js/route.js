@@ -21,19 +21,6 @@ class Router extends String {
         // If you passed in a string or integer, wrap it in an array
         params = typeof params !== 'object' ? [params] : params;
 
-        // If the tags object contains an ID and there isn't an ID param in the
-        // url template, they probably passed in a single model object and we should
-        // wrap this in an array. This could be slightly dangerous and I want to find
-        // a better solution for this rare case.
-
-        if (
-            params.hasOwnProperty('id') &&
-            this.template.indexOf('{id}') === -1 &&
-            this.template.indexOf('{id?}') === -1
-        ) {
-            params = [params.id];
-        }
-
         this.numericParamIndices = Array.isArray(params);
         return Object.assign({}, params);
     }
@@ -80,7 +67,27 @@ class Router extends String {
                     delete this.urlParams[keyName];
                 }
 
-                // The value is null or defined; is this param
+                // The block above is what requires us to assign tagValue below
+                // instead of returning - if multiple *objects* are passed as
+                // params, numericParamIndices will be true and each object will
+                // be assigned above, which means !tagValue will evaluate to
+                // false, skipping the block below.
+
+                // If a value wasn't provided for this named parameter explicitly,
+                // but the object that was passed contains an ID, that object
+                // was probably a model, so we use the ID.
+
+                let bindingKey = this.ziggy.namedRoutes[this.name]?.bindings?.[keyName];
+
+                if (bindingKey && !this.urlParams[keyName] && this.urlParams[bindingKey]) {
+                    tagValue = this.urlParams[bindingKey];
+                    delete this.urlParams[bindingKey];
+                } else if (!tagValue && !this.urlParams[keyName] && this.urlParams['id']) {
+                    tagValue = this.urlParams['id']
+                    delete this.urlParams['id'];
+                }
+
+                // The value is null or undefined; is this param
                 // optional or not
                 if (tagValue == null) {
                     if (tag.indexOf('?') === -1) {
@@ -99,6 +106,8 @@ class Router extends String {
                 // If an object was passed and has an id, return it
                 if (tagValue.id) {
                     return encodeURIComponent(tagValue.id);
+                } else if (tagValue[bindingKey]) {
+                    return encodeURIComponent(tagValue[bindingKey])
                 }
 
                 return encodeURIComponent(tagValue);

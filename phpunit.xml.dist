@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
-         bootstrap="tests/bootstrap.php"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnError="false"
-         stopOnFailure="false"
-         verbose="true"
->
+<phpunit bootstrap="vendor/autoload.php" colors="true">
     <testsuites>
-        <testsuite name="Ziggy Test Suite">
+        <testsuite name="Ziggy Tests">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
     <php>
-        <env name="APP_URL" value="http://myapp.com/"/>
+        <env name="APP_URL" value="http://ziggy.dev"/>
     </php>
 </phpunit>

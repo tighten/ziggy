@@ -24,11 +24,12 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tightenco\\Tests\\": "tests/"
+            "Tests\\": "tests/"
         }
     },
     "require-dev": {
-        "orchestra/testbench": "^5.0"
+        "orchestra/testbench": "^5.0",
+        "phpunit/phpunit": "^9.2"
     },
     "extra": {
         "laravel": {

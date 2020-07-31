@@ -1,18 +1,9 @@
-    var Ziggy = {
-        namedRoutes: {"admin.dashboard":{"uri":"admin","methods":["GET","HEAD"],"domain":null}},
-        baseUrl: 'http://myapp.com/',
-        baseProtocol: 'http',
-        baseDomain: 'myapp.com',
-        basePort: false,
-        defaultParameters: []
-    };
+var Ziggy = {"baseUrl":"http:\/\/ziggy.dev\/","baseProtocol":"http","baseDomain":"ziggy.dev","basePort":null,"defaultParameters":[],"namedRoutes":{"admin.dashboard":{"uri":"admin","methods":["GET","HEAD"],"domain":null,"bindings":[]}}};
 
-    if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
-        for (var name in window.Ziggy.namedRoutes) {
-            Ziggy.namedRoutes[name] = window.Ziggy.namedRoutes[name];
-        }
+if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
+    for (var name in window.Ziggy.namedRoutes) {
+        Ziggy.namedRoutes[name] = window.Ziggy.namedRoutes[name];
     }
+}
 
-    export {
-        Ziggy
-    }
+export { Ziggy };

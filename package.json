@@ -14,9 +14,6 @@
         "src/js",
         "dist"
     ],
-    "directories": {
-        "test": "tests/js"
-    },
     "repository": {
         "type": "git",
         "url": "https://github.com/tightenco/ziggy.git"
@@ -38,23 +35,20 @@
     "homepage": "https://github.com/tightenco/ziggy#readme",
     "scripts": {
         "build": "NODE_ENV=production webpack --progress",
-        "build:watch": "npm run build -- --watch",
-        "test": "NODE_ENV=test mocha-webpack 'tests/js/**/*.js'",
-        "test:watch": "npm run test -- --watch",
+        "test": "jest",
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {
-        "@babel/core": "^7.5.5",
-        "@babel/plugin-transform-object-assign": "^7.2.0",
-        "@babel/preset-env": "^7.5.5",
-        "axios": "^0.19.0",
+        "@babel/core": "^7.10.5",
+        "@babel/plugin-transform-modules-commonjs": "^7.10.4",
+        "@babel/preset-env": "^7.10.4",
         "babel-loader": "^8.0.6",
-        "mocha": "^6.2.0",
-        "mocha-webpack": "^2.0.0-beta.0",
-        "moxios": "^0.4.0",
+        "babel-preset-power-assert": "^3.0.0",
+        "jest": "^26.1.0",
+        "power-assert": "^1.6.1",
         "unminified-webpack-plugin": "^2.0.0",
         "webpack": "^4.39.3",
-        "webpack-cli": "^3.3.7"
+        "webpack-cli": "^3.3.12"
     },
     "dependencies": {
         "qs": "^6.8.0"
