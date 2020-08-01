@@ -28,6 +28,7 @@
     "main": "dist/route.js",
     "umd:main": "dist/route.js",
     "unpkg": "dist/route.js",
+    "browser": "dist/route.js",
     "module": "dist/route.m.js",
     "esmodule": "dist/route.es.js",
     "repository": {
