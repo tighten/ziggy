@@ -7,20 +7,9 @@
         "routes",
         "ziggy"
     ],
-    "source": "src/js/route.js",
-    "main": "dist/route.js",
-    "umd:main": "dist/route.js",
-    "unpkg": "dist/route.js",
-    "module": "dist/route.m.js",
-    "esmodule": "dist/route.es.js",
-    "files": [
-        "src/js",
-        "dist"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/tightenco/ziggy.git"
-    },
+    "homepage": "https://github.com/tightenco/ziggy#readme",
+    "bugs": "https://github.com/tightenco/ziggy/issues",
+    "license": "MIT",
     "authors": [
         {
             "name": "Daniel Coulbourne",
@@ -31,27 +20,33 @@
             "email": "jake@tighten.co"
         }
     ],
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/tightenco/ziggy/issues"
+    "files": [
+        "src/js",
+        "dist"
+    ],
+    "source": "src/js/route.js",
+    "main": "dist/route.js",
+    "umd:main": "dist/route.js",
+    "unpkg": "dist/route.js",
+    "module": "dist/route.m.js",
+    "esmodule": "dist/route.es.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tightenco/ziggy.git"
     },
-    "homepage": "https://github.com/tightenco/ziggy#readme",
     "scripts": {
         "build": "microbundle --name route --format modern,es,umd",
         "test": "jest",
         "prepublishOnly": "npm run build"
     },
-    "devDependencies": {
-        "@babel/preset-env": "^7.10.4",
-        "babel-preset-power-assert": "^3.0.0",
-        "jest": "^26.1.0",
-        "microbundle": "^0.12.3",
-        "power-assert": "^1.6.1"
-    },
     "dependencies": {
         "qs": "^6.8.0"
     },
-    "engines": {
-        "node": ">= 8.9"
+    "devDependencies": {
+        "@babel/preset-env": "^7.11.0",
+        "babel-preset-power-assert": "^3.0.0",
+        "jest": "^26.2.2",
+        "microbundle": "^0.12.3",
+        "power-assert": "^1.6.1"
     }
 }
