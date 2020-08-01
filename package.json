@@ -42,17 +42,11 @@
         "prepublishOnly": "npm run build"
     },
     "devDependencies": {
-        "@babel/core": "^7.10.5",
-        "@babel/plugin-transform-modules-commonjs": "^7.10.4",
         "@babel/preset-env": "^7.10.4",
-        "babel-loader": "^8.0.6",
         "babel-preset-power-assert": "^3.0.0",
         "jest": "^26.1.0",
         "microbundle": "^0.12.3",
-        "power-assert": "^1.6.1",
-        "unminified-webpack-plugin": "^2.0.0",
-        "webpack": "^4.39.3",
-        "webpack-cli": "^3.3.12"
+        "power-assert": "^1.6.1"
     },
     "dependencies": {
         "qs": "^6.8.0"
