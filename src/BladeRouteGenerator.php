@@ -45,7 +45,7 @@ HTML;
 
     private function getRouteFilePath()
     {
-        return __DIR__ . '/../dist/js/route' . (app()->isLocal() ? '' : '.min') . '.js';
+        return __DIR__ . '/../dist/route.js';
     }
 
     private function getRouteFunction()
