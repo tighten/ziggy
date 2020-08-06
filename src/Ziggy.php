@@ -201,8 +201,8 @@ class Ziggy implements JsonSerializable
         $this->basePort = $settings->get('port');
 
         $this->baseUrl = Str::finish($this->baseProtocol, '://')
-            .Str::of($this->baseDomain)->rtrim('/')
-            .($this->basePort ? Str::of($this->basePort)->prepend(':') : '')
-            .'/';
+            . Str::of($this->baseDomain)->rtrim('/')
+            . ($this->basePort ? Str::of($this->basePort)->prepend(':') : '')
+            . '/';
     }
 }
