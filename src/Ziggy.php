@@ -183,13 +183,21 @@ class Ziggy implements JsonSerializable
         ];
 
         $settings = Collection::make($defaults)
+            // First, we attempt to parse our App's default using Laravel's URL helper.
             ->merge(parse_url(Str::finish($defaults['url'], '/')) ?? [])
+            // Next, we overload these defaults with any Ziggy-configured settings.
             ->merge(config()->get('ziggy', []))
+            // If the user configured a URL in Ziggy, it takes precedence over
+            // all the other user-configured settings. We'll try to parse
+            // this URL, and overload the defaults with it again.
             ->when(config()->has('ziggy.url'), function (Collection $settings) {
                 return $settings
                     ->merge(['port' => null])
                     ->merge(parse_url(Str::finish($settings->get('url'), '/')) ?? []);
             })
+            // Finally, we'll accept the given URL (if any), which takes the
+            // highest priority. We'll attempt parsing it and overwrite
+            // the defaults with it one last time.
             ->when($url, function (Collection $settings) use ($url) {
                 return $settings
                     ->merge(['port' => null])
