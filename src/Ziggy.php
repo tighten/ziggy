@@ -3,6 +3,7 @@
 namespace Tightenco\Ziggy;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use JsonSerializable;
 
@@ -18,15 +19,7 @@ class Ziggy implements JsonSerializable
     public function __construct(string $group = null, string $url = null)
     {
         $this->group = $group;
-
-        $this->baseUrl = Str::finish($url ?? url('/'), '/');
-
-        tap(parse_url($this->baseUrl), function ($url) {
-            $this->baseProtocol = $url['scheme'] ?? 'http';
-            $this->baseDomain = $url['host'] ?? '';
-            $this->basePort = $url['port'] ?? null;
-        });
-
+        $this->prepareBaseDetails($url);
         $this->routes = $this->nameKeyedRoutes();
     }
 
@@ -175,5 +168,41 @@ class Ziggy implements JsonSerializable
     {
         return (isset($route->listedAs) && $route->listedAs === $list)
             || Arr::get($route->getAction(), 'listed_as', null) === $list;
+    }
+
+    /**
+     * Gathers and prepares this Ziggy instance's base details.
+     */
+    protected function prepareBaseDetails(string $url = null)
+    {
+        $defaults = [
+            'url' => url('/'),
+            'scheme' => 'http',
+            'host' => '',
+            'port' => null,
+        ];
+
+        $settings = Collection::make($defaults)
+            ->merge(parse_url(Str::finish($defaults['url'], '/')) ?? [])
+            ->merge(config()->get('ziggy', []))
+            ->when(config()->has('ziggy.url'), function (Collection $settings) {
+                return $settings
+                    ->merge(['port' => null])
+                    ->merge(parse_url(Str::finish($settings->get('url'), '/')) ?? []);
+            })
+            ->when($url, function (Collection $settings) use ($url) {
+                return $settings
+                    ->merge(['port' => null])
+                    ->merge(parse_url(Str::finish($url, '/')) ?? []);
+            });
+
+        $this->baseProtocol = $settings->get('scheme');
+        $this->baseDomain = $settings->get('host');
+        $this->basePort = $settings->get('port');
+
+        $this->baseUrl = Str::finish($this->baseProtocol, '://')
+            .Str::of($this->baseDomain)->rtrim('/')
+            .($this->basePort ? Str::of($this->basePort)->prepend(':') : '')
+            .'/';
     }
 }

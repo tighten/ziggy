@@ -586,4 +586,57 @@ class ZiggyTest extends TestCase
         $response->assertSuccessful();
         $this->assertSame((new Ziggy)->toJson(), $response->getContent());
     }
+
+    /** @test */
+    public function can_configure_base_details()
+    {
+        config(['ziggy' => [
+            'scheme' => 'https',
+            'host' => 'example.com',
+            'port' => '8080',
+        ]]);
+
+        $ziggy = (new Ziggy)->toArray();
+
+        $this->assertEquals('https://example.com:8080/', $ziggy['baseUrl']);
+        $this->assertEquals('https', $ziggy['baseProtocol']);
+        $this->assertEquals('example.com', $ziggy['baseDomain']);
+        $this->assertEquals(8080, $ziggy['basePort']);
+    }
+
+    /** @test */
+    public function can_configure_an_url_that_takes_precedence_over_other_configured_base_details()
+    {
+        config(['ziggy' => [
+            'url' => 'https://example.com/',
+            'scheme' => 'ssh',
+            'host' => 'tighten.co',
+            'port' => '1337',
+        ]]);
+
+        $ziggy = (new Ziggy)->toArray();
+
+        $this->assertEquals('https://example.com/', $ziggy['baseUrl']);
+        $this->assertEquals('https', $ziggy['baseProtocol']);
+        $this->assertEquals('example.com', $ziggy['baseDomain']);
+        $this->assertNull($ziggy['basePort']);
+    }
+
+    /** @test */
+    public function a_given_url_always_takes_precedence_over_configured_base_details()
+    {
+        config(['ziggy' => [
+            'url' => 'ftp://example.com/',
+            'scheme' => 'ssh',
+            'host' => 'tighten.co',
+            'port' => '1337',
+        ]]);
+
+        $ziggy = (new Ziggy(false, 'https://laravel.com/'))->toArray();
+
+        $this->assertEquals('https://laravel.com/', $ziggy['baseUrl']);
+        $this->assertEquals('https', $ziggy['baseProtocol']);
+        $this->assertEquals('laravel.com', $ziggy['baseDomain']);
+        $this->assertNull($ziggy['basePort']);
+    }
 }
