@@ -210,7 +210,7 @@ class Ziggy implements JsonSerializable
 
         $this->baseUrl = Str::finish($this->baseProtocol, '://')
             . rtrim($this->baseDomain, '/')
-            . ($this->basePort ? ':' . ltrim($this->basePort) : '')
+            . ($this->basePort ? ':' . ltrim($this->basePort, ':') : '')
             . '/';
     }
 }
