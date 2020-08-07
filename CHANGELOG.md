@@ -12,6 +12,7 @@ Breaking changes are marked with ⚠️.
 
 - Document the `check()` method ([#294](https://github.com/tightenco/ziggy/pull/294)) and how to install and use Ziggy via `npm` and over a CDN ([#299](https://github.com/tightenco/ziggy/pull/299))
 - Add support for [custom scoped route model bindings](https://laravel.com/docs/7.x/routing#implicit-binding), e.g. `/users/{user}/posts/{post:slug}` ([#307](https://github.com/tightenco/ziggy/pull/307))
+- Add support for passing parameters to `current()` to check against the current URL in addition to the route name ([#314](https://github.com/tightenco/ziggy/pull/314))
 
 **Changed**
 
@@ -34,6 +35,7 @@ Breaking changes are marked with ⚠️.
 - Fix port not being added to URL for routes with subdomains ([#293](https://github.com/tightenco/ziggy/pull/293))
 - Fix getting parameters of routes in apps installed in subfolders ([#302](https://github.com/tightenco/ziggy/pull/302))
 - Ensure fallback routes are always last, thanks [@davejamesmiller](https://github.com/davejamesmiller)! ([#310](https://github.com/tightenco/ziggy/pull/310))
+- ⚠️ Allow getting the route name with `current()` when the current URL has a query string ([#314](https://github.com/tightenco/ziggy/pull/314))
 
 ## [0.9.4] - 2020-06-05
 
