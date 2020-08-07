@@ -124,40 +124,28 @@ class Router extends String {
     }
 
     matchUrl() {
-        let windowUrl =
-            window.location.hostname +
-            (window.location.port ? ':' + window.location.port : '') +
-            window.location.pathname;
+        const url = (window.location.hostname
+            + (window.location.port ? `:${window.location.port}` : '')
+            + window.location.pathname).replace(/\/?$/, '');
 
         // If parameters were passed to current(), hydrate and match the entire URL
         if (Object.keys(this.urlParams).length) {
             try {
-                return windowUrl === this.hydrateUrl().split('://')[1];
+                return url === this.hydrateUrl().split('://')[1];
             } catch {
                 return false;
             }
         }
 
-        // Strip out optional parameters
-        let optionalTemplate = this.template
-            .replace(/(\/\{[^\}]*\?\})/g, '/')
-            .replace(/(\{[^\}]*\})/gi, '[^/?]+')
+        // Replace paramaters in the URI template, like `{post}`, with a regex,
+        // ensuring optional parameters, like `{locale?}`, are optional
+        const urlPattern = this.template
+            .replace(/\/\{[^\}]*\?\}/g, '(\/[^/?]+)?')
+            .replace(/\{[^\}]*\}/gi, '[^/?]+')
             .replace(/\/?$/, '')
             .split('://')[1];
 
-        let searchTemplate = this.template
-            .replace(/(\{[^\}]*\})/gi, '[^/?]+')
-            .split('://')[1];
-        let urlWithTrailingSlash = windowUrl.replace(/\/?$/, '/');
-
-        const regularSearch = new RegExp('^' + searchTemplate + '/$').test(
-            urlWithTrailingSlash
-        );
-        const optionalSearch = new RegExp('^' + optionalTemplate + '/$').test(
-            urlWithTrailingSlash
-        );
-
-        return regularSearch || optionalSearch;
+        return new RegExp(`^${urlPattern}$`).test(url);
     }
 
     constructQuery() {
@@ -188,7 +176,7 @@ class Router extends String {
         })[0];
 
         if (name) {
-            return (new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`, 'i')).test(currentRoute);
+            return new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`, 'i').test(currentRoute);
         }
 
         return currentRoute;

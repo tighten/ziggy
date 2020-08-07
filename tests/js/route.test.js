@@ -498,10 +498,21 @@ describe('current', () => {
         assert(route().current('optional'));
     });
 
-    test('can check the current route name on a route with empty optional parameters', () => {
+    test('can check the current route name on a route with trailing empty optional parameters', () => {
         global.window.location.pathname = '/optional/1';
 
         assert(route().current('optional'));
+    });
+
+    test('can check the current route name on a route with optional parameters in the middle of the URI', () => {
+        global.Ziggy.baseUrl = 'https://ziggy.dev/subfolder/';
+
+        // Missing the optional 'language' parameter (e.g. subfolder/ph/en/products...)
+        global.window.location.href = 'https://ziggy.dev/subfolder/ph/products/4';
+        global.window.location.hostname = 'ziggy.dev';
+        global.window.location.pathname = '/subfolder/ph/products/4';
+
+        assert(route().current('products.show'));
     });
 
     test('can check the current route with parameters', () => {
