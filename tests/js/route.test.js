@@ -449,6 +449,12 @@ describe('current', () => {
         equal(route().current(), 'events.venues.index');
     });
 
+    test('can ignore query string when getting current route name', () => {
+        global.window.location.pathname = '/events/1/venues?foo=2';
+
+        equal(route().current(), 'events.venues.index');
+    });
+
     test('can get the current route name with a custom Ziggy object', () => {
         global.Ziggy = undefined;
         global.window.location.pathname = '/events/';
@@ -555,11 +561,4 @@ describe('current', () => {
 
         equal(route().current(), 'events.venues.index');
     });
-
-    test.todo('can ignore query parameters');
-    // test('can ignore query parameters', () => {
-    //     global.window.location.pathname = '/events/1/venues?foo=2';
-
-    //     equal(route().current(), 'events.venues.index');
-    // });
 });

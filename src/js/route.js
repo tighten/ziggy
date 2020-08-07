@@ -145,7 +145,7 @@ class Router extends String {
             .replace(/\/?$/, '')
             .split('://')[1];
 
-        return new RegExp(`^${urlPattern}$`).test(url);
+        return new RegExp(`^${urlPattern}$`).test(url.split('?').shift());
     }
 
     constructQuery() {
