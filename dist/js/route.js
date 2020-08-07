@@ -1009,8 +1009,6 @@ var lib = __webpack_require__(2);
 // CONCATENATED MODULE: ./src/js/route.js
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function route_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1071,17 +1069,9 @@ var route_Router = /*#__PURE__*/function (_String) {
     value: function normalizeParams(params) {
       if (typeof params === 'undefined') return {}; // If you passed in a string or integer, wrap it in an array
 
-      params = _typeof(params) !== 'object' ? [params] : params; // If the tags object contains an ID and there isn't an ID param in the
-      // url template, they probably passed in a single model object and we should
-      // wrap this in an array. This could be slightly dangerous and I want to find
-      // a better solution for this rare case.
-
-      if (params.hasOwnProperty('id') && this.template.indexOf('{id}') === -1 && this.template.indexOf('{id?}') === -1) {
-        params = [params.id];
-      }
-
+      params = _typeof(params) !== 'object' ? [params] : params;
       this.numericParamIndices = Array.isArray(params);
-      return _extends({}, params);
+      return Object.assign({}, params);
     }
   }, {
     key: "with",
@@ -1092,8 +1082,7 @@ var route_Router = /*#__PURE__*/function (_String) {
   }, {
     key: "withQuery",
     value: function withQuery(params) {
-      _extends(this.queryParams, params);
-
+      Object.assign(this.queryParams, params);
       return this;
     }
   }, {
@@ -1103,6 +1092,8 @@ var route_Router = /*#__PURE__*/function (_String) {
 
       if (this.hydrated) return this.hydrated;
       var hydrated = this.template.replace(/{([^}]+)}/gi, function (tag, i) {
+        var _this2$ziggy$namedRou, _this2$ziggy$namedRou2;
+
         var keyName = _this2.trimParam(tag),
             defaultParameter,
             tagValue;
@@ -1126,7 +1117,25 @@ var route_Router = /*#__PURE__*/function (_String) {
         } else {
           tagValue = _this2.urlParams[keyName];
           delete _this2.urlParams[keyName];
-        } // The value is null or defined; is this param
+        } // The block above is what requires us to assign tagValue below
+        // instead of returning - if multiple *objects* are passed as
+        // params, numericParamIndices will be true and each object will
+        // be assigned above, which means !tagValue will evaluate to
+        // false, skipping the block below.
+        // If a value wasn't provided for this named parameter explicitly,
+        // but the object that was passed contains an ID, that object
+        // was probably a model, so we use the ID.
+
+
+        var bindingKey = (_this2$ziggy$namedRou = _this2.ziggy.namedRoutes[_this2.name]) === null || _this2$ziggy$namedRou === void 0 ? void 0 : (_this2$ziggy$namedRou2 = _this2$ziggy$namedRou.bindings) === null || _this2$ziggy$namedRou2 === void 0 ? void 0 : _this2$ziggy$namedRou2[keyName];
+
+        if (bindingKey && !_this2.urlParams[keyName] && _this2.urlParams[bindingKey]) {
+          tagValue = _this2.urlParams[bindingKey];
+          delete _this2.urlParams[bindingKey];
+        } else if (!tagValue && !_this2.urlParams[keyName] && _this2.urlParams['id']) {
+          tagValue = _this2.urlParams['id'];
+          delete _this2.urlParams['id'];
+        } // The value is null or undefined; is this param
         // optional or not
 
 
@@ -1141,6 +1150,8 @@ var route_Router = /*#__PURE__*/function (_String) {
 
         if (tagValue.id) {
           return encodeURIComponent(tagValue.id);
+        } else if (tagValue[bindingKey]) {
+          return encodeURIComponent(tagValue[bindingKey]);
         }
 
         return encodeURIComponent(tagValue);
@@ -1156,14 +1167,20 @@ var route_Router = /*#__PURE__*/function (_String) {
   }, {
     key: "matchUrl",
     value: function matchUrl() {
-      var windowUrl = window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname; // Strip out optional parameters
+      var url = (window.location.hostname + (window.location.port ? ":".concat(window.location.port) : '') + window.location.pathname).replace(/\/?$/, ''); // If parameters were passed to current(), hydrate and match the entire URL
 
-      var optionalTemplate = this.template.replace(/(\/\{[^\}]*\?\})/g, '/').replace(/(\{[^\}]*\})/gi, '[^/?]+').replace(/\/?$/, '').split('://')[1];
-      var searchTemplate = this.template.replace(/(\{[^\}]*\})/gi, '[^/?]+').split('://')[1];
-      var urlWithTrailingSlash = windowUrl.replace(/\/?$/, '/');
-      var regularSearch = new RegExp('^' + searchTemplate + '/$').test(urlWithTrailingSlash);
-      var optionalSearch = new RegExp('^' + optionalTemplate + '/$').test(urlWithTrailingSlash);
-      return regularSearch || optionalSearch;
+      if (Object.keys(this.urlParams).length) {
+        try {
+          return url === this.url().split('://').pop();
+        } catch (_unused) {
+          return false;
+        }
+      } // Replace paramaters in the URI template, like `{post}`, with a regex,
+      // ensuring optional parameters, like `{locale?}`, are optional
+
+
+      var urlPattern = this.template.replace(/\/\{[^\}]*\?\}/g, '(\/[^/?]+)?').replace(/\{[^\}]*\}/gi, '[^/?]+').replace(/\/?$/, '').split('://').pop();
+      return new RegExp("^".concat(urlPattern, "$")).test(url.split('?').shift());
     }
   }, {
     key: "constructQuery",
@@ -1172,8 +1189,7 @@ var route_Router = /*#__PURE__*/function (_String) {
         return '';
       }
 
-      var remainingParams = _extends(this.urlParams, this.queryParams);
-
+      var remainingParams = Object.assign(this.urlParams, this.queryParams);
       return Object(lib["stringify"])(remainingParams, {
         encodeValuesOnly: true,
         skipNulls: true,
@@ -1187,18 +1203,17 @@ var route_Router = /*#__PURE__*/function (_String) {
       var _this3 = this;
 
       var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-      var routeNames = Object.keys(this.ziggy.namedRoutes);
-      var currentRoute = routeNames.filter(function (name) {
-        if (_this3.ziggy.namedRoutes[name].methods.indexOf('GET') === -1) {
+      var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+      var currentRoute = Object.keys(this.ziggy.namedRoutes).filter(function (name) {
+        if (!_this3.ziggy.namedRoutes[name].methods.includes('GET')) {
           return false;
         }
 
-        return new Router(name, undefined, undefined, _this3.ziggy).matchUrl();
+        return new Router(name, params, undefined, _this3.ziggy).matchUrl();
       })[0];
 
       if (name) {
-        var pattern = new RegExp('^' + name.replace('.', '\\.').replace('*', '.*') + '$', 'i');
-        return pattern.test(currentRoute);
+        return new RegExp("^".concat(name.replace('.', '\\.').replace('*', '.*'), "$"), 'i').test(currentRoute);
       }
 
       return currentRoute;
@@ -1217,7 +1232,7 @@ var route_Router = /*#__PURE__*/function (_String) {
       var uriParts = uri.split(delimiter);
       var templateParts = template.split(delimiter);
       return templateParts.reduce(function (params, param, i) {
-        return param.indexOf('{') === 0 && param.indexOf('}') !== -1 && uriParts[i] ? _extends(params, _defineProperty({}, _this4.trimParam(param), uriParts[i])) : params;
+        return param.indexOf('{') === 0 && param.indexOf('}') !== -1 && uriParts[i] ? Object.assign(params, _defineProperty({}, _this4.trimParam(param), uriParts[i])) : params;
       }, {});
     }
   }, {
@@ -1251,7 +1266,7 @@ var route_Router = /*#__PURE__*/function (_String) {
     get: function get() {
       var namedRoute = this.ziggy.namedRoutes[this.current()];
       var pathname = window.location.pathname.replace(this.ziggy.baseUrl.split('://')[1].split('/')[1], '').replace(/^\/+/, '');
-      return _extends(this.extractParams(window.location.hostname, namedRoute.domain || '', '.'), this.extractParams(pathname, namedRoute.uri, '/'));
+      return Object.assign(this.extractParams(window.location.hostname, namedRoute.domain || '', '.'), this.extractParams(pathname, namedRoute.uri, '/'));
     }
   }]);
 
