@@ -170,27 +170,16 @@ class Router extends String {
     }
 
     current(name = null) {
-        let routeNames = Object.keys(this.ziggy.namedRoutes);
-
-        let currentRoute = routeNames.filter(name => {
-            if (this.ziggy.namedRoutes[name].methods.indexOf('GET') === -1) {
+        let currentRoute = Object.keys(this.ziggy.namedRoutes).filter((name) => {
+            if (!this.ziggy.namedRoutes[name].methods.includes('GET')) {
                 return false;
             }
 
-            return new Router(
-                name,
-                undefined,
-                undefined,
-                this.ziggy
-            ).matchUrl();
+            return new Router(name, undefined, undefined, this.ziggy).matchUrl();
         })[0];
 
         if (name) {
-            const pattern = new RegExp(
-                '^' + name.replace('.', '\\.').replace('*', '.*') + '$',
-                'i'
-            );
-            return pattern.test(currentRoute);
+            return (new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`, 'i')).test(currentRoute);
         }
 
         return currentRoute;
