@@ -504,14 +504,13 @@ describe('current', () => {
         assert(route().current('optional'));
     });
 
-    test.todo('can check the current route name and parameters');
-    // test.todo('can check the current route name and parameters', () => {
-    //     global.window.location.pathname = '/events/1/venues/2';
+    test('can check the current route with parameters', () => {
+        global.window.location.pathname = '/events/1/venues/2';
 
-    //     assert(route().current('events.venues.show', { event: 1, venue: 2 }));
-    //     assert(!route().current('events.venues.show', { event: 4, venue: 2 }));
-    //     assert(!route().current('events.venues.show', { event: 1, venue: 6 }));
-    // });
+        assert(route().current('events.venues.show', { event: 1, venue: 2 }));
+        assert(!route().current('events.venues.show', { event: 4, venue: 2 }));
+        assert(!route().current('events.venues.show', { event: 1, venue: 6 }));
+    });
 
     test('can ignore routes that dont allow GET requests', () => {
         global.window.location.pathname = '/posts/1';

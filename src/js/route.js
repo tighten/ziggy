@@ -129,6 +129,17 @@ class Router extends String {
             (window.location.port ? ':' + window.location.port : '') +
             window.location.pathname;
 
+        if (JSON.stringify(this.urlParams) !== JSON.stringify({})) {
+            // We were passed params...
+            try {
+                if (this.hydrateUrl()) {
+                    return windowUrl === this.hydrated.split('://')[1];
+                }
+            } catch {
+                return false;
+            }
+        }
+
         // Strip out optional parameters
         let optionalTemplate = this.template
             .replace(/(\/\{[^\}]*\?\})/g, '/')
@@ -169,13 +180,13 @@ class Router extends String {
         });
     }
 
-    current(name = null) {
+    current(name = null, params = undefined) {
         let currentRoute = Object.keys(this.ziggy.namedRoutes).filter((name) => {
             if (!this.ziggy.namedRoutes[name].methods.includes('GET')) {
                 return false;
             }
 
-            return new Router(name, undefined, undefined, this.ziggy).matchUrl();
+            return new Router(name, params, undefined, this.ziggy).matchUrl();
         })[0];
 
         if (name) {
