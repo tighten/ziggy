@@ -129,12 +129,10 @@ class Router extends String {
             (window.location.port ? ':' + window.location.port : '') +
             window.location.pathname;
 
-        if (JSON.stringify(this.urlParams) !== JSON.stringify({})) {
-            // We were passed params...
+        // If parameters were passed to current(), hydrate and match the entire URL
+        if (Object.keys(this.urlParams).length) {
             try {
-                if (this.hydrateUrl()) {
-                    return windowUrl === this.hydrated.split('://')[1];
-                }
+                return windowUrl === this.hydrateUrl().split('://')[1];
             } catch {
                 return false;
             }
