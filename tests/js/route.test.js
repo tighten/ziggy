@@ -521,11 +521,27 @@ describe('current', () => {
         assert(route().current('events.venues.show', { event: 1, venue: 2 }));
         assert(route().current('events.venues.show', [1, 2]));
         assert(route().current('events.venues.show', [1, { id: 2, name: 'Grand Canyon' }]));
-        assert(route().current('events.venues.show', [{ name: 'Main St.', id: 1 }, { id: 2, name: 'Grand Canyon' }]));
+        assert(route().current('events.venues.show', [{ name: 'Laracon', id: 1 }, { id: 2, name: 'Grand Canyon' }]));
 
         assert(!route().current('events.venues.show', { event: 4, venue: 2 }));
         assert(!route().current('events.venues.show', [1, 6]));
         assert(!route().current('events.venues.show', [{ id: 1 }, { id: 4, name: 'Great Pyramids' }]));
+    });
+
+    test('can check the current route with query parameters', () => {
+        global.window.location.pathname = '/events/1/venues/2?user=Jacob';
+
+        assert(route().current('events.venues.show', { event: 1, venue: 2, user: 'Jacob' }));
+        assert(route().current('events.venues.show', {
+            event: { id: 1, name: 'Party' },
+            venue: 2,
+            user: 'Jacob',
+        }));
+
+        // @todo it would be cool if we could *partially* match whatever params are provided,
+        // but for now it's all-or-nothing
+        assert(!route().current('events.venues.show', { event: 1, venue: 2 }));
+        assert(!route().current('events.venues.show', { event: 1 }));
     });
 
     test('can ignore routes that dont allow GET requests', () => {

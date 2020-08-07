@@ -131,7 +131,7 @@ class Router extends String {
         // If parameters were passed to current(), hydrate and match the entire URL
         if (Object.keys(this.urlParams).length) {
             try {
-                return url === this.hydrateUrl().split('://')[1];
+                return url === this.url().split('://')[1];
             } catch {
                 return false;
             }
