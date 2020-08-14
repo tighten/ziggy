@@ -28,6 +28,9 @@ class RouteModelBindingTest extends TestCase
             $router->get('blog/{category}/{post:slug}', function (PostCategory $category, Post $post) {
                 return '';
             })->name('posts');
+            $router->get('blog/{category}/{post:slug}/{tag:slug}', function (PostCategory $category, Post $post, Tag $tag) {
+                return '';
+            })->name('posts.tags');
         }
 
         $router->getRoutes()->refreshNameLookups();
@@ -81,6 +84,36 @@ class RouteModelBindingTest extends TestCase
     }
 
     /** @test */
+    public function can_handle_multiple_scoped_bindings()
+    {
+        if (! $this->laravelVersion(7)) {
+            $this->markTestSkipped('Requires Laravel >=7');
+        }
+
+        $this->assertSame([
+            'posts' => [
+                'uri' => 'blog/{category}/{post}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'category' => 'id',
+                    'post' => 'slug',
+                ],
+            ],
+            'posts.tags' => [
+                'uri' => 'blog/{category}/{post}/{tag}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'category' => 'id',
+                    'post' => 'slug',
+                    'tag' => 'slug',
+                ],
+            ],
+        ], (new Ziggy)->filter('posts*')->toArray());
+    }
+
+    /** @test */
     public function can_merge_implicit_and_scoped_bindings()
     {
         if (! $this->laravelVersion(7)) {
@@ -119,6 +152,16 @@ class RouteModelBindingTest extends TestCase
                     'post' => 'slug',
                 ],
             ],
+            'posts.tags' => [
+                'uri' => 'blog/{category}/{post}/{tag}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'category' => 'id',
+                    'post' => 'slug',
+                    'tag' => 'slug',
+                ],
+            ],
         ], (new Ziggy)->toArray()['namedRoutes']);
     }
 }
@@ -137,6 +180,11 @@ class PostCategory extends Model
 }
 
 class Post extends Model
+{
+    //
+}
+
+class Tag extends Model
 {
     //
 }
