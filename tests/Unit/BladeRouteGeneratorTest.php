@@ -91,4 +91,16 @@ class BladeRouteGeneratorTest extends TestCase
             (new BladeRouteGenerator)->generate(false, 'supercalifragilisticexpialidocious')
         );
     }
+
+    /** @test */
+    public function can_compile_routes_directive()
+    {
+        $compiler = app('blade.compiler');
+
+        $script = (new BladeRouteGenerator)->generate();
+
+        BladeRouteGenerator::$generated = false;
+
+        $this->assertSame($script, $compiler->compileString('@routes'));
+    }
 }
