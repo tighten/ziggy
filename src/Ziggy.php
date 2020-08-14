@@ -105,7 +105,7 @@ class Ziggy implements JsonSerializable
                 return $route->isFallback;
             });
 
-        $routes->merge($fallbacks);
+        $routes = $routes->merge($fallbacks);
 
         $implicitBindings = $routes->mapWithKeys(function ($route, $name) {
             $bindings = collect($route->signatureParameters(UrlRoutable::class))
