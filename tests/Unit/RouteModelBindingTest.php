@@ -164,6 +164,14 @@ class RouteModelBindingTest extends TestCase
             ],
         ], (new Ziggy)->toArray()['namedRoutes']);
     }
+
+    /** @test */
+    public function can_json_bindings()
+    {
+        $json = '{"baseUrl":"http:\/\/ziggy.dev\/","baseProtocol":"http","baseDomain":"ziggy.dev","basePort":null,"defaultParameters":[],"namedRoutes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"domain":null,"bindings":{"user":"uuid"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"],"domain":null,"bindings":[]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"domain":null,"bindings":{"user":"uuid"}},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"domain":null,"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"domain":null,"bindings":{"category":"id","post":"slug","tag":"slug"}}}}';
+
+        $this->assertSame($json, (new Ziggy)->toJson());
+    }
 }
 
 class User extends Model
