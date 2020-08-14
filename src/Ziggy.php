@@ -121,9 +121,6 @@ class Ziggy implements JsonSerializable
                 return collect($route)->only(['uri', 'methods'])
                     ->put('domain', $route->domain())
                     ->put('bindings', $bindings[$route->getName()])
-                    ->when(method_exists($route, 'bindingFields'), function ($collection) use ($route) {
-                        return $collection->put('bindings', array_merge($collection->get('bindings'), $route->bindingFields()));
-                    })
                     ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
                         if (is_array($middleware)) {
                             return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values());
@@ -193,6 +190,10 @@ class Ziggy implements JsonSerializable
             $routeBindings = array_map(function ($parameter) {
                 return [$parameter->getName() => app($parameter->getType()->getName())->getRouteKeyName()];
             }, $route->signatureParameters(UrlRoutable::class));
+
+            if (method_exists($route, 'bindingFields')) {
+                $routeBindings = array_merge($routeBindings, [$route->bindingFields()]);
+            }
 
             return [$name => Arr::collapse($routeBindings)];
         })->all();
