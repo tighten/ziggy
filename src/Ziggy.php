@@ -2,6 +2,7 @@
 
 namespace Tightenco\Ziggy;
 
+use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use JsonSerializable;
@@ -104,8 +105,19 @@ class Ziggy implements JsonSerializable
                 return $route->isFallback;
             });
 
-        return $routes->merge($fallbacks)
-            ->map(function ($route) {
+        $routes->merge($fallbacks);
+
+        $implicitBindings = $routes->mapWithKeys(function ($route, $name) {
+            $bindings = collect($route->signatureParameters(UrlRoutable::class))
+                ->mapWithKeys(function ($reflectionParameter) {
+                    return [$reflectionParameter->getName() => app($reflectionParameter->getType()->getName())->getRouteKeyName()];
+                })->all();
+
+            return [$name => $bindings];
+        })->all();
+
+        return $routes
+            ->map(function ($route) use ($implicitBindings) {
                 if ($this->isListedAs($route, 'except')) {
                     $this->appendRouteToList($route->getName(), 'except');
                 } elseif ($this->isListedAs($route, 'only')) {
@@ -114,8 +126,9 @@ class Ziggy implements JsonSerializable
 
                 return collect($route)->only(['uri', 'methods'])
                     ->put('domain', $route->domain())
+                    ->put('bindings', $implicitBindings[$route->getName()])
                     ->when(method_exists($route, 'bindingFields'), function ($collection) use ($route) {
-                        return $collection->put('bindings', $route->bindingFields());
+                        return $collection->put('bindings', array_merge($collection->get('bindings'), $route->bindingFields()));
                     })
                     ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
                         if (is_array($middleware)) {
