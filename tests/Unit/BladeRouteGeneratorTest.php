@@ -97,10 +97,10 @@ class BladeRouteGeneratorTest extends TestCase
     {
         $compiler = app('blade.compiler');
 
+        BladeRouteGenerator::$generated = false;
         $script = (new BladeRouteGenerator)->generate();
 
         BladeRouteGenerator::$generated = false;
-
         $this->assertSame($script, $compiler->compileString('@routes'));
     }
 }
