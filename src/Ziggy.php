@@ -4,6 +4,7 @@ namespace Tightenco\Ziggy;
 
 use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use JsonSerializable;
 
@@ -107,17 +108,10 @@ class Ziggy implements JsonSerializable
 
         $routes = $routes->merge($fallbacks);
 
-        $implicitBindings = $routes->mapWithKeys(function ($route, $name) {
-            $bindings = collect($route->signatureParameters(UrlRoutable::class))
-                ->mapWithKeys(function ($reflectionParameter) {
-                    return [$reflectionParameter->getName() => app($reflectionParameter->getType()->getName())->getRouteKeyName()];
-                })->all();
-
-            return [$name => $bindings];
-        })->all();
+        $bindings = $this->resolveBindings($routes);
 
         return $routes
-            ->map(function ($route) use ($implicitBindings) {
+            ->map(function ($route) use ($bindings) {
                 if ($this->isListedAs($route, 'except')) {
                     $this->appendRouteToList($route->getName(), 'except');
                 } elseif ($this->isListedAs($route, 'only')) {
@@ -126,7 +120,7 @@ class Ziggy implements JsonSerializable
 
                 return collect($route)->only(['uri', 'methods'])
                     ->put('domain', $route->domain())
-                    ->put('bindings', $implicitBindings[$route->getName()])
+                    ->put('bindings', $bindings[$route->getName()])
                     ->when(method_exists($route, 'bindingFields'), function ($collection) use ($route) {
                         return $collection->put('bindings', array_merge($collection->get('bindings'), $route->bindingFields()));
                     })
@@ -188,5 +182,19 @@ class Ziggy implements JsonSerializable
     {
         return (isset($route->listedAs) && $route->listedAs === $list)
             || Arr::get($route->getAction(), 'listed_as', null) === $list;
+    }
+
+    /**
+     * Resolve route key names for route parameters using Eloquent route model binding.
+     */
+    protected function resolveBindings(Collection $routes): array
+    {
+        return $routes->mapWithKeys(function ($route, $name) {
+            $routeBindings = array_map(function ($parameter) {
+                return [$parameter->getName() => app($parameter->getType()->getName())->getRouteKeyName()];
+            }, $route->signatureParameters(UrlRoutable::class));
+
+            return [$name => Arr::collapse($routeBindings)];
+        })->all();
     }
 }
