@@ -106,11 +106,9 @@ class Ziggy implements JsonSerializable
                 return $route->isFallback;
             });
 
-        $routes = $routes->merge($fallbacks);
-
         $bindings = $this->resolveBindings($routes);
 
-        return $routes
+        return $routes->merge($fallbacks)
             ->map(function ($route) use ($bindings) {
                 if ($this->isListedAs($route, 'except')) {
                     $this->appendRouteToList($route->getName(), 'except');
@@ -120,7 +118,7 @@ class Ziggy implements JsonSerializable
 
                 return collect($route)->only(['uri', 'methods'])
                     ->put('domain', $route->domain())
-                    ->put('bindings', $bindings[$route->getName()])
+                    ->put('bindings', $bindings[$route->getName()] ?? [])
                     ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
                         if (is_array($middleware)) {
                             return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values());
