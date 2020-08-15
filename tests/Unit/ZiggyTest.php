@@ -577,6 +577,14 @@ class ZiggyTest extends TestCase
 
         $json = '{"baseUrl":"http:\/\/ziggy.dev\/","baseProtocol":"http","baseDomain":"ziggy.dev","basePort":null,"defaultParameters":[],"namedRoutes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"domain":null,"bindings":[]}}}';
 
+        if ($this->laravelVersion(7)) {
+            $json = str_replace(
+                '"domain":null,"bindings":[]}',
+                '"domain":null,"bindings":[]},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"domain":null,"bindings":{"comment":"uuid"}}',
+                $json,
+            );
+        }
+
         $this->assertSame($expected, json_decode(json_encode(new Ziggy), true));
         $this->assertSame($json, json_encode(new Ziggy));
         $this->assertSame($json, (new Ziggy)->toJson());
