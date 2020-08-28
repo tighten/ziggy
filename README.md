@@ -174,13 +174,13 @@ If you want to expose multiple groups you can pass an array of group names:
 
 ## Content Security Policy
 
-A Content Security Policy may block unsafe inline scripts which Ziggy uses to pass the routes to JavaScript. By adding a nonce to your CSP you can allow certain inlined scripts. To add this nonce to Ziggy you can pass it as the second argument:
+A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) may block unsafe inline scripts which Ziggy uses to pass the routes to JavaScript. By adding a nonce to your CSP you can allow certain inlined scripts. To add this nonce to Ziggy you can pass it as the second argument:
 
 ```php
-@routes(false, 'nonce="[YOUR_NONCE]"')
+@routes(false, '[YOUR_NONCE]')
 ```
 
-Or if you are using [Spaties CSP Package](https://github.com/spatie/laravel-csp):
+Or if you are using [Spatie's CSP Package](https://github.com/spatie/laravel-csp):
 
 ```php
 @routes(false, csp_nonce())
