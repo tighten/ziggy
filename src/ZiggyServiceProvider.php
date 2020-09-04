@@ -26,7 +26,7 @@ class ZiggyServiceProvider extends ServiceProvider
     {
         $bladeCompiler->directive('routes', function ($group) {
             return app()->isLocal()
-                ? "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>";
+                ? "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>"
                 : app(BladeRouteGenerator::class)->generate($group);
         });
     }
