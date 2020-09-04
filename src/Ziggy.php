@@ -2,9 +2,11 @@
 
 namespace Tightenco\Ziggy;
 
+use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use JsonSerializable;
+use ReflectionMethod;
 
 class Ziggy implements JsonSerializable
 {
@@ -104,8 +106,10 @@ class Ziggy implements JsonSerializable
                 return $route->isFallback;
             });
 
+        $bindings = $this->resolveBindings($routes->toArray());
+
         return $routes->merge($fallbacks)
-            ->map(function ($route) {
+            ->map(function ($route) use ($bindings) {
                 if ($this->isListedAs($route, 'except')) {
                     $this->appendRouteToList($route->getName(), 'except');
                 } elseif ($this->isListedAs($route, 'only')) {
@@ -114,9 +118,7 @@ class Ziggy implements JsonSerializable
 
                 return collect($route)->only(['uri', 'methods'])
                     ->put('domain', $route->domain())
-                    ->when(method_exists($route, 'bindingFields'), function ($collection) use ($route) {
-                        return $collection->put('bindings', $route->bindingFields());
-                    })
+                    ->put('bindings', $bindings[$route->getName()] ?? [])
                     ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
                         if (is_array($middleware)) {
                             return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values());
@@ -175,5 +177,29 @@ class Ziggy implements JsonSerializable
     {
         return (isset($route->listedAs) && $route->listedAs === $list)
             || Arr::get($route->getAction(), 'listed_as', null) === $list;
+    }
+
+    /**
+     * Resolve route key names for any route parameters using Eloquent route model binding.
+     */
+    protected function resolveBindings(array $routes): array
+    {
+        $scopedBindings = method_exists(head($routes), 'bindingFields');
+
+        foreach ($routes as $name => $route) {
+            $bindings = [];
+
+            foreach ($route->signatureParameters(UrlRoutable::class) as $parameter) {
+                $model = $parameter->getType()->getName();
+                $override = $model === (new ReflectionMethod($model, 'getRouteKeyName'))->class;
+
+                // Avoid booting this model if it doesn't override the default route key name
+                $bindings[$parameter->getName()] = $override ? app($model)->getRouteKeyName() : 'id';
+            }
+
+            $routes[$name] = $scopedBindings ? array_merge($bindings, $route->bindingFields()) : $bindings;
+        }
+
+        return $routes;
     }
 }

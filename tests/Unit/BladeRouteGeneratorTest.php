@@ -49,12 +49,9 @@ class BladeRouteGeneratorTest extends TestCase
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => null,
+                'bindings' => [],
             ],
         ];
-
-        if ($this->laravelVersion(7)) {
-            $expected['postComments.index']['bindings'] = [];
-        }
 
         $this->assertStringContainsString(json_encode($expected), (new BladeRouteGenerator)->generate());
     }
@@ -73,12 +70,9 @@ class BladeRouteGeneratorTest extends TestCase
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => '{account}.myapp.com',
+                'bindings' => [],
             ],
         ];
-
-        if ($this->laravelVersion(7)) {
-            $expected['postComments.index']['bindings'] = [];
-        }
 
         $this->assertStringContainsString(json_encode($expected), (new BladeRouteGenerator)->generate());
     }
@@ -90,5 +84,17 @@ class BladeRouteGeneratorTest extends TestCase
             '<script type="text/javascript" nonce="supercalifragilisticexpialidocious">',
             (new BladeRouteGenerator)->generate(false, 'supercalifragilisticexpialidocious')
         );
+    }
+
+    /** @test */
+    public function can_compile_routes_directive()
+    {
+        $compiler = app('blade.compiler');
+
+        BladeRouteGenerator::$generated = false;
+        $script = (new BladeRouteGenerator)->generate();
+
+        BladeRouteGenerator::$generated = false;
+        $this->assertSame($script, $compiler->compileString('@routes'));
     }
 }
