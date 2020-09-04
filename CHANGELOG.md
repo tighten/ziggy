@@ -23,6 +23,7 @@ Breaking changes are marked with ⚠️.
     - Remove the `getRoutePayload()` methods on the `BladeRouteGenerator` and `CommandRouteGenerator` classes
 - ⚠️ Rename all `whitelist` and `blacklist` functionality to `only` and `except` ([#300](https://github.com/tightenco/ziggy/pull/300))
 - Use Jest instead of Mocha for JS tests ([#309](https://github.com/tightenco/ziggy/pull/309))
+- Use [microbundle](https://github.com/developit/microbundle) instead of Webpack to build and distribute Ziggy ([#312](https://github.com/tightenco/ziggy/pull/312))
 
 **Removed**
 
