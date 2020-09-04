@@ -1,4 +1,3 @@
-dist/*.map
 node_modules/
 vendor/
 *.log
