@@ -189,14 +189,13 @@ class Ziggy implements JsonSerializable
             $routeBindings = array_map(function ($parameter) {
                 $model = $parameter->getType()->getName();
 
-                if (
-                    (new ReflectionMethod($model, 'getRouteKey'))->class === $model
-                    || (new ReflectionMethod($model, 'getRouteKeyName'))->class === $model
-                ) {
-                    return [$parameter->getName() => app($model)->getRouteKeyName()];
-                } else {
-                    return [$parameter->getName() => 'id'];
-                }
+                $routeKeyDefiners = [
+                    (new ReflectionMethod($model, 'getRouteKey'))->class,
+                    (new ReflectionMethod($model, 'getRouteKeyName'))->class,
+                ];
+
+                // Avoid booting this model if it doesn't override the default route key name
+                return [$parameter->getName() => in_array($model, $routeKeyDefiners) ? app($model)->getRouteKeyName() : 'id'];
             }, $route->signatureParameters(UrlRoutable::class));
 
             if (method_exists($route, 'bindingFields')) {
