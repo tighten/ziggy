@@ -1,12 +1,10 @@
 * text=auto
 
 /tests export-ignore
-ziggy-banner.png export-ignore
-CONTRIBUTING.md export-ignore
-.babelrc export-ignore
 .editorconfig export-ignore
 .gitattributes export-ignore
 .github export-ignore
 .gitignore export-ignore
+CONTRIBUTING.md export-ignore
 phpunit.xml.dist export-ignore
-webpack.config.js export-ignore
+ziggy-banner.png export-ignore

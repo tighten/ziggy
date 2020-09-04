@@ -7,17 +7,9 @@
         "routes",
         "ziggy"
     ],
-    "module": "src/js/route.js",
-    "main": "dist/js/route.js",
-    "browser": "dist/js/route.min.js",
-    "files": [
-        "src/js",
-        "dist"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/tightenco/ziggy.git"
-    },
+    "homepage": "https://github.com/tightenco/ziggy#readme",
+    "bugs": "https://github.com/tightenco/ziggy/issues",
+    "license": "MIT",
     "authors": [
         {
             "name": "Daniel Coulbourne",
@@ -28,32 +20,34 @@
             "email": "jake@tighten.co"
         }
     ],
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/tightenco/ziggy/issues"
+    "files": [
+        "src/js",
+        "dist"
+    ],
+    "source": "src/js/route.js",
+    "main": "dist/route.js",
+    "umd:main": "dist/route.js",
+    "unpkg": "dist/route.js",
+    "browser": "dist/route.js",
+    "module": "dist/route.m.js",
+    "esmodule": "dist/route.es.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tightenco/ziggy.git"
     },
-    "homepage": "https://github.com/tightenco/ziggy#readme",
     "scripts": {
-        "build": "NODE_ENV=production webpack --progress",
+        "build": "microbundle --name route --format modern,es,umd",
         "test": "jest",
         "prepublishOnly": "npm run build"
-    },
-    "devDependencies": {
-        "@babel/core": "^7.10.5",
-        "@babel/plugin-transform-modules-commonjs": "^7.10.4",
-        "@babel/preset-env": "^7.10.4",
-        "babel-loader": "^8.0.6",
-        "babel-preset-power-assert": "^3.0.0",
-        "jest": "^26.1.0",
-        "power-assert": "^1.6.1",
-        "unminified-webpack-plugin": "^2.0.0",
-        "webpack": "^4.39.3",
-        "webpack-cli": "^3.3.12"
     },
     "dependencies": {
         "qs": "^6.8.0"
     },
-    "engines": {
-        "node": ">= 8.9"
+    "devDependencies": {
+        "@babel/preset-env": "^7.11.0",
+        "babel-preset-power-assert": "^3.0.0",
+        "jest": "^26.2.2",
+        "microbundle": "^0.12.3",
+        "power-assert": "^1.6.1"
     }
 }
