@@ -121,11 +121,11 @@ class Ziggy implements JsonSerializable
                     ->put('bindings', $bindings[$route->getName()] ?? [])
                     ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
                         if (is_array($middleware)) {
-                            return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values());
+                            return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values()->all());
                         }
 
                         return $collection->put('middleware', $route->middleware());
-                    });
+                    })->filter();
             });
     }
 
