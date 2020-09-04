@@ -4,7 +4,6 @@ namespace Tightenco\Ziggy;
 
 use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use JsonSerializable;
 use ReflectionMethod;
@@ -181,7 +180,7 @@ class Ziggy implements JsonSerializable
     }
 
     /**
-     * Resolve route key names for route parameters using Eloquent route model binding.
+     * Resolve route key names for any route parameters using Eloquent route model binding.
      */
     protected function resolveBindings(array $routes): array
     {
