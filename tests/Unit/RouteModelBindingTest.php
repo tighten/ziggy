@@ -17,6 +17,9 @@ class RouteModelBindingTest extends TestCase
         $router->get('users/{user}', function (User $user) {
             return '';
         })->name('users');
+        $router->get('tags/{tag}', function (Tag $tag) {
+            return '';
+        })->name('tags');
         $router->get('tokens/{token}', function ($token) {
             return '';
         })->name('tokens');
@@ -67,7 +70,7 @@ class RouteModelBindingTest extends TestCase
     }
 
     /** @test */
-    public function can_handle_bound_and_unbound_params_in_the_same_route()
+    public function can_handle_bound_and_unbound_parameters_in_the_same_route()
     {
         $expected = [
             'users.numbers' => [
@@ -129,6 +132,14 @@ class RouteModelBindingTest extends TestCase
                     'user' => 'uuid',
                 ],
             ],
+            'tags' => [
+                'uri' => 'tags/{tag}',
+                'methods' => ['GET', 'HEAD'],
+                'domain' => null,
+                'bindings' => [
+                    'tag' => 'id',
+                ],
+            ],
             'tokens' => [
                 'uri' => 'tokens/{token}',
                 'methods' => ['GET', 'HEAD'],
@@ -172,14 +183,31 @@ class RouteModelBindingTest extends TestCase
             $this->markTestSkipped('Requires Laravel >=7');
         }
 
-        $json = '{"baseUrl":"http:\/\/ziggy.dev\/","baseProtocol":"http","baseDomain":"ziggy.dev","basePort":null,"defaultParameters":[],"namedRoutes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"domain":null,"bindings":{"user":"uuid"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"],"domain":null,"bindings":[]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"domain":null,"bindings":{"user":"uuid"}},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"domain":null,"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"domain":null,"bindings":{"category":"id","post":"slug","tag":"slug"}}}}';
+        $json = '{"baseUrl":"http:\/\/ziggy.dev\/","baseProtocol":"http","baseDomain":"ziggy.dev","basePort":null,"defaultParameters":[],"namedRoutes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"domain":null,"bindings":{"user":"uuid"}},"tags":{"uri":"tags\/{tag}","methods":["GET","HEAD"],"domain":null,"bindings":{"tag":"id"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"],"domain":null,"bindings":[]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"domain":null,"bindings":{"user":"uuid"}},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"domain":null,"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"domain":null,"bindings":{"category":"id","post":"slug","tag":"slug"}}}}';
 
         $this->assertSame($json, (new Ziggy)->toJson());
+    }
+
+    /** @test */
+    public function can_skip_booting_models_that_dont_override_their_route_key()
+    {
+        (new Ziggy)->filter(['tokens', 'users.numbers']);
+
+        $this->assertTrue(User::$wasBooted);
+        $this->assertFalse(Tag::$wasBooted);
     }
 }
 
 class User extends Model
 {
+    public static $wasBooted = false;
+
+    public static function boot()
+    {
+        parent::boot();
+        static::$wasBooted = true;
+    }
+
     public function getRouteKeyName()
     {
         return 'uuid';
@@ -198,5 +226,11 @@ class Post extends Model
 
 class Tag extends Model
 {
-    //
+    public static $wasBooted = false;
+
+    public static function boot()
+    {
+        parent::boot();
+        static::$wasBooted = true;
+    }
 }

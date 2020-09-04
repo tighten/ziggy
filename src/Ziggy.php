@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use JsonSerializable;
+use ReflectionMethod;
 
 class Ziggy implements JsonSerializable
 {
@@ -186,7 +187,16 @@ class Ziggy implements JsonSerializable
     {
         return $routes->mapWithKeys(function ($route, $name) {
             $routeBindings = array_map(function ($parameter) {
-                return [$parameter->getName() => app($parameter->getType()->getName())->getRouteKeyName()];
+                $model = $parameter->getType()->getName();
+
+                if (
+                    (new ReflectionMethod($model, 'getRouteKey'))->class === $model
+                    || (new ReflectionMethod($model, 'getRouteKeyName'))->class === $model
+                ) {
+                    return [$parameter->getName() => app($model)->getRouteKeyName()];
+                } else {
+                    return [$parameter->getName() => 'id'];
+                }
             }, $route->signatureParameters(UrlRoutable::class));
 
             if (method_exists($route, 'bindingFields')) {
