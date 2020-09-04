@@ -14,6 +14,8 @@ Ziggy supports all versions of Laravel from `5.4` to `7.x`.
 
 ## Contents
 
+> **Note**: you are viewing the `develop` branch, which is under active development. Not all of the features and changes in this documentation have been released. [Docs for the latest Ziggy release, `v0.9.4`, are in the Readme on the `0.9.x` branch](https://github.com/tightenco/ziggy/tree/0.9.x).
+
 - [Installation](#installation)
 - [Usage](#usage)
     - [Examples](#examples)
@@ -21,6 +23,7 @@ Ziggy supports all versions of Laravel from `5.4` to `7.x`.
 - [Filtering Routes](#filtering-routes)
     - [Basic Filtering](#basic-filtering)
     - [Filtering using Groups](#filtering-using-groups)
+- [Content Security Policy](#content-security-policy)
 - [Other Useful Methods](#other-useful-methods)
     - [`current()`](#current)
     - [`check()`](#check)
@@ -170,6 +173,20 @@ If you want to expose multiple groups you can pass an array of group names:
 ```
 
 **Note: Passing group names to the `@routes` directive will always take precedence over your other `only` or `except` settings.**
+
+## Content Security Policy
+
+A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) may block unsafe inline scripts which Ziggy uses to pass the routes to JavaScript. By adding a nonce to your CSP you can allow certain inlined scripts. To add this nonce to Ziggy you can pass it as the second argument:
+
+```php
+@routes(false, '[YOUR_NONCE]')
+```
+
+Or if you are using [Spatie's CSP Package](https://github.com/spatie/laravel-csp):
+
+```php
+@routes(false, csp_nonce())
+```
 
 ## Other Useful Methods
 
