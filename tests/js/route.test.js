@@ -25,6 +25,9 @@ const defaultZiggy = {
         'posts.show': {
             uri: 'posts/{post}',
             methods: ['GET', 'HEAD'],
+            bindings: {
+                post: 'id',
+            },
         },
         'posts.update': {
             uri: 'posts/{post}',
@@ -182,7 +185,7 @@ describe('route()', () => {
     test('can generate a URL using an integer', () => {
         // route with required parameters
         equal(route('posts.show', 1), 'https://ziggy.dev/posts/1');
-        // route with optional parameters
+        // route with default parameters
         equal(route('translatePosts.show', 1), 'https://ziggy.dev/en/posts/1');
     });
 
@@ -192,7 +195,7 @@ describe('route()', () => {
         equal(route('events.venues.show', { event: 1, venue: 2 }), 'https://ziggy.dev/events/1/venues/2');
         // route with optional parameters
         equal(route('optionalId', { type: 'model', id: 1 }), 'https://ziggy.dev/optionalId/model/1');
-        // route with both required and optional parameters
+        // route with both required and default parameters
         equal(route('translateEvents.venues.show', { event: 1, venue: 2 }), 'https://ziggy.dev/en/events/1/venues/2');
     });
 
@@ -200,9 +203,9 @@ describe('route()', () => {
         // routes with required parameters
         equal(route('posts.show', [1]), 'https://ziggy.dev/posts/1');
         equal(route('events.venues.show', [1, 2]), 'https://ziggy.dev/events/1/venues/2');
-        // route with optional parameters
+        // route with default parameters
         equal(route('translatePosts.show', [1]), 'https://ziggy.dev/en/posts/1');
-        // route with both required and optional parameters
+        // route with both required and default parameters
         equal(route('translateEvents.venues.show', [1, 2]), 'https://ziggy.dev/en/events/1/venues/2');
     });
 

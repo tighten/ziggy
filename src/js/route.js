@@ -1,6 +1,21 @@
 import UrlBuilder from './UrlBuilder';
 import { stringify } from 'qs';
 
+function partition(array, test) {
+    return array.reduce(([pass, fail], value) => {
+        return test(value) ? [[...pass, value], fail] : [pass, [...fail, value]];
+    }, [[], []]);
+}
+
+function extractSegments(template) {
+    return template
+        .match(/{[^}?]+\??}/g)
+        ?.map((segment) => ({
+            name: segment.replace(/{|\??}/g, ''),
+            optional: /\?}$/.test(segment),
+        })) ?? [];
+};
+
 class Router extends String {
     constructor(name, params, absolute, customZiggy = null) {
         super();
@@ -18,11 +33,26 @@ class Router extends String {
     normalizeParams(params) {
         if (typeof params === 'undefined') return {};
 
-        // If you passed in a string or integer, wrap it in an array
-        params = typeof params !== 'object' ? [params] : params;
+        // If 'params' is a single string or integer, wrap it in an array
+        params = ['string', 'number'].includes(typeof params) ? [params] : params;
 
-        this.numericParamIndices = Array.isArray(params);
-        return Object.assign({}, params);
+        let defaults, segments;
+
+        if (this.template) {
+            [defaults, segments] = partition(
+                extractSegments(this.template),
+                (s) => Object.keys(this.ziggy.defaultParameters).includes(s.name)
+            );
+
+            defaults = segments.reduce((result, current, i) => ({ ...result, [current.name]: this.ziggy.defaultParameters[current.name] }), {});
+        }
+
+        // If the parameters are an array they have to be in order, so we can
+        // transform them into an object simply by keying them with the route
+        // template segments in the order they appear
+        return Array.isArray(params)
+            ? params.reduce((result, current, i) => ({ ...result, [segments[i].name]: current }), defaults)
+            : params;
     }
 
     with(params) {
@@ -40,7 +70,7 @@ class Router extends String {
 
         let hydrated = this.template.replace(
             /{([^}]+)}/gi,
-            (tag, i) => {
+            (tag) => {
                 let keyName = this.trimParam(tag),
                     defaultParameter,
                     tagValue;
@@ -52,20 +82,11 @@ class Router extends String {
                 // If a default parameter exists, and a value wasn't
                 // provided for it manually, use the default value
                 if (defaultParameter && !this.urlParams[keyName]) {
-                    delete this.urlParams[keyName];
                     return defaultParameter;
                 }
 
-                // We were passed an array, shift the value off the
-                // object and return that value to the route
-                if (this.numericParamIndices) {
-                    this.urlParams = Object.values(this.urlParams);
-
-                    tagValue = this.urlParams.shift();
-                } else {
-                    tagValue = this.urlParams[keyName];
-                    delete this.urlParams[keyName];
-                }
+                tagValue = this.urlParams[keyName];
+                delete this.urlParams[keyName];
 
                 // The block above is what requires us to assign tagValue below
                 // instead of returning - if multiple *objects* are passed as
@@ -79,10 +100,10 @@ class Router extends String {
 
                 let bindingKey = this.ziggy.namedRoutes[this.name]?.bindings?.[keyName];
 
-                if (bindingKey && !this.urlParams[keyName] && this.urlParams[bindingKey]) {
+                if (bindingKey && this.urlParams[bindingKey]) {
                     tagValue = this.urlParams[bindingKey];
                     delete this.urlParams[bindingKey];
-                } else if (!tagValue && !this.urlParams[keyName] && this.urlParams['id']) {
+                } else if (!tagValue && this.urlParams['id']) {
                     tagValue = this.urlParams['id']
                     delete this.urlParams['id'];
                 }
@@ -104,10 +125,8 @@ class Router extends String {
                 }
 
                 // If an object was passed and has an id, return it
-                if (tagValue.id) {
-                    return encodeURIComponent(tagValue.id);
-                } else if (tagValue[bindingKey]) {
-                    return encodeURIComponent(tagValue[bindingKey])
+                if (tagValue[bindingKey ?? 'id']) {
+                    return encodeURIComponent(tagValue[bindingKey ?? 'id'])
                 }
 
                 return encodeURIComponent(tagValue);
