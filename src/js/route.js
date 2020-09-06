@@ -30,9 +30,7 @@ class Router extends String {
         this.hydrated = '';
     }
 
-    normalizeParams(params) {
-        if (typeof params === 'undefined') return {};
-
+    normalizeParams(params = {}) {
         // If 'params' is a single string or integer, wrap it in an array
         params = ['string', 'number'].includes(typeof params) ? [params] : params;
 
@@ -44,7 +42,7 @@ class Router extends String {
                 (s) => Object.keys(this.ziggy.defaultParameters).includes(s.name)
             );
 
-            defaults = segments.reduce((result, current, i) => ({ ...result, [current.name]: this.ziggy.defaultParameters[current.name] }), {});
+            defaults = defaults.reduce((result, current, i) => ({ ...result, [current.name]: this.ziggy.defaultParameters[current.name] }), {});
         }
 
         // If the parameters are an array they have to be in order, so we can
@@ -52,7 +50,7 @@ class Router extends String {
         // template segments in the order they appear
         return Array.isArray(params)
             ? params.reduce((result, current, i) => ({ ...result, [segments[i].name]: current }), defaults)
-            : params;
+            : { ...defaults, ...params };
     }
 
     with(params) {
@@ -260,12 +258,11 @@ class Router extends String {
     }
 
     parse() {
-        this.return = this.hydrateUrl() + this.constructQuery();
+        return this.hydrateUrl() + this.constructQuery();
     }
 
     url() {
-        this.parse();
-        return this.return;
+        return this.parse();
     }
 
     toString() {
