@@ -1,4 +1,3 @@
-import UrlBuilder from './UrlBuilder';
 import { stringify } from 'qs';
 
 function partition(array, test) {
@@ -17,14 +16,18 @@ function extractSegments(template) {
 };
 
 class Router extends String {
-    constructor(name, params, absolute, customZiggy = null) {
+    constructor(name, params, absolute = true, customZiggy) {
         super();
 
         this.name = name;
-        this.absolute = absolute;
-        this.ziggy = customZiggy ? customZiggy : Ziggy;
-        this.urlBuilder = this.name ? new UrlBuilder(name, absolute, this.ziggy) : null;
-        this.template = this.urlBuilder ? this.urlBuilder.construct() : '';
+        this.relative = !absolute;
+        this.ziggy = customZiggy ?? Ziggy;
+
+        if (this.name && !this.ziggy.namedRoutes[this.name]) {
+            throw new Error(`Ziggy Error: route '${this.name}' is not found in the route list`);
+        }
+
+        this.route = this.ziggy.namedRoutes[this.name];
         this.bindings = this.ziggy.namedRoutes[this.name]?.bindings;
         this.urlParams = this.normalizeParams(params);
         this.queryParams = {};
@@ -68,6 +71,28 @@ class Router extends String {
             : { ...defaults, ...params };
     }
 
+    get origin() {
+        // If we're building a relative URL, there is no origin
+        if (this.relative) {
+            return '';
+        }
+
+        // If the current route doesn't have a domain, the origin is the app domain (Ziggy's 'baseUrl')
+        if (!this.route.domain) {
+            return this.ziggy.baseUrl.replace(/\/$/, '');
+        }
+
+        // Otherwise, construct the origin based on the route definition and Ziggy's config
+        return `${this.ziggy.baseProtocol}://`
+            + this.route.domain.replace(/\/$/, '')
+            + (this.ziggy.basePort ? `:${this.ziggy.basePort}` : '');
+    }
+
+    get template() {
+        /// @todo don't ever even call this if this.name isn't set
+        return this.name ? `${this.origin}/${this.route.uri.replace(/^\//, '')}` : '';
+    }
+
     with(params) {
         this.urlParams = this.normalizeParams(params);
         return this;
@@ -79,38 +104,36 @@ class Router extends String {
     }
 
     hydrateUrl() {
-        if (this.hydrated) return this.hydrated;
-
         this.segments = extractSegments(this.template);
 
-        let hydrated = this.template.replace(/{([^}?]+)\??}/g, (_, segment) => {
+        // Return early if there's nothing to replace (e.g. '/' or '/posts')
+        if (!this.segments.length) {
+            this.hydrated = this.template;
+            return this.hydrated;
+        }
+
+        this.hydrated = this.template.replace(/{([^}?]+)\??}/g, (_, segment) => {
             switch (typeof this.urlParams[segment]) {
                 case 'string':
                 case 'number':
                     return encodeURIComponent(this.urlParams[segment]);
                 case 'object':
                     if (this.urlParams[segment] === null) {
-                        if (this.segments.filter(s => s.name === segment).shift().optional) {
-                            return '';
-                        } else {
+                        if (!this.segments.filter(s => s.name === segment).shift().optional) {
                             throw new Error(`Ziggy Error: '${segment}' key is required for route '${this.name}'`);
                         }
+                        return '';
                     }
                     return encodeURIComponent(this.urlParams[segment][this.bindings[segment]]);
                 case 'undefined':
-                    if (this.segments.filter(s => s.name === segment).shift().optional) {
-                        return '';
-                    } else {
+                    if (!this.segments.filter(s => s.name === segment).shift().optional) {
                         throw new Error(`Ziggy Error: '${segment}' key is required for route '${this.name}'`);
                     }
+                    return '';
             }
         });
 
-        if (this.urlBuilder != null && this.urlBuilder.path !== '') {
-          hydrated = hydrated.replace(/\/+$/, '');
-        }
-
-        this.hydrated = hydrated;
+        this.hydrated = this.hydrated.replace(/\/$/, '');
 
         return this.hydrated;
     }
