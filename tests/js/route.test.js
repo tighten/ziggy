@@ -32,11 +32,15 @@ const defaultZiggy = {
         'posts.update': {
             uri: 'posts/{post}',
             methods: ['PUT'],
+            bindings: {
+                post: 'id',
+            },
         },
         'postComments.show': {
             uri: 'posts/{post}/comments/{comment}',
             methods: ['GET', 'HEAD'],
             bindings: {
+                post: 'id',
                 comment: 'uuid',
             },
         },
@@ -51,14 +55,25 @@ const defaultZiggy = {
         'events.venues.index': {
             uri: 'events/{event}/venues',
             methods: ['GET', 'HEAD'],
+            bindings: {
+                event: 'id',
+            },
         },
         'events.venues.show': {
             uri: 'events/{event}/venues/{venue}',
             methods: ['GET', 'HEAD'],
+            bindings: {
+                event: 'id',
+                venue: 'id',
+            },
         },
         'translateEvents.venues.show': {
             uri: '{locale}/events/{event}/venues/{venue}',
             methods: ['GET', 'HEAD'],
+            bindings: {
+                event: 'id',
+                venue: 'id',
+            },
         },
         'conversations.show': {
             uri: 'subscribers/{subscriber}/conversations/{type}/{conversation_id?}',

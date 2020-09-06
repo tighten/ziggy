@@ -25,6 +25,7 @@ class Router extends String {
         this.ziggy = customZiggy ? customZiggy : Ziggy;
         this.urlBuilder = this.name ? new UrlBuilder(name, absolute, this.ziggy) : null;
         this.template = this.urlBuilder ? this.urlBuilder.construct() : '';
+        this.bindings = this.ziggy.namedRoutes[this.name]?.bindings;
         this.urlParams = this.normalizeParams(params);
         this.queryParams = {};
         this.hydrated = '';
@@ -43,6 +44,20 @@ class Router extends String {
             );
 
             defaults = defaults.reduce((result, current, i) => ({ ...result, [current.name]: this.ziggy.defaultParameters[current.name] }), {});
+        }
+
+        // We need an early strategy for determining if a key is 'missing' or if it just appears to be,
+        // based on the shape of the parameters object passed in.
+        // -> If there is more than one segment and the params are one object, that object must have keys for every segment
+        // -> If there's only one segment (AND for each individual segment if there are many)...
+        //      -> If it HAS a binding registered and the params are an object, that object MUST have the binding key
+        //      -> If it does NOT have a binding registered, the params CANNOT be an object
+
+        if (segments?.length === 1
+            && !Object.keys(params).includes(segments[0].name)
+            && Object.keys(params).includes(Object.values(this.bindings ?? {})[0])
+        ) {
+            params = { [segments[0].name]: params };
         }
 
         // If the parameters are an array they have to be in order, so we can
@@ -66,70 +81,30 @@ class Router extends String {
     hydrateUrl() {
         if (this.hydrated) return this.hydrated;
 
-        let hydrated = this.template.replace(
-            /{([^}]+)}/gi,
-            (tag) => {
-                let keyName = this.trimParam(tag),
-                    defaultParameter,
-                    tagValue;
+        this.segments = extractSegments(this.template);
 
-                if (this.ziggy.defaultParameters.hasOwnProperty(keyName)) {
-                    defaultParameter = this.ziggy.defaultParameters[keyName];
-                }
-
-                // If a default parameter exists, and a value wasn't
-                // provided for it manually, use the default value
-                if (defaultParameter && !this.urlParams[keyName]) {
-                    return defaultParameter;
-                }
-
-                tagValue = this.urlParams[keyName];
-                delete this.urlParams[keyName];
-
-                // The block above is what requires us to assign tagValue below
-                // instead of returning - if multiple *objects* are passed as
-                // params, numericParamIndices will be true and each object will
-                // be assigned above, which means !tagValue will evaluate to
-                // false, skipping the block below.
-
-                // If a value wasn't provided for this named parameter explicitly,
-                // but the object that was passed contains an ID, that object
-                // was probably a model, so we use the ID.
-
-                let bindingKey = this.ziggy.namedRoutes[this.name]?.bindings?.[keyName];
-
-                if (bindingKey && this.urlParams[bindingKey]) {
-                    tagValue = this.urlParams[bindingKey];
-                    delete this.urlParams[bindingKey];
-                } else if (!tagValue && this.urlParams['id']) {
-                    tagValue = this.urlParams['id']
-                    delete this.urlParams['id'];
-                }
-
-                // The value is null or undefined; is this param
-                // optional or not
-                if (tagValue == null) {
-                    if (tag.indexOf('?') === -1) {
-                        throw new Error(
-                            "Ziggy Error: '" +
-                                keyName +
-                                "' key is required for route '" +
-                                this.name +
-                                "'"
-                        );
-                    } else {
-                        return '';
+        let hydrated = this.template.replace(/{([^}?]+)\??}/g, (_, segment) => {
+            switch (typeof this.urlParams[segment]) {
+                case 'string':
+                case 'number':
+                    return encodeURIComponent(this.urlParams[segment]);
+                case 'object':
+                    if (this.urlParams[segment] === null) {
+                        if (this.segments.filter(s => s.name === segment).shift().optional) {
+                            return '';
+                        } else {
+                            throw new Error(`Ziggy Error: '${segment}' key is required for route '${this.name}'`);
+                        }
                     }
-                }
-
-                // If an object was passed and has an id, return it
-                if (tagValue[bindingKey ?? 'id']) {
-                    return encodeURIComponent(tagValue[bindingKey ?? 'id'])
-                }
-
-                return encodeURIComponent(tagValue);
+                    return encodeURIComponent(this.urlParams[segment][this.bindings[segment]]);
+                case 'undefined':
+                    if (this.segments.filter(s => s.name === segment).shift().optional) {
+                        return '';
+                    } else {
+                        throw new Error(`Ziggy Error: '${segment}' key is required for route '${this.name}'`);
+                    }
             }
-        );
+        });
 
         if (this.urlBuilder != null && this.urlBuilder.path !== '') {
           hydrated = hydrated.replace(/\/+$/, '');
@@ -169,14 +144,8 @@ class Router extends String {
     }
 
     constructQuery() {
-        if (
-            Object.keys(this.queryParams).length === 0 &&
-            Object.keys(this.urlParams).length === 0
-        ) {
-            return '';
-        }
-
-        let remainingParams = Object.assign(this.urlParams, this.queryParams);
+        let diff = Object.keys(this.urlParams).filter((key) => !this.segments.some(s => s.name === key));
+        let remainingParams = diff.reduce((result, current) => ({ ...result, [current]: this.urlParams[current] }), this.queryParams ?? {});
 
         return stringify(remainingParams, {
             encodeValuesOnly: true,
