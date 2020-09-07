@@ -139,31 +139,17 @@ class Router extends String {
     }
 
     matchUrl() {
-        let windowUrl =
-            window.location.hostname +
-            (window.location.port ? ':' + window.location.port : '') +
-            window.location.pathname;
+        const url = (
+            ({ hostname, port, pathname }) => `${hostname}${port ? `:${port}` : ''}${pathname}`.replace(/\/?$/, '')
+        )(window.location);
 
-        // Strip out optional parameters
-        let optionalTemplate = this.template
-            .replace(/(\/\{[^\}]*\?\})/g, '/')
-            .replace(/(\{[^\}]*\})/gi, '[^/?]+')
+        const urlPattern = this.template
+            .replace(/\/\{[^\}]*\?\}/g, '(\/[^/?]+)?')
+            .replace(/\{[^\}]*\}/gi, '[^/?]+')
             .replace(/\/?$/, '')
-            .split('://')[1];
+            .split('://').pop();
 
-        let searchTemplate = this.template
-            .replace(/(\{[^\}]*\})/gi, '[^/?]+')
-            .split('://')[1];
-        let urlWithTrailingSlash = windowUrl.replace(/\/?$/, '/');
-
-        const regularSearch = new RegExp('^' + searchTemplate + '/$').test(
-            urlWithTrailingSlash
-        );
-        const optionalSearch = new RegExp('^' + optionalTemplate + '/$').test(
-            urlWithTrailingSlash
-        );
-
-        return regularSearch || optionalSearch;
+        return new RegExp(`^${urlPattern}$`).test(url.split('?').shift());
     }
 
     constructQuery() {
@@ -179,27 +165,14 @@ class Router extends String {
     }
 
     current(name = null) {
-        let routeNames = Object.keys(this.ziggy.namedRoutes);
-
-        let currentRoute = routeNames.filter(name => {
-            if (this.ziggy.namedRoutes[name].methods.indexOf('GET') === -1) {
-                return false;
-            }
-
-            return new Router(
-                name,
-                undefined,
-                undefined,
-                this.ziggy
-            ).matchUrl();
+        const currentRoute = Object.keys(this.ziggy.namedRoutes).filter(name => {
+            return this.ziggy.namedRoutes[name].methods.includes('GET')
+                ? new Router(name, undefined, undefined, this.ziggy).matchUrl()
+                : false;
         })[0];
 
         if (name) {
-            const pattern = new RegExp(
-                '^' + name.replace('.', '\\.').replace('*', '.*') + '$',
-                'i'
-            );
-            return pattern.test(currentRoute);
+            return new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`, 'i').test(currentRoute);
         }
 
         return currentRoute;
@@ -215,17 +188,11 @@ class Router extends String {
         const uriParts = uri.split(delimiter);
         const templateParts = template.split(delimiter);
 
-        return templateParts.reduce(
-            (params, param, i) =>
-                param.indexOf('{') === 0 &&
-                param.indexOf('}') !== -1 &&
-                uriParts[i]
-                    ? Object.assign(params, {
-                          [this.trimParam(param)]: uriParts[i]
-                      })
-                    : params,
-            {}
-        );
+        return templateParts.reduce((params, param, i) => {
+            return /^{[^}]+}$/.test(param) && uriParts[i]
+                ? { ...params, [this.trimParam(param)]: uriParts[i] }
+                : params;
+        }, {});
     }
 
     get params() {
@@ -236,16 +203,8 @@ class Router extends String {
             .replace(/^\/+/, '');
 
         return Object.assign(
-            this.extractParams(
-                window.location.hostname,
-                namedRoute.domain || '',
-                '.'
-            ),
-            this.extractParams(
-                pathname,
-                namedRoute.uri,
-                '/'
-            )
+            this.extractParams(window.location.hostname, namedRoute.domain || '', '.'),
+            this.extractParams(pathname, namedRoute.uri, '/')
         );
     }
 
