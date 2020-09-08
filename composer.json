@@ -37,5 +37,7 @@
                 "Tightenco\\Ziggy\\ZiggyServiceProvider"
             ]
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
