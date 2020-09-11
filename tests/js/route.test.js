@@ -3,7 +3,7 @@ import route from '../../src/js/route.js';
 
 const defaultWindow = {
     location: {
-        hostname: 'ziggy.dev',
+        host: 'ziggy.dev',
     },
 };
 
@@ -412,15 +412,23 @@ describe('route()', () => {
         global.Ziggy.baseUrl = 'https://ziggy.dev/subfolder/';
 
         global.window.location.href = 'https://ziggy.dev/subfolder/ph/en/products/4';
-        global.window.location.hostname = 'ziggy.dev';
+        global.window.location.host = 'ziggy.dev';
         global.window.location.pathname = '/subfolder/ph/en/products/4';
 
         deepEqual(route().params, { country: 'ph', language: 'en', id: '4' });
     });
 
+    test('can extract domain parameters from the current URL', () => {
+        global.window.location.href = 'https://tighten.ziggy.dev/users/1';
+        global.window.location.host = 'tighten.ziggy.dev';
+        global.window.location.pathname = '/users/1';
+
+        deepEqual(route().params, { team: 'tighten', id: '1' });
+    });
+
     test('can extract named parameters from the current URL', () => {
         global.window.location.href = 'https://ziggy.dev/posts/1';
-        global.window.location.hostname = 'ziggy.dev';
+        global.window.location.host = 'ziggy.dev';
         global.window.location.pathname = '/posts/1';
 
         deepEqual(route().params, { post: '1' });
@@ -431,12 +439,19 @@ describe('route()', () => {
         deepEqual(route().params, { event: '1', venue: '2' });
     });
 
-    test('can extract domain parameters from the current URL', () => {
-        global.window.location.href = 'https://tighten.ziggy.dev/users/1';
-        global.window.location.hostname = 'tighten.ziggy.dev';
-        global.window.location.pathname = '/users/1';
+    test('can extract query parameters from the current URL', () => {
+        global.window.location.href = 'https://ziggy.dev/posts/1?guest[name]=Taylor';
+        global.window.location.host = 'ziggy.dev';
+        global.window.location.pathname = '/posts/1';
+        global.window.location.search = '?guest[name]=Taylor';
 
-        deepEqual(route().params, { team: 'tighten', id: '1' });
+        deepEqual(route().params, { post: '1', guest: { name: 'Taylor' } });
+
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=true';
+        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.search = '?id=5&vip=true';
+
+        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: 'true' });
     });
 });
 

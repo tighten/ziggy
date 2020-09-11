@@ -1,4 +1,4 @@
-import { stringify } from 'qs';
+import { parse, stringify } from 'qs';
 
 function partition(array, test) {
     return array.reduce(([pass, fail], value) => {
@@ -42,7 +42,7 @@ class Router extends String {
 
         if (this.template) {
             [defaults, segments] = partition(
-                extractSegments(this.template),
+                this.segments,
                 (s) => Object.keys(this.ziggy.defaultParameters).includes(s.name)
             );
 
@@ -93,6 +93,10 @@ class Router extends String {
         return this.name ? `${this.origin}/${this.route.uri.replace(/^\//, '')}` : '';
     }
 
+    get segments() {
+        return this.name ? extractSegments(this.template) : [];
+    }
+
     with(params) {
         this.urlParams = this.normalizeParams(params);
         return this;
@@ -104,8 +108,6 @@ class Router extends String {
     }
 
     hydrateUrl() {
-        this.segments = extractSegments(this.template);
-
         // Return early if there's nothing to replace (e.g. '/' or '/posts')
         if (!this.segments.length) {
             this.hydrated = this.template;
@@ -139,14 +141,12 @@ class Router extends String {
     }
 
     matchUrl() {
-        const url = (
-            ({ hostname, port, pathname }) => `${hostname}${port ? `:${port}` : ''}${pathname}`.replace(/\/?$/, '')
-        )(window.location);
+        const url = (({ host, pathname }) => `${host}${pathname}`.replace(/\/?$/, ''))(window.location);
 
         const urlPattern = this.template
-            .replace(/\/\{[^\}]*\?\}/g, '(\/[^/?]+)?')
-            .replace(/\{[^\}]*\}/gi, '[^/?]+')
-            .replace(/\/?$/, '')
+            .replace(/\/{[^}?]*\?}/g, '(\/[^/?]+)?') // replace optional parameters with optional regex
+            .replace(/{[^}]+}/g, '[^/?]+') // replace required parameters with regex
+            .replace(/\/?$/, '') // trim trailing slash
             .split('://').pop();
 
         return new RegExp(`^${urlPattern}$`).test(url.split('?').shift());
@@ -184,28 +184,30 @@ class Router extends String {
         return routeNames.includes(name);
     }
 
-    extractParams(uri, template, delimiter) {
-        const uriParts = uri.split(delimiter);
-        const templateParts = template.split(delimiter);
+    extractParams(hydrated, template = '', delimiter) {
+        const [values, segments] = [hydrated, template].map(s => s.split(delimiter));
 
-        return templateParts.reduce((params, param, i) => {
-            return /^{[^}]+}$/.test(param) && uriParts[i]
-                ? { ...params, [this.trimParam(param)]: uriParts[i] }
-                : params;
+        // Replace each parameter segment in the template with its value in the hydrated uri
+        return segments.reduce((result, current, i) => {
+            return /^{[^}?]+\??}$/.test(current) && values[i]
+                ? { ...result, [current.replace(/^{|\??}$/g, '')]: values[i] }
+                : result;
         }, {});
     }
 
     get params() {
-        const namedRoute = this.ziggy.namedRoutes[this.current()];
+        const route = this.ziggy.namedRoutes[this.current()];
 
         let pathname = window.location.pathname
-            .replace(this.ziggy.baseUrl.split('://')[1].split('/')[1], '')
+            // .replace(this.ziggy.baseUrl.replace(/^\w*?:\/\/[^/]+/, ''), '')
+            .replace(this.ziggy.baseUrl.split('://')[1].split('/')[1], '') // subfolders
             .replace(/^\/+/, '');
 
-        return Object.assign(
-            this.extractParams(window.location.hostname, namedRoute.domain || '', '.'),
-            this.extractParams(pathname, namedRoute.uri, '/')
-        );
+        return {
+            ...this.extractParams(window.location.host, route.domain, '.'), // (sub)domain params
+            ...this.extractParams(pathname, route.uri, '/'), // path params
+            ...parse(window.location.search?.replace(/^\?/, '')) // query params
+        };
     }
 
     parse() {
