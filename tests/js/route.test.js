@@ -482,6 +482,12 @@ describe('current', () => {
         equal(route().current(), 'events.venues.index');
     });
 
+    test('can ignore query string when getting current route name', () => {
+        global.window.location.pathname = '/events/1/venues?foo=2';
+
+        equal(route().current(), 'events.venues.index');
+    });
+
     test('can get the current route name with a custom Ziggy object', () => {
         global.Ziggy = undefined;
         global.window.location.pathname = '/events/';
@@ -531,20 +537,78 @@ describe('current', () => {
         assert(route().current('optional'));
     });
 
-    test('can check the current route name on a route with empty optional parameters', () => {
+    test('can check the current route name on a route with trailing empty optional parameters', () => {
         global.window.location.pathname = '/optional/1';
 
         assert(route().current('optional'));
     });
 
-    test.todo('can check the current route name and parameters');
-    // test.todo('can check the current route name and parameters', () => {
-    //     global.window.location.pathname = '/events/1/venues/2';
+    test('can check the current route name on a route with optional parameters in the middle of the URI', () => {
+        global.Ziggy.baseUrl = 'https://ziggy.dev/subfolder/';
 
-    //     assert(route().current('events.venues.show', { event: 1, venue: 2 }));
-    //     assert(!route().current('events.venues.show', { event: 4, venue: 2 }));
-    //     assert(!route().current('events.venues.show', { event: 1, venue: 6 }));
-    // });
+        // Missing the optional 'language' parameter (e.g. subfolder/ph/en/products...)
+        global.window.location.href = 'https://ziggy.dev/subfolder/ph/products/4';
+        global.window.location.host = 'ziggy.dev';
+        global.window.location.pathname = '/subfolder/ph/products/4';
+
+        assert(route().current('products.show'));
+    });
+
+    test('can check the current route with parameters', () => {
+        global.window.location.pathname = '/events/1/venues/2';
+
+        assert(route().current('events.venues.show', { event: 1, venue: 2 }));
+        assert(route().current('events.venues.show', [1, 2]));
+        assert(route().current('events.venues.show', [1, { id: 2, name: 'Grand Canyon' }]));
+        assert(route().current('events.venues.show', { event: 1 }));
+        assert(route().current('events.venues.show', { venue: 2 }));
+        assert(route().current('events.venues.show', [1]));
+
+        assert(!route().current('events.venues.show', { event: 4, venue: 2 }));
+        assert(!route().current('events.venues.show', [1, 6]));
+        assert(!route().current('events.venues.show', [{ id: 1 }, { id: 4, name: 'Great Pyramids' }]));
+        assert(!route().current('events.venues.show', { event: 4 }));
+        assert(!route().current('events.venues.show', { venue: 4 }));
+        assert(!route().current('events.venues.show', [5]));
+    });
+
+    test('can check the current route with query parameters', () => {
+        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.search = '?user=Jacob&id=9';
+
+        assert(route().current('events.venues.show', { event: 1, venue: 2, user: 'Jacob' }));
+        assert(route().current('events.venues.show', {
+            event: { id: 1, name: 'Party' },
+            venue: 2,
+            id: 9,
+        }));
+        assert(route().current('events.venues.show', { user: 'Jacob', venue: { id: 2 } }));
+
+        assert(!route().current('events.venues.show', { user: 'Matt', venue: { id: 9 } }));
+        assert(!route().current('events.venues.show', { event: 5, id: 9, user: 'Jacob' }));
+        assert(!route().current('events.venues.show', { id: 12, user: 'Matt' }));
+    });
+
+    test('can check the current route with exact parameters', () => {
+        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.search = '?user=Jacob&id=9';
+
+        assert(route().current('events.venues.show', { event: 1, venue: 2, user: 'Jacob', id: 9 }, true));
+        assert(route().current('events.venues.show', {
+            event: { id: 1, name: 'Party' },
+            venue: 2,
+            id: 9,
+            user: 'Jacob',
+        }, true));
+
+        assert(!route().current('events.venues.show', {
+            event: { id: 1, name: 'Party' },
+            venue: 2,
+            id: 9,
+        }, true));
+        assert(!route().current('events.venues.show', { event: 1, user: 'Jacob', id: 9 }, true));
+        assert(!route().current('events.venues.show', { user: 'Jacob', venue: { id: 2 } }, true));
+    });
 
     test('can ignore routes that dont allow GET requests', () => {
         global.window.location.pathname = '/posts/1';
@@ -557,11 +621,4 @@ describe('current', () => {
 
         equal(route().current(), 'events.venues.index');
     });
-
-    test.todo('can ignore query parameters');
-    // test('can ignore query parameters', () => {
-    //     global.window.location.pathname = '/events/1/venues?foo=2';
-
-    //     equal(route().current(), 'events.venues.index');
-    // });
 });

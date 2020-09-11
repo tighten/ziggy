@@ -29,20 +29,20 @@ class Router extends String {
 
         this.route = this.ziggy.namedRoutes[this.name];
         this.bindings = this.ziggy.namedRoutes[this.name]?.bindings;
-        this.urlParams = this.normalizeParams(params);
+        this.urlParams = this._parseParameters(this.route, params);
         this.queryParams = {};
         this.hydrated = '';
     }
 
-    normalizeParams(params = {}) {
+    _parseParameters(route, params = {}) {
         // If 'params' is a single string or integer, wrap it in an array
         params = ['string', 'number'].includes(typeof params) ? [params] : params;
 
         let defaults, segments;
 
-        if (this.template) {
+        if (route) {
             [defaults, segments] = partition(
-                this.segments,
+                extractSegments(this._compileTemplate(route)),
                 (s) => Object.keys(this.ziggy.defaultParameters).includes(s.name)
             );
 
@@ -71,34 +71,33 @@ class Router extends String {
             : { ...defaults, ...params };
     }
 
-    get origin() {
+    _compileOrigin(route = this.route) {
         // If we're building a relative URL, there is no origin
         if (this.relative) {
             return '';
         }
 
         // If the current route doesn't have a domain, the origin is the app domain (Ziggy's 'baseUrl')
-        if (!this.route.domain) {
+        if (!route?.domain) {
             return this.ziggy.baseUrl.replace(/\/$/, '');
         }
 
         // Otherwise, construct the origin based on the route definition and Ziggy's config
         return `${this.ziggy.baseProtocol}://`
-            + this.route.domain.replace(/\/$/, '')
+            + route.domain.replace(/\/$/, '')
             + (this.ziggy.basePort ? `:${this.ziggy.basePort}` : '');
     }
 
-    get template() {
-        /// @todo don't ever even call this if this.name isn't set
-        return this.name ? `${this.origin}/${this.route.uri.replace(/^\//, '')}` : '';
+    _compileTemplate(route = this.route) {
+        return `${this._compileOrigin(route)}/${route.uri.replace(/^\//, '')}`;
     }
 
-    get segments() {
-        return this.name ? extractSegments(this.template) : [];
-    }
+    // get segments() {
+    //     return this.name ? extractSegments(this._compileTemplate()) : [];
+    // }
 
     with(params) {
-        this.urlParams = this.normalizeParams(params);
+        this.urlParams = this._parseParameters(this.route, params);
         return this;
     }
 
@@ -108,52 +107,37 @@ class Router extends String {
     }
 
     hydrateUrl() {
+        const template = this._compileTemplate();
+
         // Return early if there's nothing to replace (e.g. '/' or '/posts')
-        if (!this.segments.length) {
-            this.hydrated = this.template;
-            return this.hydrated;
+        if (!extractSegments(template).length) {
+            return template;
         }
 
-        this.hydrated = this.template.replace(/{([^}?]+)\??}/g, (_, segment) => {
+        return template.replace(/{([^}?]+)\??}/g, (_, segment) => {
             switch (typeof this.urlParams[segment]) {
                 case 'string':
                 case 'number':
                     return encodeURIComponent(this.urlParams[segment]);
                 case 'object':
                     if (this.urlParams[segment] === null) {
-                        if (!this.segments.filter(s => s.name === segment).shift().optional) {
+                        if (!extractSegments(template).filter(s => s.name === segment).shift().optional) {
                             throw new Error(`Ziggy Error: '${segment}' key is required for route '${this.name}'`);
                         }
                         return '';
                     }
                     return encodeURIComponent(this.urlParams[segment][this.bindings[segment]]);
                 case 'undefined':
-                    if (!this.segments.filter(s => s.name === segment).shift().optional) {
+                    if (!extractSegments(template).filter(s => s.name === segment).shift().optional) {
                         throw new Error(`Ziggy Error: '${segment}' key is required for route '${this.name}'`);
                     }
                     return '';
             }
-        });
-
-        this.hydrated = this.hydrated.replace(/\/$/, '');
-
-        return this.hydrated;
-    }
-
-    matchUrl() {
-        const url = (({ host, pathname }) => `${host}${pathname}`.replace(/\/?$/, ''))(window.location);
-
-        const urlPattern = this.template
-            .replace(/\/{[^}?]*\?}/g, '(\/[^/?]+)?') // replace optional parameters with optional regex
-            .replace(/{[^}]+}/g, '[^/?]+') // replace required parameters with regex
-            .replace(/\/?$/, '') // trim trailing slash
-            .split('://').pop();
-
-        return new RegExp(`^${urlPattern}$`).test(url.split('?').shift());
+        }).replace(/\/$/, '');
     }
 
     constructQuery() {
-        let diff = Object.keys(this.urlParams).filter((key) => !this.segments.some(s => s.name === key));
+        let diff = Object.keys(this.urlParams).filter((key) => !extractSegments(this._compileTemplate()).some(s => s.name === key));
         let remainingParams = diff.reduce((result, current) => ({ ...result, [current]: this.urlParams[current] }), this.queryParams ?? {});
 
         return stringify(remainingParams, {
@@ -164,18 +148,58 @@ class Router extends String {
         });
     }
 
-    current(name = null) {
-        const currentRoute = Object.keys(this.ziggy.namedRoutes).filter(name => {
-            return this.ziggy.namedRoutes[name].methods.includes('GET')
-                ? new Router(name, undefined, undefined, this.ziggy).matchUrl()
-                : false;
+    current(name, params, exact = false) {
+        const url = (({ host, pathname }) => `${host}${pathname}`.replace(/\/?$/, ''))(window.location);
+
+        // Loop over every named route and see if it matches the current URL
+        const [n, route] = Object.entries(this.ziggy.namedRoutes).filter(([_, route]) => { // bindings??
+            if (!route.methods.includes('GET')) {
+                return false;
+            }
+
+            // Transform this route's template into a regex that will match a hydrated URL
+            // by replacing its segments with matchers for (optional) path segment values
+            const pattern = this._compileTemplate(route)
+                .replace(/\/{[^}?]*\?}/g, '(\/[^/?]+)?')
+                .replace(/{[^}]+}/g, '[^/?]+')
+                .replace(/\/?$/, '')
+                .split('://').pop();
+
+            // Test this pattern against the current URL, ignoring the protocol and query,
+            // e.g. `ziggy.dev/posts/[^/?]+/tags/(/[^/?]+)?` vs. ziggy.dev/posts/12/tags/javascript
+            return new RegExp(`^${pattern}$`).test(url.split('?')[0]);
         })[0];
 
         if (name) {
-            return new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`, 'i').test(currentRoute);
+            let match = new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`).test(n);
+
+            if (match && params) {
+                let currentParams = this.params;
+                let hydratedParams = this._parseParameters(route, params);
+                let hydratedBindings = route.bindings ?? {};
+                return exact ? Object.entries(currentParams).every(([k, v]) => {
+                    switch (typeof hydratedParams[k]) {
+                        case 'string':
+                        case 'number':
+                            return hydratedParams[k] == v;
+                        case 'object':
+                            return hydratedParams[k][hydratedBindings[k]] == v;
+                    }
+                }) : Object.entries(hydratedParams).every(([k, v]) => {
+                    switch (typeof v) {
+                        case 'string':
+                        case 'number':
+                            return currentParams[k] == v;
+                        case 'object':
+                            return currentParams[k] == v[hydratedBindings[k]];
+                    }
+                });
+            }
+
+            return match;
         }
 
-        return currentRoute;
+        return n;
     }
 
     check(name) {
