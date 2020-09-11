@@ -10,7 +10,7 @@
 
 Ziggy creates a Blade directive that you can include in your views. It will export a JavaScript object of your application's named routes, keyed by their names (aliases), as well as a global `route()` helper function which you can use to access your routes in your JavaScript.
 
-Ziggy supports all versions of Laravel from `5.4` to `7.x`.
+Ziggy supports all versions of Laravel from `5.4` to `8.x`.
 
 > **Note**: you are viewing the `develop` branch, which is under active development. Not all of the features and changes in this documentation have been released. [Docs for the latest Ziggy release, `v0.9.4`, are in the Readme on the `0.9.x` branch](https://github.com/tightenco/ziggy/tree/0.9.x).
 
