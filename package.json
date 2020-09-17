@@ -40,6 +40,9 @@
         "test": "jest",
         "prepublishOnly": "npm run build"
     },
+    "mangle": {
+        "regex": "^_"
+    },
     "dependencies": {
         "qs": "^6.8.0"
     },
