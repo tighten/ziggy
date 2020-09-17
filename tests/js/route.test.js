@@ -181,11 +181,11 @@ describe('route()', () => {
     });
 
     test('can error if a required parameter is not provided', () => {
-        assert.throws(() => route('posts.show').url(), /'post' key is required/);
+        assert.throws(() => route('posts.show').url(), /'post' parameter is required/);
     });
 
     test('can error if a required parameter is not provided to a route with default parameters', () => {
-        assert.throws(() => route('translatePosts.show').url(), /'id' key is required/);
+        assert.throws(() => route('translatePosts.show').url(), /'id' parameter is required/);
     });
 
     test('can error if a required parameter with a default has no default value', () => {
@@ -193,7 +193,7 @@ describe('route()', () => {
 
         assert.throws(
             () => route('translatePosts.index').url(),
-            /'locale' key is required/
+            /'locale' parameter is required/
         );
     });
 
@@ -272,7 +272,7 @@ describe('route()', () => {
     });
 
     test('can error if a route name doesn’t exist', () => {
-        assert.throws(() => route('unknown-route').url(), /route 'unknown-route' is not found in the route list/);
+        assert.throws(() => route('unknown-route').url(), /Ziggy error: route 'unknown-route' is not in the route list\./);
     });
 
     test('can append values as a query string with .withQuery', () => {
