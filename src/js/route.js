@@ -35,8 +35,6 @@ function dehydrate(hydrated, template = '', delimiter) {
  */
 function substituteBindings(params, bindings = {}) {
     return Object.entries(params).reduce((result, [key, value]) => {
-        // Check if the binding key is in the object, if not throw smth like 'key `id` missing from object passed as `event` prop to route `events.venues.show`' -- test for this too!
-
         const bound = value && typeof value === 'object' && bindings[key];
 
         if (bound && !value.hasOwnProperty(bindings[key])) {
