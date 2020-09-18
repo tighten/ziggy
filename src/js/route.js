@@ -46,15 +46,6 @@ function substituteBindings(params, bindings = {}) {
 }
 
 class Router extends String {
-    name = undefined;
-    relative = false;
-    config = {};
-
-    route = undefined;
-
-    urlParams = {};
-    queryParams = {};
-
     constructor(name, params, absolute = true, config) {
         super();
 
@@ -73,7 +64,7 @@ class Router extends String {
     }
 
     /**
-     * Parse route parameters into a simple object.
+     * Parse route parameters into a flat object.
      */
     _parseParameters(params = {}, route = this.route) {
         // If 'params' is a string or integer, wrap it in an array
@@ -135,7 +126,7 @@ class Router extends String {
      * Compile the URL.
      */
     _compile() {
-        const template = this._template(this.route);
+        const template = this._template();
         const segments = extractSegments(template);
 
         // Return early if there's nothing to replace (e.g. '/' or '/posts')
@@ -157,7 +148,7 @@ class Router extends String {
      * Compile the query string.
      */
     _compileQuery() {
-        const segments = extractSegments(this._template(this.route));
+        const segments = extractSegments(this._template());
 
         // Get passed parameters that do NOT correspond to route segments
         const unhandled = Object.keys(this.urlParams)
