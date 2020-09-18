@@ -589,26 +589,7 @@ describe('current', () => {
         assert(!route().current('events.venues.show', { id: 12, user: 'Matt' }));
     });
 
-    test('can check the current route with exact parameters', () => {
-        global.window.location.pathname = '/events/1/venues/2';
-        global.window.location.search = '?user=Jacob&id=9';
 
-        assert(route().current('events.venues.show', { event: 1, venue: 2, user: 'Jacob', id: 9 }, true));
-        assert(route().current('events.venues.show', {
-            event: { id: 1, name: 'Party' },
-            venue: 2,
-            id: 9,
-            user: 'Jacob',
-        }, true));
-
-        assert(!route().current('events.venues.show', {
-            event: { id: 1, name: 'Party' },
-            venue: 2,
-            id: 9,
-        }, true));
-        assert(!route().current('events.venues.show', { event: 1, user: 'Jacob', id: 9 }, true));
-        assert(!route().current('events.venues.show', { user: 'Jacob', venue: { id: 2 } }, true));
-    });
 
     test('can ignore routes that dont allow GET requests', () => {
         global.window.location.pathname = '/posts/1';

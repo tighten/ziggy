@@ -193,7 +193,7 @@ class Router extends String {
      * Get the name of the route matching the current URL, or, given a route name
      * and parameters, check if the current URL and parameters match that route.
      */
-    current(name, params, exact = false) {
+    current(name, params) {
         const url = (({ host, pathname }) => `${host}${pathname}`.replace(/\/$/, ''))(window.location);
 
         // Find the first named route that matches the current URL, ignoring
@@ -228,8 +228,7 @@ class Router extends String {
             params = this._parseParameters(params, route);
 
             return Object.entries(this._getParametersFromCurrentUrl(route)).every(([key, value]) => {
-                // If the `exact` flag was enabled, match the entire object
-                return exact ? params[key] == value : (params[key] == value || !params.hasOwnProperty(key));
+                return params.hasOwnProperty(key) ? params[key] == value : true;
             });
         }
 
