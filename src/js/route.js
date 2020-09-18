@@ -40,7 +40,7 @@ function substituteBindings(params, bindings = {}) {
         const bound = value && typeof value === 'object' && bindings[key];
 
         if (bound && !value.hasOwnProperty(bindings[key])) {
-            throw new Error(`Ziggy error: for parameter '${key}' is missing route model binding key ${bindings[key]}.`)
+            throw new Error(`Ziggy error: object passed as '${key}' parameter is missing route model binding key '${bindings[key]}'.`)
         }
 
         return { ...result, [key]: bound ? value[bindings[key]] : value };
@@ -116,7 +116,7 @@ class Router extends String {
 
         // If the route has a domain defined, construct the origin
         // based on the config and route definition
-        if (route.domain) {
+        if (route?.domain) {
             return `${this.config.baseProtocol}://`
                 + route.domain.replace(/\/$/, '')
                 + (this.config.basePort ? `:${this.config.basePort}` : '');

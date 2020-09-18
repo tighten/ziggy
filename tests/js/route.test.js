@@ -204,6 +204,13 @@ describe('route()', () => {
         equal(route('translatePosts.show', 1), 'https://ziggy.dev/en/posts/1');
     });
 
+    test('can generate a URL using a string', () => {
+        // route with required parameters
+        equal(route('posts.show', 'my-first-post'), 'https://ziggy.dev/posts/my-first-post');
+        // route with default parameters
+        equal(route('translatePosts.show', 'my-first-post'), 'https://ziggy.dev/en/posts/my-first-post');
+    });
+
     test('can generate a URL using an object', () => {
         // routes with required parameters
         equal(route('posts.show', { id: 1 }), 'https://ziggy.dev/posts/1');
@@ -218,6 +225,7 @@ describe('route()', () => {
         // routes with required parameters
         equal(route('posts.show', [1]), 'https://ziggy.dev/posts/1');
         equal(route('events.venues.show', [1, 2]), 'https://ziggy.dev/events/1/venues/2');
+        equal(route('events.venues.show', [1, 'coliseum']), 'https://ziggy.dev/events/1/venues/coliseum');
         // route with default parameters
         equal(route('translatePosts.show', [1]), 'https://ziggy.dev/en/posts/1');
         // route with both required and default parameters
@@ -225,8 +233,8 @@ describe('route()', () => {
     });
 
     test('can generate a URL using an array of objects', () => {
-        let event = { id: 1, name: 'World Series' };
-        let venue = { id: 2, name: 'Rogers Centre' };
+        const event = { id: 1, name: 'World Series' };
+        const venue = { id: 2, name: 'Rogers Centre' };
 
         // route with required parameters
         equal(route('events.venues.show', [event, venue]), 'https://ziggy.dev/events/1/venues/2');
@@ -235,7 +243,7 @@ describe('route()', () => {
     });
 
     test('can generate a URL using an array of integers and objects', () => {
-        let venue = { id: 2, name: 'Rogers Centre' };
+        const venue = { id: 2, name: 'Rogers Centre' };
 
         // route with required parameters
         equal(route('events.venues.show', [1, venue]), 'https://ziggy.dev/events/1/venues/2');
@@ -257,6 +265,26 @@ describe('route()', () => {
                 { uuid: 12345, title: 'Comment' },
             ]),
             'https://ziggy.dev/posts/1/comments/12345'
+        );
+        equal(
+            route('postComments.show', [1, { uuid: 'correct-horse-etc-etc' }]),
+            'https://ziggy.dev/posts/1/comments/correct-horse-etc-etc'
+        );
+    });
+
+    test('can generate a URL for an app installed in a subfolder', () => {
+        global.Ziggy.baseUrl = 'https://ziggy.dev/subfolder/';
+
+        equal(
+            route('postComments.show', [1, { uuid: 'correct-horse-etc-etc' }]),
+            'https://ziggy.dev/subfolder/posts/1/comments/correct-horse-etc-etc'
+        );
+    });
+
+    test('can error if a route model binding key is missing', () => {
+        assert.throws(
+            () => route('postComments.show', [1, { id: 20 }]).url(),
+            /Ziggy error: object passed as 'comment' parameter is missing route model binding key 'uuid'\./
         );
     });
 
@@ -357,7 +385,7 @@ describe('route()', () => {
     });
 
     test('can accept a custom Ziggy configuration object', () => {
-        const customZiggy = {
+        const config = {
             baseUrl: 'http://notYourAverage.dev/',
             baseProtocol: 'http',
             baseDomain: 'notYourAverage.dev',
@@ -372,7 +400,7 @@ describe('route()', () => {
         };
 
         equal(
-            route('tightenDev.packages.index', { dev: 1 }, true, customZiggy),
+            route('tightenDev.packages.index', { dev: 1 }, true, config),
             'http://notYourAverage.dev/tightenDev/1/packages'
         );
     });
@@ -408,7 +436,7 @@ describe('route()', () => {
         );
     });
 
-    test('can generate URL for an app installed in a subfolder', () => {
+    test('can extract parameters for an app installed in a subfolder', () => {
         global.Ziggy.baseUrl = 'https://ziggy.dev/subfolder/';
 
         global.window.location.href = 'https://ziggy.dev/subfolder/ph/en/products/4';
@@ -455,14 +483,19 @@ describe('route()', () => {
     });
 });
 
-describe('check', () => {
+describe('has()', () => {
     test('can check if given named route exists', () => {
+        assert(route().has('posts.show'));
+        assert(!route().has('non.existing.route'));
+    });
+
+    test('can check if given named route exists with .check()', () => {
         assert(route().check('posts.show'));
         assert(!route().check('non.existing.route'));
     });
 });
 
-describe('current', () => {
+describe('current()', () => {
     test('can get the current route name', () => {
         global.window.location.pathname = '/events/1/venues/2';
 
@@ -492,7 +525,7 @@ describe('current', () => {
         global.Ziggy = undefined;
         global.window.location.pathname = '/events/';
 
-        const customZiggy = {
+        const config = {
             baseUrl: 'https://ziggy.dev/',
             baseProtocol: 'https',
             baseDomain: 'ziggy.dev',
@@ -505,7 +538,7 @@ describe('current', () => {
             },
         };
 
-        equal(route(undefined, undefined, undefined, customZiggy).current(), 'events.index');
+        equal(route(undefined, undefined, undefined, config).current(), 'events.index');
     });
 
     test('can check the current route name against a pattern', () => {
@@ -563,8 +596,11 @@ describe('current', () => {
         assert(route().current('events.venues.show', { event: 1 }));
         assert(route().current('events.venues.show', { venue: 2 }));
         assert(route().current('events.venues.show', [1]));
+        assert(route().current('events.venues.show', {}));
+        assert(route().current('events.venues.show', null));
 
         assert(!route().current('events.venues.show', { event: 4, venue: 2 }));
+        assert(!route().current('events.venues.show', { event: null }));
         assert(!route().current('events.venues.show', [1, 6]));
         assert(!route().current('events.venues.show', [{ id: 1 }, { id: 4, name: 'Great Pyramids' }]));
         assert(!route().current('events.venues.show', { event: 4 }));
@@ -589,9 +625,7 @@ describe('current', () => {
         assert(!route().current('events.venues.show', { id: 12, user: 'Matt' }));
     });
 
-
-
-    test('can ignore routes that dont allow GET requests', () => {
+    test('can ignore routes that don’t allow GET requests', () => {
         global.window.location.pathname = '/posts/1';
 
         assert(!route().current('posts.update'));
