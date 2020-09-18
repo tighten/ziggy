@@ -7,8 +7,8 @@
         "routes",
         "ziggy"
     ],
-    "homepage": "https://github.com/tightenco/ziggy#readme",
-    "bugs": "https://github.com/tightenco/ziggy/issues",
+    "homepage": "https://github.com/tighten/ziggy#readme",
+    "bugs": "https://github.com/tighten/ziggy/issues",
     "license": "MIT",
     "authors": [
         {
@@ -33,7 +33,7 @@
     "esmodule": "dist/route.es.js",
     "repository": {
         "type": "git",
-        "url": "https://github.com/tightenco/ziggy.git"
+        "url": "https://github.com/tighten/ziggy.git"
     },
     "scripts": {
         "build": "microbundle --name route --format modern,es,umd",

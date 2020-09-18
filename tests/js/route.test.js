@@ -488,7 +488,7 @@ describe('current', () => {
 
         assert(route().current('hosting-contacts.index'));
         assert(route().current('*.index'));
-        // https://github.com/tightenco/ziggy/pull/296
+        // https://github.com/tighten/ziggy/pull/296
         assert(!route().current('hosting.*'));
     });
 

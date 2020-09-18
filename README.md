@@ -1,8 +1,8 @@
-![Ziggy - Use your Laravel named routes in JavaScript](https://raw.githubusercontent.com/tightenco/ziggy/master/ziggy-banner.png?version=3)
+![Ziggy - Use your Laravel named routes in JavaScript](https://raw.githubusercontent.com/tighten/ziggy/master/ziggy-banner.png?version=3)
 
 # Ziggy – Use your Laravel named routes in JavaScript
 
-[![GitHub Actions Status](https://img.shields.io/github/workflow/status/tightenco/ziggy/Tests?label=tests&style=flat)](https://github.com/tightenco/ziggy/actions?query=workflow:Tests+branch:master)
+[![GitHub Actions Status](https://img.shields.io/github/workflow/status/tighten/ziggy/Tests?label=tests&style=flat)](https://github.com/tighten/ziggy/actions?query=workflow:Tests+branch:master)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/tightenco/ziggy.svg?style=flat)](https://packagist.org/packages/tightenco/ziggy)
 [![Downloads on Packagist](https://img.shields.io/packagist/dt/tightenco/ziggy.svg?style=flat)](https://packagist.org/packages/tightenco/ziggy)
 [![Latest Version on NPM](https://img.shields.io/npm/v/ziggy-js.svg?style=flat)](https://npmjs.com/package/ziggy-js)
@@ -12,7 +12,7 @@ Ziggy creates a Blade directive that you can include in your views. It will expo
 
 Ziggy supports all versions of Laravel from `5.4` to `8.x`.
 
-> **Note**: you are viewing the `develop` branch, which is under active development. Not all of the features and changes in this documentation have been released. [Docs for the latest Ziggy release, `v0.9.4`, are in the Readme on the `0.9.x` branch](https://github.com/tightenco/ziggy/tree/0.9.x).
+> **Note**: you are viewing the `develop` branch, which is under active development. Not all of the features and changes in this documentation have been released. [Docs for the latest Ziggy release, `v0.9.4`, are in the Readme on the `0.9.x` branch](https://github.com/tighten/ziggy/tree/0.9.x).
 
 ## Contents
 
@@ -38,7 +38,7 @@ Ziggy supports all versions of Laravel from `5.4` to `8.x`.
 
 ## Installation
 
-1. Install Ziggy using Composer: `composer require tightenco/ziggy`.
+1. Install Ziggy using Composer: `composer require tighten/ziggy`.
 1. If using Laravel 5.4, add `Tightenco\Ziggy\ZiggyServiceProvider::class` to the `providers` array in your `config/app.php`.
 1. Include our Blade directive (`@routes`) somewhere in your template before your main application JavaScript is loaded—likely in the header somewhere.
 
@@ -282,7 +282,7 @@ const path = require('path');
 mix.webpackConfig({
     resolve: {
         alias: {
-            ziggy: path.resolve('vendor/tightenco/ziggy/src/js/route.js'),
+            ziggy: path.resolve('vendor/tighten/ziggy/src/js/route.js'),
         },
     },
 });
@@ -318,7 +318,7 @@ Then you can use the method in your Vue components like so:
 <a class="nav-link" :href="route('home')">Home</a>
 ```
 
-Thanks to [Archer70](https://github.com/tightenco/ziggy/issues/70#issuecomment-369129032) for this solution.
+Thanks to [Archer70](https://github.com/tighten/ziggy/issues/70#issuecomment-369129032) for this solution.
 
 ## Other
 
@@ -348,7 +348,7 @@ To get started contributing to Ziggy, check out [the contribution guide](CONTRIB
 - [Jake Bathman](https://twitter.com/jakebathman)
 - [Matt Stauffer](https://twitter.com/stauffermatt)
 - [Jacob Baker-Kretzmar](https://twitter.com/bakerkretzmar)
-- [All contributors](https://github.com/tightenco/ziggy/contributors)
+- [All contributors](https://github.com/tighten/ziggy/contributors)
 
 Thanks to [Caleb Porzio](http://twitter.com/calebporzio), [Adam Wathan](http://twitter.com/adamwathan), and [Jeffrey Way](http://twitter.com/jeffrey_way) for help solidifying the idea.
 
