@@ -10,7 +10,7 @@ Be kind.
 
 ## Viability
 
-If you have an idea for a feature, we'd prefer you open an issue before going to the trouble if writing code. We welcome your ideas, but we'd like to work with you to come up with solutions that work well for the project as a whole. We're usually pretty responsive, so it shouldn't take us long to figure out whether and how best to implement your idea.
+If you have an idea for a feature, we'd prefer you open an issue before going to the trouble of writing code. We welcome your ideas, but we'd like to work with you to come up with solutions that work well for the project as a whole. We're usually pretty responsive, so it shouldn't take us long to figure out whether and how best to implement your idea.
 
 ## Procedure
 
