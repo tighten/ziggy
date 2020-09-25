@@ -62,7 +62,7 @@ class Router extends String {
     constructor(name, params, absolute = true, config) {
         super();
 
-        this.config = config ?? Ziggy;
+        this.config = config ?? Ziggy ?? globalThis?.Ziggy;
 
         if (name) {
             if (!this.config.namedRoutes[name]) {
