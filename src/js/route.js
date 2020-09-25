@@ -60,14 +60,14 @@ class Router extends String {
     constructor(name, params, absolute = true, config) {
         super();
 
-        this.config = config ?? Ziggy ?? globalThis?.Ziggy;
+        this._config = config ?? Ziggy ?? globalThis?.Ziggy;
 
         if (name) {
-            if (!this.config.namedRoutes[name]) {
+            if (!this._config.namedRoutes[name]) {
                 throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
             }
 
-            this._route = new Route(name, this.config.namedRoutes[name], { ...this.config, absolute });
+            this._route = new Route(name, this._config.namedRoutes[name], { ...this._config, absolute });
             this._params = this._parse(params);
         }
     }
@@ -78,9 +78,9 @@ class Router extends String {
         params = ['string', 'number'].includes(typeof params) ? [params] : params;
 
         // Separate segments with and without defaults, and fill in the default values
-        const segments = route.segments.filter(({ name }) => !this.config.defaultParameters[name]);
-        const defaults = route.segments.filter(({ name }) => this.config.defaultParameters[name])
-            .reduce((result, { name }, i) => ({ ...result, [name]: this.config.defaultParameters[name] }), {});
+        const segments = route.segments.filter(({ name }) => !this._config.defaultParameters[name]);
+        const defaults = route.segments.filter(({ name }) => this._config.defaultParameters[name])
+            .reduce((result, { name }, i) => ({ ...result, [name]: this._config.defaultParameters[name] }), {});
 
         if (Array.isArray(params)) {
             // If the parameters are an array they have to be in order, so we can transform them into
@@ -109,7 +109,7 @@ class Router extends String {
     // Get the parameter values from the current window URL, based on the given route definition
     _dehydrate(route) {
         let pathname = window.location.pathname
-            .replace(this.config.baseUrl.replace(/^\w*:\/\/[^/]+/, ''), '') // Remove subdirectories
+            .replace(this._config.baseUrl.replace(/^\w*:\/\/[^/]+/, ''), '') // Remove subdirectories
             .replace(/^\/+/, '');
 
         // Given the hydrated string, template, and delimiter, extract and return
@@ -138,8 +138,8 @@ class Router extends String {
         const url = (({ host, pathname }) => `${host}${pathname}`.replace(/\/$/, ''))(window.location);
 
         // Find the first named route that matches the current URL
-        const [current, route] = Object.entries(this.config.namedRoutes).find(
-            ([_, route]) => new Route(name, route, this.config).current(url)
+        const [current, route] = Object.entries(this._config.namedRoutes).find(
+            ([_, route]) => new Route(name, route, this._config).current(url)
         );
 
         // If a name wasn't passed, return the name of the current route
@@ -152,7 +152,7 @@ class Router extends String {
         if (!params) return match;
 
         // If parameters were passed, check that their values match in the current window URL
-        params = this._parse(params, new Route(current, route, this.config));
+        params = this._parse(params, new Route(current, route, this._config));
 
         return Object.entries(this._dehydrate(route))
             // Only check the parameters that were passed into this method
@@ -163,17 +163,17 @@ class Router extends String {
 
     // Get the parameter values from the current window URL
     get params() {
-        return this._dehydrate(this.config.namedRoutes[this.current()]);
+        return this._dehydrate(this._config.namedRoutes[this.current()]);
     }
 
     // Check whether the given named route exists
     has(name) {
-        return Object.keys(this.config.namedRoutes).includes(name);
+        return Object.keys(this._config.namedRoutes).includes(name);
     }
 
     // Add query parameters to be appended to the hydrated URL
     withQuery(params) {
-        this.queryParams = { ...this.queryParams, ...params };
+        this._queryParams = { ...this._queryParams, ...params };
         return this;
     }
 
@@ -182,7 +182,7 @@ class Router extends String {
         // Get passed parameters that do not correspond to any route segments...
         const unhandled = Object.keys(this._params)
             .filter((key) => !this._route.segments.some(({ name }) => name === key))
-            .reduce((result, current) => ({ ...result, [current]: this._params[current] }), this.queryParams);
+            .reduce((result, current) => ({ ...result, [current]: this._params[current] }), this._queryParams);
 
         // ...and append them in the query
         return this._route.compile(this._params) + stringify(unhandled, {
