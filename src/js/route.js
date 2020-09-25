@@ -28,11 +28,9 @@ class Route {
         })) ?? [];
     }
 
-    // Get whether this route's template matches the current window URL
-    get current() {
+    // Get whether this route's template matches the given URL
+    current(url) {
         if (!this.methods.includes('GET')) return false;
-
-        const url = (({ host, pathname }) => `${host}${pathname}`.replace(/\/$/, ''))(window.location);
 
         // Transform the route's template into a regex that will match a hydrated URL, by
         // replacing its parameter segments with matchers for parameter values
@@ -137,9 +135,11 @@ class Router extends String {
     // Get the name of the route matching the current window URL, or, given a route name
     // and parameters, check if the current window URL and parameters match that route
     current(name, params) {
+        const url = (({ host, pathname }) => `${host}${pathname}`.replace(/\/$/, ''))(window.location);
+
         // Find the first named route that matches the current URL
         const [current, route] = Object.entries(this.config.namedRoutes).find(
-            ([_, route]) => new Route(name, route, this.config).current
+            ([_, route]) => new Route(name, route, this.config).current(url)
         );
 
         // If a name wasn't passed, return the name of the current route
