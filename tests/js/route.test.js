@@ -405,37 +405,6 @@ describe('route()', () => {
         );
     });
 
-    // test('can remove braces and question marks from route parameter definitions', () => {
-    //     equal(route().trimParam('optional'), 'optional');
-    //     equal(route().trimParam('{id}'), 'id');
-    //     equal(route().trimParam('{id?}'), 'id');
-    //     equal(route().trimParam('{slug?}'), 'slug');
-    // });
-
-    // test('can extract named parameters from a URL using a template and delimiter', () => {
-    //     deepEqual(route().extractParams('', '', '/'), {});
-    //     deepEqual(route().extractParams('posts', 'posts', '/'), {});
-
-    //     deepEqual(route().extractParams('users/1', 'users/{id}', '/'), { id: '1' });
-    //     deepEqual(
-    //         route().extractParams('events/1/venues/2', 'events/{event}/venues/{venue}', '/'),
-    //         { event: '1', venue: '2' }
-    //     );
-    //     deepEqual(
-    //         route().extractParams('optional/123', 'optional/{id}/{slug?}', '/'),
-    //         { id: '123' }
-    //     );
-    //     deepEqual(
-    //         route().extractParams('optional/123/news', 'optional/{id}/{slug?}', '/'),
-    //         { id: '123', slug: 'news' }
-    //     );
-
-    //     deepEqual(
-    //         route().extractParams('tighten.myapp.dev', '{team}.myapp.dev', '.'),
-    //         { team: 'tighten' }
-    //     );
-    // });
-
     test('can extract parameters for an app installed in a subfolder', () => {
         global.Ziggy.baseUrl = 'https://ziggy.dev/subfolder/';
 
