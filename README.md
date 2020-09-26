@@ -16,16 +16,16 @@ Ziggy supports all versions of Laravel from `5.4` to `7.x`.
 
 - [Installation](#installation)
 - [Usage](#usage)
-    - [Examples](#examples)
-    - [Default Values](#default-values)
+  - [Examples](#examples)
+  - [Default Values](#default-values)
 - [Filtering Routes](#filtering-routes)
-    - [Basic Whitelisting & Blacklisting](#basic-whitelisting--blacklisting)
-    - [Basic Whitelisting & Blacklisting using Macros](#basic-whitelisting--blacklisting-using-macros)
-    - [Advanced Whitelisting using Groups](#advanced-whitelisting-using-groups)
+  - [Basic Whitelisting & Blacklisting](#basic-whitelisting--blacklisting)
+  - [Basic Whitelisting & Blacklisting using Macros](#basic-whitelisting--blacklisting-using-macros)
+  - [Advanced Whitelisting using Groups](#advanced-whitelisting-using-groups)
 - [Other Useful Methods](#other-useful-methods)
-    - [`current()`](#current)
-    - [`check()`](#check)
-    - [`url()`](#url)
+  - [`current()`](#current)
+  - [`check()`](#check)
+  - [`url()`](#url)
 - [Artisan Command](#artisan-command)
 - [Using with Vue Components](#using-with-vue-components)
 - [Other](#other)
@@ -44,10 +44,15 @@ Ziggy is also available as an NPM package, `ziggy-js`, that exposes the `route()
 
 ```html
 <!-- Load the Ziggy routes object first -->
-<script defer src="https://unpkg.com/ziggy-js@0.9.x/dist/js/route.min.js"></script>
+<script
+  defer
+  src="https://unpkg.com/ziggy-js@0.9.x/dist/js/route.min.js"
+></script>
 ```
 
 Note that you still have to generate your routes file with `php artisan ziggy:generate` and make it available to your frontend app.
+
+**Unofficial Typescript Support:** Typescript definitions maintained by [benallfree](https://github.com/benallfree) available via `npm install @types/ziggy-js`.
 
 ## Usage
 
@@ -60,48 +65,47 @@ The package also creates an optional `route()` JavaScript helper that functions 
 Without parameters:
 
 ```js
-route('posts.index'); // Returns '/posts'
+route('posts.index') // Returns '/posts'
 ```
 
 With required parameter:
 
 ```js
-route('posts.show', { id: 1 }); // Returns '/posts/1'
-route('posts.show', [1]); // Returns '/posts/1'
-route('posts.show', 1); // Returns '/posts/1'
+route('posts.show', { id: 1 }) // Returns '/posts/1'
+route('posts.show', [1]) // Returns '/posts/1'
+route('posts.show', 1) // Returns '/posts/1'
 ```
 
 With multiple required parameters:
 
 ```js
-route('events.venues.show', { event: 1, venue: 2 }); // Returns '/events/1/venues/2'
-route('events.venues.show', [1, 2]); // Returns '/events/1/venues/2'
+route('events.venues.show', { event: 1, venue: 2 }) // Returns '/events/1/venues/2'
+route('events.venues.show', [1, 2]) // Returns '/events/1/venues/2'
 ```
 
 With query parameters:
 
 ```js
-route('events.venues.show', { event: 1, venue: 2, page: 5, count: 10 }); // Returns '/events/1/venues/2?page=5&count=10'
+route('events.venues.show', { event: 1, venue: 2, page: 5, count: 10 }) // Returns '/events/1/venues/2?page=5&count=10'
 ```
 
 If whole objects are passed, Ziggy will automatically look for an `id` primary key:
 
 ```js
-let event = { id: 1, name: 'World Series' };
-let venue = { id: 2, name: 'Rogers Centre' };
+let event = { id: 1, name: 'World Series' }
+let venue = { id: 2, name: 'Rogers Centre' }
 
-route('events.venues.show', [event, venue]); // Returns '/events/1/venues/2'
+route('events.venues.show', [event, venue]) // Returns '/events/1/venues/2'
 ```
 
 Practical AJAX example:
 
 ```js
-let post = { id: 1, title: 'Ziggy Stardust' };
+let post = { id: 1, title: 'Ziggy Stardust' }
 
-return axios.get(route('posts.show', post))
-    .then((response) => {
-        return response.data;
-    });
+return axios.get(route('posts.show', post)).then((response) => {
+  return response.data
+})
 ```
 
 _Note: If you are using Axios and making requests that require CSRF verification, use the [`url()` method](#url) on the route (documented below). This will ensure that the `X-XSRF-TOKEN` header is sent with the request._
@@ -114,9 +118,9 @@ Default values work out of the box for Laravel versions >= 5.5.29, for previous 
 
 ```js
 Ziggy.defaultParameters = {
-    // example
-    locale: 'en',
-};
+  // example
+  locale: 'en',
+}
 ```
 
 ## Filtering Routes
@@ -133,8 +137,8 @@ Example `config/ziggy.php`:
 
 ```php
 return [
-    // 'whitelist' => ['home', 'api.*'],
-    'blacklist' => ['debugbar.*', 'horizon.*', 'admin.*'],
+  // 'whitelist' => ['home', 'api.*'],
+  'blacklist' => ['debugbar.*', 'horizon.*', 'admin.*'],
 ];
 ```
 
@@ -148,20 +152,24 @@ Example whitelisting:
 
 ```php
 Route::whitelist(function () {
-    Route::get('...')->name('posts');
+  Route::get('...')->name('posts');
 });
 
-Route::whitelist()->get('...')->name('posts');
+Route::whitelist()
+  ->get('...')
+  ->name('posts');
 ```
 
 Example blacklisting:
 
 ```php
 Route::blacklist(function () {
-    Route::get('...')->name('posts');
+  Route::get('...')->name('posts');
 });
 
-Route::blacklist()->get('...')->name('posts');
+Route::blacklist()
+  ->get('...')
+  ->name('posts');
 ```
 
 #### Advanced Whitelisting using Groups
@@ -170,28 +178,23 @@ You may also optionally define multiple whitelists using a `groups` key in your 
 
 ```php
 return [
-    'groups' => [
-        'admin' => [
-            'admin.*',
-            'posts.*',
-        ],
-        'author' => [
-            'posts.*',
-        ],
-    ],
+  'groups' => [
+    'admin' => ['admin.*', 'posts.*'],
+    'author' => ['posts.*'],
+  ],
 ];
 ```
 
 In the above example, you can see we have configured multiple whitelists for different user roles. You may expose a specific whitelist group by passing the group key into the `@routes` directive in your Blade view:
 
 ```php
-@routes('author')
+@routes('author');
 ```
 
 If you want to expose multiple groups you can pass an array of group names:
 
 ```php
-@routes(['admin', 'author'])
+@routes(['admin', 'author']);
 ```
 
 **Note: Passing group names to the `@routes` directive will always take precedence over your other `whitelist` and `blacklist` settings.**
@@ -203,21 +206,21 @@ If you want to expose multiple groups you can pass an array of group names:
 To get the name of the current route based on the browser's `window.location`, you can use:
 
 ```js
-route().current();
+route().current()
 // returns 'events.index'
 ```
 
 To check whether you are currently on a specific route, you can pass the route name to `current()`:
 
 ```js
-route().current('events.index');
+route().current('events.index')
 // returns true
 ```
 
 You can even use wildcards to check if you're on any of the routes in a given 'group':
 
 ```js
-route().current('events.*');
+route().current('events.*')
 // returns true
 ```
 
@@ -226,7 +229,7 @@ route().current('events.*');
 Ziggy can check if a given named route is defined:
 
 ```js
-route().check('home');
+route().check('home')
 // returns true if a route name 'home' exists, false otherwise
 ```
 
@@ -237,7 +240,7 @@ Ziggy returns a wrapper of the JavaScript [String primitive](https://developer.m
 To achieve this you can call `url()` on your route:
 
 ```js
-route('home').url();
+route('home').url()
 // returns 'https://ziggy.test/'
 ```
 
@@ -257,11 +260,11 @@ Example `ziggy.js`, where the named routes `home` and `login` exist in `routes/w
 // routes/web.php
 
 Route::get('/', function () {
-    return view('welcome');
+  return view('welcome');
 })->name('home');
 
 Route::get('/login', function () {
-    return view('login');
+  return view('login');
 })->name('login');
 ```
 
@@ -269,38 +272,39 @@ Route::get('/login', function () {
 // ziggy.js
 
 var Ziggy = {
-    namedRoutes: {"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"login":{"uri":"login","methods":["GET","HEAD"],"domain":null}},
-    baseUrl: 'http://ziggy.test/',
-    baseProtocol: 'http',
-    baseDomain: 'ziggy.test',
-    basePort: false
-};
+  namedRoutes: {
+    home: { uri: '/', methods: ['GET', 'HEAD'], domain: null },
+    login: { uri: 'login', methods: ['GET', 'HEAD'], domain: null },
+  },
+  baseUrl: 'http://ziggy.test/',
+  baseProtocol: 'http',
+  baseDomain: 'ziggy.test',
+  basePort: false,
+}
 
-export {
-    Ziggy
-};
+export { Ziggy }
 ```
 
 Importing the `route()` helper and generated `ziggy.js`
 
 ```js
 // webpack.mix.js
-const path = require('path');
+const path = require('path')
 
 mix.webpackConfig({
-    resolve: {
-        alias: {
-            ziggy: path.resolve('vendor/tightenco/ziggy/src/js/route.js'),
-        },
+  resolve: {
+    alias: {
+      ziggy: path.resolve('vendor/tightenco/ziggy/src/js/route.js'),
     },
-});
+  },
+})
 ```
 
 ```js
 // app.js
 
-import route from 'ziggy';
-import { Ziggy } from './ziggy';
+import route from 'ziggy'
+import { Ziggy } from './ziggy'
 ```
 
 ## Using with Vue Components
@@ -310,14 +314,14 @@ If you want to use the `route()` helper in a Vue component, add this to your `ap
 ```js
 // app.js
 
-import route from 'ziggy';
-import { Ziggy } from './ziggy';
+import route from 'ziggy'
+import { Ziggy } from './ziggy'
 
 Vue.mixin({
-    methods: {
-        route: (name, params, absolute) => route(name, params, absolute, Ziggy),
-    },
-});
+  methods: {
+    route: (name, params, absolute) => route(name, params, absolute, Ziggy),
+  },
+})
 ```
 
 Then you can use the method in your Vue components like so:
@@ -342,7 +346,7 @@ If you only want to use the `@routes` directive to make your app's routes availa
 // config/ziggy.php
 
 return [
-    'skip-route-function' => true,
+  'skip-route-function' => true,
 ];
 ```
 
