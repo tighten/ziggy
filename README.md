@@ -3,8 +3,8 @@
 # Ziggy – Use your Laravel named routes in JavaScript
 
 [![GitHub Actions Status](https://img.shields.io/github/workflow/status/tighten/ziggy/Tests?label=tests&style=flat)](https://github.com/tighten/ziggy/actions?query=workflow:Tests+branch:master)
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/tighten/ziggy.svg?style=flat)](https://packagist.org/packages/tighten/ziggy)
-[![Downloads on Packagist](https://img.shields.io/packagist/dt/tighten/ziggy.svg?style=flat)](https://packagist.org/packages/tighten/ziggy)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/tighten/ziggy.svg?style=flat)](https://packagist.org/packages/tightenco/ziggy)
+[![Downloads on Packagist](https://img.shields.io/packagist/dt/tighten/ziggy.svg?style=flat)](https://packagist.org/packages/tightenco/ziggy)
 [![Latest Version on NPM](https://img.shields.io/npm/v/ziggy-js.svg?style=flat)](https://npmjs.com/package/ziggy-js)
 [![Downloads on NPM](https://img.shields.io/npm/dt/ziggy-js.svg?style=flat)](https://npmjs.com/package/ziggy-js)
 
