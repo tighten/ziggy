@@ -49,7 +49,9 @@ Ziggy is also available as an NPM package, `ziggy-js`, that exposes the `route()
 
 Note that you still have to generate your routes file with `php artisan ziggy:generate` and make it available to your frontend app.
 
-**Unofficial Typescript Support:** Typescript definitions maintained by [benallfree](https://github.com/benallfree) available via `npm install @types/ziggy-js`.
+**TypeScript support**
+
+Unofficial TypeScript type definitions for Ziggy are maintained by [benallfree](https://github.com/benallfree) as part of [Definitely Typed](https://github.com/DefinitelyTyped/DefinitelyTyped), and can be installed with `npm install @types/ziggy-js`.
 
 ## Usage
 
