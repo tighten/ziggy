@@ -15,7 +15,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/tightenco/ziggy.git"
+        "url": "https://github.com/tighten/ziggy.git"
     },
     "authors": [
         {
@@ -29,9 +29,9 @@
     ],
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/tightenco/ziggy/issues"
+        "url": "https://github.com/tighten/ziggy/issues"
     },
-    "homepage": "https://github.com/tightenco/ziggy#readme",
+    "homepage": "https://github.com/tighten/ziggy#readme",
     "scripts": {
         "build": "NODE_ENV=production webpack --progress",
         "build:watch": "npm run build -- --watch",
