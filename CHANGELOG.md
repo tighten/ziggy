@@ -26,6 +26,7 @@ Breaking changes are marked with ⚠️.
 - ⚠️ Rename all `whitelist` and `blacklist` functionality to `only` and `except` ([#300](https://github.com/tighten/ziggy/pull/300))
 - Use Jest instead of Mocha for JS tests ([#309](https://github.com/tighten/ziggy/pull/309))
 - Use [microbundle](https://github.com/developit/microbundle) instead of Webpack to build and distribute Ziggy ([#312](https://github.com/tighten/ziggy/pull/312))
+- ⚠️ Default Ziggy's `baseUrl` to the value of the `APP_URL` environment variable instead of `url('/')` ([#334](https://github.com/tighten/ziggy/pull/334))
 - ⚠️ Allow getting the route name with `current()` when the current URL has a query string ([#330](https://github.com/tightenco/ziggy/pull/330))
 
 **Deprecated**
