@@ -1,62 +1,103 @@
 import { parse, stringify } from 'qs';
 
+/**
+ * A Laravel route. This class represents one route and its configuration and metadata.
+ */
 class Route {
-    absolute = true;
-    bindings = {};
-
+    /**
+     * @param {String} name - Route name.
+     * @param {Object} definition - Route definition.
+     * @param {Object} config - Ziggy configuration.
+     */
     constructor(name, definition, config) {
-        Object.entries({ name, ...definition, ...config }).map(([key, value]) => this[key] = value);
+        this.name = name;
+        this.definition = definition;
+        this.bindings = definition.bindings ?? {};
+        this.config = { absolute: true, ...config };
     }
 
-    // Get a template of the complete URL for this route, e.g. https://{team}.ziggy.dev/user/{user}
+    /**
+     * Get a 'template' of the complete URL for this route.
+     *
+     * @example
+     * https://{team}.ziggy.dev/user/{user}
+     *
+     * @return {String} Route template.
+     */
     get template() {
-        // If  we're building a relative URL there's no origin, otherwise: if this route has a custom
-        // domain we construct the origin with that, and if not we use the app URL
-        const origin = !this.absolute ? '' : this.domain
-            ? `${this.baseProtocol}://${this.domain.replace(/\/$/, '')}${this.basePort ? `:${this.basePort}` : ''}`
-            : this.baseUrl.replace(/\/$/, '');
+        // If  we're building just a path there's no origin, otherwise: if this route has a
+        // domain configured we construct the origin with that, if not we use the app URL
+        const origin = !this.config.absolute ? '' : this.definition.domain
+            ? `${this.config.baseProtocol}://${this.definition.domain}${this.config.basePort ? `:${this.config.basePort}` : ''}`
+            : this.config.baseUrl;
 
-        return `${origin}/${this.uri}`.replace(/\/$/, '');
+        return `${origin}/${this.definition.uri}`;
     }
 
-    // Get an array of objects representing the parameters that this route accepts,
-    // e.g. [{ name: 'team', required: true }, { name: 'user', required: false }]
-    get segments() {
+    /**
+     * Get an array of objects representing the parameters that this route accepts.
+     *
+     * @example
+     * [{ name: 'team', required: true }, { name: 'user', required: false }]
+     *
+     * @return {Array} Parameter segments.
+     */
+    get parameterSegments() {
         return this.template.match(/{[^}?]+\??}/g)?.map((segment) => ({
             name: segment.replace(/{|\??}/g, ''),
             required: !/\?}$/.test(segment),
         })) ?? [];
     }
 
-    // Get whether this route's template matches the given URL
-    current(url) {
-        if (!this.methods.includes('GET')) return false;
+    /**
+     * Get whether this route's template matches the given URL.
+     *
+     * @param {String} url - URL to check.
+     * @return {Boolean} Whether this route matches.
+     */
+    matchesUrl(url) {
+        if (!this.definition.methods.includes('GET')) return false;
 
         // Transform the route's template into a regex that will match a hydrated URL, by
         // replacing its parameter segments with matchers for parameter values
         const pattern = this.template
             .replace(/\/{[^}?]*\?}/g, '(\/[^/?]+)?')
             .replace(/{[^}]+}/g, '[^/?]+')
-            .replace(/^\w*:\/\//, '');
+            .replace(/^\w+:\/\//, '');
 
-        return new RegExp(`^${pattern}$`).test(url.split('?').shift());
+        return new RegExp(`^${pattern}$`).test(url.replace(/\/+$/, '').split('?').shift());
     }
 
-    // Hydrate and return a complete URL for this route with the given parameters
+    /**
+     * Hydrate and return a complete URL for this route with the given parameters.
+     *
+     * @param {Object} params
+     * @return {String}
+     */
     compile(params) {
-        if (!this.segments.length) return this.template;
+        if (!this.parameterSegments.length) return this.template.replace(/\/+$/, '');
 
         return this.template.replace(/{([^}?]+)\??}/g, (_, segment) => {
-            if ([null, undefined].includes(params[segment]) && this.segments.find(({ name }) => name === segment).required) {
+            // If the parameter is missing but is not optional, throw an error
+            if ([null, undefined].includes(params[segment]) && this.parameterSegments.find(({ name }) => name === segment).required) {
                 throw new Error(`Ziggy error: '${segment}' parameter is required for route '${this.name}'.`)
             }
 
             return encodeURIComponent(params[segment] ?? '');
-        }).replace(/\/$/, '');
+        }).replace(/\/+$/, '');
     }
 }
 
+/**
+ * A collection of Laravel routes. This class constitutes Ziggy's main API.
+ */
 class Router extends String {
+    /**
+     * @param {String} name - Route name.
+     * @param {(String|Number|Array|Object)} params - Route parameters.
+     * @param {Boolean} config - Whether to include the URL origin.
+     * @param {Object} config - Ziggy configuration.
+     */
     constructor(name, params, absolute = true, config) {
         super();
 
@@ -72,53 +113,206 @@ class Router extends String {
         }
     }
 
-    // Parse parameters of any type into a simple object with their keys and values
+    /**
+     * Get the compiled URL string for the current route and parameters.
+     *
+     * @example
+     * // with 'posts.show' route 'posts/{post}'
+     * route('posts.show', 1).url(); // 'https://ziggy.dev/posts/1'
+     *
+     * @return {String}
+     */
+    url() {
+        // Get parameters that don't correspond to any route segments to append them to the query
+        const unhandled = Object.keys(this._params)
+            .filter((key) => !this._route.parameterSegments.some(({ name }) => name === key))
+            .reduce((result, current) => ({ ...result, [current]: this._params[current] }), {});
+
+        return this._route.compile(this._params) + stringify({ ...unhandled, ...this._queryParams }, {
+            addQueryPrefix: true,
+            arrayFormat: 'indices',
+            encodeValuesOnly: true,
+            skipNulls: true,
+        });
+    }
+
+    /**
+     * Get the name of the route matching the current window URL, or, given a route name
+     * and parameters, check if the current window URL and parameters match that route.
+     *
+     * @example
+     * // at URL https://ziggy.dev/posts/4 with 'posts.show' route 'posts/{post}'
+     * route().current(); // 'posts.show'
+     * route().current('posts.index'); // false
+     * route().current('posts.show'); // true
+     * route().current('posts.show', { post: 1 }); // false
+     * route().current('posts.show', { post: 4 }); // true
+     *
+     * @param {String} name - Route name to check.
+     * @param {(String|Number|Array|Object)} params - Route parameters.
+     * @return {(Boolean|String)}
+     */
+    current(name, params) {
+        const url = window.location.host + window.location.pathname;
+
+        // Find the first route that matches the current URL
+        const [current, route] = Object.entries(this._config.namedRoutes).find(
+            ([_, route]) => new Route(name, route, this._config).matchesUrl(url)
+        );
+
+        // If a name wasn't passed, return the name of the current route
+        if (!name) return current;
+
+        // Test the passed name against the current route, matching some
+        // basic wildcards, e.g. passing `events.*` matches `events.show`
+        const match = new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`).test(current);
+
+        if (!params) return match;
+
+        params = this._parse(params, new Route(current, route, this._config));
+
+        // Check that all passed parameters match their values in the current window URL
+        return Object.entries(this._dehydrate(route))
+            .filter(([key]) => params.hasOwnProperty(key))
+            // Use weak equality because all values in the current window URL will be strings
+            .every(([key, value]) => params[key] == value);
+    }
+
+    /**
+     * Get all parameter values from the current window URL.
+     *
+     * @example
+     * // at URL https://tighten.ziggy.dev/posts/4?lang=en with 'posts.show' route 'posts/{post}' and domain '{team}.ziggy.dev'
+     * route().params; // { team: 'tighten', post: 4, locale: 'en' }
+     *
+     * @return {Object}
+     */
+    get params() {
+        return this._dehydrate(this._config.namedRoutes[this.current()]);
+    }
+
+    /**
+     * Check whether the given route exists.
+     *
+     * @param {String} name
+     * @return {Boolean}
+     */
+    has(name) {
+        return Object.keys(this._config.namedRoutes).includes(name);
+    }
+
+    /**
+     * Add query parameters to be appended to the compiled URL.
+     *
+     * @param {Object} params
+     * @return {this}
+     */
+    withQuery(params) {
+        this._queryParams = params;
+        return this;
+    }
+
+    /**
+     * Parse Laravel-style route parameters of any type into a normalized object.
+     *
+     * @example
+     * // with route parameter names 'event' and 'venue'
+     * _parse(1); // { event: 1 }
+     * _parse({ event: 2, venue: 3 }); // { event: 2, venue: 3 }
+     * _parse(['Taylor', 'Matt']); // { event: 'Taylor', venue: 'Matt' }
+     * _parse([4, { uuid: 56789, name: 'Grand Canyon' }]); // { event: 4, venue: 56789 }
+     *
+     * @param {(String|Number|Array|Object)} params - Route parameters.
+     * @param {Route} route - Route instance.
+     * @return {Object} Normalized complete route parameters.
+     */
     _parse(params = {}, route = this._route) {
-        // If `params` is a single string or integer, wrap it in an array
+        // If `params` is a string or integer, wrap it in an array
         params = ['string', 'number'].includes(typeof params) ? [params] : params;
 
         // Separate segments with and without defaults, and fill in the default values
-        const segments = route.segments.filter(({ name }) => !this._config.defaultParameters[name]);
-        const defaults = route.segments.filter(({ name }) => this._config.defaultParameters[name])
-            .reduce((result, { name }, i) => ({ ...result, [name]: this._config.defaultParameters[name] }), {});
+        const segments = route.parameterSegments.filter(({ name }) => !this._config.defaultParameters[name]);
 
         if (Array.isArray(params)) {
             // If the parameters are an array they have to be in order, so we can transform them into
-            // an object by keying them with the template segments in the order they appear
-            params = params.reduce((result, current, i) => ({ ...result, [segments[i].name]: current }), defaults);
+            // an object by keying them with the template segment names in the order they appear
+            params = params.reduce((result, current, i) => ({ ...result, [segments[i].name]: current }), {});
         } else if (segments.length === 1 && !params[segments[0].name] && params[Object.values(route.bindings)[0]]) {
-            // If there is only one parameter template segment and `params` is an object, that
-            // object is ambiguous—it could be the parameter key and value, or it could be an
-            // object representing just the parameter value; we can inspect it to find out,
-            // and if it's the parameter value, wrap it in an object with its key
+            // If there is only one template segment and `params` is an object, that object is
+            // ambiguous—it could contain the parameter key and value, or it could be an object
+            // representing just the value (e.g. a model); we can inspect it to find out, and
+            // if it's just the parameter value, we can wrap it in an object with its key
             params = { [segments[0].name]: params };
         }
 
-        // Substitute any registered route model bindings for this route
-        return Object.entries({ ...defaults, ...params }).reduce((result, [key, value]) => {
-            const bound = value && typeof value === 'object' && route.bindings[key];
-
-            if (bound && !value.hasOwnProperty(route.bindings[key])) {
-                throw new Error(`Ziggy error: object passed as '${key}' parameter is missing route model binding key '${route.bindings[key]}'.`)
-            }
-
-            return { ...result, [key]: bound ? value[route.bindings[key]] : value };
-        }, {})
+        return {
+            ...this._defaults(route),
+            ...this._substituteBindings(params, route.bindings),
+        };
     }
 
-    // Get the parameter values from the current window URL, based on the given route definition
+    /**
+     * Populate default parameters for the given route.
+     *
+     * @example
+     * // with default parameters { locale: 'en', country: 'US' } and 'posts.show' route '{locale}/posts/{post}'
+     * defaults(...); // { locale: 'en' }
+     *
+     * @param {Route} route
+     * @return {Object} Default route parameters.
+     */
+    _defaults(route) {
+        return route.parameterSegments.filter(({ name }) => this._config.defaultParameters[name])
+            .reduce((result, { name }, i) => ({ ...result, [name]: this._config.defaultParameters[name] }), {});
+    }
+
+    /**
+     * Substitute Laravel route model bindings in the given parameters.
+     *
+     * @example
+     * _substituteBindings({ post: { id: 4, slug: 'hello-world', title: 'Hello, world!' } }, { post: 'slug' }); // { post: 'hello-world' }
+     *
+     * @param {Object} params - Route parameters.
+     * @param {Object} bindings - Route model bindings.
+     * @return {Object} Normalized route parameters.
+     */
+    _substituteBindings(params, bindings = {}) {
+        return Object.entries(params).reduce((result, [key, value]) => {
+            const bound = value && typeof value === 'object' && bindings[key];
+
+            if (bound && !value.hasOwnProperty(bindings[key])) {
+                throw new Error(`Ziggy error: object passed as '${key}' parameter is missing route model binding key '${bindings[key]}'.`)
+            }
+
+            return { ...result, [key]: bound ? value[bindings[key]] : value };
+        }, {});
+    }
+
+    /**
+     * Get all parameters and their values from the current window URL, based on the given route definition.
+     *
+     * @example
+     * // at URL https://tighten.ziggy.dev/events/8/venues/chicago?zoom=true
+     * _dehydrate({ domain: '{team}.ziggy.dev', uri: 'events/{event}/venues/{venue?}' }); // { team: 'tighten', event: 8, venue: 'chicago', zoom: true }
+     *
+     * @param {Object} route - Route definition.
+     * @return {Object} Parameters.
+     */
     _dehydrate(route) {
         let pathname = window.location.pathname
-            .replace(this._config.baseUrl.replace(/^\w*:\/\/[^/]+/, ''), '') // Remove subdirectories
+            // If this Laravel app is in a subdirectory, trim the subdirectory from the path
+            .replace(this._config.baseUrl.replace(/^\w*:\/\/[^/]+/, ''), '')
             .replace(/^\/+/, '');
 
-        // Given the hydrated string, template, and delimiter, extract and return
-        // an object of parameter names and values from part of a path or URL
+        // Given part of a valid 'hydrated' URL containing all its parameter values,
+        // a route template, and a delimiter, extract the parameters as an object
+        // E.g. dehydrate('events/{event}/{venue}', 'events/2/chicago', '/'); // { event: 2, venue: 'chicago' }
         const dehydrate = (hydrated, template = '', delimiter) => {
             const [values, segments] = [hydrated, template].map(s => s.split(delimiter));
 
             return segments.reduce((result, current, i) => {
-                // Ignore values that are empty or don't correspond to a route segment
+                // Only include template segments that are route parameters
+                // AND have a value present in the passed hydrated string
                 return /^{[^}?]+\??}$/.test(current) && values[i]
                     ? { ...result, [current.replace(/^{|\??}$/g, '')]: values[i] }
                     : result;
@@ -132,67 +326,6 @@ class Router extends String {
         };
     }
 
-    // Get the name of the route matching the current window URL, or, given a route name
-    // and parameters, check if the current window URL and parameters match that route
-    current(name, params) {
-        const url = (({ host, pathname }) => `${host}${pathname}`.replace(/\/$/, ''))(window.location);
-
-        // Find the first named route that matches the current URL
-        const [current, route] = Object.entries(this._config.namedRoutes).find(
-            ([_, route]) => new Route(name, route, this._config).current(url)
-        );
-
-        // If a name wasn't passed, return the name of the current route
-        if (!name) return current;
-
-        // Test the passed name against the current route, matching some
-        // basic wildcards, e.g. `events.*` matches `events.show`
-        const match = new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`).test(current);
-
-        if (!params) return match;
-
-        // If parameters were passed, check that their values match in the current window URL
-        params = this._parse(params, new Route(current, route, this._config));
-
-        return Object.entries(this._dehydrate(route))
-            // Only check the parameters that were passed into this method
-            .filter(([key]) => params.hasOwnProperty(key))
-            // Use weak equality because all values in the current window URL will be strings
-            .every(([key, value]) => params[key] == value);
-    }
-
-    // Get the parameter values from the current window URL
-    get params() {
-        return this._dehydrate(this._config.namedRoutes[this.current()]);
-    }
-
-    // Check whether the given named route exists
-    has(name) {
-        return Object.keys(this._config.namedRoutes).includes(name);
-    }
-
-    // Add query parameters to be appended to the hydrated URL
-    withQuery(params) {
-        this._queryParams = { ...this._queryParams, ...params };
-        return this;
-    }
-
-    // Get the compiled URL for the current route and parameters, as a plain string
-    url() {
-        // Get passed parameters that do not correspond to any route segments...
-        const unhandled = Object.keys(this._params)
-            .filter((key) => !this._route.segments.some(({ name }) => name === key))
-            .reduce((result, current) => ({ ...result, [current]: this._params[current] }), this._queryParams);
-
-        // ...and append them in the query
-        return this._route.compile(this._params) + stringify(unhandled, {
-            addQueryPrefix: true,
-            arrayFormat: 'indices',
-            encodeValuesOnly: true,
-            skipNulls: true,
-        });
-    }
-
     toString() {
         return this.url();
     }
@@ -201,13 +334,17 @@ class Router extends String {
         return this.url();
     }
 
-    // @deprecated - Pass parameters as the second argument to `route()`
+    /**
+     * @deprecated since v1.0, pass parameters as the second argument to `route()` instead.
+     */
     with(params) {
         this._params = this._parse(params);
         return this;
     }
 
-    // @deprecated - Use `has()` instead
+    /**
+     * @deprecated since v1.0, use `has()` instead.
+     */
     check(name) {
         return this.has(name);
     }
