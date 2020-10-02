@@ -21,7 +21,7 @@ class Ziggy implements JsonSerializable
     {
         $this->group = $group;
 
-        $this->baseUrl = Str::finish($url ?? url('/'), '/');
+        $this->baseUrl = Str::finish($url ?? config('app.url', url('/')), '/');
 
         tap(parse_url($this->baseUrl), function ($url) {
             $this->baseProtocol = $url['scheme'] ?? 'http';
