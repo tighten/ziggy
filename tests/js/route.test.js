@@ -9,8 +9,6 @@ const defaultWindow = {
 
 const defaultZiggy = {
     baseUrl: 'https://ziggy.dev',
-    baseProtocol: 'https',
-    baseDomain: 'ziggy.dev',
     basePort: null,
     defaultParameters: { locale: 'en' },
     namedRoutes: {
@@ -353,7 +351,6 @@ describe('route()', () => {
 
     test('can generate a URL with a port', () => {
         global.Ziggy.baseUrl = 'https://ziggy.dev:81';
-        global.Ziggy.baseDomain = 'ziggy.dev';
         global.Ziggy.basePort = 81;
 
         // route with no parameters
@@ -401,8 +398,6 @@ describe('route()', () => {
     test('can accept a custom Ziggy configuration object', () => {
         const config = {
             baseUrl: 'http://notYourAverage.dev',
-            baseProtocol: 'http',
-            baseDomain: 'notYourAverage.dev',
             basePort: false,
             defaultParameters: { locale: 'en' },
             namedRoutes: {
@@ -520,8 +515,6 @@ describe('current()', () => {
 
         const config = {
             baseUrl: 'https://ziggy.dev',
-            baseProtocol: 'https',
-            baseDomain: 'ziggy.dev',
             basePort: false,
             namedRoutes: {
                 'events.index': {
