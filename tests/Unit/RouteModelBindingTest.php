@@ -52,7 +52,7 @@ class RouteModelBindingTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, (new Ziggy)->filter('users')->toArray());
+        $this->assertSame($expected, (new Ziggy)->filter('users')->toArray()['namedRoutes']);
     }
 
     /** @test */
@@ -63,7 +63,7 @@ class RouteModelBindingTest extends TestCase
                 'uri' => 'tokens/{token}',
                 'methods' => ['GET', 'HEAD'],
             ],
-        ], (new Ziggy)->filter(['tokens'])->toArray());
+        ], (new Ziggy)->filter(['tokens'])->toArray()['namedRoutes']);
     }
 
     /** @test */
@@ -79,7 +79,7 @@ class RouteModelBindingTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, (new Ziggy)->filter('users.numbers')->toArray());
+        $this->assertSame($expected, (new Ziggy)->filter('users.numbers')->toArray()['namedRoutes']);
     }
 
     /** @test */
@@ -107,7 +107,7 @@ class RouteModelBindingTest extends TestCase
                     'tag' => 'slug',
                 ],
             ],
-        ], (new Ziggy)->filter('posts*')->toArray());
+        ], (new Ziggy)->filter('posts*')->toArray()['namedRoutes']);
     }
 
     /** @test */

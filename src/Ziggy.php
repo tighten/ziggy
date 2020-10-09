@@ -32,7 +32,7 @@ class Ziggy implements JsonSerializable
         $this->routes = $this->nameKeyedRoutes();
     }
 
-    public function applyFilters($group)
+    private function applyFilters($group)
     {
         if ($group) {
             return $this->group($group);
@@ -44,11 +44,11 @@ class Ziggy implements JsonSerializable
         }
 
         if (config()->has('ziggy.except')) {
-            return $this->filter(config('ziggy.except'), false);
+            return $this->filter(config('ziggy.except'), false)->routes;
         }
 
         if (config()->has('ziggy.only')) {
-            return $this->filter(config('ziggy.only'));
+            return $this->filter(config('ziggy.only'))->routes;
         }
 
         return $this->routes;
@@ -57,7 +57,7 @@ class Ziggy implements JsonSerializable
     /**
      * Filter routes by group.
      */
-    public function group($group)
+    private function group($group)
     {
         if (is_array($group)) {
             $filters = [];
@@ -66,11 +66,11 @@ class Ziggy implements JsonSerializable
                 $filters = array_merge($filters, config("ziggy.groups.{$groupName}"));
             }
 
-            return $this->filter($filters, true);
+            return $this->filter($filters, true)->routes;
         }
 
         if (config()->has("ziggy.groups.{$group}")) {
-            return $this->filter(config("ziggy.groups.{$group}"), true);
+            return $this->filter(config("ziggy.groups.{$group}"), true)->routes;
         }
 
         return $this->routes;
@@ -79,11 +79,13 @@ class Ziggy implements JsonSerializable
     /**
      * Filter routes by name using the given patterns.
      */
-    public function filter($filters = [], $include = true)
+    public function filter($filters = [], $include = true): self
     {
-        return $this->routes->filter(function ($route, $name) use ($filters, $include) {
+        $this->routes = $this->routes->filter(function ($route, $name) use ($filters, $include) {
             return Str::is(Arr::wrap($filters), $name) ? $include : ! $include;
         });
+
+        return $this;
     }
 
     /**
