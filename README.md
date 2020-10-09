@@ -262,7 +262,7 @@ Route::get('/login', function () {
 
 var Ziggy = {
     routes: {"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"login":{"uri":"login","methods":["GET","HEAD"],"domain":null}},
-    baseUrl: 'http://ziggy.test/',
+    url: 'http://ziggy.test/',
     baseProtocol: 'http',
     baseDomain: 'ziggy.test',
     basePort: false

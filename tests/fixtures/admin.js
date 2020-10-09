@@ -1,4 +1,4 @@
-var Ziggy = {"baseUrl":"http:\/\/ziggy.dev","baseProtocol":"http","baseDomain":"ziggy.dev","basePort":null,"defaults":[],"routes":{"admin.dashboard":{"uri":"admin","methods":["GET","HEAD"]}}};
+var Ziggy = {"url":"http:\/\/ziggy.dev","baseProtocol":"http","baseDomain":"ziggy.dev","basePort":null,"defaults":[],"routes":{"admin.dashboard":{"uri":"admin","methods":["GET","HEAD"]}}};
 
 if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
     for (var name in window.Ziggy.routes) {

@@ -29,7 +29,7 @@ class Route {
         // domain configured we construct the origin with that, if not we use the app URL
         const origin = !this.config.absolute ? '' : this.definition.domain
             ? `${this.config.baseProtocol}://${this.definition.domain}${this.config.basePort ? `:${this.config.basePort}` : ''}`
-            : this.config.baseUrl;
+            : this.config.url;
 
         return `${origin}/${this.definition.uri}`;
     }
@@ -313,7 +313,7 @@ class Router extends String {
     _dehydrate(route) {
         let pathname = window.location.pathname
             // If this Laravel app is in a subdirectory, trim the subdirectory from the path
-            .replace(this._config.baseUrl.replace(/^\w*:\/\/[^/]+/, ''), '')
+            .replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '')
             .replace(/^\/+/, '');
 
         // Given part of a valid 'hydrated' URL containing all its parameter values,

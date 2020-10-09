@@ -13,7 +13,7 @@ class Ziggy implements JsonSerializable
     protected $baseDomain;
     protected $basePort;
     protected $baseProtocol;
-    protected $baseUrl;
+    protected $url;
     protected $group;
     protected $routes;
 
@@ -21,9 +21,9 @@ class Ziggy implements JsonSerializable
     {
         $this->group = $group;
 
-        $this->baseUrl = rtrim($url ?? config('app.url', url('/')), '/');
+        $this->url = rtrim($url ?? config('app.url', url('/')), '/');
 
-        tap(parse_url($this->baseUrl), function ($url) {
+        tap(parse_url($this->url), function ($url) {
             $this->baseProtocol = $url['scheme'] ?? 'http';
             $this->baseDomain = $url['host'] ?? '';
             $this->basePort = $url['port'] ?? null;
@@ -135,7 +135,7 @@ class Ziggy implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'baseUrl' => $this->baseUrl,
+            'url' => $this->url,
             'baseProtocol' => $this->baseProtocol,
             'baseDomain' => $this->baseDomain,
             'basePort' => $this->basePort,

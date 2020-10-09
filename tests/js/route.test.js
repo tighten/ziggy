@@ -8,7 +8,7 @@ const defaultWindow = {
 };
 
 const defaultZiggy = {
-    baseUrl: 'https://ziggy.dev',
+    url: 'https://ziggy.dev',
     baseProtocol: 'https',
     baseDomain: 'ziggy.dev',
     basePort: null,
@@ -287,7 +287,7 @@ describe('route()', () => {
     });
 
     test('can generate a URL for an app installed in a subfolder', () => {
-        global.Ziggy.baseUrl = 'https://ziggy.dev/subfolder';
+        global.Ziggy.url = 'https://ziggy.dev/subfolder';
 
         equal(
             route('postComments.show', [1, { uuid: 'correct-horse-etc-etc' }]),
@@ -352,7 +352,7 @@ describe('route()', () => {
     });
 
     test('can generate a URL with a port', () => {
-        global.Ziggy.baseUrl = 'https://ziggy.dev:81';
+        global.Ziggy.url = 'https://ziggy.dev:81';
         global.Ziggy.baseDomain = 'ziggy.dev';
         global.Ziggy.basePort = 81;
 
@@ -363,13 +363,13 @@ describe('route()', () => {
     });
 
     test('can handle trailing path segments in the base URL', () => {
-        global.Ziggy.baseUrl = 'https://test.thing/ab/cd';
+        global.Ziggy.url = 'https://test.thing/ab/cd';
 
         equal(route('events.venues.index', 1), 'https://test.thing/ab/cd/events/1/venues');
     });
 
     test('can URL-encode named parameters', () => {
-        global.Ziggy.baseUrl = 'https://test.thing/ab/cd';
+        global.Ziggy.url = 'https://test.thing/ab/cd';
 
         equal(
             route('events.venues.index', { event: 'Fun&Games' }),
@@ -400,7 +400,7 @@ describe('route()', () => {
 
     test('can accept a custom Ziggy configuration object', () => {
         const config = {
-            baseUrl: 'http://notYourAverage.dev',
+            url: 'http://notYourAverage.dev',
             baseProtocol: 'http',
             baseDomain: 'notYourAverage.dev',
             basePort: false,
@@ -420,7 +420,7 @@ describe('route()', () => {
     });
 
     test('can extract parameters for an app installed in a subfolder', () => {
-        global.Ziggy.baseUrl = 'https://ziggy.dev/subfolder';
+        global.Ziggy.url = 'https://ziggy.dev/subfolder';
 
         global.window.location.href = 'https://ziggy.dev/subfolder/ph/en/products/4';
         global.window.location.host = 'ziggy.dev';
@@ -430,7 +430,7 @@ describe('route()', () => {
     });
 
     test('can extract parameters for an app installed in nested subfolders', () => {
-        global.Ziggy.baseUrl = 'https://ziggy.dev/nested/subfolder';
+        global.Ziggy.url = 'https://ziggy.dev/nested/subfolder';
 
         global.window.location.href = 'https://ziggy.dev/nested/subfolder/ph/en/products/4';
         global.window.location.host = 'ziggy.dev';
@@ -519,7 +519,7 @@ describe('current()', () => {
         global.window.location.pathname = '/events/';
 
         const config = {
-            baseUrl: 'https://ziggy.dev',
+            url: 'https://ziggy.dev',
             baseProtocol: 'https',
             baseDomain: 'ziggy.dev',
             basePort: false,
@@ -570,7 +570,7 @@ describe('current()', () => {
     });
 
     test('can check the current route name on a route with optional parameters in the middle of the URI', () => {
-        global.Ziggy.baseUrl = 'https://ziggy.dev/subfolder';
+        global.Ziggy.url = 'https://ziggy.dev/subfolder';
 
         // Missing the optional 'language' parameter (e.g. subfolder/ph/en/products...)
         global.window.location.href = 'https://ziggy.dev/subfolder/ph/products/4';
