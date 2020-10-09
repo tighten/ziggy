@@ -52,6 +52,10 @@ const defaultZiggy = {
             uri: '{locale}/posts/{id}',
             methods: ['GET', 'HEAD'],
         },
+        'translatePosts.update': {
+            uri: '{locale}/posts/{post}',
+            methods: ['PUT', 'PATCH'],
+        },
         'events.venues.index': {
             uri: 'events/{event}/venues',
             methods: ['GET', 'HEAD'],
@@ -66,6 +70,10 @@ const defaultZiggy = {
                 event: 'id',
                 venue: 'id',
             },
+        },
+        'events.venues.update': {
+            uri: 'events/{event}/venues/{venue}',
+            methods: ['PUT', 'PATCH'],
         },
         'translateEvents.venues.show': {
             uri: '{locale}/events/{event}/venues/{venue}',
@@ -272,6 +280,12 @@ describe('route()', () => {
         );
     });
 
+    test("can fall back to an 'id' key if an object is passed for a parameter with no registered bindings", () => {
+        equal(route('translatePosts.update', { id: 14 }), 'https://ziggy.dev/en/posts/14');
+        equal(route('translatePosts.update', [{ id: 14 }]), 'https://ziggy.dev/en/posts/14');
+        equal(route('events.venues.update', [{ id: 10 }, { id: 1 }]), 'https://ziggy.dev/events/10/venues/1');
+    });
+
     test('can generate a URL for an app installed in a subfolder', () => {
         global.Ziggy.baseUrl = 'https://ziggy.dev/subfolder';
 
@@ -283,7 +297,7 @@ describe('route()', () => {
 
     test('can error if a route model binding key is missing', () => {
         assert.throws(
-            () => route('postComments.show', [1, { id: 20 }]).url(),
+            () => route('postComments.show', [1, { count: 20 }]).url(),
             /Ziggy error: object passed as 'comment' parameter is missing route model binding key 'uuid'\./
         );
     });

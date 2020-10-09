@@ -237,7 +237,11 @@ class Router extends String {
             // If the parameters are an array they have to be in order, so we can transform them into
             // an object by keying them with the template segment names in the order they appear
             params = params.reduce((result, current, i) => ({ ...result, [segments[i].name]: current }), {});
-        } else if (segments.length === 1 && !params[segments[0].name] && params[Object.values(route.bindings)[0]]) {
+        } else if (
+            segments.length === 1
+            && !params[segments[0].name]
+            && (params.hasOwnProperty(Object.values(route.bindings)[0]) || params.hasOwnProperty('id'))
+        ) {
             // If there is only one template segment and `params` is an object, that object is
             // ambiguous—it could contain the parameter key and value, or it could be an object
             // representing just the value (e.g. a model); we can inspect it to find out, and
@@ -278,13 +282,20 @@ class Router extends String {
      */
     _substituteBindings(params, bindings = {}) {
         return Object.entries(params).reduce((result, [key, value]) => {
-            const bound = value && typeof value === 'object' && bindings[key];
-
-            if (bound && !value.hasOwnProperty(bindings[key])) {
-                throw new Error(`Ziggy error: object passed as '${key}' parameter is missing route model binding key '${bindings[key]}'.`)
+            // If the value isn't an object there's nothing to substitute, so we return it as-is
+            if (!value || typeof value !== 'object' || Array.isArray(value)) {
+                return { ...result, [key]: value };
             }
 
-            return { ...result, [key]: bound ? value[bindings[key]] : value };
+            if (!value.hasOwnProperty(bindings[key])) {
+                if (value.hasOwnProperty('id')) {
+                    bindings[key] = 'id';
+                } else {
+                    throw new Error(`Ziggy error: object passed as '${key}' parameter is missing route model binding key '${bindings[key]}'.`)
+                }
+            }
+
+            return { ...result, [key]: value[bindings[key]] };
         }, {});
     }
 
