@@ -118,11 +118,11 @@ class Router extends String {
      *
      * @example
      * // with 'posts.show' route 'posts/{post}'
-     * route('posts.show', 1).url(); // 'https://ziggy.dev/posts/1'
+     * (new Router('posts.show', 1)).toString(); // 'https://ziggy.dev/posts/1'
      *
      * @return {String}
      */
-    url() {
+    toString() {
         // Get parameters that don't correspond to any route segments to append them to the query
         const unhandled = Object.keys(this._params)
             .filter((key) => !this._route.parameterSegments.some(({ name }) => name === key))
@@ -329,12 +329,8 @@ class Router extends String {
         };
     }
 
-    toString() {
-        return this.url();
-    }
-
     valueOf() {
-        return this.url();
+        return this.toString();
     }
 
     /**
@@ -348,5 +344,5 @@ class Router extends String {
 export default function route(name, params, absolute, config) {
     const router = new Router(name, params, absolute, config);
 
-    return name ? router.url() : router;
+    return name ? router.toString() : router;
 }
