@@ -44,11 +44,11 @@ class Ziggy implements JsonSerializable
         }
 
         if (config()->has('ziggy.except')) {
-            return $this->except();
+            return $this->filter(config('ziggy.except'), false);
         }
 
         if (config()->has('ziggy.only')) {
-            return $this->only();
+            return $this->filter(config('ziggy.only'));
         }
 
         return $this->routes;
@@ -74,16 +74,6 @@ class Ziggy implements JsonSerializable
         }
 
         return $this->routes;
-    }
-
-    public function except()
-    {
-        return $this->filter(config('ziggy.except'), false);
-    }
-
-    public function only()
-    {
-        return $this->filter(config('ziggy.only'));
     }
 
     /**
