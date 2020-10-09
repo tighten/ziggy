@@ -4,15 +4,45 @@
 
 Ziggy `1.0` includes significant changes and improvements, most of which shouldn't require any changes to existing code! **The behavior of the `@routes` Blade directive and the `route()` helper function has not changed**, so if you're just using those and not customizing or extending Ziggy at all, you likely won't have to do anything.
 
-### Medium–high impact changes
+### Overview
 
-**[PHP] Default `ziggy:generate` path changed**
+- **High-impact changes**
+  - [`route(...)` now returns a string](#)
+  - [`url()` method removed](#)
+- **Medium-impact changes**
+  - [Default `ziggy:generate` path changed](#)
+  - [`whitelist` and `blacklist` renamed](#)
+- **Low-impact changes**
+  - [`with()` and `withQuery()` methods removed](#)
 
-The default output path of the `ziggy:generate` command has changed from `resources/assets/js/ziggy.js` to `resources/js/ziggy.js` to bring it in line with the changes to the `resources` directory structure introduced in Laravel 5.7. [#269](https://github.com/tighten/ziggy/pull/269)
+### High impact changes
 
-**[PHP] `whitelist` and `blacklist` renamed**
+1. **The `route()` function now returns a literal string if it is passed any arguments.**
 
-All `whitelist` and `blacklist` functionality was renamed to `only` and `except`. [#300](https://github.com/tighten/ziggy/pull/300)
+   If you are chaining methods onto `route(...)` _with arguments_, such as `route('posts.show').url()` or `route('home').withQuery(...)`, remove the chained methods. In the case of `route(...).url()` you can just remove `.url()` and nothing will change, for other methods see below.
+
+   Calls specifically to `route()`, with no arguments, are not affected and will still return an instance of the `Router` class, so things like `route().current()` and `route().params` don't need to change.
+
+1. **The `url()` method on the `Router` class was removed** and can safely be deleted from projects that used it.
+
+   Because of the above change to `route(...)`, the `url()` method is no longer necessary. You can safely remove it, e.g. by replacing all instances of `'.url()'` in your project with `''` (nothing).
+
+### Medium impact changes
+
+1. **The default `ziggy:generate` path has changed to `resources/js/ziggy.js`**, Laravel's default javascript asset location.
+
+   <details>
+   <summary>Details</summary>
+   The default output path of the `ziggy:generate` command has changed from `resources/assets/js/ziggy.js` to `resources/js/ziggy.js` to bring it in line with the changes to the `resources` directory structure introduced in Laravel 5.7. [#269](https://github.com/tighten/ziggy/pull/269)
+   </details>
+
+1. **The `whitelist` and `blacklist` features were renamed** to `only` and `except`.
+
+   <details>
+   <summary>Details</summary>
+   All `whitelist` and `blacklist` functionality, like the config keys and methods, was renamed to `only` and `except`. [#300](https://github.com/tighten/ziggy/pull/300)
+   </details>
+
 
 ### Low impact changes
 
