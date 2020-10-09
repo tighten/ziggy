@@ -13,6 +13,7 @@ Breaking changes are marked with ⚠️.
 - Document the `check()` method ([#294](https://github.com/tighten/ziggy/pull/294)) and how to install and use Ziggy via `npm` and over a CDN ([#299](https://github.com/tighten/ziggy/pull/299))
 - Add support for [custom scoped route model binding](https://laravel.com/docs/7.x/routing#implicit-binding), e.g. `/users/{user}/posts/{post:slug}` ([#307](https://github.com/tighten/ziggy/pull/307))
 - Add support for [implicit route model binding](https://laravel.com/docs/7.x/routing#implicit-binding) ([#315](https://github.com/tighten/ziggy/pull/315))
+- Add support for passing parameters to `current()` to check against the current URL in addition to the route name ([#330](https://github.com/tighten/ziggy/pull/330))
 
 **Changed**
 
@@ -26,10 +27,19 @@ Breaking changes are marked with ⚠️.
 - Use Jest instead of Mocha for JS tests ([#309](https://github.com/tighten/ziggy/pull/309))
 - Use [microbundle](https://github.com/developit/microbundle) instead of Webpack to build and distribute Ziggy ([#312](https://github.com/tighten/ziggy/pull/312))
 - ⚠️ Default Ziggy's `baseUrl` to the value of the `APP_URL` environment variable instead of `url('/')` ([#334](https://github.com/tighten/ziggy/pull/334))
+- ⚠️ Allow getting the route name with `current()` when the current URL has a query string ([#330](https://github.com/tighten/ziggy/pull/330))
+
+**Deprecated**
+
+- Deprecate the `with()` and `check()` methods ([#330](https://github.com/tighten/ziggy/pull/330))
 
 **Removed**
 
 - ⚠️ Remove `Route` Facade macros `Route::only()` and `Route::except()` (previously `Route::whitelist()` and `Route::blacklist()`) ([#306](https://github.com/tighten/ziggy/pull/306))
+- ⚠️ Remove the following undocumented public properties and methods from the `Router` class returned by the `route()` function ([#330](https://github.com/tighten/ziggy/pull/330)):
+    - `name`, `absolute`, `ziggy`, `urlBuilder`, `template`, `urlParams`, `queryParams`, and `hydrated`
+    - `normalizeParams()`, `hydrateUrl()`, `matchUrl()`, `constructQuery()`, `extractParams()`, `parse()`, and `trimParam()`
+- ⚠️ Remove the `UrlBuilder` class ([#330](https://github.com/tighten/ziggy/pull/330)):
 
 **Fixed**
 
