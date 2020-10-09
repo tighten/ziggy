@@ -28,7 +28,7 @@ class ZiggyTest extends TestCase
     }
 
     /**
-     * If running Laravel 7 or higher, the 'postComments.show' route.
+     * If running Laravel 7 or higher, add the 'postComments.show' route.
      */
     protected function addPostCommentsRouteWithBindings(array &$routes): void
     {
