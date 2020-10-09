@@ -99,7 +99,7 @@ class Ziggy implements JsonSerializable
     /**
      * Get a list of the application's named routes, keyed by their names.
      */
-    protected function nameKeyedRoutes()
+    private function nameKeyedRoutes()
     {
         [$fallbacks, $routes] = collect(app('router')->getRoutes()->getRoutesByName())
             ->partition(function ($route) {
@@ -159,7 +159,7 @@ class Ziggy implements JsonSerializable
     /**
      * Resolve route key names for any route parameters using Eloquent route model binding.
      */
-    protected function resolveBindings(array $routes): array
+    private function resolveBindings(array $routes): array
     {
         $scopedBindings = method_exists(head($routes), 'bindingFields');
 
