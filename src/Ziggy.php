@@ -110,12 +110,6 @@ class Ziggy implements JsonSerializable
 
         return $routes->merge($fallbacks)
             ->map(function ($route) use ($bindings) {
-                if ($this->isListedAs($route, 'except')) {
-                    $this->appendRouteToList($route->getName(), 'except');
-                } elseif ($this->isListedAs($route, 'only')) {
-                    $this->appendRouteToList($route->getName(), 'only');
-                }
-
                 return collect($route)->only(['uri', 'methods'])
                     ->put('domain', $route->domain())
                     ->put('bindings', $bindings[$route->getName()] ?? [])
@@ -160,23 +154,6 @@ class Ziggy implements JsonSerializable
     public function toJson(int $options = 0): string
     {
         return json_encode($this->jsonSerialize(), $options);
-    }
-
-    /**
-     * Add the given route name to the current list of routes.
-     */
-    protected function appendRouteToList($name, $list)
-    {
-        config()->push("ziggy.{$list}", $name);
-    }
-
-    /**
-     * Check if the given route name is present in the given list.
-     */
-    protected function isListedAs($route, $list)
-    {
-        return (isset($route->listedAs) && $route->listedAs === $list)
-            || Arr::get($route->getAction(), 'listed_as', null) === $list;
     }
 
     /**
