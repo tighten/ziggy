@@ -11,7 +11,7 @@ const defaultZiggy = {
     url: 'https://ziggy.dev',
     baseProtocol: 'https',
     baseDomain: 'ziggy.dev',
-    basePort: null,
+    port: null,
     defaults: { locale: 'en' },
     routes: {
         'home': {
@@ -354,7 +354,7 @@ describe('route()', () => {
     test('can generate a URL with a port', () => {
         global.Ziggy.url = 'https://ziggy.dev:81';
         global.Ziggy.baseDomain = 'ziggy.dev';
-        global.Ziggy.basePort = 81;
+        global.Ziggy.port = 81;
 
         // route with no parameters
         equal(route('posts.index'), 'https://ziggy.dev:81/posts');
@@ -403,7 +403,7 @@ describe('route()', () => {
             url: 'http://notYourAverage.dev',
             baseProtocol: 'http',
             baseDomain: 'notYourAverage.dev',
-            basePort: false,
+            port: null,
             defaults: { locale: 'en' },
             routes: {
                 'tightenDev.packages.index': {
@@ -522,7 +522,7 @@ describe('current()', () => {
             url: 'https://ziggy.dev',
             baseProtocol: 'https',
             baseDomain: 'ziggy.dev',
-            basePort: false,
+            port: null,
             routes: {
                 'events.index': {
                     uri: 'events',

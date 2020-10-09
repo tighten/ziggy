@@ -11,7 +11,7 @@ use ReflectionMethod;
 class Ziggy implements JsonSerializable
 {
     protected $baseDomain;
-    protected $basePort;
+    protected $port;
     protected $baseProtocol;
     protected $url;
     protected $group;
@@ -26,7 +26,7 @@ class Ziggy implements JsonSerializable
         tap(parse_url($this->url), function ($url) {
             $this->baseProtocol = $url['scheme'] ?? 'http';
             $this->baseDomain = $url['host'] ?? '';
-            $this->basePort = $url['port'] ?? null;
+            $this->port = $url['port'] ?? null;
         });
 
         $this->routes = $this->nameKeyedRoutes();
@@ -138,7 +138,7 @@ class Ziggy implements JsonSerializable
             'url' => $this->url,
             'baseProtocol' => $this->baseProtocol,
             'baseDomain' => $this->baseDomain,
-            'basePort' => $this->basePort,
+            'port' => $this->port,
             'defaults' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
                 : [],

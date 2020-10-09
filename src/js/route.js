@@ -28,7 +28,7 @@ class Route {
         // If  we're building just a path there's no origin, otherwise: if this route has a
         // domain configured we construct the origin with that, if not we use the app URL
         const origin = !this.config.absolute ? '' : this.definition.domain
-            ? `${this.config.baseProtocol}://${this.definition.domain}${this.config.basePort ? `:${this.config.basePort}` : ''}`
+            ? `${this.config.baseProtocol}://${this.definition.domain}${this.config.port ? `:${this.config.port}` : ''}`
             : this.config.url;
 
         return `${origin}/${this.definition.uri}`;
