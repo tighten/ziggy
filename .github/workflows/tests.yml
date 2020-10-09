@@ -2,8 +2,12 @@ name: Tests
 
 on:
   pull_request:
+    paths-ignore:
+      - 'dist/**'
+      - '*.md'
   push:
     branches:
+      - develop
       - master
     paths-ignore:
       - 'dist/**'
