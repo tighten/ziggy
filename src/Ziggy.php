@@ -139,7 +139,7 @@ class Ziggy implements JsonSerializable
             'baseProtocol' => $this->baseProtocol,
             'baseDomain' => $this->baseDomain,
             'basePort' => $this->basePort,
-            'defaultParameters' => method_exists(app('url'), 'getDefaultParameters')
+            'defaults' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
                 : [],
             'routes' => $this->applyFilters($this->group)->toArray(),

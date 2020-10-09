@@ -395,7 +395,7 @@ class ZiggyTest extends TestCase
             'baseProtocol' => 'http',
             'baseDomain' => 'ziggy.dev',
             'basePort' => null,
-            'defaultParameters' => [],
+            'defaults' => [],
             'routes' => [
                 'home' => [
                     'uri' => 'home',
@@ -442,7 +442,7 @@ class ZiggyTest extends TestCase
             'baseProtocol' => 'http',
             'baseDomain' => 'ziggy.dev',
             'basePort' => null,
-            'defaultParameters' => [],
+            'defaults' => [],
             'routes' => [
                 'postComments.index' => [
                     'uri' => 'posts/{post}/comments',
@@ -453,7 +453,7 @@ class ZiggyTest extends TestCase
 
         $this->addPostCommentsRouteWithBindings($expected['routes']);
 
-        $json = '{"baseUrl":"http:\/\/ziggy.dev","baseProtocol":"http","baseDomain":"ziggy.dev","basePort":null,"defaultParameters":[],"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"]}}}';
+        $json = '{"baseUrl":"http:\/\/ziggy.dev","baseProtocol":"http","baseDomain":"ziggy.dev","basePort":null,"defaults":[],"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"]}}}';
 
         if ($this->laravelVersion(7)) {
             $json = str_replace(

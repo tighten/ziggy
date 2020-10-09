@@ -12,7 +12,7 @@ const defaultZiggy = {
     baseProtocol: 'https',
     baseDomain: 'ziggy.dev',
     basePort: null,
-    defaultParameters: { locale: 'en' },
+    defaults: { locale: 'en' },
     routes: {
         'home': {
             uri: '/',
@@ -197,7 +197,7 @@ describe('route()', () => {
     });
 
     test('can error if a required parameter with a default has no default value', () => {
-        global.Ziggy.defaultParameters = {};
+        global.Ziggy.defaults = {};
 
         assert.throws(
             () => route('translatePosts.index').url(),
@@ -404,7 +404,7 @@ describe('route()', () => {
             baseProtocol: 'http',
             baseDomain: 'notYourAverage.dev',
             basePort: false,
-            defaultParameters: { locale: 'en' },
+            defaults: { locale: 'en' },
             routes: {
                 'tightenDev.packages.index': {
                     uri: 'tightenDev/{dev}/packages',

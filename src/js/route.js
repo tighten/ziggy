@@ -231,7 +231,7 @@ class Router extends String {
         params = ['string', 'number'].includes(typeof params) ? [params] : params;
 
         // Separate segments with and without defaults, and fill in the default values
-        const segments = route.parameterSegments.filter(({ name }) => !this._config.defaultParameters[name]);
+        const segments = route.parameterSegments.filter(({ name }) => !this._config.defaults[name]);
 
         if (Array.isArray(params)) {
             // If the parameters are an array they have to be in order, so we can transform them into
@@ -266,8 +266,8 @@ class Router extends String {
      * @return {Object} Default route parameters.
      */
     _defaults(route) {
-        return route.parameterSegments.filter(({ name }) => this._config.defaultParameters[name])
-            .reduce((result, { name }, i) => ({ ...result, [name]: this._config.defaultParameters[name] }), {});
+        return route.parameterSegments.filter(({ name }) => this._config.defaults[name])
+            .reduce((result, { name }, i) => ({ ...result, [name]: this._config.defaults[name] }), {});
     }
 
     /**
