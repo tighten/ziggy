@@ -19,8 +19,8 @@ assignees: ''
 
 <!-- Include ALL of the information below: -->
 
-- **Laravel version**:
-- **Ziggy version**:
+- **Laravel version**: 
+- **Ziggy version**: 
 
 **Related routes**:
 

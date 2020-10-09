@@ -265,7 +265,7 @@ var Ziggy = {
     url: 'http://ziggy.test/',
     baseProtocol: 'http',
     baseDomain: 'ziggy.test',
-    port: null
+    port: null,
 };
 
 export {
