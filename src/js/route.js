@@ -58,8 +58,8 @@ class Route {
     matchesUrl(url) {
         if (!this.definition.methods.includes('GET')) return false;
 
-        // Transform the route's template into a regex that will match a hydrated URL, by
-        // replacing its parameter segments with matchers for parameter values
+        // Transform the route's template into a regex that will match a hydrated URL,
+        // by replacing its parameter segments with matchers for parameter values
         const pattern = this.template
             .replace(/\/{[^}?]*\?}/g, '(\/[^/?]+)?')
             .replace(/{[^}]+}/g, '[^/?]+')
@@ -95,7 +95,7 @@ class Router extends String {
     /**
      * @param {String} name - Route name.
      * @param {(String|Number|Array|Object)} params - Route parameters.
-     * @param {Boolean} config - Whether to include the URL origin.
+     * @param {Boolean} absolute - Whether to include the URL origin.
      * @param {Object} config - Ziggy configuration.
      */
     constructor(name, params, absolute = true, config) {
@@ -183,7 +183,7 @@ class Router extends String {
      *
      * @example
      * // at URL https://tighten.ziggy.dev/posts/4?lang=en with 'posts.show' route 'posts/{post}' and domain '{team}.ziggy.dev'
-     * route().params; // { team: 'tighten', post: 4, locale: 'en' }
+     * route().params; // { team: 'tighten', post: 4, lang: 'en' }
      *
      * @return {Object}
      */
@@ -289,6 +289,7 @@ class Router extends String {
 
             if (!value.hasOwnProperty(bindings[key])) {
                 if (value.hasOwnProperty('id')) {
+                    // As a fallback, we still accept an 'id' key not explicitly registered as a binding
                     bindings[key] = 'id';
                 } else {
                     throw new Error(`Ziggy error: object passed as '${key}' parameter is missing route model binding key '${bindings[key]}'.`)
