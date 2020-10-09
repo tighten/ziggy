@@ -142,7 +142,7 @@ class Ziggy implements JsonSerializable
             'defaultParameters' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
                 : [],
-            'namedRoutes' => $this->applyFilters($this->group)->toArray(),
+            'routes' => $this->applyFilters($this->group)->toArray(),
         ];
     }
 

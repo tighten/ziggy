@@ -13,7 +13,7 @@ const defaultZiggy = {
     baseDomain: 'ziggy.dev',
     basePort: null,
     defaultParameters: { locale: 'en' },
-    namedRoutes: {
+    routes: {
         'home': {
             uri: '/',
             methods: ['GET', 'HEAD'],
@@ -405,7 +405,7 @@ describe('route()', () => {
             baseDomain: 'notYourAverage.dev',
             basePort: false,
             defaultParameters: { locale: 'en' },
-            namedRoutes: {
+            routes: {
                 'tightenDev.packages.index': {
                     uri: 'tightenDev/{dev}/packages',
                     methods: ['GET', 'HEAD'],
@@ -523,7 +523,7 @@ describe('current()', () => {
             baseProtocol: 'https',
             baseDomain: 'ziggy.dev',
             basePort: false,
-            namedRoutes: {
+            routes: {
                 'events.index': {
                     uri: 'events',
                     methods: ['GET', 'HEAD'],

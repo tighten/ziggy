@@ -36,7 +36,7 @@ HTML;
         var routes = {$json};
 
         for (var name in routes) {
-            Ziggy.namedRoutes[name] = routes[name];
+            Ziggy.routes[name] = routes[name];
         }
     })();
 </script>

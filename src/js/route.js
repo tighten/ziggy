@@ -104,11 +104,11 @@ class Router extends String {
         this._config = config ?? Ziggy ?? globalThis?.Ziggy;
 
         if (name) {
-            if (!this._config.namedRoutes[name]) {
+            if (!this._config.routes[name]) {
                 throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
             }
 
-            this._route = new Route(name, this._config.namedRoutes[name], { ...this._config, absolute });
+            this._route = new Route(name, this._config.routes[name], { ...this._config, absolute });
             this._params = this._parse(params);
         }
     }
@@ -156,7 +156,7 @@ class Router extends String {
         const url = window.location.host + window.location.pathname;
 
         // Find the first route that matches the current URL
-        const [current, route] = Object.entries(this._config.namedRoutes).find(
+        const [current, route] = Object.entries(this._config.routes).find(
             ([_, route]) => new Route(name, route, this._config).matchesUrl(url)
         );
 
@@ -188,7 +188,7 @@ class Router extends String {
      * @return {Object}
      */
     get params() {
-        return this._dehydrate(this._config.namedRoutes[this.current()]);
+        return this._dehydrate(this._config.routes[this.current()]);
     }
 
     /**
@@ -198,7 +198,7 @@ class Router extends String {
      * @return {Boolean}
      */
     has(name) {
-        return Object.keys(this._config.namedRoutes).includes(name);
+        return Object.keys(this._config.routes).includes(name);
     }
 
     /**

@@ -13,7 +13,7 @@ class BladeRouteGeneratorTest extends TestCase
     {
         $generator = app(BladeRouteGenerator::class);
 
-        $this->assertStringContainsString('"namedRoutes":[]', $generator->generate());
+        $this->assertStringContainsString('"routes":[]', $generator->generate());
     }
 
     /** @test */
@@ -30,11 +30,11 @@ class BladeRouteGeneratorTest extends TestCase
         $output = (new BladeRouteGenerator)->generate();
         $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
 
-        $this->assertCount(4, $ziggy['namedRoutes']);
-        $this->assertArrayHasKey('posts.index', $ziggy['namedRoutes']);
-        $this->assertArrayHasKey('posts.show', $ziggy['namedRoutes']);
-        $this->assertArrayHasKey('posts.store', $ziggy['namedRoutes']);
-        $this->assertArrayHasKey('postComments.index', $ziggy['namedRoutes']);
+        $this->assertCount(4, $ziggy['routes']);
+        $this->assertArrayHasKey('posts.index', $ziggy['routes']);
+        $this->assertArrayHasKey('posts.show', $ziggy['routes']);
+        $this->assertArrayHasKey('posts.store', $ziggy['routes']);
+        $this->assertArrayHasKey('postComments.index', $ziggy['routes']);
     }
 
     /** @test */
