@@ -2,9 +2,10 @@ name: Tests
 
 on:
   pull_request:
+    paths-ignore: ['*.md']
   push:
-    branches:
-      - master
+    branches: [main, 0.9.x]
+    paths-ignore: ['*.md']
 
 jobs:
   test:
