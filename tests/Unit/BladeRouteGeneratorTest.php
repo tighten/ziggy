@@ -27,6 +27,7 @@ class BladeRouteGeneratorTest extends TestCase
         $router->post('posts', $this->noop())->name('posts.store');
         $router->getRoutes()->refreshNameLookups();
 
+        BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate();
         $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
 
