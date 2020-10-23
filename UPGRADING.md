@@ -2,7 +2,14 @@
 
 ## Upgrading from `0.9.x` to `1.x`
 
-Ziggy `1.0` includes significant changes and improvements, most of which shouldn't require any changes to existing code! **The behavior of the `@routes` Blade directive and the `route()` helper function has not changed**, so if you're just using those and not customizing or extending Ziggy at all, you likely won't have to do anything.
+Ziggy `1.0` includes significant improvements and changes, most of which won't require any changes to existing code!
+
+**TL;DR** – If all you're doing is dropping the `@routes` Blade directive into a view somewhere and using the Javascript `route()` helper function later, you only really need to worry about three things:
+
+- `route()` with any arguments returns a string now, so:
+  - Anywhere you're calling `.url()` to get a literal string, remove it.
+  - Anywhere you're passing route paramaters using `.with()`, pass them as the second argument to `route()` instead.
+  - Anywhere you're passing query paramaters using `.withQuery()`, pass them along with your route parameters in the second argument to `route()`. If any of their names collide with your route parameters, nest your query parameters under a `_query` key.
 
 ### Overview
 
@@ -14,6 +21,12 @@ Ziggy `1.0` includes significant changes and improvements, most of which shouldn
   - [`whitelist` and `blacklist` renamed](#)
 - **Low-impact changes**
   - [`with()` and `withQuery()` methods removed](#)
+  - [`Route` Facade macros removed](#)
+  - [`RoutePayload` renamed to `Ziggy`](#)
+  - [`getRoutePayload()` method removed](#)
+  - [`UrlBuilder` class removed](#)
+  - [`check()` method deprecated](#)
+  - [Other undocumented methods removed](#)
 
 ### High impact changes
 
@@ -23,9 +36,13 @@ Ziggy `1.0` includes significant changes and improvements, most of which shouldn
 
    Calls specifically to `route()`, with no arguments, are not affected and will still return an instance of the `Router` class, so things like `route().current()` and `route().params` don't need to change.
 
+   See [#336](https://github.com/tighten/ziggy/pull/336)
+
 1. **The `url()` method on the `Router` class was removed** and can safely be deleted from projects that used it.
 
-   Because of the above change to `route(...)`, the `url()` method is no longer necessary. You can safely remove it, e.g. by replacing all instances of `'.url()'` in your project with `''` (nothing).
+   Because of the above change to `route(...)`, the `url()` method is no longer necessary. You can safely remove it, e.g. by finding and replacing instances of `'.url()'` in your project with `''` (nothing).
+
+   See [#336](https://github.com/tighten/ziggy/pull/336)
 
 ### Medium impact changes
 
@@ -33,63 +50,105 @@ Ziggy `1.0` includes significant changes and improvements, most of which shouldn
 
    <details>
    <summary>Details</summary>
-   The default output path of the `ziggy:generate` command has changed from `resources/assets/js/ziggy.js` to `resources/js/ziggy.js` to bring it in line with the changes to the `resources` directory structure introduced in Laravel 5.7. [#269](https://github.com/tighten/ziggy/pull/269)
+   The default output path of the `ziggy:generate` command has changed from `resources/assets/js/ziggy.js` to `resources/js/ziggy.js` to bring it in line with the changes to the `resources` directory structure introduced in Laravel 5.7.
+
+   See[#269](https://github.com/tighten/ziggy/pull/269)
    </details>
 
 1. **The `whitelist` and `blacklist` features were renamed** to `only` and `except`.
 
    <details>
    <summary>Details</summary>
-   All `whitelist` and `blacklist` functionality, like the config keys and methods, was renamed to `only` and `except`. [#300](https://github.com/tighten/ziggy/pull/300)
-   </details>
+   All `whitelist` and `blacklist` functionality, like the config keys and methods, was renamed to `only` and `except`.
 
+   See [#300](https://github.com/tighten/ziggy/pull/300)
+   </details>
 
 ### Low impact changes
 
-**[PHP] `Route` Facade macros removed**
+1. **The `with()` and `withQuery()` methods were removed.**
 
-The `Route` Facade macros `Route::only()` and `Route::except()` (previously `Route::whitelist()` and `Route::blacklist()`) were removed. [#306](https://github.com/tighten/ziggy/pull/306)
+   <details>
+   <summary>Details</summary>
+   The `with()` and `withQuery()` methods on the `Router` class (the object returned by the `route()` function if it is passed no arguments) are deprecated. Instead of `with()`, pass parameters as the second argument to `route()`. Instead of `withQuery()`, you can pass query parameters in the same object with regular parameters, as the second argument to `route()`. If you have query parameters and named parameters with the same name, use the new special `_query` key.
 
-**[PHP] `RoutePayload` class renamed and refactored**
+   See [#330](https://github.com/tightenco/ziggy/pull/330) and [#336](https://github.com/tightenco/ziggy/pull/336)
+   </details>
 
-The `RoutePayload` class was renamed to `Ziggy` and its `->compile()` method was removed in favor of constructing a new instance and calling `->toArray()` or `->toJson()` ([#305](https://github.com/tighten/ziggy/pull/305)). Also:
+1. **The `Route` Facade macros, `Route::whitelist()` and `Route::blacklist()`, were removed.**
 
-- The application router instance is now resolved internally instead of being passed into the constructor, so `new Ziggy(...)` now takes only 2 arguments, `$group` and `$url`
-- The default value of `$basePort` was changed from `false` to `null`
+   <details>
+   <summary>Details</summary>
+   The `Route` Facade macros, `Route::only()` and `Route::except()` (previously `Route::whitelist()` and `Route::blacklist()`) were removed. Instead of using these macros in your route files, set the routes to include/exclude in `config/ziggy.php`.
 
-**[PHP] `getRoutePayload()` method removed**
+   See [#306](https://github.com/tighten/ziggy/pull/306)
+   </details>
 
-The `getRoutePayload()` method on the `BladeRouteGenerator` and `CommandRouteGenerator` classes was removed. [#305](https://github.com/tighten/ziggy/pull/305)
+1. **The `RoutePayload` class was renamed to `Ziggy`** and refactored.
 
-**[JS] `RouteBuilder` class removed**
+   <details>
+   <summary>Details</summary>
+   The PHP `RoutePayload` class was renamed to `Ziggy` and its `->compile()` method was removed in favor of constructing a new instance and calling `->toArray()` or `->toJson()`. Also:
+   
+   - The application router instance is now resolved internally instead of being passed into the constructor, so `new Ziggy(...)` now takes only 2 arguments, `$group` and `$url`
+   - The default value of `$basePort` was changed from `false` to `null`
 
-The `RouteBuilder` class was removed. Refer to the `template()` getter on the new `Route` class if you need to re-implement this functionality yourself. [#330](https://github.com/tightenco/ziggy/pull/330)
+   See [#305](https://github.com/tighten/ziggy/pull/305)
+   </details>
 
-**[JS] `with()` and `check()` deprecated**
+1. **The `getRoutePayload()` method was removed.**
 
-The `with()` and `check()` methods on the `Router` class (the object returned by the `route()` function) are deprecated. Instead of `with()`, pass parameters as the second argument to `route()`. Instead of `check()`, use `has()`. [#330](https://github.com/tightenco/ziggy/pull/330)
+   <details>
+   <summary>Details</summary>
+   The `getRoutePayload()` method on the PHP `BladeRouteGenerator` and `CommandRouteGenerator` classes was removed.
 
-**[JS] several other methods and properties removed**
+   See [#305](https://github.com/tighten/ziggy/pull/305)
+   </details>
 
-Several undocumented methods and properties on the `Router` class (the object returned by the `route()` function) were removed. Replace them with the suggestions below or refer to Ziggy's internals if you need to re-implement the functionality yourself. [#330](https://github.com/tightenco/ziggy/pull/330)
+1. **The `UrlBuilder` class was removed**
 
-Removed properties:
+   <details>
+   <summary>Details</summary>
+   The Javascript `UrlBuilder` class was removed. Refer to the `template()` getter on the new `Route` class if you need to re-implement this functionality yourself.
 
-- `name`: use the name you were passing into `route()` as the first argument.
-- `absolute`: use the value you were passing into `route()` as the third argument.
-- `ziggy`: use the global `Ziggy` configuraton object.
-- `urlBuilder`: refer to the `template()` getter on the new `Route` class.
-- `template`: refer to the `template()` getter on the new `Route` class.
-- `urlParams`: use the value you were passing into `route()` as the second argument.
-- `queryParams`: use the value you were passing into `route()` as the second argument or into `withQuery()`.
-- `hydrated`: use the `url()` method.
+   See [#330](https://github.com/tightenco/ziggy/pull/330)
+   </details>
 
-Removed methods:
+1. **The `check()` method was deprecated.**
 
-- `normalizeParams()`: refer to the internal `_parse()` method.
-- `hydrateUrl()`: use `url()`.
-- `matchUrl()`: use `current()` or refer to the `current()` method on the new `Route` class.
-- `constructQuery()`: use or refer to `url()`.
-- `extractParams()`: refer to the internal `_dehydrate()` method.
-- `parse()`: use `url()`.
-- `trimParam()`: use `.replace(/{|\??}/g, '')`.
+   <details>
+   <summary>Details</summary>
+   Use `has()` instead.
+
+   See [#330](https://github.com/tightenco/ziggy/pull/330)
+   </details>
+
+1. **Several undocumented methods and properties were removed** from the Javascript `Router` class.
+
+   <details>
+   <summary>Details</summary>
+   Several undocumented methods and properties on the `Router` class (the object returned by the `route()` function when it's called with no arguments) were removed. Replace them with the suggestions below or refer to Ziggy's internals if you need to re-implement the functionality yourself.
+
+   Removed properties:
+
+   - `name`: use the name you were passing into `route()` as the first argument.
+   - `absolute`: use the value you were passing into `route()` as the third argument.
+   - `ziggy`: use the global `Ziggy` configuraton object.
+   - `urlBuilder`: refer to the `template()` getter on the new `Route` class.
+   - `template`: refer to the `template()` getter on the new `Route` class.
+   - `urlParams`: use the value you were passing into `route()` as the second argument.
+   - `queryParams`: use the value you were passing into `withQuery()`, or into `route()` as the second argument.
+   - `hydrated`: use the returned URL string.
+
+   Removed methods:
+
+   - `normalizeParams()`: refer to the internal `_parse()` method.
+   - `hydrateUrl()`: use the returned URL string.
+   - `matchUrl()`: use `current()` or refer to the `current()` method on the new `Route` class.
+   - `constructQuery()`: use the returned URL string.
+   - `extractParams()`: refer to the `_dehydrate()` method on the `Router` class.
+   - `parse()`: use the returned URL string.
+   - `trimParam()`: use `.replace(/{|\??}/g, '')`.
+
+   See [#330](https://github.com/tightenco/ziggy/pull/330)
+   </details>
