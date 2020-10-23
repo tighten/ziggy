@@ -38,6 +38,26 @@ class BladeRouteGeneratorTest extends TestCase
     }
 
     /** @test */
+    public function can_generate_mergeable_json_payload_on_repeated_compiles()
+    {
+        $router = app('router');
+        $router->get('posts', $this->noop())->name('posts.index');
+        $router->getRoutes()->refreshNameLookups();
+
+        BladeRouteGenerator::$generated = false;
+        (new BladeRouteGenerator)->generate();
+        $script = (new BladeRouteGenerator)->generate();
+
+        $payload = json_decode(Str::after(Str::before($script, ";\n\n"), 'routes = '), true);
+        $this->assertSame([
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+            ],
+        ], json_decode(Str::after(Str::before($script, ";\n\n"), 'routes = '), true));
+    }
+
+    /** @test */
     public function can_generate_routes_for_default_domain()
     {
         $router = app('router');
