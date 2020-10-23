@@ -22,10 +22,11 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 - **Low-impact changes**
   - [`with()` and `withQuery()` methods removed](#)
   - [`Route` Facade macros removed](#)
-  - [`RoutePayload` renamed to `Ziggy`](#user-content-route-payload-class-renamed)
+  - [`RoutePayload` renamed to `Ziggy`](#user-content-route-payload-renamed)
   - [`getRoutePayload()` method removed](#)
   - [`UrlBuilder` class removed](#)
   - [`check()` method deprecated](#)
+  - [`baseProtocol` and `baseDomain` properties removed](#user-content-base-protocol-domain-removed)
   - [Other undocumented methods removed](#)
 
 ### High impact changes
@@ -78,7 +79,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 
    The `with()` and `withQuery()` methods on the `Router` class (the object returned by the `route()` function if it is passed no arguments) are deprecated. Instead of `with()`, pass parameters as the second argument to `route()`. Instead of `withQuery()`, you can pass query parameters in the same object with regular parameters, as the second argument to `route()`. If you have query parameters and named parameters with the same name, use the new special `_query` key.
 
-   See [#330](https://github.com/tightenco/ziggy/pull/330) and [#336](https://github.com/tightenco/ziggy/pull/336)
+   See [#330](https://github.com/tighten/ziggy/pull/330) and [#336](https://github.com/tighten/ziggy/pull/336)
    </details>
 
 1. **The `Route` Facade macros, `Route::whitelist()` and `Route::blacklist()`, were removed.**
@@ -92,7 +93,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    See [#306](https://github.com/tighten/ziggy/pull/306)
    </details>
 
-1. **The `RoutePayload` class was renamed to `Ziggy`** and refactored. <span id="route-payload-class-renamed"></span>
+1. **The `RoutePayload` class was renamed to `Ziggy`** and refactored. <span id="route-payload-renamed"></span>
 
    <details>
    <summary>Details</summary>
@@ -127,7 +128,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 
    The Javascript `UrlBuilder` class was removed. Refer to the `template()` getter on the new `Route` class if you need to re-implement this functionality yourself.
 
-   See [#330](https://github.com/tightenco/ziggy/pull/330)
+   See [#330](https://github.com/tighten/ziggy/pull/330)
    </details>
 
 1. **The `check()` method was deprecated.**
@@ -138,7 +139,18 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 
    Use `has()` instead.
 
-   See [#330](https://github.com/tightenco/ziggy/pull/330)
+   See [#330](https://github.com/tighten/ziggy/pull/330)
+   </details>
+
+1. **The `baseProtocol` and `baseDomain` properties were removed** from Ziggy's global configuration object. <span id="base-protocol-domain-removed"></span>
+
+   <details>
+   <summary>Details</summary>
+   <p></p>
+
+   The `baseProtocol` and `baseDomain` keys were removed from Ziggy's config. Both these values were inferred from the `baseUrl` property, which is set to your app URL. Refer to the `template()` getter on the new `Route` class if you need to re-implement this functionality yourself.
+
+   See [#337](https://github.com/tighten/ziggy/pull/337)
    </details>
 
 1. **Several undocumented methods and properties were removed** from the Javascript `Router` class.
@@ -174,5 +186,5 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 
    <p></p>
    
-   See [#330](https://github.com/tightenco/ziggy/pull/330)
+   See [#330](https://github.com/tighten/ziggy/pull/330)
    </details>
