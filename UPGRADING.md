@@ -14,24 +14,24 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 ### Overview
 
 - **High-impact changes**
-  - [`route(...)` now returns a string](#)
-  - [`url()` method removed](#)
+  - [`route(...)` now returns a string](#user-content-route-string)
+  - [`url()` method removed](#user-content-url-removed)
 - **Medium-impact changes**
-  - [Default `ziggy:generate` path changed](#)
-  - [`whitelist` and `blacklist` renamed](#)
+  - [Default `ziggy:generate` path changed](#user-content-generate-path-changed)
+  - [`whitelist` and `blacklist` renamed](#user-content-whitelist-blacklist-renamed)
 - **Low-impact changes**
-  - [`with()` and `withQuery()` methods removed](#)
-  - [`Route` Facade macros removed](#)
+  - [`with()` and `withQuery()` methods removed](#user-content-with-withquery-removed)
+  - [`Route` Facade macros removed](#user-content-macros-removed)
   - [`RoutePayload` renamed to `Ziggy`](#user-content-route-payload-renamed)
-  - [`getRoutePayload()` method removed](#)
-  - [`UrlBuilder` class removed](#)
-  - [`check()` method deprecated](#)
+  - [`getRoutePayload()` method removed](#user-content-getroutepayload-removed)
+  - [`UrlBuilder` class removed](#user-content-urlbuilder-removed)
+  - [`check()` method deprecated](#user-content-check-deprecated)
   - [`baseProtocol` and `baseDomain` properties removed](#user-content-base-protocol-domain-removed)
-  - [Other undocumented methods removed](#)
+  - [Other undocumented methods removed](#user-content-undocumented-methods-removed)
 
 ### High impact changes
 
-1. **The `route()` function now returns a literal string if it is passed any arguments.**
+1. **The `route()` function now returns a literal string if it is passed any arguments.** <span id="route-string"></span>
 
    If you are chaining methods onto `route(...)` _with arguments_, such as `route('posts.show').url()` or `route('home').withQuery(...)`, remove the chained methods. In the case of `route(...).url()` you can just remove `.url()` and nothing will change, for other methods see below.
 
@@ -39,7 +39,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 
    See [#336](https://github.com/tighten/ziggy/pull/336)
 
-1. **The `url()` method on the `Router` class was removed** and can safely be deleted from projects that used it.
+1. **The `url()` method on the `Router` class was removed** and can safely be deleted from projects that used it. <span id="url-removed"></span>
 
    Because of the above change to `route(...)`, the `url()` method is no longer necessary. You can safely remove it, e.g. by finding and replacing instances of `'.url()'` in your project with `''` (nothing).
 
@@ -47,7 +47,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 
 ### Medium impact changes
 
-1. **The default `ziggy:generate` path has changed to `resources/js/ziggy.js`**, Laravel's default javascript asset location.
+1. **The default `ziggy:generate` path has changed to `resources/js/ziggy.js`**, Laravel's default javascript asset location. <span id="generate-path-changed"></span>
 
    <details>
    <summary>Details</summary>
@@ -58,7 +58,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    See[#269](https://github.com/tighten/ziggy/pull/269)
    </details>
 
-1. **The `whitelist` and `blacklist` features were renamed** to `only` and `except`.
+1. **The `whitelist` and `blacklist` features were renamed** to `only` and `except`. <span id="whitelist-blacklist-renamed"></span>
 
    <details>
    <summary>Details</summary>
@@ -71,7 +71,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 
 ### Low impact changes
 
-1. **The `with()` and `withQuery()` methods were removed.**
+1. **The `with()` and `withQuery()` methods were removed.** <span id="with-withquery-removed"></span>
 
    <details>
    <summary>Details</summary>
@@ -82,7 +82,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    See [#330](https://github.com/tighten/ziggy/pull/330) and [#336](https://github.com/tighten/ziggy/pull/336)
    </details>
 
-1. **The `Route` Facade macros, `Route::whitelist()` and `Route::blacklist()`, were removed.**
+1. **The `Route` Facade macros, `Route::whitelist()` and `Route::blacklist()`, were removed.** <span id="macros-removed"></span>
 
    <details>
    <summary>Details</summary>
@@ -109,7 +109,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    See [#305](https://github.com/tighten/ziggy/pull/305)
    </details>
 
-1. **The `getRoutePayload()` method was removed.**
+1. **The `getRoutePayload()` method was removed.** <span id="getroutepayload-removed"></span>
 
    <details>
    <summary>Details</summary>
@@ -120,7 +120,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    See [#305](https://github.com/tighten/ziggy/pull/305)
    </details>
 
-1. **The `UrlBuilder` class was removed**
+1. **The `UrlBuilder` class was removed.** <span id="urlbuilder-removed"></span>
 
    <details>
    <summary>Details</summary>
@@ -131,7 +131,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    See [#330](https://github.com/tighten/ziggy/pull/330)
    </details>
 
-1. **The `check()` method was deprecated.**
+1. **The `check()` method was deprecated.** <span id="check-deprecated"></span>
 
    <details>
    <summary>Details</summary>
@@ -153,7 +153,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    See [#337](https://github.com/tighten/ziggy/pull/337)
    </details>
 
-1. **Several undocumented methods and properties were removed** from the Javascript `Router` class.
+1. **Several undocumented methods and properties were removed** from the Javascript `Router` class. <span id="undocumented-methods-removed"></span>
 
    <details>
    <summary>Details</summary>
