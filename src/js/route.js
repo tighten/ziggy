@@ -118,17 +118,18 @@ class Router extends String {
      *
      * @example
      * // with 'posts.show' route 'posts/{post}'
-     * route('posts.show', 1).url(); // 'https://ziggy.dev/posts/1'
+     * (new Router('posts.show', 1)).toString(); // 'https://ziggy.dev/posts/1'
      *
      * @return {String}
      */
-    url() {
+    toString() {
         // Get parameters that don't correspond to any route segments to append them to the query
         const unhandled = Object.keys(this._params)
             .filter((key) => !this._route.parameterSegments.some(({ name }) => name === key))
+            .filter((key) => key !== '_query')
             .reduce((result, current) => ({ ...result, [current]: this._params[current] }), {});
 
-        return this._route.compile(this._params) + stringify({ ...unhandled, ...this._queryParams }, {
+        return this._route.compile(this._params) + stringify({ ...unhandled, ...this._params['_query'] }, {
             addQueryPrefix: true,
             arrayFormat: 'indices',
             encodeValuesOnly: true,
@@ -202,17 +203,6 @@ class Router extends String {
     }
 
     /**
-     * Add query parameters to be appended to the compiled URL.
-     *
-     * @param {Object} params
-     * @return {this}
-     */
-    withQuery(params) {
-        this._queryParams = params;
-        return this;
-    }
-
-    /**
      * Parse Laravel-style route parameters of any type into a normalized object.
      *
      * @example
@@ -282,8 +272,9 @@ class Router extends String {
      */
     _substituteBindings(params, bindings = {}) {
         return Object.entries(params).reduce((result, [key, value]) => {
-            // If the value isn't an object there's nothing to substitute, so we return it as-is
-            if (!value || typeof value !== 'object' || Array.isArray(value)) {
+            // If the value isn't an object, or if it's an object of explicity query
+            // parameters, there's nothing to substitute so we return it as-is
+            if (!value || typeof value !== 'object' || Array.isArray(value) || key === '_query') {
                 return { ...result, [key]: value };
             }
 
@@ -338,20 +329,8 @@ class Router extends String {
         };
     }
 
-    toString() {
-        return this.url();
-    }
-
     valueOf() {
-        return this.url();
-    }
-
-    /**
-     * @deprecated since v1.0, pass parameters as the second argument to `route()` instead.
-     */
-    with(params) {
-        this._params = this._parse(params);
-        return this;
+        return this.toString();
     }
 
     /**
@@ -363,5 +342,7 @@ class Router extends String {
 }
 
 export default function route(name, params, absolute, config) {
-    return new Router(name, params, absolute, config);
+    const router = new Router(name, params, absolute, config);
+
+    return name ? router.toString() : router;
 }
