@@ -28,7 +28,10 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
   - [`check()` method deprecated](#user-content-check-deprecated)
   - [`baseProtocol` and `baseDomain` properties removed](#user-content-base-protocol-domain-removed)
   - [`base` and other prefixes removed](#user-content-prefixes-removed)
-  - [Other undocumented methods removed](#user-content-undocumented-methods-removed)
+  - [`filter()` method made fluent](#user-content-filter-fluent)
+  - [Unused PHP methods removed](#user-content-unused-php-removed)
+  - [Internal PHP methods made private](#user-content-internal-methods-private)
+  - [Undocumented Javascript methods removed](#user-content-undocumented-methods-removed)
 
 ### High impact changes
 
@@ -163,6 +166,41 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    The `namedRoutes`, `defaultParameters`, `baseUrl`, and `basePort` configuration properties were renamed to `routes`, `defaults`, `url`, and `port`.
 
    See [#338](https://github.com/tighten/ziggy/pull/338)
+   </details>
+
+  - [Internal PHP methods made private](#user-content-internal-methods-private)
+
+1. **The `filter()` method on the `Ziggy` class is now 'fluent'** and returns an instance of `Ziggy`. <span id="filter-fluent"></span>
+
+   <details>
+   <summary>Details</summary>
+   <p></p>
+
+   The `filter()` method on the `Ziggy` class now returns an instance of `Ziggy` instead of a collection of routes.
+
+   See [#341](https://github.com/tighten/ziggy/pull/341)
+   </details>
+
+1. **Unused PHP methods were removed.** <span id="unused-php-removed"></span>
+
+   <details>
+   <summary>Details</summary>
+   <p></p>
+
+   The unused `appendRouteToList()` and `isListedAs()` methods, and the redundant/unnecessary `except()` and `only()` methods on the `Ziggy` class, were removed.
+
+   See [#341](https://github.com/tighten/ziggy/pull/341)
+   </details>
+
+1. **Some internal methods on Ziggy's PHP classes were made private.** <span id="internal-methods-private"></span>
+
+   <details>
+   <summary>Details</summary>
+   <p></p>
+
+   The `nameKeyedRoutes()`, `resolveBindings()`, `applyFilters()`, and `group()` methods on the `Ziggy` class, and the `generate()` method on the `CommandRouteGenerator` class, are now private.
+
+   See [#341](https://github.com/tighten/ziggy/pull/341)
    </details>
 
 1. **Several undocumented methods and properties were removed** from the Javascript `Router` class. <span id="undocumented-methods-removed"></span>
