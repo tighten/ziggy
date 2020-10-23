@@ -27,6 +27,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
   - [`UrlBuilder` class removed](#user-content-urlbuilder-removed)
   - [`check()` method deprecated](#user-content-check-deprecated)
   - [`baseProtocol` and `baseDomain` properties removed](#user-content-base-protocol-domain-removed)
+  - [`base` and other prefixes removed](#user-content-prefixes-removed)
   - [Other undocumented methods removed](#user-content-undocumented-methods-removed)
 
 ### High impact changes
@@ -151,6 +152,17 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    The `baseProtocol` and `baseDomain` keys were removed from Ziggy's config. Both these values were inferred from the `baseUrl` property, which is set to your app URL. Refer to the `template()` getter on the new `Route` class if you need to re-implement this functionality yourself.
 
    See [#337](https://github.com/tighten/ziggy/pull/337)
+   </details>
+
+1. **`base` and other prefixes were removed** from config keys. <span id="prefixes-removed"></span>
+
+   <details>
+   <summary>Details</summary>
+   <p></p>
+
+   The `namedRoutes`, `defaultParameters`, `baseUrl`, and `basePort` configuration properties were renamed to `routes`, `defaults`, `url`, and `port`.
+
+   See [#338](https://github.com/tighten/ziggy/pull/338)
    </details>
 
 1. **Several undocumented methods and properties were removed** from the Javascript `Router` class. <span id="undocumented-methods-removed"></span>
