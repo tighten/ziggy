@@ -282,20 +282,6 @@ If you want to expose multiple groups you can pass an array of group names:
 
 **Note: Passing group names to the `@routes` directive will always take precedence over your other `only` or `except` settings.**
 
-## Content Security Policy
-
-A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) may block unsafe inline scripts which Ziggy uses to pass the routes to JavaScript. By adding a nonce to your CSP you can allow certain inlined scripts. To add this nonce to Ziggy you can pass it as the second argument:
-
-```php
-@routes(false, '[YOUR_NONCE]')
-```
-
-Or if you are using [Spatie's CSP Package](https://github.com/spatie/laravel-csp):
-
-```php
-@routes(false, csp_nonce())
-```
-
 ## Other Useful Methods
 
 #### `current()`
@@ -430,9 +416,13 @@ Thanks to [Archer70](https://github.com/tighten/ziggy/issues/70#issuecomment-369
 
 ## Other
 
-**Environment-based loading of minified route helper file**
+#### Using `@routes` with a Content Security Policy
 
-When using the `@routes` Blade directive, Ziggy will detect the current environment and minify the output if `APP_ENV` is not `local`. In this case, `ziggy.min.js` will be loaded—otherwise, `ziggy.js` will be used.
+A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) may block inline scripts, including those output by Ziggy's `@routes` Blade directive. If you have a CSP and are using a nonce to flag safe inline scripts, you can pass the nonce as as the second argument to the `@routes` directive and it will be added to Ziggy's script tag:
+
+```php
+@routes(false, 'your-nonce-here')
+```
 
 **Disabling the `route()` helper**
 
