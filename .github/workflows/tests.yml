@@ -2,10 +2,10 @@ name: Tests
 
 on:
   pull_request:
-    paths-ignore: ['*.md']
+    paths-ignore: ['dist/**', '*.md']
   push:
     branches: [main, 0.9.x]
-    paths-ignore: ['*.md']
+    paths-ignore: ['dist/**', '*.md']
 
 jobs:
   test:
