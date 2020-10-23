@@ -53,61 +53,169 @@ Note that you still have to generate your routes file with `php artisan ziggy:ge
 
 ## Usage
 
-This package uses the `@routes` directive to inject a JavaScript object containing all of your application's routes, keyed by their names. This collection is available at `Ziggy.namedRoutes`.
+Ziggy's `route()` helper function works similarly to Laravel's—you can pass it the name of any of your routes, and the parameters you want to pass to the route, and it will return a URL.
 
-The package also creates an optional `route()` JavaScript helper that functions like Laravel's PHP `route()` helper, which can be used to retrieve URLs by name and (optionally) parameters.
+<!-- This package uses the `@routes` directive to inject a JavaScript object containing all of your application's routes, keyed by their names. This collection is available at `Ziggy.namedRoutes`.
+The package also creates an optional `route()` JavaScript helper that functions like Laravel's PHP `route()` helper, which can be used to retrieve URLs by name and (optionally) parameters. -->
 
-#### Examples
+**Basic usage**
 
-Without parameters:
+```php
+// routes/web.php
 
-```js
-route('posts.index'); // Returns '/posts'
+Route::get('posts', fn (Request $request) => /* ... */)->name('posts.index');
 ```
 
-With required parameter:
-
 ```js
-route('posts.show', { post: 1 }); // Returns '/posts/1'
-route('posts.show', [1]); // Returns '/posts/1'
-route('posts.show', 1); // Returns '/posts/1'
+// app.js
+
+route('posts.index'); // 'https://ziggy.test/posts'
 ```
 
-With multiple required parameters:
+**With parameters**
 
-```js
-route('events.venues.show', { event: 1, venue: 2 }); // Returns '/events/1/venues/2'
-route('events.venues.show', [1, 2]); // Returns '/events/1/venues/2'
+```php
+// routes/web.php
+
+Route::get('posts/{post}', fn (Request $request, Post $post) => /* ... */)->name('posts.show');
 ```
 
-With query parameters:
-
 ```js
-route('events.venues.show', { event: 1, venue: 2, page: 5, count: 10 }); // Returns '/events/1/venues/2?page=5&count=10'
+// app.js
+
+route('posts.show', 1);           // 'https://ziggy.test/posts/1'
+route('posts.show', [1]);         // 'https://ziggy.test/posts/1'
+route('posts.show', { post: 1 }); // 'https://ziggy.test/posts/1'
 ```
 
-If whole objects are passed, Ziggy will automatically look for an `id` primary key:
+**With multiple parameters**
 
-```js
-let event = { id: 1, name: 'World Series' };
-let venue = { id: 2, name: 'Rogers Centre' };
+```php
+// routes/web.php
 
-route('events.venues.show', [event, venue]); // Returns '/events/1/venues/2'
+Route::get('events/{event}/venues/{venue}', fn (Request $request, Event $event, Venue $venue) => /* ... */)->name('events.venues.show');
 ```
 
-Practical AJAX example:
-
 ```js
-let post = { id: 1, title: 'Ziggy Stardust' };
+// app.js
 
-return axios.get(route('posts.show', post))
-    .then((response) => {
-        return response.data;
-    });
+route('events.venues.show', [1, 2]);                 // 'https://ziggy.test/events/1/venues/2'
+route('events.venues.show', { event: 1, venue: 2 }); // 'https://ziggy.test/events/1/venues/2'
 ```
 
-_Note: If you are using Axios and making requests that require CSRF verification, use the [`url()` method](#url) on the route (documented below). This will ensure that the `X-XSRF-TOKEN` header is sent with the request._
+**With query parameters**
 
+```php
+// routes/web.php
+
+Route::get('events/{event}/venues/{venue}', fn (Request $request, Event $event, Venue $venue) => /* ... */)->name('events.venues.show');
+```
+
+```js
+// app.js
+
+route('events.venues.show', {
+    event: 1,
+    venue: 2,
+    page: 5,
+    count: 10,
+});
+// 'https://ziggy.test/events/1/venues/2?page=5&count=10'
+```
+
+If you have a query parameter with the same name as a route parameter, nest it under a `_query` key:
+
+```js
+route('events.venues.show', {
+    event: 1,
+    venue: 2,
+    _query: {
+        event: 3,
+        page: 5,
+    },
+});
+// 'https://ziggy.test/events/1/venues/2?event=3&page=5'
+```
+
+**With default parameter values**
+
+@todo
+
+**Practical AJAX example**
+
+```js
+const post = { id: 1, title: 'Ziggy Stardust' };
+
+return axios.get(route('posts.show', post)).then((response) => response.data);
+```
+
+#### Route-model binding
+
+Ziggy recognizes [Laravel route-model bindings](https://laravel.com/docs/routing#route-model-binding) and can use custom route key names. If you pass a Javascript object as a parameter value, Ziggy will use the registered route key if it's present, and fall back to `id` if it isn't.
+
+```php
+// app/Models/Post.php
+
+class Post extends Model
+{
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+}
+```
+
+```php
+// app/Http/Controllers/PostController.php
+
+class PostController
+{
+    public function show(Request $request, Post $post)
+    {
+        //
+    }
+}
+```
+
+```php
+// routes/web.php
+
+Route::get('blog/{post}', [PostController::class, 'show'])->name('posts.show');
+```
+
+```js
+// app.js
+
+const post = {
+    title: 'Introducing Ziggy v1',
+    slug: 'introducing-ziggy-v1',
+    date: '2020-10-23T20:59:24.359278Z',
+};
+
+route('posts.show', post); // 'https://ziggy.test/blog/introducing-ziggy-v1'
+```
+
+Ziggy also supports [custom keys](https://laravel.com/docs/routing#customizing-the-key) for scoped bindings in the route definition:
+
+```php
+// routes/web.php
+
+Route::get('authors/{author}/photos/{photo:uuid}', fn (Request $request, Author $author, Photo $photo) => /* ... */)->name('authors.photos.show');
+```
+
+```js
+// app.js
+
+const photo = {
+    uuid: '714b19e8-ac5e-4dab-99ba-34dc6fdd24a5',
+    filename: 'sunset.jpg',
+}
+
+route('authors.photos.show', [{ id: 1, name: 'Jacob' }, photo]);
+// 'https://ziggy.test/authors/1/photos/introducing-ziggy-v1'
+```
+
+@todo move this up
 #### Default Values
 
 See the [Laravel documentation on default route parameter values](https://laravel.com/docs/urls#default-values).
