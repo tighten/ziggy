@@ -41,7 +41,8 @@ Breaking changes are marked with ⚠️.
     - `name`, `absolute`, `ziggy`, `urlBuilder`, `template`, `urlParams`, `queryParams`, and `hydrated`
     - `normalizeParams()`, `hydrateUrl()`, `matchUrl()`, `constructQuery()`, `extractParams()`, `parse()`, and `trimParam()`
 - ⚠️ Remove the `UrlBuilder` class ([#330](https://github.com/tighten/ziggy/pull/330))
-- ⚠️ Remove the `url()` method now that `route(...)` returns a string ([#336](https://github.com/tighten/ziggy/pull/336)):
+- ⚠️ Remove the `url()` method now that `route(...)` returns a string ([#336](https://github.com/tighten/ziggy/pull/336))
+- ⚠️ Remove the `baseDomain` and `baseProtocol` properties on the Ziggy config object ([#337](https://github.com/tighten/ziggy/pull/337))
 
 **Fixed**
 
