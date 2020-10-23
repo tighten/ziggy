@@ -27,6 +27,7 @@ class BladeRouteGeneratorTest extends TestCase
         $router->post('posts', $this->noop())->name('posts.store');
         $router->getRoutes()->refreshNameLookups();
 
+        BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate();
         $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
 
@@ -35,6 +36,26 @@ class BladeRouteGeneratorTest extends TestCase
         $this->assertArrayHasKey('posts.show', $ziggy['namedRoutes']);
         $this->assertArrayHasKey('posts.store', $ziggy['namedRoutes']);
         $this->assertArrayHasKey('postComments.index', $ziggy['namedRoutes']);
+    }
+
+    /** @test */
+    public function can_generate_mergeable_json_payload_on_repeated_compiles()
+    {
+        $router = app('router');
+        $router->get('posts', $this->noop())->name('posts.index');
+        $router->getRoutes()->refreshNameLookups();
+
+        BladeRouteGenerator::$generated = false;
+        (new BladeRouteGenerator)->generate();
+        $script = (new BladeRouteGenerator)->generate();
+
+        $payload = json_decode(Str::after(Str::before($script, ";\n\n"), 'routes = '), true);
+        $this->assertSame([
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+            ],
+        ], json_decode(Str::after(Str::before($script, ";\n\n"), 'routes = '), true));
     }
 
     /** @test */
