@@ -456,4 +456,4 @@ If you discover any security related issues, please email <hello@tighten.co> ins
 
 ## License
 
-Ziggy is open source software licensed under the MIT license. See [LICENSE.md](LICENSE.md) for more information.
+Ziggy is open source software released under the MIT license. See [LICENSE](LICENSE) for more information.
