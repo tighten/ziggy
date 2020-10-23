@@ -12,7 +12,7 @@ class BladeRouteGenerator
         $nonce = $nonce ? ' nonce="' . $nonce . '"' : '';
 
         if (static::$generated) {
-            return $this->generateMergeJavascript(json_encode($payload->toArray()['namedRoutes']), $nonce);
+            return $this->generateMergeJavascript(json_encode($payload->toArray()['routes']), $nonce);
         }
 
         $routeFunction = $this->getRouteFunction();
