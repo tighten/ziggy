@@ -167,18 +167,18 @@ describe('route()', () => {
     });
 
     test('can error if a required parameter is not provided', () => {
-        throws(() => route('posts.show').url(), /'post' parameter is required/);
+        throws(() => route('posts.show'), /'post' parameter is required/);
     });
 
     test('can error if a required parameter is not provided to a route with default parameters', () => {
-        throws(() => route('translatePosts.show').url(), /'id' parameter is required/);
+        throws(() => route('translatePosts.show'), /'id' parameter is required/);
     });
 
     test('can error if a required parameter with a default has no default value', () => {
         global.Ziggy.defaultParameters = {};
 
         throws(
-            () => route('translatePosts.index').url(),
+            () => route('translatePosts.index'),
             /'locale' parameter is required/
         );
     });
@@ -275,7 +275,7 @@ describe('route()', () => {
 
     test('can error if a route model binding key is missing', () => {
         throws(
-            () => route('postComments.show', [1, { count: 20 }]).url(),
+            () => route('postComments.show', [1, { count: 20 }]),
             /Ziggy error: object passed as 'comment' parameter is missing route model binding key 'uuid'\./
         );
     });
@@ -292,7 +292,7 @@ describe('route()', () => {
     });
 
     test('can error if a route name doesn’t exist', () => {
-        throws(() => route('unknown-route').url(), /Ziggy error: route 'unknown-route' is not in the route list\./);
+        throws(() => route('unknown-route'), /Ziggy error: route 'unknown-route' is not in the route list\./);
     });
 
     test('can automatically append extra parameter values as a query string', () => {
