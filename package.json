@@ -1,6 +1,6 @@
 {
     "name": "ziggy-js",
-    "version": "0.9.1",
+    "version": "1.0.0-beta.1",
     "description": "Use your Laravel named routes in JavaScript.",
     "keywords": [
         "laravel",
