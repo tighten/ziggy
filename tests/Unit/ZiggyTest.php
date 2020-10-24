@@ -64,7 +64,7 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, $routes->toArray()['namedRoutes']);
+        $this->assertSame($expected, $routes->toArray()['routes']);
     }
 
     /** @test */
@@ -86,7 +86,7 @@ class ZiggyTest extends TestCase
 
         $this->addPostCommentsRouteWithBindings($expected);
 
-        $this->assertSame($expected, $routes->toArray()['namedRoutes']);
+        $this->assertSame($expected, $routes->toArray()['routes']);
     }
 
     /** @test */
