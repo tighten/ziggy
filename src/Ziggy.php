@@ -10,10 +10,8 @@ use ReflectionMethod;
 
 class Ziggy implements JsonSerializable
 {
-    protected $baseDomain;
-    protected $basePort;
-    protected $baseProtocol;
-    protected $baseUrl;
+    protected $port;
+    protected $url;
     protected $group;
     protected $routes;
 
@@ -21,18 +19,13 @@ class Ziggy implements JsonSerializable
     {
         $this->group = $group;
 
-        $this->baseUrl = Str::finish($url ?? url('/'), '/');
-
-        tap(parse_url($this->baseUrl), function ($url) {
-            $this->baseProtocol = $url['scheme'] ?? 'http';
-            $this->baseDomain = $url['host'] ?? '';
-            $this->basePort = $url['port'] ?? null;
-        });
+        $this->url = rtrim($url ?? config('app.url', url('/')), '/');
+        $this->port = parse_url($this->url)['port'] ?? null;
 
         $this->routes = $this->nameKeyedRoutes();
     }
 
-    public function applyFilters($group)
+    private function applyFilters($group)
     {
         if ($group) {
             return $this->group($group);
@@ -44,11 +37,11 @@ class Ziggy implements JsonSerializable
         }
 
         if (config()->has('ziggy.except')) {
-            return $this->except();
+            return $this->filter(config('ziggy.except'), false)->routes;
         }
 
         if (config()->has('ziggy.only')) {
-            return $this->only();
+            return $this->filter(config('ziggy.only'))->routes;
         }
 
         return $this->routes;
@@ -57,7 +50,7 @@ class Ziggy implements JsonSerializable
     /**
      * Filter routes by group.
      */
-    public function group($group)
+    private function group($group)
     {
         if (is_array($group)) {
             $filters = [];
@@ -66,40 +59,32 @@ class Ziggy implements JsonSerializable
                 $filters = array_merge($filters, config("ziggy.groups.{$groupName}"));
             }
 
-            return $this->filter($filters, true);
+            return $this->filter($filters, true)->routes;
         }
 
         if (config()->has("ziggy.groups.{$group}")) {
-            return $this->filter(config("ziggy.groups.{$group}"), true);
+            return $this->filter(config("ziggy.groups.{$group}"), true)->routes;
         }
 
         return $this->routes;
     }
 
-    public function except()
-    {
-        return $this->filter(config('ziggy.except'), false);
-    }
-
-    public function only()
-    {
-        return $this->filter(config('ziggy.only'));
-    }
-
     /**
      * Filter routes by name using the given patterns.
      */
-    public function filter($filters = [], $include = true)
+    public function filter($filters = [], $include = true): self
     {
-        return $this->routes->filter(function ($route, $name) use ($filters, $include) {
+        $this->routes = $this->routes->filter(function ($route, $name) use ($filters, $include) {
             return Str::is(Arr::wrap($filters), $name) ? $include : ! $include;
         });
+
+        return $this;
     }
 
     /**
      * Get a list of the application's named routes, keyed by their names.
      */
-    protected function nameKeyedRoutes()
+    private function nameKeyedRoutes()
     {
         [$fallbacks, $routes] = collect(app('router')->getRoutes()->getRoutesByName())
             ->partition(function ($route) {
@@ -110,12 +95,6 @@ class Ziggy implements JsonSerializable
 
         return $routes->merge($fallbacks)
             ->map(function ($route) use ($bindings) {
-                if ($this->isListedAs($route, 'except')) {
-                    $this->appendRouteToList($route->getName(), 'except');
-                } elseif ($this->isListedAs($route, 'only')) {
-                    $this->appendRouteToList($route->getName(), 'only');
-                }
-
                 return collect($route)->only(['uri', 'methods'])
                     ->put('domain', $route->domain())
                     ->put('bindings', $bindings[$route->getName()] ?? [])
@@ -135,14 +114,12 @@ class Ziggy implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'baseUrl' => $this->baseUrl,
-            'baseProtocol' => $this->baseProtocol,
-            'baseDomain' => $this->baseDomain,
-            'basePort' => $this->basePort,
-            'defaultParameters' => method_exists(app('url'), 'getDefaultParameters')
+            'url' => $this->url,
+            'port' => $this->port,
+            'defaults' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
                 : [],
-            'namedRoutes' => $this->applyFilters($this->group)->toArray(),
+            'routes' => $this->applyFilters($this->group)->toArray(),
         ];
     }
 
@@ -163,26 +140,9 @@ class Ziggy implements JsonSerializable
     }
 
     /**
-     * Add the given route name to the current list of routes.
-     */
-    protected function appendRouteToList($name, $list)
-    {
-        config()->push("ziggy.{$list}", $name);
-    }
-
-    /**
-     * Check if the given route name is present in the given list.
-     */
-    protected function isListedAs($route, $list)
-    {
-        return (isset($route->listedAs) && $route->listedAs === $list)
-            || Arr::get($route->getAction(), 'listed_as', null) === $list;
-    }
-
-    /**
      * Resolve route key names for any route parameters using Eloquent route model binding.
      */
-    protected function resolveBindings(array $routes): array
+    private function resolveBindings(array $routes): array
     {
         $scopedBindings = method_exists(head($routes), 'bindingFields');
 

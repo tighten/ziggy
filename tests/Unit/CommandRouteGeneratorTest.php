@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class CommandRouteGeneratorTest extends TestCase
@@ -55,6 +56,7 @@ class CommandRouteGeneratorTest extends TestCase
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         $router->getRoutes()->refreshNameLookups();
+        URL::defaults(['locale' => 'en']);
 
         Artisan::call('ziggy:generate', ['--url' => 'http://example.org']);
 

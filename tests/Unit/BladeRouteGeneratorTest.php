@@ -13,7 +13,7 @@ class BladeRouteGeneratorTest extends TestCase
     {
         $generator = app(BladeRouteGenerator::class);
 
-        $this->assertStringContainsString('"namedRoutes":[]', $generator->generate());
+        $this->assertStringContainsString('"routes":[]', $generator->generate());
     }
 
     /** @test */
@@ -27,14 +27,35 @@ class BladeRouteGeneratorTest extends TestCase
         $router->post('posts', $this->noop())->name('posts.store');
         $router->getRoutes()->refreshNameLookups();
 
+        BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate();
         $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
 
-        $this->assertCount(4, $ziggy['namedRoutes']);
-        $this->assertArrayHasKey('posts.index', $ziggy['namedRoutes']);
-        $this->assertArrayHasKey('posts.show', $ziggy['namedRoutes']);
-        $this->assertArrayHasKey('posts.store', $ziggy['namedRoutes']);
-        $this->assertArrayHasKey('postComments.index', $ziggy['namedRoutes']);
+        $this->assertCount(4, $ziggy['routes']);
+        $this->assertArrayHasKey('posts.index', $ziggy['routes']);
+        $this->assertArrayHasKey('posts.show', $ziggy['routes']);
+        $this->assertArrayHasKey('posts.store', $ziggy['routes']);
+        $this->assertArrayHasKey('postComments.index', $ziggy['routes']);
+    }
+
+    /** @test */
+    public function can_generate_mergeable_json_payload_on_repeated_compiles()
+    {
+        $router = app('router');
+        $router->get('posts', $this->noop())->name('posts.index');
+        $router->getRoutes()->refreshNameLookups();
+
+        BladeRouteGenerator::$generated = false;
+        (new BladeRouteGenerator)->generate();
+        $script = (new BladeRouteGenerator)->generate();
+
+        $payload = json_decode(Str::after(Str::before($script, ";\n\n"), 'routes = '), true);
+        $this->assertSame([
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+            ],
+        ], json_decode(Str::after(Str::before($script, ";\n\n"), 'routes = '), true));
     }
 
     /** @test */

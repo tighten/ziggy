@@ -35,7 +35,7 @@ class CommandRouteGenerator extends Command
         $this->info('File generated!');
     }
 
-    public function generate($group = false)
+    private function generate($group = false)
     {
         $payload = (new Ziggy($group, url($this->option('url'))))->toJson();
 
@@ -43,8 +43,8 @@ class CommandRouteGenerator extends Command
 var Ziggy = {$payload};
 
 if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
-    for (var name in window.Ziggy.namedRoutes) {
-        Ziggy.namedRoutes[name] = window.Ziggy.namedRoutes[name];
+    for (var name in window.Ziggy.routes) {
+        Ziggy.routes[name] = window.Ziggy.routes[name];
     }
 }
 
