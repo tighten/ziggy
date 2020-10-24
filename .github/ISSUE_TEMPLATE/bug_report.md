@@ -2,9 +2,7 @@
 name: Bug report
 about: Report an issue to help us improve Ziggy
 title: ''
-labels: needs triage
 assignees: ''
-
 ---
 
 ### Description

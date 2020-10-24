@@ -2,9 +2,7 @@
 name: Feature request
 about: Suggest a new feature for Ziggy
 title: ''
-labels: enhancement, needs triage
 assignees: ''
-
 ---
 
 ### Description
