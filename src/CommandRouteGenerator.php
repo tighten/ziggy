@@ -43,8 +43,8 @@ class CommandRouteGenerator extends Command
 var Ziggy = {$payload};
 
 if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
-    for (var name in window.Ziggy.namedRoutes) {
-        Ziggy.namedRoutes[name] = window.Ziggy.namedRoutes[name];
+    for (var name in window.Ziggy.routes) {
+        Ziggy.routes[name] = window.Ziggy.routes[name];
     }
 }
 
