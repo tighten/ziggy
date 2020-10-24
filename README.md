@@ -53,7 +53,7 @@ Note that you still have to generate your routes file with `php artisan ziggy:ge
 
 ## Usage
 
-This package uses the `@routes` directive to inject a JavaScript object containing all of your application's routes, keyed by their names. This collection is available at `Ziggy.namedRoutes`.
+This package uses the `@routes` directive to inject a JavaScript object containing all of your application's routes, keyed by their names. This collection is available at `Ziggy.routes`.
 
 The package also creates an optional `route()` JavaScript helper that functions like Laravel's PHP `route()` helper, which can be used to retrieve URLs by name and (optionally) parameters.
 
@@ -115,7 +115,7 @@ See the [Laravel documentation on default route parameter values](https://larave
 Default values work out of the box for Laravel versions >= 5.5.29, for previous versions you will need to set the default parameters by including this code somewhere in the same page as Ziggy's `@routes` Blade directive.
 
 ```js
-Ziggy.defaultParameters = {
+Ziggy.defaults = {
     // example
     locale: 'en',
 };
@@ -261,9 +261,9 @@ Route::get('/login', function () {
 // ziggy.js
 
 var Ziggy = {
-    namedRoutes: {"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"login":{"uri":"login","methods":["GET","HEAD"],"domain":null}},
-    baseUrl: 'http://ziggy.test/',
-    basePort: false
+    routes: {"home":{"uri":"\/","methods":["GET","HEAD"],"domain":null},"login":{"uri":"login","methods":["GET","HEAD"],"domain":null}},
+    url: 'http://ziggy.test/',
+    port: null,
 };
 
 export {

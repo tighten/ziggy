@@ -12,7 +12,7 @@ class BladeRouteGenerator
         $nonce = $nonce ? ' nonce="' . $nonce . '"' : '';
 
         if (static::$generated) {
-            return $this->generateMergeJavascript(json_encode($payload->toArray()['namedRoutes']), $nonce);
+            return $this->generateMergeJavascript(json_encode($payload->toArray()['routes']), $nonce);
         }
 
         $routeFunction = $this->getRouteFunction();
@@ -36,7 +36,7 @@ HTML;
         var routes = {$json};
 
         for (var name in routes) {
-            Ziggy.namedRoutes[name] = routes[name];
+            Ziggy.routes[name] = routes[name];
         }
     })();
 </script>

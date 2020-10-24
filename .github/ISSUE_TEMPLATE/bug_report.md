@@ -19,8 +19,8 @@ assignees: ''
 
 <!-- Include ALL of the information below: -->
 
-- **Laravel version**: 
-- **Ziggy version**: 
+- **Laravel version**: 
+- **Ziggy version**: 
 
 **Related routes**:
 
@@ -30,9 +30,9 @@ assignees: ''
 Route::get('/', 'HomeController')->name('home');
 ```
 
-**`Ziggy.namedRoutes`**:
+**`Ziggy.routes`**:
 
-<!-- In your browser console/devtools, run `Ziggy.namedRoutes` and paste the result here. E.g.: -->
+<!-- In your browser console/devtools, run `Ziggy.routes` and paste the result here. E.g.: -->
 
 ```js
 {

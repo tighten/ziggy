@@ -10,8 +10,8 @@ use ReflectionMethod;
 
 class Ziggy implements JsonSerializable
 {
-    protected $basePort;
-    protected $baseUrl;
+    protected $port;
+    protected $url;
     protected $group;
     protected $routes;
 
@@ -19,8 +19,8 @@ class Ziggy implements JsonSerializable
     {
         $this->group = $group;
 
-        $this->baseUrl = rtrim($url ?? config('app.url', url('/')), '/');
-        $this->basePort = parse_url($this->baseUrl)['port'] ?? null;
+        $this->url = rtrim($url ?? config('app.url', url('/')), '/');
+        $this->port = parse_url($this->url)['port'] ?? null;
 
         $this->routes = $this->nameKeyedRoutes();
     }
@@ -128,12 +128,12 @@ class Ziggy implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'baseUrl' => $this->baseUrl,
-            'basePort' => $this->basePort,
-            'defaultParameters' => method_exists(app('url'), 'getDefaultParameters')
+            'url' => $this->url,
+            'port' => $this->port,
+            'defaults' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
                 : [],
-            'namedRoutes' => $this->applyFilters($this->group)->toArray(),
+            'routes' => $this->applyFilters($this->group)->toArray(),
         ];
     }
 
