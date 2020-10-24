@@ -35,7 +35,7 @@ class CommandRouteGenerator extends Command
         $this->info('File generated!');
     }
 
-    public function generate($group = false)
+    private function generate($group = false)
     {
         $payload = (new Ziggy($group, url($this->option('url'))))->toJson();
 

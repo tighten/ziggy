@@ -30,6 +30,8 @@ Breaking changes are marked with ⚠️.
 - ⚠️ Allow getting the route name with `current()` when the current URL has a query string ([#330](https://github.com/tighten/ziggy/pull/330))
 - ⚠️ Return a literal string from the `route()` function when any arguments are passed to it ([#336](https://github.com/tighten/ziggy/pull/336))
 - ⚠️ Rename `namedRoutes` → `routes`, `defaultParameters` → `defaults`, `baseUrl` → `url`, and `basePort` → `port` ([#338](https://github.com/tighten/ziggy/pull/338))
+- ⚠️ Make the `filter()` method on the `Ziggy` class return an instance of that class instead of a collection of routes ([#341](https://github.com/tighten/ziggy/pull/341))
+- ⚠️ Make the `nameKeyedRoutes()`, `resolveBindings()`, `applyFilters()`, and `group()` methods on the `Ziggy` class, and the `generate()` method on the `CommandRouteGenerator` class, private ([#341](https://github.com/tighten/ziggy/pull/341))
 
 **Deprecated**
 
@@ -44,6 +46,7 @@ Breaking changes are marked with ⚠️.
 - ⚠️ Remove the `UrlBuilder` class ([#330](https://github.com/tighten/ziggy/pull/330))
 - ⚠️ Remove the `url()` method now that `route(...)` returns a string ([#336](https://github.com/tighten/ziggy/pull/336))
 - ⚠️ Remove the `baseDomain` and `baseProtocol` properties on the Ziggy config object ([#337](https://github.com/tighten/ziggy/pull/337))
+- ⚠️ Remove the `appendRouteToList()`, `isListedAs()`, `except()`, and `only()` methods from the `Ziggy` class ([#341](https://github.com/tighten/ziggy/pull/341))
 
 **Fixed**
 
