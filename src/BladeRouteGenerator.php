@@ -45,7 +45,7 @@ HTML;
 
     private function getRouteFilePath()
     {
-        return __DIR__ . '/../dist/route.js';
+        return __DIR__ . '/../dist/index.js';
     }
 
     private function getRouteFunction()
