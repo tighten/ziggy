@@ -21,7 +21,7 @@ class BladeRouteGenerator
 
         return <<<HTML
 <script type="text/javascript"{$nonce}>
-    var Ziggy = {$payload->toJson()};
+    const Ziggy = {$payload->toJson()};
 
     $routeFunction
 </script>
@@ -32,10 +32,10 @@ HTML;
     {
         return <<<HTML
 <script type="text/javascript"{$nonce}>
-    (function() {
-        var routes = {$json};
+    (function () {
+        const routes = {$json};
 
-        for (var name in routes) {
+        for (let name in routes) {
             Ziggy.routes[name] = routes[name];
         }
     })();
