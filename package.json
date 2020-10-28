@@ -45,7 +45,7 @@
         "prepublishOnly": "npm run build"
     },
     "mangle": {
-        "regex": "^_"
+        "regex": "^_(?!query)"
     },
     "dependencies": {
         "qs": "^6.8.0"
