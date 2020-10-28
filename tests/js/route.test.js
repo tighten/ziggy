@@ -316,6 +316,10 @@ describe('route()', () => {
         same(route('posts.index', { filled: 'filling', empty: null }), 'https://ziggy.dev/posts?filled=filling');
     });
 
+    test('can cast boolean query parameters to integers', () => {
+        same(route('posts.show', { post: 1, preview: true }), 'https://ziggy.dev/posts/1?preview=1');
+    });
+
     test('can explicitly append query parameters using _query parameter', () => {
         same(
             route('events.venues.show', {
