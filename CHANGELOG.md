@@ -32,6 +32,7 @@ Breaking changes are marked with ⚠️.
 - ⚠️ Rename `namedRoutes` → `routes`, `defaultParameters` → `defaults`, `baseUrl` → `url`, and `basePort` → `port` ([#338](https://github.com/tighten/ziggy/pull/338))
 - ⚠️ Make the `filter()` method on the `Ziggy` class return an instance of that class instead of a collection of routes ([#341](https://github.com/tighten/ziggy/pull/341))
 - ⚠️ Make the `nameKeyedRoutes()`, `resolveBindings()`, `applyFilters()`, and `group()` methods on the `Ziggy` class, and the `generate()` method on the `CommandRouteGenerator` class, private ([#341](https://github.com/tighten/ziggy/pull/341))
+- ⚠️ Encode boolean query parameters as integers ([#345](https://github.com/tighten/ziggy/pull/345))
 
 **Deprecated**
 
