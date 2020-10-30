@@ -37,6 +37,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
   - [Internal PHP methods made private](#user-content-internal-methods-private)
   - [Undocumented Javascript methods removed](#user-content-undocumented-methods-removed)
   - [Javascript build asset renamed `index.js`](#user-content-export-index)
+  - [`check()` method deprecated](#user-content-check-deprecated)
 
 ### New features
 
@@ -322,4 +323,15 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    Ziggy's main Javascript source and dist files are now called `index.js` instead of `route.js`.
 
    See [#344](https://github.com/tighten/ziggy/pull/344)
+   </details>
+
+1. **The `check()` method is deprecated.** <span id="check-deprecated"></span>
+
+   <details>
+   <summary>Details</summary>
+   <p></p>
+
+   The `route().check()` method is deprecated and will be removed in a future major version of Ziggy. Use `route().has()` instead.
+
+   See [#330](https://github.com/tighten/ziggy/pull/330)
    </details>
