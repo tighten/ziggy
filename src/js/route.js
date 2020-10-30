@@ -134,11 +134,7 @@ class Router extends String {
             arrayFormat: 'indices',
             encodeValuesOnly: true,
             skipNulls: true,
-            encoder: (value, encoder) => {
-                return typeof value === 'boolean'
-                    ? String(Number(value))
-                    : encoder(value);
-            },
+            encoder: (value, encoder) => typeof value === 'boolean' ? Number(value) : encoder(value),
         });
     }
 
