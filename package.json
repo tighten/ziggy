@@ -1,6 +1,6 @@
 {
     "name": "ziggy-js",
-    "version": "1.0.0-beta.2",
+    "version": "1.0.0-beta.3",
     "description": "Use your Laravel named routes in JavaScript.",
     "keywords": [
         "laravel",
@@ -40,9 +40,10 @@
         "url": "https://github.com/tighten/ziggy.git"
     },
     "scripts": {
-        "build": "microbundle --name route --format modern,es,umd",
+        "build": "microbundle --name route --format modern,es,umd --external none",
+        "build:npm": "microbundle --name route --format modern,es,umd",
         "test": "jest",
-        "prepublishOnly": "npm run build"
+        "prepublishOnly": "npm run build:npm"
     },
     "mangle": {
         "regex": "^_(?!query)"
