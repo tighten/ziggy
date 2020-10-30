@@ -22,6 +22,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 - **Medium-impact changes**
   - [Default `ziggy:generate` path changed](#user-content-generate-path-changed)
   - [`whitelist` and `blacklist` renamed](#user-content-whitelist-blacklist-renamed)
+  - [Boolean query parameters encoded as integers](#user-content-booleans-integers)
 - **Low-impact changes**
   - [`with()` and `withQuery()` methods removed](#user-content-with-withquery-removed)
   - [`Route` Facade macros removed](#user-content-macros-removed)
@@ -137,6 +138,17 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    All `whitelist` and `blacklist` functionality, like the config keys and methods, was renamed to `only` and `except`.
 
    See [#300](https://github.com/tighten/ziggy/pull/300)
+   </details>
+
+1. **Boolean query parameters are now encoded as integers.** <span id="booleans-integers"></span>
+
+   <details>
+   <summary>Details</summary>
+   <p></p>
+
+   Ziggy's `route()` function will now encode boolean query parameters as integers (`0`/`1`) instead of strings (`'true'`/`'false'`).
+
+   See [#345](https://github.com/tighten/ziggy/pull/345)
    </details>
 
 ### Low impact changes
