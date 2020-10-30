@@ -13,6 +13,9 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 
 ### Overview
 
+- **New features**
+  - [Added full route-model binding support](#user-content-route-model-binding)
+  - [Added support for checking parameters with `current()`](#user-content-params-current)
 - **High-impact changes**
   - [`route(...)` now returns a string](#user-content-route-string)
   - [`url()` method removed](#user-content-url-removed)
@@ -32,6 +35,66 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
   - [Unused PHP methods removed](#user-content-unused-php-removed)
   - [Internal PHP methods made private](#user-content-internal-methods-private)
   - [Undocumented Javascript methods removed](#user-content-undocumented-methods-removed)
+
+### New features
+
+1. **Ziggy now fully supports Laravel's route-model binding functionality.** <span id="route-model-binding"></span>
+
+   Previously, Ziggy could use the `id` key of an object passed in as a parameter as the parameter value, allowing you to pass, for example, a Javascript object representing an instance of one of your Laravel models, directly into the `route()` function.
+
+   This feature has been fleshed out to more fully support route-model binding in two key ways:
+   - Ziggy now fully supports [custom scoped route-model binding](https://laravel.com/docs/8.x/routing#implicit-binding) defined in route definitions, e.g. `/users/{user}/posts/{post:uuid}`.
+   - Ziggy now supports [implicit route-model binding](https://laravel.com/docs/8.x/routing#implicit-binding) defined by type-hinting controller methods and route closures.
+
+   For example, take the following model and route:
+
+   ```php
+   class Post extends Model
+   {
+        public function getRouteKeyName()
+        {
+            return 'slug';
+        }
+   }
+   ```
+
+   ```php
+   Route::post('posts/{post}', function (Post $post) {
+       //
+   })->name('posts.update');
+   ```
+
+   In Ziggy v1, you can pass an object with a `slug` key into the `route()` helper, and the slug will be used as the route parameter value:
+
+   ```js
+   const post = { id: 15, slug: 'announcing-ziggy-v1', author: 'Jacob', published: false };
+
+   route('posts.update', post); // 'https://ziggy.test/posts/announcing-ziggy-v1'
+   ```
+
+   See [#307](https://github.com/tighten/ziggy/pull/307) and [#315](https://github.com/tighten/ziggy/pull/315)
+
+1. **Ziggy now supports matching parameters using `current()`.** <span id="params-current"></span>
+
+   Ziggy's `current()` method, which can be passed a route name to check if the browser is currently 'on' that route, can now be passed an object of parameters as the second argument, and will return whether those parameter values match in the current URL.
+
+   This addition makes the following checks possible:
+
+   ```js
+   // Route called 'events.venues.show', with URI '/events/{event}/venues/{venue}'
+   // Window URL is https://myapp.com/events/1/venues/2?authors=all
+
+   // Before (unchanged)
+   route().current(); // 'events.venues.show'
+   route().current('events.venues.show'); // true
+
+   // After
+   route().current('events.venues.show', { event: 1, venue: 2 }); // true
+   route().current('events.venues.show', { authors: 'all' }); // true
+   route().current('events.venues.show', { venue: 6 }); // false
+   ```
+
+   See [#314](https://github.com/tighten/ziggy/pull/314) and [#330](https://github.com/tighten/ziggy/pull/330)
 
 ### High impact changes
 
