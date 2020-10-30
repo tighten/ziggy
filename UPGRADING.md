@@ -168,8 +168,6 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    See [#338](https://github.com/tighten/ziggy/pull/338)
    </details>
 
-  - [Internal PHP methods made private](#user-content-internal-methods-private)
-
 1. **The `filter()` method on the `Ziggy` class is now 'fluent'** and returns an instance of `Ziggy`. <span id="filter-fluent"></span>
 
    <details>
