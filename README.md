@@ -1,6 +1,6 @@
-![Ziggy - Use your Laravel named routes in JavaScript](https://raw.githubusercontent.com/tighten/ziggy/master/ziggy-banner.png)
+![Ziggy - Use your Laravel named routes in Javascript](https://raw.githubusercontent.com/tighten/ziggy/master/ziggy-banner.png)
 
-# Ziggy – Use your Laravel routes in JavaScript
+# Ziggy – Use your Laravel routes in Javascript
 
 [![GitHub Actions Status](https://img.shields.io/github/workflow/status/tighten/ziggy/Tests?label=tests&style=flat)](https://github.com/tighten/ziggy/actions?query=workflow:Tests+branch:master)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/tightenco/ziggy.svg?style=flat)](https://packagist.org/packages/tightenco/ziggy)
@@ -8,7 +8,7 @@
 [![Latest Version on NPM](https://img.shields.io/npm/v/ziggy-js.svg?style=flat)](https://npmjs.com/package/ziggy-js)
 [![Downloads on NPM](https://img.shields.io/npm/dt/ziggy-js.svg?style=flat)](https://npmjs.com/package/ziggy-js)
 
-Ziggy provides a JavaScript `route()` helper function that works like Laravel's, making it easy to use your Laravel named routes in JavaScript.
+Ziggy provides a Javascript `route()` helper function that works like Laravel's, making it easy to use your Laravel named routes in Javascript.
 
 Ziggy supports all versions of Laravel from `5.4` onward, and all modern browsers.
 
@@ -413,7 +413,7 @@ route('authors.photos.show', [{ id: 1, name: 'Jacob' }, photo]);
 
 ## Filtering Routes
 
-Filtering routes is completely optional. If you want to pass all of your app's routes to your JavaScript by default, you can carry on using Ziggy as described above.
+Filtering routes is completely optional. If you want to pass all of your app's routes to your Javascript by default, you can carry on using Ziggy as described above.
 
 #### Basic Filtering
 
@@ -538,7 +538,7 @@ A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CS
 
 #### Disabling the `route()` helper
 
-If you only want to use the `@routes` directive to make your app's routes available in JavaScript, but don't need the `route()` helper function, set the `skip-route-function` config value to `true`:
+If you only want to use the `@routes` directive to make your app's routes available in Javascript, but don't need the `route()` helper function, set the `skip-route-function` config value to `true`:
 
 ```php
 // config/ziggy.php
