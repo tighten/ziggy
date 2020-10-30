@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 use Tightenco\Ziggy\BladeRouteGenerator;
+use Tightenco\Ziggy\Ziggy;
 
 class BladeRouteGeneratorTest extends TestCase
 {
@@ -114,5 +115,52 @@ class BladeRouteGeneratorTest extends TestCase
 
         BladeRouteGenerator::$generated = false;
         $this->assertSame($script, $compiler->compileString('@routes'));
+    }
+
+    /** @test */
+    public function can_output_script_tag()
+    {
+        $router = app('router');
+        $router->get('posts', $this->noop())->name('posts.index');
+        BladeRouteGenerator::$generated = false;
+
+        $json = (new Ziggy)->toJson();
+        $routeFunction = file_get_contents(__DIR__ . '/../../dist/index.js');
+
+        $this->assertSame(
+            <<<HTML
+<script type="text/javascript">
+    const Ziggy = {$json};
+
+    {$routeFunction}
+</script>
+HTML,
+            (new BladeRouteGenerator)->generate()
+        );
+    }
+
+    /** @test */
+    public function can_output_merge_script_tag()
+    {
+        $router = app('router');
+        $router->get('posts', $this->noop())->name('posts.index');
+        (new BladeRouteGenerator)->generate();
+
+        $json = json_encode((new Ziggy)->toArray()['routes']);
+
+        $this->assertSame(
+            <<<HTML
+<script type="text/javascript">
+    (function () {
+        const routes = {$json};
+
+        for (let name in routes) {
+            Ziggy.routes[name] = routes[name];
+        }
+    })();
+</script>
+HTML,
+            (new BladeRouteGenerator)->generate()
+        );
     }
 }
