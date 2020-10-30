@@ -374,7 +374,7 @@ const path = require('path');
 mix.webpackConfig({
     resolve: {
         alias: {
-            ziggy: path.resolve('vendor/tighten/ziggy/src/js/route.js'),
+            ziggy: path.resolve('vendor/tighten/ziggy/dist'),
         },
     },
 });
