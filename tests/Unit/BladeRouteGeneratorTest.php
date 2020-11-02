@@ -106,18 +106,6 @@ class BladeRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function can_compile_routes_directive()
-    {
-        $compiler = app('blade.compiler');
-
-        BladeRouteGenerator::$generated = false;
-        $script = (new BladeRouteGenerator)->generate();
-
-        BladeRouteGenerator::$generated = false;
-        $this->assertSame($script, $compiler->compileString('@routes'));
-    }
-
-    /** @test */
     public function can_output_script_tag()
     {
         $router = app('router');
