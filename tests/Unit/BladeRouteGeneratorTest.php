@@ -97,6 +97,38 @@ class BladeRouteGeneratorTest extends TestCase
     }
 
     /** @test */
+    public function can_generate_routes_for_given_group_or_groups()
+    {
+        $router = app('router');
+        $router->get('posts', $this->noop())->name('posts.index');
+        $router->get('posts/{post}', $this->noop())->name('posts.show');
+        $router->get('users/{user}', $this->noop())->name('users.show');
+        $router->getRoutes()->refreshNameLookups();
+
+        config(['ziggy.groups' => [
+            'guest' => ['posts.*'],
+            'admin' => ['users.*'],
+        ]]);
+
+        BladeRouteGenerator::$generated = false;
+        $output = (new BladeRouteGenerator)->generate('guest');
+        $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
+
+        $this->assertCount(2, $ziggy['routes']);
+        $this->assertArrayHasKey('posts.index', $ziggy['routes']);
+        $this->assertArrayHasKey('posts.show', $ziggy['routes']);
+
+        BladeRouteGenerator::$generated = false;
+        $output = (new BladeRouteGenerator)->generate(['guest', 'admin']);
+        $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
+
+        $this->assertCount(3, $ziggy['routes']);
+        $this->assertArrayHasKey('posts.index', $ziggy['routes']);
+        $this->assertArrayHasKey('posts.show', $ziggy['routes']);
+        $this->assertArrayHasKey('users.show', $ziggy['routes']);
+    }
+
+    /** @test */
     public function can_set_csp_nonce()
     {
         $this->assertStringContainsString(

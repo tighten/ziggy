@@ -15,7 +15,7 @@ class Ziggy implements JsonSerializable
     protected $group;
     protected $routes;
 
-    public function __construct(string $group = null, string $url = null)
+    public function __construct($group = null, string $url = null)
     {
         $this->group = $group;
 
