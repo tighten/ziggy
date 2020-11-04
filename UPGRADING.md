@@ -4,12 +4,12 @@
 
 Ziggy `1.0` includes significant improvements and changes, most of which won't require any changes to existing code!
 
-**TL;DR** – If all you're doing is dropping the `@routes` Blade directive into a view somewhere and using the Javascript `route()` helper function later, you only really need to worry about three things:
+**TL;DR** – If all you're doing is dropping the `@routes` Blade directive into a view somewhere and using the Javascript `route()` helper function later, you only really need to worry about one thing:
 
-- `route()` with any arguments returns a string now, so:
+- `route()` _with any arguments_ returns a string now, so:
   - Anywhere you're calling `.url()` to get a literal string, remove it.
   - Anywhere you're passing route paramaters using `.with()`, pass them as the second argument to `route()` instead.
-  - Anywhere you're passing query paramaters using `.withQuery()`, pass them along with your route parameters in the second argument to `route()`. If any of their names collide with your route parameters, nest your query parameters under a `_query` key.
+  - Anywhere you're passing query paramaters using `.withQuery()`, pass them along with your route parameters in the second argument to `route()`. (If any of their names collide with your route parameters, nest your query parameters under a `_query` key.)
 
 ### Overview
 
@@ -22,14 +22,13 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 - **Medium-impact changes**
   - [Default `ziggy:generate` path changed](#user-content-generate-path-changed)
   - [`whitelist` and `blacklist` renamed](#user-content-whitelist-blacklist-renamed)
-  - [Boolean query parameters encoded as integers](#user-content-booleans-integers)
+  - [Boolean query parameters are encoded as integers](#user-content-booleans-integers)
 - **Low-impact changes**
   - [`with()` and `withQuery()` methods removed](#user-content-with-withquery-removed)
   - [`Route` Facade macros removed](#user-content-macros-removed)
   - [`RoutePayload` renamed to `Ziggy`](#user-content-route-payload-renamed)
   - [`getRoutePayload()` method removed](#user-content-getroutepayload-removed)
   - [`UrlBuilder` class removed](#user-content-urlbuilder-removed)
-  - [`check()` method deprecated](#user-content-check-deprecated)
   - [`baseProtocol` and `baseDomain` properties removed](#user-content-base-protocol-domain-removed)
   - [`base` and other prefixes removed](#user-content-prefixes-removed)
   - [`filter()` method made fluent](#user-content-filter-fluent)
@@ -37,18 +36,18 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
   - [Unused PHP methods removed](#user-content-unused-php-removed)
   - [Internal PHP methods made private](#user-content-internal-methods-private)
   - [Undocumented Javascript methods removed](#user-content-undocumented-methods-removed)
-  - [Javascript build asset renamed `index.js`](#user-content-export-index)
+  - [Javascript build asset renamed to `index.js`](#user-content-export-index)
   - [`check()` method deprecated](#user-content-check-deprecated)
 
 ### New features
 
 1. **Ziggy now fully supports Laravel's route-model binding functionality.** <span id="route-model-binding"></span>
 
-   Previously, Ziggy could use the `id` key of an object passed in as a parameter as the parameter value, allowing you to pass, for example, a Javascript object representing an instance of one of your Laravel models, directly into the `route()` function.
+   Previously, Ziggy could accept an object as a parameter and use its `id` key as the actual parameter value in the URL, allowing you to pass, for example, a Javascript object representing an instance of one of your Laravel models, directly into the `route()` function.
 
    This feature has been fleshed out to more fully support route-model binding in two key ways:
    - Ziggy now fully supports [custom scoped route-model binding](https://laravel.com/docs/8.x/routing#implicit-binding) defined in route definitions, e.g. `/users/{user}/posts/{post:uuid}`.
-   - Ziggy now supports [implicit route-model binding](https://laravel.com/docs/8.x/routing#implicit-binding) defined by type-hinting controller methods and route closures.
+   - Ziggy now supports [implicit route-model binding](https://laravel.com/docs/8.x/routing#implicit-binding) defined by type-hinting controller methods and closures.
 
    For example, take the following model and route:
 
@@ -64,7 +63,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 
    ```php
    Route::post('posts/{post}', function (Post $post) {
-       //
+       return view('posts.show', ['post' => $post]);
    })->name('posts.update');
    ```
 
@@ -92,7 +91,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    route().current(); // 'events.venues.show'
    route().current('events.venues.show'); // true
 
-   // After
+   // New in Ziggy v1
    route().current('events.venues.show', { event: 1, venue: 2 }); // true
    route().current('events.venues.show', { authors: 'all' }); // true
    route().current('events.venues.show', { venue: 6 }); // false
@@ -104,9 +103,9 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 
 1. **The `route()` function now returns a literal string if it is passed any arguments.** <span id="route-string"></span>
 
-   If you are chaining methods onto `route(...)` _with arguments_, such as `route('posts.show').url()` or `route('home').withQuery(...)`, remove the chained methods. In the case of `route(...).url()` you can just remove `.url()` and nothing will change, for other methods see below.
+   If you are chaining methods onto a `route(...)` call _with arguments_, such as `route('posts.show').url()` or `route('home').withQuery(...)`, remove the chained methods. In the case of `route(...).url()` you can just remove `.url()` and nothing will change, for other methods see below.
 
-   Calls specifically to `route()`, with no arguments, are not affected and will still return an instance of the `Router` class, so things like `route().current()` and `route().params` don't need to change.
+   Calls specifically to `route()`, with no arguments, are not affected and will still return an instance of the `Router` class, so things like `route().current()` and `route().params` still work as expected.
 
    See [#336](https://github.com/tighten/ziggy/pull/336)
 
@@ -126,7 +125,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
 
    The default output path of the `ziggy:generate` command has changed from `resources/assets/js/ziggy.js` to `resources/js/ziggy.js` to bring it in line with the changes to the `resources` directory structure introduced in Laravel 5.7.
 
-   See[#269](https://github.com/tighten/ziggy/pull/269)
+   See [#269](https://github.com/tighten/ziggy/pull/269)
    </details>
 
 1. **The `whitelist` and `blacklist` features were renamed** to `only` and `except`. <span id="whitelist-blacklist-renamed"></span>
@@ -209,17 +208,6 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    <p></p>
 
    The Javascript `UrlBuilder` class was removed. Refer to the `template()` getter on the new `Route` class if you need to re-implement this functionality yourself.
-
-   See [#330](https://github.com/tighten/ziggy/pull/330)
-   </details>
-
-1. **The `check()` method was deprecated.** <span id="check-deprecated"></span>
-
-   <details>
-   <summary>Details</summary>
-   <p></p>
-
-   Use `has()` instead.
 
    See [#330](https://github.com/tighten/ziggy/pull/330)
    </details>
