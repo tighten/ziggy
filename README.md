@@ -25,7 +25,6 @@ Ziggy supports all versions of Laravel from `5.4` onward, and all modern browser
 - [**Filtering Routes**](#filtering-routes)
     - [Basic Filtering](#basic-filtering)
     - [Filtering using Groups](#filtering-using-groups)
-- [Using with Vue Components](#using-with-vue-components)
 - [**Other**](#other)
 - [**Contributing**](#contributing)
 
