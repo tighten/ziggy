@@ -168,7 +168,7 @@ return axios.get(route('posts.show', post)).then((response) => response.data);
 
 Calling Ziggy's `route()` helper function with no arguments will return an instance of the Javascript `Router` class, which has some other useful properties and methods.
 
-**Getting/checking the current route: `route().current()`**
+**Checking the current route: `route().current()`**
 
 ```js
 // Route called 'events.index', with URI '/events'
@@ -423,7 +423,7 @@ Ziggy supports filtering the routes it makes available to your Javascript, which
 
 To set up basic route filtering, create a config file in your Laravel app at `config/ziggy.php` and define **either** an `only` or `except` setting as an array of route name patterns.
 
-> **Note:** You have to choose one or the other. Setting both `only` and `except` will disable filtering altogether and return all named routes.
+> Note: You have to choose one or the other. Setting both `only` and `except` will disable filtering altogether and return all named routes.
 
 ```php
 // config/ziggy.php
@@ -474,7 +474,7 @@ To expose multiple groups you can pass an array of group names:
 @routes(['admin', 'author'])
 ```
 
-> **Note:** Passing group names to the `@routes` directive will always take precedence over your other `only` or `except` settings.
+> Note: Passing group names to the `@routes` directive will always take precedence over your other `only` or `except` settings.
 
 ## Other
 
