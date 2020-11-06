@@ -516,7 +516,7 @@ route('home', undefined, undefined, Ziggy);
 
 #### Re-generating the routes file when your app routes change
 
-Watch your app's route files, and whenever they're saved, re-run `php artisan ziggy:generate` automatically. The example is a Laravel Mix plugin but you could do it without Mix too. Huge thanks to [Nuno Rodrigues](https://github.com/nacr) for [the idea and a sample implementation](https://github.com/tighten/ziggy/issues/321#issuecomment-689150082)!
+If you're exporting your Ziggy routes as a file by running `php artisan ziggy:generate`, you may want to watch your app's route files and re-run the command automatically whenever they're updated. The example below is a Laravel Mix plugin, but similar functionality could be achieved without Mix. Huge thanks to [Nuno Rodrigues](https://github.com/nacr) for [the idea and a sample implementation](https://github.com/tighten/ziggy/issues/321#issuecomment-689150082)!
 
 <details>
 <summary>Code example</summary>
