@@ -316,6 +316,10 @@ describe('route()', () => {
         same(route('posts.index', { filled: 'filling', empty: null }), 'https://ziggy.dev/posts?filled=filling');
     });
 
+    test('can cast boolean query parameters to integers', () => {
+        same(route('posts.show', { post: 1, preview: true }), 'https://ziggy.dev/posts/1?preview=1');
+    });
+
     test('can explicitly append query parameters using _query parameter', () => {
         same(
             route('events.venues.show', {
@@ -455,11 +459,11 @@ describe('route()', () => {
 
         deepEqual(route().params, { post: '1', guest: { name: 'Taylor' } });
 
-        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=true';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=0';
         global.window.location.pathname = '/events/1/venues/2';
-        global.window.location.search = '?id=5&vip=true';
+        global.window.location.search = '?id=5&vip=0';
 
-        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: 'true' });
+        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: '0' });
     });
 });
 
@@ -499,6 +503,34 @@ describe('current()', () => {
         global.window.location.pathname = '/events/1/venues?foo=2';
 
         same(route().current(), 'events.venues.index');
+    });
+
+    test('can ignore domain when getting current route name and absolute is false', () => {
+        global.window.location.href = 'https://tighten.ziggy.dev/events/1/venues?foo=2';
+        global.window.location.host = 'tighten.ziggy.dev';
+        global.window.location.pathname = '/events/1/venues?foo=2';
+
+        same(route(undefined, undefined, false).current(), 'events.venues.index');
+
+        global.window.location.href = 'https://example.com/events/1/venues?foo=2';
+        global.window.location.host = 'example.com';
+        global.window.location.pathname = '/events/1/venues?foo=2';
+
+        same(route(undefined, undefined, false).current(), 'events.venues.index');
+    });
+
+    test('can ignore domain when getting current route name, absolute is false, and app is in a subfolder', () => {
+        global.Ziggy.url = 'https://tighten.ziggy.dev/subfolder';
+        global.window.location.href = 'https://tighten.ziggy.dev/subfolder/events/1/venues?foo=2';
+        global.window.location.pathname = '/subfolder/events/1/venues?foo=2';
+
+        same(route(undefined, undefined, false).current(), 'events.venues.index');
+
+        global.Ziggy.url = 'https://example.com/nested/subfolder';
+        global.window.location.href = 'https://example.com/nested/subfolder/events/1/venues?foo=2';
+        global.window.location.pathname = '/nested/subfolder/events/1/venues?foo=2';
+
+        same(route(undefined, undefined, false).current(), 'events.venues.index');
     });
 
     test('can get the current route name with a custom Ziggy object', () => {
