@@ -47,6 +47,7 @@ export default class Router extends String {
             arrayFormat: 'indices',
             encodeValuesOnly: true,
             skipNulls: true,
+            encoder: (value, encoder) => typeof value === 'boolean' ? Number(value) : encoder(value),
         });
     }
 
