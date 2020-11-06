@@ -15,13 +15,14 @@ export default class Router extends String {
         super();
 
         this._config = config ?? Ziggy ?? globalThis?.Ziggy;
+        this._config = { ...this._config, absolute };
 
         if (name) {
             if (!this._config.routes[name]) {
                 throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
             }
 
-            this._route = new Route(name, this._config.routes[name], { ...this._config, absolute });
+            this._route = new Route(name, this._config.routes[name], this._config);
             this._params = this._parse(params);
         }
     }
@@ -68,7 +69,9 @@ export default class Router extends String {
      * @return {(Boolean|String)}
      */
     current(name, params) {
-        const url = window.location.host + window.location.pathname;
+        const url = this._config.absolute
+            ? window.location.host + window.location.pathname
+            : window.location.pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/');
 
         // Find the first route that matches the current URL
         const [current, route] = Object.entries(this._config.routes).find(

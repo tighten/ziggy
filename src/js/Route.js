@@ -11,7 +11,7 @@ export default class Route {
         this.name = name;
         this.definition = definition;
         this.bindings = definition.bindings ?? {};
-        this.config = { absolute: true, ...config };
+        this.config = config;
     }
 
     /**
