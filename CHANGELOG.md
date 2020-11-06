@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html), and the format of this changelog is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
-
 Breaking changes are marked with ⚠️.
+
+## [v1.0.0] - 
 
 **Added**
 
@@ -27,7 +27,6 @@ Breaking changes are marked with ⚠️.
 - Use Jest instead of Mocha for JS tests ([#309](https://github.com/tighten/ziggy/pull/309))
 - Use [microbundle](https://github.com/developit/microbundle) instead of Webpack to build and distribute Ziggy ([#312](https://github.com/tighten/ziggy/pull/312))
 - ⚠️ Default Ziggy's `baseUrl` to the value of the `APP_URL` environment variable instead of `url('/')` ([#334](https://github.com/tighten/ziggy/pull/334))
-- ⚠️ Allow getting the route name with `current()` when the current URL has a query string ([#330](https://github.com/tighten/ziggy/pull/330))
 - ⚠️ Return a literal string from the `route()` function when any arguments are passed to it ([#336](https://github.com/tighten/ziggy/pull/336))
 - ⚠️ Rename `namedRoutes` → `routes`, `defaultParameters` → `defaults`, `baseUrl` → `url`, and `basePort` → `port` ([#338](https://github.com/tighten/ziggy/pull/338))
 - ⚠️ Make the `filter()` method on the `Ziggy` class return an instance of that class instead of a collection of routes ([#341](https://github.com/tighten/ziggy/pull/341))
@@ -57,14 +56,15 @@ Breaking changes are marked with ⚠️.
 - Fix port not being added to URL for routes with subdomains ([#293](https://github.com/tighten/ziggy/pull/293))
 - Fix getting parameters of routes in apps installed in subfolders ([#302](https://github.com/tighten/ziggy/pull/302))
 - Ensure fallback routes are always last, thanks [@davejamesmiller](https://github.com/davejamesmiller)! ([#310](https://github.com/tighten/ziggy/pull/310))
+- Allow getting the route name with `current()` when the current URL has a query string ([#330](https://github.com/tighten/ziggy/pull/330))
 
-## [0.9.4] - 2020-06-05
+## [v0.9.4] - 2020-06-05
 
 **Fixed**
 
 - Fix escaping of `.` characters in the `current()` method, thanks [@davejamesmiller](https://github.com/davejamesmiller)! ([#296](https://github.com/tighten/ziggy/pull/296))
 
-## [0.9.3] - 2020-05-08
+## [v0.9.3] - 2020-05-08
 
 **Added**
 
@@ -85,6 +85,7 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/0.9.4...HEAD
-[0.9.4]: https://github.com/tighten/ziggy/compare/0.9.3...0.9.4
-[0.9.3]: https://github.com/tighten/ziggy/compare/v0.9.2...0.9.3
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.0.0...HEAD
+[v1.0.0]: https://github.com/tighten/ziggy/compare/0.9.4...v1.0.0
+[v0.9.4]: https://github.com/tighten/ziggy/compare/0.9.3...0.9.4
+[v0.9.3]: https://github.com/tighten/ziggy/compare/v0.9.2...0.9.3

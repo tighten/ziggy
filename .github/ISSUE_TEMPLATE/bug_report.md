@@ -2,20 +2,18 @@
 name: Bug report
 about: Report an issue to help us improve Ziggy
 title: ''
-labels: needs triage
 assignees: ''
-
 ---
 
-### Description
+#### Description
 
 <!-- Provide a clear and concise description of the current behaviour and what the bug is. -->
 
-### Expected behavior
+#### Expected behavior
 
 <!-- Provide a clear and concise description of what you expected to happen. -->
 
-### Environment
+#### Environment
 
 <!-- Include ALL of the information below: -->
 
@@ -44,7 +42,7 @@ Route::get('/', 'HomeController')->name('home');
 }
 ```
 
-**Ziggy call**:
+**Ziggy call and context**:
 
 <!-- Show where and how you're using Ziggy when this bug occurs. E.g.: -->
 
