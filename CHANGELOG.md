@@ -33,6 +33,7 @@ Breaking changes are marked with ⚠️.
 - ⚠️ Make the `filter()` method on the `Ziggy` class return an instance of that class instead of a collection of routes ([#341](https://github.com/tighten/ziggy/pull/341))
 - ⚠️ Make the `nameKeyedRoutes()`, `resolveBindings()`, `applyFilters()`, and `group()` methods on the `Ziggy` class, and the `generate()` method on the `CommandRouteGenerator` class, private ([#341](https://github.com/tighten/ziggy/pull/341))
 - ⚠️ Export from `index.js` instead of `route.js` ([#344](https://github.com/tighten/ziggy/pull/344))
+- ⚠️ Ensure `.current()` respects the value of the `absolute` option ([#353](https://github.com/tighten/ziggy/pull/353))
 
 **Deprecated**
 
