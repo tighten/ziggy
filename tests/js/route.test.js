@@ -316,6 +316,10 @@ describe('route()', () => {
         same(route('posts.index', { filled: 'filling', empty: null }), 'https://ziggy.dev/posts?filled=filling');
     });
 
+    test('can cast boolean query parameters to integers', () => {
+        same(route('posts.show', { post: 1, preview: true }), 'https://ziggy.dev/posts/1?preview=1');
+    });
+
     test('can explicitly append query parameters using _query parameter', () => {
         same(
             route('events.venues.show', {
@@ -455,11 +459,11 @@ describe('route()', () => {
 
         deepEqual(route().params, { post: '1', guest: { name: 'Taylor' } });
 
-        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=true';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=0';
         global.window.location.pathname = '/events/1/venues/2';
-        global.window.location.search = '?id=5&vip=true';
+        global.window.location.search = '?id=5&vip=0';
 
-        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: 'true' });
+        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: '0' });
     });
 });
 

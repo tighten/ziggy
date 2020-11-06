@@ -86,6 +86,8 @@ With query parameters:
 route('events.venues.show', { event: 1, venue: 2, page: 5, count: 10 }); // Returns '/events/1/venues/2?page=5&count=10'
 ```
 
+> Note: like Laravel's `route()` helper, Ziggy will encode boolean query parameters as integers. Due to their ambiguity, Ziggy **cannot** decode these query parameters back into booleans, so if you're parsing them out with `route().params` you will have to decode them yourself.
+
 If whole objects are passed, Ziggy will automatically look for an `id` primary key:
 
 ```js
