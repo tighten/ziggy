@@ -351,7 +351,7 @@ Vue.mixin({
 > Note: If you include the `@routes` Blade directive in your views, the `route()` helper will already be available globally, including in your Vue app, so you don't need to import `route` or `Ziggy`. For convenience, you can optionally create a simpler version of the above mixin to make `route()` easily accessibly inside your components:
 >
 > ```js
-> Vue.mixin({ methods: { route });
+> Vue.mixin({ methods: { route }});
 > ```
 
 Now you can use the method in your Vue components like so:
