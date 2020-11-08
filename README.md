@@ -1,8 +1,8 @@
-![Ziggy - Use your Laravel named routes in JavaScript](https://raw.githubusercontent.com/tighten/ziggy/master/ziggy-banner.png)
+![Ziggy - Use your Laravel named routes in JavaScript](https://raw.githubusercontent.com/tighten/ziggy/main/ziggy-banner.png)
 
 # Ziggy – Use your Laravel routes in JavaScript
 
-[![GitHub Actions Status](https://img.shields.io/github/workflow/status/tighten/ziggy/Tests?label=tests&style=flat)](https://github.com/tighten/ziggy/actions?query=workflow:Tests+branch:master)
+[![GitHub Actions Status](https://img.shields.io/github/workflow/status/tighten/ziggy/Tests?label=tests&style=flat)](https://github.com/tighten/ziggy/actions?query=workflow:Tests+branch:main)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/tightenco/ziggy.svg?style=flat)](https://packagist.org/packages/tightenco/ziggy)
 [![Downloads on Packagist](https://img.shields.io/packagist/dt/tightenco/ziggy.svg?style=flat)](https://packagist.org/packages/tightenco/ziggy)
 [![Latest Version on NPM](https://img.shields.io/npm/v/ziggy-js.svg?style=flat)](https://npmjs.com/package/ziggy-js)
