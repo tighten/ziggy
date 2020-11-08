@@ -17,6 +17,7 @@ Ziggy supports all versions of Laravel from `5.4` onward, and all modern browser
     - [The `route()` helper](#the-route-helper)
     - [The `Router` class](#the-router-class)
     - [Route-model binding](#route-model-binding)
+    - [TypeScript support](#typescript-support)
 - [**Advanced Setup**](#advanced-setup)
     - [JavaScript frameworks](#javascript-frameworks)
     - [Vue](#vue)
@@ -277,6 +278,10 @@ const photo = {
 route('authors.photos.show', [{ id: 1, name: 'Jacob' }, photo]);
 // 'https://ziggy.test/authors/1/photos/714b19e8-ac5e-4dab-99ba-34dc6fdd24a5'
 ```
+
+#### TypeScript support
+
+Unofficial TypeScript type definitions for Ziggy are maintained by [benallfree](https://github.com/benallfree) as part of [Definitely Typed](https://github.com/DefinitelyTyped/DefinitelyTyped), and can be installed with `npm install @types/ziggy-js`.
 
 ## Advanced Setup
 
