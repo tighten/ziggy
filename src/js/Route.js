@@ -61,7 +61,8 @@ export default class Route {
         const pattern = this.template
             .replace(/\/{[^}?]*\?}/g, '(\/[^/?]+)?')
             .replace(/{[^}]+}/g, '[^/?]+')
-            .replace(/^\w+:\/\//, '');
+            .replace(/^\w+:\/\//, '')
+            .replace(/\/+$/, '');
 
         return new RegExp(`^${pattern}$`).test(url.replace(/\/+$/, '').split('?').shift());
     }
