@@ -29,7 +29,7 @@ export default class Route {
             ? `${this.config.url.match(/^\w+:\/\//)[0]}${this.definition.domain}${this.config.port ? `:${this.config.port}` : ''}`
             : this.config.url;
 
-        return `${origin}/${this.definition.uri}`;
+        return `${origin}/${this.definition.uri}`.replace(/\/+$/, '');
     }
 
     /**
@@ -73,7 +73,7 @@ export default class Route {
      * @return {String}
      */
     compile(params) {
-        if (!this.parameterSegments.length) return this.template.replace(/\/+$/, '');
+        if (!this.parameterSegments.length) return this.template;
 
         return this.template.replace(/{([^}?]+)\??}/g, (_, segment) => {
             // If the parameter is missing but is not optional, throw an error

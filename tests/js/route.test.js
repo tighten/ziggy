@@ -499,6 +499,15 @@ describe('current()', () => {
         same(route().current(), 'events.venues.index');
     });
 
+    test('can get the current route name at the domain root', () => {
+        global.window.location.href = 'https://ziggy.dev';
+        global.window.location.host = 'ziggy.dev';
+        global.window.location.pathname = '/';
+
+        same(route().current(), 'home');
+        same(route().current('home'), true);
+    });
+
     test('can ignore query string when getting current route name', () => {
         global.window.location.pathname = '/events/1/venues?foo=2';
 
