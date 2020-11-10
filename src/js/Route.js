@@ -29,7 +29,7 @@ export default class Route {
             ? `${this.config.url.match(/^\w+:\/\//)[0]}${this.definition.domain}${this.config.port ? `:${this.config.port}` : ''}`
             : this.config.url;
 
-        return `${origin}/${this.definition.uri}`;
+        return `${origin}/${this.definition.uri}`.replace(/\/+$/, '');
     }
 
     /**
@@ -61,8 +61,7 @@ export default class Route {
         const pattern = this.template
             .replace(/\/{[^}?]*\?}/g, '(\/[^/?]+)?')
             .replace(/{[^}]+}/g, '[^/?]+')
-            .replace(/^\w+:\/\//, '')
-            .replace(/\/+$/, '');
+            .replace(/^\w+:\/\//, '');
 
         return new RegExp(`^${pattern}$`).test(url.replace(/\/+$/, '').split('?').shift());
     }
