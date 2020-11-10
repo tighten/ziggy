@@ -6,6 +6,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 Breaking changes are marked with ⚠️.
 
+## [v1.0.1] - 2020-11-10
+
+**Fixed**
+
+- Fix `route().current()` on routes at the domain root ([#356](https://github.com/tighten/ziggy/pull/356))
+
 ## [v1.0.0] - 2020-11-06
 
 **Added**
@@ -85,7 +91,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.0.1...HEAD
+[v1.0.1]: https://github.com/tighten/ziggy/compare/v1.0.0...v1.0.1
 [v1.0.0]: https://github.com/tighten/ziggy/compare/0.9.4...v1.0.0
 [v0.9.4]: https://github.com/tighten/ziggy/compare/0.9.3...0.9.4
 [v0.9.3]: https://github.com/tighten/ziggy/compare/v0.9.2...0.9.3
