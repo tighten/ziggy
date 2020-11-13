@@ -560,6 +560,18 @@ describe('current()', () => {
         same(route(undefined, undefined, undefined, config).current(), 'events.index');
     });
 
+    test('can return undefined when getting the current route name on an unknown route', () => {
+        global.window.location.pathname = '/unknown/';
+
+        same(route().current(), undefined);
+    });
+
+    test('can return false when checking the current route name on an unknown route', () => {
+        global.window.location.pathname = '/unknown/';
+
+        same(route().current('posts.delete'), false);
+    });
+
     test('can check the current route name against a pattern', () => {
         global.window.location.pathname = '/events/1/venues/2';
 
