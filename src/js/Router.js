@@ -76,7 +76,7 @@ export default class Router extends String {
         // Find the first route that matches the current URL
         const [current, route] = Object.entries(this._config.routes).find(
             ([_, route]) => new Route(name, route, this._config).matchesUrl(url)
-        );
+        ) || [undefined, undefined];
 
         // If a name wasn't passed, return the name of the current route
         if (!name) return current;
