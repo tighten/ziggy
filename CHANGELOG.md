@@ -6,6 +6,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 Breaking changes are marked with ⚠️.
 
+## [v1.0.2] - 2020-11-13
+
+**Fixed**
+
+- Make `ziggy:generate` URL behaviour consistent with Ziggy class and Blade directive ([#361](https://github.com/tighten/ziggy/pull/361))
+- Fix `route().current()` error on unknown/unnamed routes ([#362](https://github.com/tighten/ziggy/pull/362))
+
 ## [v1.0.1] - 2020-11-10
 
 **Fixed**
@@ -91,7 +98,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.0.2...HEAD
+[v1.0.2]: https://github.com/tighten/ziggy/compare/v1.0.1...v1.0.2
 [v1.0.1]: https://github.com/tighten/ziggy/compare/v1.0.0...v1.0.1
 [v1.0.0]: https://github.com/tighten/ziggy/compare/0.9.4...v1.0.0
 [v0.9.4]: https://github.com/tighten/ziggy/compare/0.9.3...0.9.4
