@@ -66,7 +66,7 @@ export default class Router extends String {
      *
      * @param {String} name - Route name to check.
      * @param {(String|Number|Array|Object)} params - Route parameters.
-     * @return {(Boolean|String)}
+     * @return {(Boolean|String|undefined)}
      */
     current(name, params) {
         const url = this._config.absolute
