@@ -34,11 +34,7 @@ class CommandRouteGenerator extends Command
 
     private function generate($group = false)
     {
-        if (($url = $this->option('url')) && ! url()->isValidUrl($url)) {
-            $url = url($url);
-        }
-
-        $payload = (new Ziggy($group, $url))->toJson();
+        $payload = (new Ziggy($group, $this->option('url') ? url($this->option('url')) : null))->toJson();
 
         return <<<JAVASCRIPT
 const Ziggy = {$payload};
