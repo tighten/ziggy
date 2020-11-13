@@ -51,28 +51,6 @@ class CommandRouteGeneratorTest extends TestCase
         $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
     }
 
-    /**
-     * @test
-     * This covers an edge case where the APP_URL environment variable doesn't
-     * include a protocol. We can't override environment variables for a single
-     * test, so to run this we have to change APP_URL to just 'ziggy.dev' in
-     * phpunit.xml.dist, run just this test, and then change it back.
-     */
-    public function can_generate_file_when_app_url_is_missing_protocol()
-    {
-        if (Str::startsWith(config('app.url'), 'http')) {
-            $this->markTestSkipped('N/A: valid APP_URL.');
-        }
-
-        $router = app('router');
-        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
-        $router->getRoutes()->refreshNameLookups();
-
-        Artisan::call('ziggy:generate');
-
-        $this->assertFileEquals('./tests/fixtures/no-protocol.js', base_path('resources/js/ziggy.js'));
-    }
-
     /** @test */
     public function can_generate_file_with_custom_url()
     {
@@ -86,18 +64,9 @@ class CommandRouteGeneratorTest extends TestCase
         $this->assertFileEquals('./tests/fixtures/custom-url.js', base_path('resources/js/ziggy.js'));
     }
 
-    /**
-     * @test
-     * This test fails when APP_URL doesn't include a protocol—this is expected
-     * and correct. If the --url options is passed an invalid URL it has to use
-     * the url() helper, which is known to behave weirdly if APP_URL is invalid.
-     */
-    public function can_generate_file_with_invalid_custom_url()
+    /** @test */
+    public function can_generate_file_with_custom_pathname()
     {
-        if (! Str::startsWith(config('app.url'), 'http')) {
-            $this->markTestIncomplete('N/A: invalid APP_URL.');
-        }
-
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         $router->getRoutes()->refreshNameLookups();
@@ -105,7 +74,7 @@ class CommandRouteGeneratorTest extends TestCase
 
         Artisan::call('ziggy:generate', ['--url' => '/foo/bar']);
 
-        $this->assertFileEquals('./tests/fixtures/invalid-url.js', base_path('resources/js/ziggy.js'));
+        $this->assertFileEquals('./tests/fixtures/custom-pathname.js', base_path('resources/js/ziggy.js'));
     }
 
     /** @test */
