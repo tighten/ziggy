@@ -128,7 +128,9 @@ class Ziggy implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return $this->toArray();
+        return array_merge($routes = $this->toArray(), [
+            'defaults' => (object) $routes['defaults'],
+        ]);
     }
 
     /**
