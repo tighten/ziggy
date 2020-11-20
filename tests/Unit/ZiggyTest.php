@@ -336,7 +336,6 @@ class ZiggyTest extends TestCase
     /** @test */
     public function can_order_fallback_routes_last()
     {
-        $ziggy = new Ziggy;
         app('router')->fallback($this->noop())->name('fallback');
         app('router')->get('/users', $this->noop())->name('users.index');
 
