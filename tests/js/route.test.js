@@ -111,13 +111,6 @@ const defaultZiggy = {
             uri: 'hosting-contacts',
             methods: ['GET', 'HEAD'],
         },
-        'hq.shifts.update': {
-            uri: 'hq/shifts/{shift}',
-            methods: ['PUT', 'PATCH'],
-            bindings: {
-                shift: 'id',
-            },
-        },
     },
 };
 
@@ -673,12 +666,5 @@ describe('current()', () => {
         global.window.location.pathname = '/events/1/venues/';
 
         same(route().current(), 'events.venues.index');
-    });
-});
-
-describe('bugs', () => {
-    test.only('can generate a URL for a route with a parameter called "shift" when there are no default parameters', () => {
-        global.Ziggy.defaults = [];
-        same(route('hq.shifts.update', 1), 'https://ziggy.dev/hq/shifts/1');
     });
 });
