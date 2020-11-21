@@ -6,6 +6,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 Breaking changes are marked with ⚠️.
 
+## [v1.0.3] - 2020-11-20
+
+**Fixed**
+
+- Filter out unnamed cached routes with randomly generated names ([#370](https://github.com/tighten/ziggy/pull/370))
+- Fix collision with JavaScript built-in method names like `shift` by casting empty `defaults` to an object ([#371](https://github.com/tighten/ziggy/pull/371))
+
 ## [v1.0.2] - 2020-11-13
 
 **Fixed**
@@ -98,7 +105,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.0.3...HEAD
+[v1.0.3]: https://github.com/tighten/ziggy/compare/v1.0.2...v1.0.3
 [v1.0.2]: https://github.com/tighten/ziggy/compare/v1.0.1...v1.0.2
 [v1.0.1]: https://github.com/tighten/ziggy/compare/v1.0.0...v1.0.1
 [v1.0.0]: https://github.com/tighten/ziggy/compare/0.9.4...v1.0.0
