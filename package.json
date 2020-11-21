@@ -41,6 +41,7 @@
     },
     "scripts": {
         "build": "microbundle --name route --format modern,es,umd --external none",
+        "watch": "npm run build watch",
         "build:npm": "microbundle --name route --format modern,es,umd",
         "test": "jest",
         "prepublishOnly": "npm run build:npm"

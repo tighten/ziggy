@@ -425,7 +425,6 @@ class ZiggyTest extends TestCase
         $this->addPostCommentsRouteWithBindings($expected['routes']);
 
         $this->assertSame($expected, $ziggy->toArray());
-        $this->assertSame($expected, $ziggy->jsonSerialize());
     }
 
     /** @test */
@@ -449,7 +448,7 @@ class ZiggyTest extends TestCase
 
         $this->addPostCommentsRouteWithBindings($expected['routes']);
 
-        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":[],"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"]}}}';
+        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"]}}}';
 
         if ($this->laravelVersion(7)) {
             $json = str_replace(
