@@ -87,6 +87,9 @@ class Ziggy implements JsonSerializable
     private function nameKeyedRoutes()
     {
         [$fallbacks, $routes] = collect(app('router')->getRoutes()->getRoutesByName())
+            ->reject(function ($route) {
+                return Str::startsWith($route->getName(), 'generated::');
+            })
             ->partition(function ($route) {
                 return $route->isFallback;
             });
