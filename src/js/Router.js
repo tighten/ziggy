@@ -87,7 +87,16 @@ export default class Router extends String {
 
         if (!params || !match) return match;
 
-        params = this._parse(params, new Route(current, route, this._config));
+        const routeObject = new Route(current, route, this._config);
+
+        // If the matching route has no defined parameters, and the passed
+        // parameters are 'positional' (*not* an object), return false
+        if (
+            !routeObject.parameterSegments.filter(({ name }) => !this._config.defaults[name]).length
+            && (['string', 'number'].includes(typeof params) || (Array.isArray(params) && !!params.length))
+        ) return false;
+
+        params = this._parse(params, routeObject);
         const routeParams = this._dehydrate(route);
 
         // Check that all passed parameters match their values in the current window URL
