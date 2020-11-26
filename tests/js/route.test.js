@@ -591,8 +591,16 @@ describe('current()', () => {
         same(route().current('posts.show', { post: 1 }), false);
     });
 
-    test.skip('can check the current route name with positional parameters on a URL with no parameters', () => {
-        global.window.location.pathname = '/posts/';
+    test('can check the current route name with positional parameters on a URL with no parameters', () => {
+        global.window.location.pathname = '/posts';
+        global.window.location.search = '?0=test';
+
+        same(route().current('posts.index', undefined), true);
+        same(route().current('posts.index', null), true);
+        same(route().current('posts.index', ''), true);
+        same(route().current('posts.index', []), true);
+        same(route().current('posts.index', {}), true);
+        same(route().current('posts.index', { '0': 'test' }), true);
 
         same(route().current('posts.index', 'test'), false);
         same(route().current('posts.index', [1]), false);
