@@ -245,8 +245,8 @@ export default class Router extends String {
         }
 
         return {
-            ...dehydrate(window.location.host, route ? route.domain : undefined, '.'), // Domain parameters
-            ...dehydrate(pathname, route ? route.uri : undefined, '/'), // Path parameters
+            ...dehydrate(window.location.host, route.domain, '.'), // Domain parameters
+            ...dehydrate(pathname, route.uri, '/'), // Path parameters
             ...parse(window.location.search?.replace(/^\?/, '')), // Query parameters
         };
     }

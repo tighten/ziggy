@@ -9,8 +9,8 @@ export default class Route {
      */
     constructor(name, definition, config) {
         this.name = name;
-        this.definition = definition ?? {};
-        this.bindings = definition ? definition.bindings ?? {} : {};
+        this.definition = definition;
+        this.bindings = definition.bindings ?? {};
         this.config = config;
     }
 
