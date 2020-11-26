@@ -111,6 +111,10 @@ const defaultZiggy = {
             uri: 'hosting-contacts',
             methods: ['GET', 'HEAD'],
         },
+        'pages': {
+            uri: '{page}',
+            methods: ['GET', 'HEAD'],
+        },
     },
 };
 
@@ -561,9 +565,21 @@ describe('current()', () => {
     });
 
     test('can return undefined when getting the current route name on an unknown route', () => {
-        global.window.location.pathname = '/unknown/';
+        global.window.location.pathname = '/unknown/path';
 
         same(route().current(), undefined);
+    });
+
+    test('can handle pure param routes', () => {
+        global.window.location.pathname = '/some-page';
+
+        assert(route().current('pages', {page: 'some-page'}));
+    });
+
+    test('can handle having no route params', () => {
+        global.window.location.pathname = '/';
+
+        assert(!route().current('pages', {page: 'test-page'}));
     });
 
     test('can return false when checking the current route name on an unknown route', () => {

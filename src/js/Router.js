@@ -88,9 +88,13 @@ export default class Router extends String {
         if (!params) return match;
 
         params = this._parse(params, new Route(current, route, this._config));
+        const routeParams = Object.entries(this._dehydrate(route));
+
+        // If the current window URL has no parameters, it won't match any that were passed
+        if (!routeParams.length) return false;
 
         // Check that all passed parameters match their values in the current window URL
-        return Object.entries(this._dehydrate(route))
+        return routeParams
             .filter(([key]) => params.hasOwnProperty(key))
             // Use weak equality because all values in the current window URL will be strings
             .every(([key, value]) => params[key] == value);

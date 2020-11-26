@@ -6,6 +6,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 Breaking changes are marked with ⚠️.
 
+## UNRELEASED
+
+**Fixed**
+
+- Fix bug where `route().current()` could incorrectly return `true` on URLs with no parameters ([#377](https://github.com/tighten/ziggy/pull/377))
+
 ## [v1.0.3] - 2020-11-20
 
 **Fixed**
