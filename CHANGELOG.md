@@ -9,7 +9,8 @@ Breaking changes are marked with ⚠️.
 ## UNRELEASED
 
 **Fixed**
-- Routes made of pure params (`{page}`) no longer get matches as when on `/`
+
+- Fix bug where `route().current()` could incorrectly return `true` on URLs with no parameters ([#377](https://github.com/tighten/ziggy/pull/377))
 
 ## [v1.0.3] - 2020-11-20
 
