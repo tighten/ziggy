@@ -685,6 +685,10 @@ describe('current()', () => {
     });
 
     test('can check a blank param', () => {
+        global.window.location.pathname = '/';
+
+        assert(!route().current('pages', ''));
+
         global.window.location.pathname = '/about';
 
         assert(!route().current('pages', ''));

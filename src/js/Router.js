@@ -1,4 +1,4 @@
-import { parse, stringify } from 'qs';
+import {parse, stringify} from 'qs';
 import Route from './Route';
 
 /**
@@ -15,7 +15,7 @@ export default class Router extends String {
         super();
 
         this._config = config ?? Ziggy ?? globalThis?.Ziggy;
-        this._config = { ...this._config, absolute };
+        this._config = {...this._config, absolute};
 
         if (name) {
             if (!this._config.routes[name]) {
@@ -39,11 +39,11 @@ export default class Router extends String {
     toString() {
         // Get parameters that don't correspond to any route segments to append them to the query
         const unhandled = Object.keys(this._params)
-            .filter((key) => !this._route.parameterSegments.some(({ name }) => name === key))
+            .filter((key) => !this._route.parameterSegments.some(({name}) => name === key))
             .filter((key) => key !== '_query')
-            .reduce((result, current) => ({ ...result, [current]: this._params[current] }), {});
+            .reduce((result, current) => ({...result, [current]: this._params[current]}), {});
 
-        return this._route.compile(this._params) + stringify({ ...unhandled, ...this._params['_query'] }, {
+        return this._route.compile(this._params) + stringify({...unhandled, ...this._params['_query']}, {
             addQueryPrefix: true,
             arrayFormat: 'indices',
             encodeValuesOnly: true,
@@ -142,12 +142,21 @@ export default class Router extends String {
         params = ['string', 'number'].includes(typeof params) ? [params] : params;
 
         // Separate segments with and without defaults, and fill in the default values
-        const segments = route.parameterSegments.filter(({ name }) => !this._config.defaults[name]);
+        const segments = route.parameterSegments.filter(({name}) => !this._config.defaults[name]);
 
         if (Array.isArray(params)) {
             // If the parameters are an array they have to be in order, so we can transform them into
             // an object by keying them with the template segment names in the order they appear
-            params = params.reduce((result, current, i) => ({ ...result, [segments[i].name]: current }), {});
+            params = params.reduce((result, current, i) => {
+                if(!segments[i]){
+                    return result;
+                }
+
+                return {
+                    ...result,
+                    [segments[i].name]: current
+                };
+            }, {});
         } else if (
             segments.length === 1
             && !params[segments[0].name]
@@ -157,7 +166,7 @@ export default class Router extends String {
             // ambiguous—it could contain the parameter key and value, or it could be an object
             // representing just the value (e.g. a model); we can inspect it to find out, and
             // if it's just the parameter value, we can wrap it in an object with its key
-            params = { [segments[0].name]: params };
+            params = {[segments[0].name]: params};
         }
 
         return {
@@ -177,8 +186,8 @@ export default class Router extends String {
      * @return {Object} Default route parameters.
      */
     _defaults(route) {
-        return route.parameterSegments.filter(({ name }) => this._config.defaults[name])
-            .reduce((result, { name }, i) => ({ ...result, [name]: this._config.defaults[name] }), {});
+        return route.parameterSegments.filter(({name}) => this._config.defaults[name])
+            .reduce((result, {name}, i) => ({...result, [name]: this._config.defaults[name]}), {});
     }
 
     /**
@@ -196,7 +205,7 @@ export default class Router extends String {
             // If the value isn't an object, or if it's an object of explicity query
             // parameters, there's nothing to substitute so we return it as-is
             if (!value || typeof value !== 'object' || Array.isArray(value) || key === '_query') {
-                return { ...result, [key]: value };
+                return {...result, [key]: value};
             }
 
             if (!value.hasOwnProperty(bindings[key])) {
@@ -208,7 +217,7 @@ export default class Router extends String {
                 }
             }
 
-            return { ...result, [key]: value[bindings[key]] };
+            return {...result, [key]: value[bindings[key]]};
         }, {});
     }
 
@@ -238,7 +247,7 @@ export default class Router extends String {
                 // Only include template segments that are route parameters
                 // AND have a value present in the passed hydrated string
                 return /^{[^}?]+\??}$/.test(current) && values[i]
-                    ? { ...result, [current.replace(/^{|\??}$/g, '')]: values[i] }
+                    ? {...result, [current.replace(/^{|\??}$/g, '')]: values[i]}
                     : result;
             }, {});
         }
