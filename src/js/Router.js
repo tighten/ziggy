@@ -197,7 +197,7 @@ export default class Router extends String {
      */
     _substituteBindings(params, bindings = {}) {
         return Object.entries(params).reduce((result, [key, value]) => {
-            // If the value isn't an object, or if it's an object of explicity query
+            // If the value isn't an object, or if it's an object of explicit query
             // parameters, there's nothing to substitute so we return it as-is
             if (!value || typeof value !== 'object' || Array.isArray(value) || key === '_query') {
                 return { ...result, [key]: value };
