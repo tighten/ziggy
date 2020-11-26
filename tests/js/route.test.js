@@ -597,12 +597,12 @@ describe('current()', () => {
 
         same(route().current('posts.index', undefined), true);
         same(route().current('posts.index', null), true);
-        same(route().current('posts.index', ''), true);
-        same(route().current('posts.index', []), true);
         same(route().current('posts.index', {}), true);
         same(route().current('posts.index', { '0': 'test' }), true);
 
+        same(route().current('posts.index', ''), false);
         same(route().current('posts.index', 'test'), false);
+        same(route().current('posts.index', []), false);
         same(route().current('posts.index', [1]), false);
     });
 

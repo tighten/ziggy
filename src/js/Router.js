@@ -85,7 +85,7 @@ export default class Router extends String {
         // basic wildcards, e.g. passing `events.*` matches `events.show`
         const match = new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`).test(current);
 
-        if (!params || !match) return match;
+        if ([null, undefined].includes(params) || !match) return match;
 
         const routeObject = new Route(current, route, this._config);
 
@@ -93,7 +93,7 @@ export default class Router extends String {
         // parameters are 'positional' (*not* an object), return false
         if (
             !routeObject.parameterSegments.filter(({ name }) => !this._config.defaults[name]).length
-            && (['string', 'number'].includes(typeof params) || (Array.isArray(params) && !!params.length))
+            && (['string', 'number'].includes(typeof params) || Array.isArray(params))
         ) return false;
 
         params = this._parse(params, routeObject);
