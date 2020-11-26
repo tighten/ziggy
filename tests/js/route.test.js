@@ -692,22 +692,22 @@ describe('current()', () => {
     test('can check the current route with parameters', () => {
         global.window.location.pathname = '/events/1/venues/2';
 
-        assert(route().current('events.venues.show', { event: 1, venue: 2 }));
-        assert(route().current('events.venues.show', [1, 2]));
-        assert(route().current('events.venues.show', [1, { id: 2, name: 'Grand Canyon' }]));
-        assert(route().current('events.venues.show', { event: 1 }));
-        assert(route().current('events.venues.show', { venue: 2 }));
-        assert(route().current('events.venues.show', [1]));
-        assert(route().current('events.venues.show', {}));
-        assert(route().current('events.venues.show', null));
+        same(route().current('events.venues.show', { event: 1, venue: 2 }), true);
+        same(route().current('events.venues.show', [1, 2]), true);
+        same(route().current('events.venues.show', [1, { id: 2, name: 'Grand Canyon' }]), true);
+        same(route().current('events.venues.show', { event: 1 }), true);
+        same(route().current('events.venues.show', { venue: 2 }), true);
+        same(route().current('events.venues.show', [1]), true);
+        same(route().current('events.venues.show', {}), true);
+        same(route().current('events.venues.show', null), true);
 
-        assert(!route().current('events.venues.show', { event: 4, venue: 2 }));
-        assert(!route().current('events.venues.show', { event: null }));
-        assert(!route().current('events.venues.show', [1, 6]));
-        assert(!route().current('events.venues.show', [{ id: 1 }, { id: 4, name: 'Great Pyramids' }]));
-        assert(!route().current('events.venues.show', { event: 4 }));
-        assert(!route().current('events.venues.show', { venue: 4 }));
-        assert(!route().current('events.venues.show', [5]));
+        same(route().current('events.venues.show', { event: 4, venue: 2 }), false);
+        same(route().current('events.venues.show', { event: null }), false);
+        same(route().current('events.venues.show', [1, 6]), false);
+        same(route().current('events.venues.show', [{ id: 1 }, { id: 4, name: 'Great Pyramids' }]), false);
+        same(route().current('events.venues.show', { event: 4 }), false);
+        same(route().current('events.venues.show', { venue: 4 }), false);
+        same(route().current('events.venues.show', [5]), false);
     });
 
     test('can check the current route with query parameters', () => {
