@@ -92,7 +92,7 @@ export default class Router extends String {
         // If the matching route has no defined parameters, and the passed
         // parameters are 'positional' (*not* an object), return false
         if (
-            !routeObject.parameterSegments.filter(({ name }) => !this._config.defaults[name]).length
+            !routeObject.parameterSegments.length
             && (['string', 'number'].includes(typeof params) || Array.isArray(params))
         ) return false;
 
