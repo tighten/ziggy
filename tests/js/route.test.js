@@ -710,6 +710,12 @@ describe('current()', () => {
         same(route().current('events.venues.show', [5]), false);
     });
 
+    test('can check the current route with parameters with incorrect parameter names', () => {
+        global.window.location.pathname = '/events/1/venues/2';
+
+        same(route().current('events.venues.show', { eventz: 2 }), false);
+    });
+
     test('can check the current route with query parameters', () => {
         global.window.location.pathname = '/events/1/venues/2';
         global.window.location.search = '?user=Jacob&id=9';
