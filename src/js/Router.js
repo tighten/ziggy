@@ -85,7 +85,7 @@ export default class Router extends String {
         // basic wildcards, e.g. passing `events.*` matches `events.show`
         const match = new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`).test(current);
 
-        if (!params) return match;
+        if (!params && params !== '') return match;
 
         params = this._parse(params, new Route(current, route, this._config));
         const routeParams = Object.entries(this._dehydrate(route));

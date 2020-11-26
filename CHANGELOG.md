@@ -11,6 +11,7 @@ Breaking changes are marked with ⚠️.
 **Fixed**
 
 - Fix bug where `route().current()` could incorrectly return `true` on URLs with no parameters ([#377](https://github.com/tighten/ziggy/pull/377))
+- Fix bug where `current()` cannot check with explicit empty parameter
 
 ## [v1.0.3] - 2020-11-20
 

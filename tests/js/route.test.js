@@ -112,7 +112,7 @@ const defaultZiggy = {
             methods: ['GET', 'HEAD'],
         },
         'pages': {
-            uri: '{page}',
+            uri: '{page?}',
             methods: ['GET', 'HEAD'],
         },
     },
@@ -682,5 +682,11 @@ describe('current()', () => {
         global.window.location.pathname = '/events/1/venues/';
 
         same(route().current(), 'events.venues.index');
+    });
+
+    test('can check a blank param', () => {
+        global.window.location.pathname = '/about';
+
+        assert(!route().current('pages', ''));
     });
 });
