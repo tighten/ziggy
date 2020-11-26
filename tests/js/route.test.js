@@ -564,28 +564,83 @@ describe('current()', () => {
         same(route(undefined, undefined, undefined, config).current(), 'events.index');
     });
 
-    test('can return undefined when getting the current route name on an unknown route', () => {
+    test('can return undefined when getting the current route name on an unknown URL', () => {
         global.window.location.pathname = '/unknown/path';
 
         same(route().current(), undefined);
     });
 
-    test('can handle pure param routes', () => {
+    test('can check the current route name on a route/URL made up entirely of a single parameter', () => {
         global.window.location.pathname = '/some-page';
 
-        assert(route().current('pages', {page: 'some-page'}));
+        same(route().current(), 'pages');
+        same(route().current('pages', { page: 'some-page' }), true);
     });
 
-    test('can handle having no route params', () => {
+    test('can check the current route name with parameters on a URL with no parameters', () => {
+        global.window.location.href = 'https://ziggy.dev';
+        global.window.location.host = 'ziggy.dev';
         global.window.location.pathname = '/';
 
-        assert(!route().current('pages', {page: 'test-page'}));
+        same(route().current('home', { page: 'test' }), false);
+        same(route().current('pages', { page: 'test' }), false);
+
+        global.window.location.pathname = '/posts/';
+
+        same(route().current('posts.index', { post: 1 }), false);
+        same(route().current('posts.show', { post: 1 }), false);
+    });
+
+    test.skip('can check the current route name with positional parameters on a URL with no parameters', () => {
+        global.window.location.pathname = '/posts/';
+
+        same(route().current('posts.index', 'test'), false);
+        same(route().current('posts.index', [1]), false);
     });
 
     test('can return false when checking the current route name on an unknown route', () => {
         global.window.location.pathname = '/unknown/';
 
         same(route().current('posts.delete'), false);
+    });
+
+    test('can return false when checking the current route name and params on an unknown URL', () => {
+        global.window.location.pathname = '/unknown/path';
+
+        same(route().current('posts.show', { post: 2 }), false);
+        same(route().current('posts.show', 2), false);
+        same(route().current('posts.show', [2]), false);
+        same(route().current('posts.show', 'post'), false);
+    });
+
+    test('can return false when checking a non-existent route name on a known URL', () => {
+        global.window.location.pathname = '/events/1/venues/2';
+
+        same(route().current('random-route'), false);
+    });
+
+    test('can return false when checking a non-existent route name on an unknown URL', () => {
+        global.window.location.pathname = '/unknown/test';
+
+        same(route().current('random-route'), false);
+    });
+
+    test('can return false when checking a non-existent route name and params on a known URL', () => {
+        global.window.location.pathname = '/events/1/venues/2';
+
+        same(route().current('random-route', { post: 2 }), false);
+        same(route().current('random-route', 2), false);
+        same(route().current('random-route', [2]), false);
+        same(route().current('random-route', 'post'), false);
+    });
+
+    test('can return false when checking a non-existent route name and params on an unknown URL', () => {
+        global.window.location.pathname = '/unknown/params';
+
+        same(route().current('random-route', { post: 2 }), false);
+        same(route().current('random-route', 2), false);
+        same(route().current('random-route', [2]), false);
+        same(route().current('random-route', 'post'), false);
     });
 
     test('can check the current route name against a pattern', () => {
