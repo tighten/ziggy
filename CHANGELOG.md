@@ -6,6 +6,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 Breaking changes are marked with ⚠️.
 
+## UNRELEASED
+
+**Fixed**
+- Routes made of pure params (`{page}`) no longer get matches as when on `/`
+
 ## [v1.0.3] - 2020-11-20
 
 **Fixed**

@@ -90,7 +90,12 @@ export default class Router extends String {
         params = this._parse(params, new Route(current, route, this._config));
 
         // Check that all passed parameters match their values in the current window URL
-        return Object.entries(this._dehydrate(route))
+        const routeParams = Object.entries(this._dehydrate(route));
+        if(!routeParams.length){
+            return false;
+        }
+
+        return routeParams
             .filter(([key]) => params.hasOwnProperty(key))
             // Use weak equality because all values in the current window URL will be strings
             .every(([key, value]) => params[key] == value);
@@ -240,8 +245,8 @@ export default class Router extends String {
         }
 
         return {
-            ...dehydrate(window.location.host, route.domain, '.'), // Domain parameters
-            ...dehydrate(pathname, route.uri, '/'), // Path parameters
+            ...dehydrate(window.location.host, route ? route.domain : undefined, '.'), // Domain parameters
+            ...dehydrate(pathname, route ? route.uri : undefined, '/'), // Path parameters
             ...parse(window.location.search?.replace(/^\?/, '')), // Query parameters
         };
     }
