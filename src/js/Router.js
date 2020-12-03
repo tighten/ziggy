@@ -81,9 +81,16 @@ export default class Router extends String {
         // If a name wasn't passed, return the name of the current route
         if (!name) return current;
         
-        // If an absolute URL was provided, check if the URL matches the previously fetched current route.
+        // If an absolute URL was provided, extract its definitions for further check.
         if (name.indexOf('://') > 0 || name.indexOf('//') === 0) {
-            return this.current(current, this.params)
+            const [actual, actualRoute] = Object.entries(this._config.routes).find(
+                ([_, route]) => new Route(_, route, this._config).matchesUrl(name)
+            ) || [undefined, undefined];
+            
+            if (!actual) return false;
+            
+            name = actual
+            params = this.params
         }
 
         // Test the passed name against the current route, matching some
