@@ -80,6 +80,11 @@ export default class Router extends String {
 
         // If a name wasn't passed, return the name of the current route
         if (!name) return current;
+        
+        // If an absolute URL was provided, check if the URL matches the current route.
+        if (name.indexOf('://') > 0 || name.indexOf('//') === 0) {
+            return route.matchesUrl(name)
+        }
 
         // Test the passed name against the current route, matching some
         // basic wildcards, e.g. passing `events.*` matches `events.show`
