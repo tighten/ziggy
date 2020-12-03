@@ -83,7 +83,7 @@ export default class Router extends String {
         
         // If an absolute URL was provided, check if the URL matches the current route.
         if (name.indexOf('://') > 0 || name.indexOf('//') === 0) {
-            return route.matchesUrl(name)
+            return new Route(current, route, this._config).matchesUrl(name)
         }
 
         // Test the passed name against the current route, matching some
