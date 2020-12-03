@@ -83,6 +83,12 @@ export default class Router extends String {
         
         // If an absolute URL was provided, extract its definitions for further check.
         if (name.indexOf('://') > 0 || name.indexOf('//') === 0) {
+            if (name.indexOf('://') > 0) {
+                name = name.substring(name.indexOf('://') + 1)
+            }
+            
+            name = name.substring(2)
+            
             const [actual, actualRoute] = Object.entries(this._config.routes).find(
                 ([_, route]) => new Route(_, route, this._config).matchesUrl(name)
             ) || [undefined, undefined];
