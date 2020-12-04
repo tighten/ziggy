@@ -295,7 +295,9 @@ class ZiggyTest extends TestCase
     /** @test */
     public function can_include_subdomain()
     {
-        app('router')->domain('{team}.ziggy.dev')->post('/', fn () => response()->json(new Ziggy))->name('home');
+        app('router')->domain('{team}.ziggy.dev')->post('/', function () {
+            return response()->json(new Ziggy);
+        })->name('home');
         app('router')->getRoutes()->refreshNameLookups();
 
         $this->post(route('home', ['team' => 'tgtn']))
@@ -307,7 +309,9 @@ class ZiggyTest extends TestCase
     /** @test */
     public function can_include_port()
     {
-        app('router')->post('/', fn () => response()->json(new Ziggy))->name('home');
+        app('router')->post('/', function () {
+            return response()->json(new Ziggy);
+        })->name('home');
         app('router')->getRoutes()->refreshNameLookups();
 
         $this->post('http://ziggy.dev:3000')
