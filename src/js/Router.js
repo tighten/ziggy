@@ -89,15 +89,11 @@ export default class Router extends String {
 
         const routeObject = new Route(current, route, this._config);
 
-        // If the matching route has no defined parameters, and the passed
-        // parameters are 'positional' (*not* an object), return false
-        if (
-            !routeObject.parameterSegments.length
-            && (['string', 'number'].includes(typeof params) || Array.isArray(params))
-        ) return false;
-
         params = this._parse(params, routeObject);
         const routeParams = this._dehydrate(route);
+
+        // If the current window URL has no route parameters, and the passed parameters are empty, return true
+        if (Object.values(params).every(p => !p) && !Object.values(routeParams).length) return true;
 
         // Check that all passed parameters match their values in the current window URL
         // Use weak equality because all values in the current window URL will be strings
@@ -151,7 +147,7 @@ export default class Router extends String {
         if (Array.isArray(params)) {
             // If the parameters are an array they have to be in order, so we can transform them into
             // an object by keying them with the template segment names in the order they appear
-            params = params.reduce((result, current, i) => ({ ...result, [segments[i].name]: current }), {});
+            params = params.reduce((result, current, i) => ({ ...result, [segments[i]?.name]: current }), {});
         } else if (
             segments.length === 1
             && !params[segments[0].name]
