@@ -111,6 +111,10 @@ const defaultZiggy = {
             uri: 'hosting-contacts',
             methods: ['GET', 'HEAD'],
         },
+        'pages.optional': {
+            uri: 'optionalpage/{page?}',
+            methods: ['GET', 'HEAD'],
+        },
         'pages': {
             uri: '{page}',
             methods: ['GET', 'HEAD'],
@@ -564,28 +568,116 @@ describe('current()', () => {
         same(route(undefined, undefined, undefined, config).current(), 'events.index');
     });
 
-    test('can return undefined when getting the current route name on an unknown route', () => {
+    test('can return undefined when getting the current route name on an unknown URL', () => {
         global.window.location.pathname = '/unknown/path';
 
         same(route().current(), undefined);
     });
 
-    test('can handle pure param routes', () => {
+    test('can check the current route name on a route/URL made up entirely of a single parameter', () => {
         global.window.location.pathname = '/some-page';
 
-        assert(route().current('pages', {page: 'some-page'}));
+        same(route().current(), 'pages');
+        same(route().current('pages', { page: 'some-page' }), true);
     });
 
-    test('can handle having no route params', () => {
+    test('can check the current route name on a route/URL made up entirely of a single optional parameter', () => {
+        global.window.location.pathname = '/optionalpage/foo';
+
+        same(route().current(), 'pages.optional');
+        same(route().current('pages.optional', ''), false);
+        same(route().current('pages.optional', ['']), false);
+        // same(route().current('pages.optional', []), false); // Not supported
+        same(route().current('pages.optional', { page: '' }), false);
+        same(route().current('pages.optional', { page: undefined }), false);
+        same(route().current('pages.optional', { page: 'foo' }), true);
+    });
+
+    test('can check the current route name on a route/URL made up entirely of a single optional parameter and with that parameter missing', () => {
+        global.window.location.pathname = '/optionalpage';
+
+        same(route().current(), 'pages.optional');
+        same(route().current('pages.optional', ''), true);
+        // same(route().current('pages.optional', []), true); // Not supported
+        same(route().current('pages.optional', ['']), true);
+        same(route().current('pages.optional', { page: '' }), true);
+        same(route().current('pages.optional', { page: undefined }), true);
+        same(route().current('pages.optional', { page: 'foo' }), false);
+    });
+
+    test('can check the current route name with parameters on a URL with no parameters', () => {
+        global.window.location.href = 'https://ziggy.dev';
+        global.window.location.host = 'ziggy.dev';
         global.window.location.pathname = '/';
 
-        assert(!route().current('pages', {page: 'test-page'}));
+        same(route().current('home', { page: 'test' }), false);
+        same(route().current('pages', { page: 'test' }), false);
+
+        global.window.location.pathname = '/posts/';
+
+        same(route().current('posts.index', { post: 1 }), false);
+        same(route().current('posts.show', { post: 1 }), false);
+    });
+
+    test('can check the current route name with positional parameters on a URL with no parameters', () => {
+        global.window.location.pathname = '/posts';
+        global.window.location.search = '?0=test';
+
+        same(route().current('posts.index', undefined), true);
+        same(route().current('posts.index', null), true);
+        same(route().current('posts.index', {}), true);
+        same(route().current('posts.index', { '0': 'test' }), true);
+
+        same(route().current('posts.index', ''), false);
+        same(route().current('posts.index', 'test'), false);
+        // same(route().current('posts.index', []), false); // Not supported
+        same(route().current('posts.index', ['']), false);
+        same(route().current('posts.index', [1]), false);
     });
 
     test('can return false when checking the current route name on an unknown route', () => {
         global.window.location.pathname = '/unknown/';
 
         same(route().current('posts.delete'), false);
+    });
+
+    test('can return false when checking the current route name and params on an unknown URL', () => {
+        global.window.location.pathname = '/unknown/path';
+
+        same(route().current('posts.show', { post: 2 }), false);
+        same(route().current('posts.show', 2), false);
+        same(route().current('posts.show', [2]), false);
+        same(route().current('posts.show', 'post'), false);
+    });
+
+    test('can return false when checking a non-existent route name on a known URL', () => {
+        global.window.location.pathname = '/events/1/venues/2';
+
+        same(route().current('random-route'), false);
+    });
+
+    test('can return false when checking a non-existent route name on an unknown URL', () => {
+        global.window.location.pathname = '/unknown/test';
+
+        same(route().current('random-route'), false);
+    });
+
+    test('can return false when checking a non-existent route name and params on a known URL', () => {
+        global.window.location.pathname = '/events/1/venues/2';
+
+        same(route().current('random-route', { post: 2 }), false);
+        same(route().current('random-route', 2), false);
+        same(route().current('random-route', [2]), false);
+        same(route().current('random-route', 'post'), false);
+    });
+
+    test('can return false when checking a non-existent route name and params on an unknown URL', () => {
+        global.window.location.pathname = '/unknown/params';
+
+        same(route().current('random-route', { post: 2 }), false);
+        same(route().current('random-route', 2), false);
+        same(route().current('random-route', [2]), false);
+        same(route().current('random-route', 'post'), false);
     });
 
     test('can check the current route name against a pattern', () => {
@@ -637,22 +729,28 @@ describe('current()', () => {
     test('can check the current route with parameters', () => {
         global.window.location.pathname = '/events/1/venues/2';
 
-        assert(route().current('events.venues.show', { event: 1, venue: 2 }));
-        assert(route().current('events.venues.show', [1, 2]));
-        assert(route().current('events.venues.show', [1, { id: 2, name: 'Grand Canyon' }]));
-        assert(route().current('events.venues.show', { event: 1 }));
-        assert(route().current('events.venues.show', { venue: 2 }));
-        assert(route().current('events.venues.show', [1]));
-        assert(route().current('events.venues.show', {}));
-        assert(route().current('events.venues.show', null));
+        same(route().current('events.venues.show', { event: 1, venue: 2 }), true);
+        same(route().current('events.venues.show', [1, 2]), true);
+        same(route().current('events.venues.show', [1, { id: 2, name: 'Grand Canyon' }]), true);
+        same(route().current('events.venues.show', { event: 1 }), true);
+        same(route().current('events.venues.show', { venue: 2 }), true);
+        same(route().current('events.venues.show', [1]), true);
+        same(route().current('events.venues.show', {}), true);
+        same(route().current('events.venues.show', null), true);
 
-        assert(!route().current('events.venues.show', { event: 4, venue: 2 }));
-        assert(!route().current('events.venues.show', { event: null }));
-        assert(!route().current('events.venues.show', [1, 6]));
-        assert(!route().current('events.venues.show', [{ id: 1 }, { id: 4, name: 'Great Pyramids' }]));
-        assert(!route().current('events.venues.show', { event: 4 }));
-        assert(!route().current('events.venues.show', { venue: 4 }));
-        assert(!route().current('events.venues.show', [5]));
+        same(route().current('events.venues.show', { event: 4, venue: 2 }), false);
+        same(route().current('events.venues.show', { event: null }), false);
+        same(route().current('events.venues.show', [1, 6]), false);
+        same(route().current('events.venues.show', [{ id: 1 }, { id: 4, name: 'Great Pyramids' }]), false);
+        same(route().current('events.venues.show', { event: 4 }), false);
+        same(route().current('events.venues.show', { venue: 4 }), false);
+        same(route().current('events.venues.show', [5]), false);
+    });
+
+    test('can check the current route with parameters with incorrect parameter names', () => {
+        global.window.location.pathname = '/events/1/venues/2';
+
+        same(route().current('events.venues.show', { eventz: 2 }), false);
     });
 
     test('can check the current route with query parameters', () => {

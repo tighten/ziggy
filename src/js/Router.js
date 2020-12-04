@@ -85,19 +85,19 @@ export default class Router extends String {
         // basic wildcards, e.g. passing `events.*` matches `events.show`
         const match = new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`).test(current);
 
-        if (!params) return match;
+        if ([null, undefined].includes(params) || !match) return match;
 
-        params = this._parse(params, new Route(current, route, this._config));
-        const routeParams = Object.entries(this._dehydrate(route));
+        const routeObject = new Route(current, route, this._config);
 
-        // If the current window URL has no parameters, it won't match any that were passed
-        if (!routeParams.length) return false;
+        params = this._parse(params, routeObject);
+        const routeParams = this._dehydrate(route);
+
+        // If the current window URL has no route parameters, and the passed parameters are empty, return true
+        if (Object.values(params).every(p => !p) && !Object.values(routeParams).length) return true;
 
         // Check that all passed parameters match their values in the current window URL
-        return routeParams
-            .filter(([key]) => params.hasOwnProperty(key))
-            // Use weak equality because all values in the current window URL will be strings
-            .every(([key, value]) => params[key] == value);
+        // Use weak equality because all values in the current window URL will be strings
+        return Object.entries(params).every(([key, value]) => routeParams[key] == value);
     }
 
     /**
@@ -147,7 +147,7 @@ export default class Router extends String {
         if (Array.isArray(params)) {
             // If the parameters are an array they have to be in order, so we can transform them into
             // an object by keying them with the template segment names in the order they appear
-            params = params.reduce((result, current, i) => ({ ...result, [segments[i].name]: current }), {});
+            params = params.reduce((result, current, i) => ({ ...result, [segments[i]?.name]: current }), {});
         } else if (
             segments.length === 1
             && !params[segments[0].name]
@@ -193,7 +193,7 @@ export default class Router extends String {
      */
     _substituteBindings(params, bindings = {}) {
         return Object.entries(params).reduce((result, [key, value]) => {
-            // If the value isn't an object, or if it's an object of explicity query
+            // If the value isn't an object, or if it's an object of explicit query
             // parameters, there's nothing to substitute so we return it as-is
             if (!value || typeof value !== 'object' || Array.isArray(value) || key === '_query') {
                 return { ...result, [key]: value };
