@@ -111,6 +111,10 @@ const defaultZiggy = {
             uri: 'hosting-contacts',
             methods: ['GET', 'HEAD'],
         },
+        'pages.optional': {
+            uri: 'optionalpage/{page?}',
+            methods: ['GET', 'HEAD'],
+        },
         'pages': {
             uri: '{page}',
             methods: ['GET', 'HEAD'],
@@ -577,6 +581,30 @@ describe('current()', () => {
         same(route().current('pages', { page: 'some-page' }), true);
     });
 
+    test('can check the current route name on a route/URL made up entirely of a single optional parameter', () => {
+        global.window.location.pathname = '/optionalpage/foo';
+
+        same(route().current(), 'pages.optional');
+        same(route().current('pages.optional', ''), false);
+        same(route().current('pages.optional', ['']), false);
+        // same(route().current('pages.optional', []), false); // Not supported
+        same(route().current('pages.optional', { page: '' }), false);
+        same(route().current('pages.optional', { page: undefined }), false);
+        same(route().current('pages.optional', { page: 'foo' }), true);
+    });
+
+    test('can check the current route name on a route/URL made up entirely of a single optional parameter and with that parameter missing', () => {
+        global.window.location.pathname = '/optionalpage';
+
+        same(route().current(), 'pages.optional');
+        same(route().current('pages.optional', ''), true);
+        // same(route().current('pages.optional', []), true); // Not supported
+        same(route().current('pages.optional', ['']), true);
+        same(route().current('pages.optional', { page: '' }), true);
+        same(route().current('pages.optional', { page: undefined }), true);
+        same(route().current('pages.optional', { page: 'foo' }), false);
+    });
+
     test('can check the current route name with parameters on a URL with no parameters', () => {
         global.window.location.href = 'https://ziggy.dev';
         global.window.location.host = 'ziggy.dev';
@@ -602,7 +630,8 @@ describe('current()', () => {
 
         same(route().current('posts.index', ''), false);
         same(route().current('posts.index', 'test'), false);
-        same(route().current('posts.index', []), false);
+        // same(route().current('posts.index', []), false); // Not supported
+        same(route().current('posts.index', ['']), false);
         same(route().current('posts.index', [1]), false);
     });
 
