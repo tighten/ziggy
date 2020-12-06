@@ -4,7 +4,7 @@ on:
   pull_request:
     paths-ignore: ['dist/**', '*.md']
   push:
-    branches: [main, develop, 0.9.x]
+    branches: [main, 0.9.x]
     paths-ignore: ['dist/**', '*.md']
 
 jobs:
