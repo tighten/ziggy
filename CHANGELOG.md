@@ -6,14 +6,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 Breaking changes are marked with ⚠️.
 
-## UNRELEASED
+## [Unreleased]
+
+## [v1.0.4] - 2020-12-06
 
 **Fixed**
 
 - Fix bug where `route().current()` could incorrectly return `true` on URLs with no parameters ([#377](https://github.com/tighten/ziggy/pull/377))
 - Fix several other bugs in `route().current()` with params ([#379](https://github.com/tighten/ziggy/pull/379))
 - Revert [#334](https://github.com/tighten/ziggy/pull/334), default Ziggy's `url` back to `url('/')` instead of the `APP_URL` environment variable ([#386](https://github.com/tighten/ziggy/pull/386))
-
 
 ## [v1.0.3] - 2020-11-20
 
@@ -114,7 +115,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.0.4...HEAD
+[v1.0.4]: https://github.com/tighten/ziggy/compare/v1.0.3...v1.0.4
 [v1.0.3]: https://github.com/tighten/ziggy/compare/v1.0.2...v1.0.3
 [v1.0.2]: https://github.com/tighten/ziggy/compare/v1.0.1...v1.0.2
 [v1.0.1]: https://github.com/tighten/ziggy/compare/v1.0.0...v1.0.1
