@@ -19,7 +19,7 @@ class Ziggy implements JsonSerializable
     {
         $this->group = $group;
 
-        $this->url = rtrim($url ?? config('app.url', url('/')), '/');
+        $this->url = rtrim($url ?? url('/'), '/');
         $this->port = parse_url($this->url)['port'] ?? null;
 
         $this->routes = $this->nameKeyedRoutes();

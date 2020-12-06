@@ -12,6 +12,8 @@ Breaking changes are marked with ⚠️.
 
 - Fix bug where `route().current()` could incorrectly return `true` on URLs with no parameters ([#377](https://github.com/tighten/ziggy/pull/377))
 - Fix several other bugs in `route().current()` with params ([#379](https://github.com/tighten/ziggy/pull/379))
+- Revert [#334](https://github.com/tighten/ziggy/pull/334), default Ziggy's `url` back to `url('/')` instead of the `APP_URL` environment variable ([#386](https://github.com/tighten/ziggy/pull/386))
+
 
 ## [v1.0.3] - 2020-11-20
 

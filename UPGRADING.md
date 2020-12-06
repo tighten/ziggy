@@ -32,7 +32,6 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
   - [`baseProtocol` and `baseDomain` properties removed](#user-content-base-protocol-domain-removed)
   - [`base` and other prefixes removed](#user-content-prefixes-removed)
   - [`filter()` method made fluent](#user-content-filter-fluent)
-  - [Base URL defaults to `APP_URL`](#user-content-app-url)
   - [Unused PHP methods removed](#user-content-unused-php-removed)
   - [Internal PHP methods made private](#user-content-internal-methods-private)
   - [Undocumented Javascript methods removed](#user-content-undocumented-methods-removed)
@@ -243,17 +242,6 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    The `filter()` method on the `Ziggy` class now returns an instance of `Ziggy` instead of a collection of routes.
 
    See [#341](https://github.com/tighten/ziggy/pull/341)
-   </details>
-
-1. **The base URL is now the `APP_URL` environment variable.** <span id="app-url"></span>
-
-   <details>
-   <summary>Details</summary>
-   <p></p>
-
-   Ziggy's `url` config value, the base URL used to build all routes and URL strings, now uses the value of the `APP_URL` environment variable, and only falls back to `url('/')` if `APP_URL` isn't set.
-
-   See [#334](https://github.com/tighten/ziggy/pull/334)
    </details>
 
 1. **Unused PHP methods were removed.** <span id="unused-php-removed"></span>
