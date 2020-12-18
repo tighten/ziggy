@@ -2,6 +2,12 @@
 
 return [
 
+    /**
+     * Base URL to use for all of Ziggy's route/URL generation.
+     *
+     * Uncomment to override globally - defaults to `url('/')`.
+     */
+    // 'url' => env('APP_URL'),
 
     /**
      * Path to the JavaScript file containing Ziggy’s routes and
