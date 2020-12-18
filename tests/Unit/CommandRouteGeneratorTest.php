@@ -111,4 +111,17 @@ class CommandRouteGeneratorTest extends TestCase
 
         $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
     }
+
+    /** @test */
+    public function can_generate_file_at_path_specified_in_config()
+    {
+        config(['ziggy.path' => 'resources/js/foo.js']);
+        $router = app('router');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->getRoutes()->refreshNameLookups();
+
+        Artisan::call('ziggy:generate');
+
+        $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/foo.js'));
+    }
 }
