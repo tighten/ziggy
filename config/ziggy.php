@@ -18,8 +18,17 @@ return [
 
     'groups' => [],
 
+    /**
+     * Include a list of each route's middleware in Ziggy's output.
+     *
+     * Allowed values are true, false, or an array of middleware names.
+     */
     'middleware' => false,
 
+    /**
+     * Don't include the JavaScript `route()` helper function
+     * in the output of the `@routes` Blade directive.
+     */
     'skip-route-function' => false,
 
 ];
