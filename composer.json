@@ -15,6 +15,10 @@
         {
             "name": "Jake Bathman",
             "email": "jake@tighten.co"
+        },
+        {
+            "name": "Jacob Baker-Kretzmar",
+            "email": "jacob@tighten.co"
         }
     ],
     "autoload": {

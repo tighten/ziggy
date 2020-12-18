@@ -28,7 +28,7 @@ class ZiggyTest extends TestCase
     }
 
     /**
-     * If running Laravel 7 or higher, the 'postComments.show' route.
+     * If running Laravel 7 or higher, add the 'postComments.show' route.
      */
     protected function addPostCommentsRouteWithBindings(array &$routes): void
     {
@@ -64,7 +64,7 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray()['routes']);
     }
 
     /** @test */
@@ -86,7 +86,7 @@ class ZiggyTest extends TestCase
 
         $this->addPostCommentsRouteWithBindings($expected);
 
-        $this->assertSame($expected, $routes->toArray());
+        $this->assertSame($expected, $routes->toArray()['routes']);
     }
 
     /** @test */
@@ -95,7 +95,7 @@ class ZiggyTest extends TestCase
         config(['ziggy' => [
             'only' => ['posts.s*', 'home'],
         ]]);
-        $routes = (new Ziggy)->toArray()['namedRoutes'];
+        $routes = (new Ziggy)->toArray()['routes'];
 
         $expected = [
             'home' => [
@@ -121,7 +121,7 @@ class ZiggyTest extends TestCase
         config(['ziggy' => [
             'except' => ['posts.s*', 'home', 'admin.*'],
         ]]);
-        $routes = (new Ziggy)->toArray()['namedRoutes'];
+        $routes = (new Ziggy)->toArray()['routes'];
 
         $expected = [
             'posts.index' => [
@@ -146,7 +146,7 @@ class ZiggyTest extends TestCase
             'except' => ['posts.s*'],
             'only' => ['home'],
         ]]);
-        $routes = (new Ziggy)->toArray()['namedRoutes'];
+        $routes = (new Ziggy)->toArray()['routes'];
 
         $expected = [
             'home' => [
@@ -188,7 +188,7 @@ class ZiggyTest extends TestCase
                 'authors' => ['home', 'posts.*'],
             ],
         ]]);
-        $routes = (new Ziggy('authors'))->toArray()['namedRoutes'];
+        $routes = (new Ziggy('authors'))->toArray()['routes'];
 
         $expected = [
             'home' => [
@@ -216,7 +216,7 @@ class ZiggyTest extends TestCase
     public function can_ignore_passed_group_not_set_in_config()
     {
         // The 'authors' group doesn't exist
-        $routes = (new Ziggy('authors'))->toArray()['namedRoutes'];
+        $routes = (new Ziggy('authors'))->toArray()['routes'];
 
         $expected = [
             'home' => [
@@ -256,7 +256,7 @@ class ZiggyTest extends TestCase
         config(['ziggy' => [
             'middleware' => true,
         ]]);
-        $routes = (new Ziggy)->toArray()['namedRoutes'];
+        $routes = (new Ziggy)->toArray()['routes'];
 
         $expected = [
             'home' => [
@@ -293,12 +293,41 @@ class ZiggyTest extends TestCase
     }
 
     /** @test */
+    public function can_include_subdomain()
+    {
+        app('router')->domain('{team}.ziggy.dev')->post('/', function () {
+            return response()->json(new Ziggy);
+        })->name('home');
+        app('router')->getRoutes()->refreshNameLookups();
+
+        $this->post(route('home', ['team' => 'tgtn']))
+            ->assertJson([
+                'url' => 'http://tgtn.ziggy.dev',
+            ]);
+    }
+
+    /** @test */
+    public function can_include_port()
+    {
+        app('router')->post('/', function () {
+            return response()->json(new Ziggy);
+        })->name('home');
+        app('router')->getRoutes()->refreshNameLookups();
+
+        $this->post('http://ziggy.dev:3000')
+            ->assertJson([
+                'url' => 'http://ziggy.dev:3000',
+                'port' => 3000,
+            ]);
+    }
+
+    /** @test */
     public function can_include_only_middleware_set_in_config()
     {
         config(['ziggy' => [
             'middleware' => ['auth'],
         ]]);
-        $routes = (new Ziggy)->toArray()['namedRoutes'];
+        $routes = (new Ziggy)->toArray()['routes'];
 
         $expected = [
             'home' => [
@@ -336,12 +365,11 @@ class ZiggyTest extends TestCase
     /** @test */
     public function can_order_fallback_routes_last()
     {
-        $ziggy = new Ziggy;
         app('router')->fallback($this->noop())->name('fallback');
         app('router')->get('/users', $this->noop())->name('users.index');
 
         app('router')->getRoutes()->refreshNameLookups();
-        $routes = (new Ziggy)->toArray()['namedRoutes'];
+        $routes = (new Ziggy)->toArray()['routes'];
 
         $expected = [
             'home' => [
@@ -391,12 +419,10 @@ class ZiggyTest extends TestCase
         $ziggy = new Ziggy;
 
         $expected = [
-            'baseUrl' => 'http://ziggy.dev',
-            'baseProtocol' => 'http',
-            'baseDomain' => 'ziggy.dev',
-            'basePort' => null,
-            'defaultParameters' => [],
-            'namedRoutes' => [
+            'url' => 'http://ziggy.dev',
+            'port' => null,
+            'defaults' => [],
+            'routes' => [
                 'home' => [
                     'uri' => 'home',
                     'methods' => ['GET', 'HEAD'],
@@ -424,10 +450,9 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $this->addPostCommentsRouteWithBindings($expected['namedRoutes']);
+        $this->addPostCommentsRouteWithBindings($expected['routes']);
 
         $this->assertSame($expected, $ziggy->toArray());
-        $this->assertSame($expected, $ziggy->jsonSerialize());
     }
 
     /** @test */
@@ -438,12 +463,10 @@ class ZiggyTest extends TestCase
         ]]);
 
         $expected = [
-            'baseUrl' => 'http://ziggy.dev',
-            'baseProtocol' => 'http',
-            'baseDomain' => 'ziggy.dev',
-            'basePort' => null,
-            'defaultParameters' => [],
-            'namedRoutes' => [
+            'url' => 'http://ziggy.dev',
+            'port' => null,
+            'defaults' => [],
+            'routes' => [
                 'postComments.index' => [
                     'uri' => 'posts/{post}/comments',
                     'methods' => ['GET', 'HEAD'],
@@ -451,9 +474,9 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $this->addPostCommentsRouteWithBindings($expected['namedRoutes']);
+        $this->addPostCommentsRouteWithBindings($expected['routes']);
 
-        $json = '{"baseUrl":"http:\/\/ziggy.dev","baseProtocol":"http","baseDomain":"ziggy.dev","basePort":null,"defaultParameters":[],"namedRoutes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"]}}}';
+        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"]}}}';
 
         if ($this->laravelVersion(7)) {
             $json = str_replace(

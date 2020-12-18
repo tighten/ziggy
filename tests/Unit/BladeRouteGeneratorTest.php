@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 use Tightenco\Ziggy\BladeRouteGenerator;
+use Tightenco\Ziggy\Ziggy;
 
 class BladeRouteGeneratorTest extends TestCase
 {
@@ -13,7 +14,7 @@ class BladeRouteGeneratorTest extends TestCase
     {
         $generator = app(BladeRouteGenerator::class);
 
-        $this->assertStringContainsString('"namedRoutes":[]', $generator->generate());
+        $this->assertStringContainsString('"routes":[]', $generator->generate());
     }
 
     /** @test */
@@ -27,14 +28,35 @@ class BladeRouteGeneratorTest extends TestCase
         $router->post('posts', $this->noop())->name('posts.store');
         $router->getRoutes()->refreshNameLookups();
 
+        BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate();
         $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
 
-        $this->assertCount(4, $ziggy['namedRoutes']);
-        $this->assertArrayHasKey('posts.index', $ziggy['namedRoutes']);
-        $this->assertArrayHasKey('posts.show', $ziggy['namedRoutes']);
-        $this->assertArrayHasKey('posts.store', $ziggy['namedRoutes']);
-        $this->assertArrayHasKey('postComments.index', $ziggy['namedRoutes']);
+        $this->assertCount(4, $ziggy['routes']);
+        $this->assertArrayHasKey('posts.index', $ziggy['routes']);
+        $this->assertArrayHasKey('posts.show', $ziggy['routes']);
+        $this->assertArrayHasKey('posts.store', $ziggy['routes']);
+        $this->assertArrayHasKey('postComments.index', $ziggy['routes']);
+    }
+
+    /** @test */
+    public function can_generate_mergeable_json_payload_on_repeated_compiles()
+    {
+        $router = app('router');
+        $router->get('posts', $this->noop())->name('posts.index');
+        $router->getRoutes()->refreshNameLookups();
+
+        BladeRouteGenerator::$generated = false;
+        (new BladeRouteGenerator)->generate();
+        $script = (new BladeRouteGenerator)->generate();
+
+        $payload = json_decode(Str::after(Str::before($script, ";\n\n"), 'routes = '), true);
+        $this->assertSame([
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+            ],
+        ], json_decode(Str::after(Str::before($script, ";\n\n"), 'routes = '), true));
     }
 
     /** @test */
@@ -75,6 +97,38 @@ class BladeRouteGeneratorTest extends TestCase
     }
 
     /** @test */
+    public function can_generate_routes_for_given_group_or_groups()
+    {
+        $router = app('router');
+        $router->get('posts', $this->noop())->name('posts.index');
+        $router->get('posts/{post}', $this->noop())->name('posts.show');
+        $router->get('users/{user}', $this->noop())->name('users.show');
+        $router->getRoutes()->refreshNameLookups();
+
+        config(['ziggy.groups' => [
+            'guest' => ['posts.*'],
+            'admin' => ['users.*'],
+        ]]);
+
+        BladeRouteGenerator::$generated = false;
+        $output = (new BladeRouteGenerator)->generate('guest');
+        $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
+
+        $this->assertCount(2, $ziggy['routes']);
+        $this->assertArrayHasKey('posts.index', $ziggy['routes']);
+        $this->assertArrayHasKey('posts.show', $ziggy['routes']);
+
+        BladeRouteGenerator::$generated = false;
+        $output = (new BladeRouteGenerator)->generate(['guest', 'admin']);
+        $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
+
+        $this->assertCount(3, $ziggy['routes']);
+        $this->assertArrayHasKey('posts.index', $ziggy['routes']);
+        $this->assertArrayHasKey('posts.show', $ziggy['routes']);
+        $this->assertArrayHasKey('users.show', $ziggy['routes']);
+    }
+
+    /** @test */
     public function can_set_csp_nonce()
     {
         $this->assertStringContainsString(
@@ -84,14 +138,49 @@ class BladeRouteGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function can_compile_routes_directive()
+    public function can_output_script_tag()
     {
-        $compiler = app('blade.compiler');
-
+        $router = app('router');
+        $router->get('posts', $this->noop())->name('posts.index');
         BladeRouteGenerator::$generated = false;
-        $script = (new BladeRouteGenerator)->generate();
 
-        BladeRouteGenerator::$generated = false;
-        $this->assertSame($script, $compiler->compileString('@routes'));
+        $json = (new Ziggy)->toJson();
+        $routeFunction = file_get_contents(__DIR__ . '/../../dist/index.js');
+
+        $this->assertSame(
+            <<<HTML
+<script type="text/javascript">
+    const Ziggy = {$json};
+
+    {$routeFunction}
+</script>
+HTML,
+            (new BladeRouteGenerator)->generate()
+        );
+    }
+
+    /** @test */
+    public function can_output_merge_script_tag()
+    {
+        $router = app('router');
+        $router->get('posts', $this->noop())->name('posts.index');
+        (new BladeRouteGenerator)->generate();
+
+        $json = json_encode((new Ziggy)->toArray()['routes']);
+
+        $this->assertSame(
+            <<<HTML
+<script type="text/javascript">
+    (function () {
+        const routes = {$json};
+
+        for (let name in routes) {
+            Ziggy.routes[name] = routes[name];
+        }
+    })();
+</script>
+HTML,
+            (new BladeRouteGenerator)->generate()
+        );
     }
 }

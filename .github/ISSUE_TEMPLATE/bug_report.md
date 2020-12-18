@@ -2,25 +2,23 @@
 name: Bug report
 about: Report an issue to help us improve Ziggy
 title: ''
-labels: needs triage
 assignees: ''
-
 ---
 
-### Description
+#### Description
 
 <!-- Provide a clear and concise description of the current behaviour and what the bug is. -->
 
-### Expected behavior
+#### Expected behavior
 
 <!-- Provide a clear and concise description of what you expected to happen. -->
 
-### Environment
+#### Environment
 
 <!-- Include ALL of the information below: -->
 
-- **Laravel version**: 
-- **Ziggy version**: 
+- **Laravel version**: 
+- **Ziggy version**: 
 
 **Related routes**:
 
@@ -30,9 +28,9 @@ assignees: ''
 Route::get('/', 'HomeController')->name('home');
 ```
 
-**`Ziggy.namedRoutes`**:
+**`Ziggy.routes`**:
 
-<!-- In your browser console/devtools, run `Ziggy.namedRoutes` and paste the result here. E.g.: -->
+<!-- In your browser console/devtools, run `Ziggy.routes` and paste the result here. E.g.: -->
 
 ```js
 {
@@ -44,7 +42,7 @@ Route::get('/', 'HomeController')->name('home');
 }
 ```
 
-**Ziggy call**:
+**Ziggy call and context**:
 
 <!-- Show where and how you're using Ziggy when this bug occurs. E.g.: -->
 

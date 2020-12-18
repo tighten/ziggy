@@ -1,97 +1,10 @@
 import { parse, stringify } from 'qs';
-
-/**
- * A Laravel route. This class represents one route and its configuration and metadata.
- */
-class Route {
-    /**
-     * @param {String} name - Route name.
-     * @param {Object} definition - Route definition.
-     * @param {Object} config - Ziggy configuration.
-     */
-    constructor(name, definition, config) {
-        this.name = name;
-        this.definition = definition;
-        this.bindings = definition.bindings ?? {};
-        this.config = { absolute: true, ...config };
-    }
-
-    /**
-     * Get a 'template' of the complete URL for this route.
-     *
-     * @example
-     * https://{team}.ziggy.dev/user/{user}
-     *
-     * @return {String} Route template.
-     */
-    get template() {
-        // If  we're building just a path there's no origin, otherwise: if this route has a
-        // domain configured we construct the origin with that, if not we use the app URL
-        const origin = !this.config.absolute ? '' : this.definition.domain
-            ? `${this.config.baseProtocol}://${this.definition.domain}${this.config.basePort ? `:${this.config.basePort}` : ''}`
-            : this.config.baseUrl;
-
-        return `${origin}/${this.definition.uri}`;
-    }
-
-    /**
-     * Get an array of objects representing the parameters that this route accepts.
-     *
-     * @example
-     * [{ name: 'team', required: true }, { name: 'user', required: false }]
-     *
-     * @return {Array} Parameter segments.
-     */
-    get parameterSegments() {
-        return this.template.match(/{[^}?]+\??}/g)?.map((segment) => ({
-            name: segment.replace(/{|\??}/g, ''),
-            required: !/\?}$/.test(segment),
-        })) ?? [];
-    }
-
-    /**
-     * Get whether this route's template matches the given URL.
-     *
-     * @param {String} url - URL to check.
-     * @return {Boolean} Whether this route matches.
-     */
-    matchesUrl(url) {
-        if (!this.definition.methods.includes('GET')) return false;
-
-        // Transform the route's template into a regex that will match a hydrated URL,
-        // by replacing its parameter segments with matchers for parameter values
-        const pattern = this.template
-            .replace(/\/{[^}?]*\?}/g, '(\/[^/?]+)?')
-            .replace(/{[^}]+}/g, '[^/?]+')
-            .replace(/^\w+:\/\//, '');
-
-        return new RegExp(`^${pattern}$`).test(url.replace(/\/+$/, '').split('?').shift());
-    }
-
-    /**
-     * Hydrate and return a complete URL for this route with the given parameters.
-     *
-     * @param {Object} params
-     * @return {String}
-     */
-    compile(params) {
-        if (!this.parameterSegments.length) return this.template.replace(/\/+$/, '');
-
-        return this.template.replace(/{([^}?]+)\??}/g, (_, segment) => {
-            // If the parameter is missing but is not optional, throw an error
-            if ([null, undefined].includes(params[segment]) && this.parameterSegments.find(({ name }) => name === segment).required) {
-                throw new Error(`Ziggy error: '${segment}' parameter is required for route '${this.name}'.`)
-            }
-
-            return encodeURIComponent(params[segment] ?? '');
-        }).replace(/\/+$/, '');
-    }
-}
+import Route from './Route';
 
 /**
  * A collection of Laravel routes. This class constitutes Ziggy's main API.
  */
-class Router extends String {
+export default class Router extends String {
     /**
      * @param {String} name - Route name.
      * @param {(String|Number|Array|Object)} params - Route parameters.
@@ -102,13 +15,14 @@ class Router extends String {
         super();
 
         this._config = config ?? Ziggy ?? globalThis?.Ziggy;
+        this._config = { ...this._config, absolute };
 
         if (name) {
-            if (!this._config.namedRoutes[name]) {
+            if (!this._config.routes[name]) {
                 throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
             }
 
-            this._route = new Route(name, this._config.namedRoutes[name], { ...this._config, absolute });
+            this._route = new Route(name, this._config.routes[name], this._config);
             this._params = this._parse(params);
         }
     }
@@ -118,21 +32,23 @@ class Router extends String {
      *
      * @example
      * // with 'posts.show' route 'posts/{post}'
-     * route('posts.show', 1).url(); // 'https://ziggy.dev/posts/1'
+     * (new Router('posts.show', 1)).toString(); // 'https://ziggy.dev/posts/1'
      *
      * @return {String}
      */
-    url() {
+    toString() {
         // Get parameters that don't correspond to any route segments to append them to the query
         const unhandled = Object.keys(this._params)
             .filter((key) => !this._route.parameterSegments.some(({ name }) => name === key))
+            .filter((key) => key !== '_query')
             .reduce((result, current) => ({ ...result, [current]: this._params[current] }), {});
 
-        return this._route.compile(this._params) + stringify({ ...unhandled, ...this._queryParams }, {
+        return this._route.compile(this._params) + stringify({ ...unhandled, ...this._params['_query'] }, {
             addQueryPrefix: true,
             arrayFormat: 'indices',
             encodeValuesOnly: true,
             skipNulls: true,
+            encoder: (value, encoder) => typeof value === 'boolean' ? Number(value) : encoder(value),
         });
     }
 
@@ -150,15 +66,17 @@ class Router extends String {
      *
      * @param {String} name - Route name to check.
      * @param {(String|Number|Array|Object)} params - Route parameters.
-     * @return {(Boolean|String)}
+     * @return {(Boolean|String|undefined)}
      */
     current(name, params) {
-        const url = window.location.host + window.location.pathname;
+        const url = this._config.absolute
+            ? window.location.host + window.location.pathname
+            : window.location.pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/');
 
         // Find the first route that matches the current URL
-        const [current, route] = Object.entries(this._config.namedRoutes).find(
+        const [current, route] = Object.entries(this._config.routes).find(
             ([_, route]) => new Route(name, route, this._config).matchesUrl(url)
-        );
+        ) || [undefined, undefined];
 
         // If a name wasn't passed, return the name of the current route
         if (!name) return current;
@@ -167,15 +85,19 @@ class Router extends String {
         // basic wildcards, e.g. passing `events.*` matches `events.show`
         const match = new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`).test(current);
 
-        if (!params) return match;
+        if ([null, undefined].includes(params) || !match) return match;
 
-        params = this._parse(params, new Route(current, route, this._config));
+        const routeObject = new Route(current, route, this._config);
+
+        params = this._parse(params, routeObject);
+        const routeParams = this._dehydrate(route);
+
+        // If the current window URL has no route parameters, and the passed parameters are empty, return true
+        if (Object.values(params).every(p => !p) && !Object.values(routeParams).length) return true;
 
         // Check that all passed parameters match their values in the current window URL
-        return Object.entries(this._dehydrate(route))
-            .filter(([key]) => params.hasOwnProperty(key))
-            // Use weak equality because all values in the current window URL will be strings
-            .every(([key, value]) => params[key] == value);
+        // Use weak equality because all values in the current window URL will be strings
+        return Object.entries(params).every(([key, value]) => routeParams[key] == value);
     }
 
     /**
@@ -188,7 +110,7 @@ class Router extends String {
      * @return {Object}
      */
     get params() {
-        return this._dehydrate(this._config.namedRoutes[this.current()]);
+        return this._dehydrate(this._config.routes[this.current()]);
     }
 
     /**
@@ -198,18 +120,7 @@ class Router extends String {
      * @return {Boolean}
      */
     has(name) {
-        return Object.keys(this._config.namedRoutes).includes(name);
-    }
-
-    /**
-     * Add query parameters to be appended to the compiled URL.
-     *
-     * @param {Object} params
-     * @return {this}
-     */
-    withQuery(params) {
-        this._queryParams = params;
-        return this;
+        return Object.keys(this._config.routes).includes(name);
     }
 
     /**
@@ -231,12 +142,12 @@ class Router extends String {
         params = ['string', 'number'].includes(typeof params) ? [params] : params;
 
         // Separate segments with and without defaults, and fill in the default values
-        const segments = route.parameterSegments.filter(({ name }) => !this._config.defaultParameters[name]);
+        const segments = route.parameterSegments.filter(({ name }) => !this._config.defaults[name]);
 
         if (Array.isArray(params)) {
             // If the parameters are an array they have to be in order, so we can transform them into
             // an object by keying them with the template segment names in the order they appear
-            params = params.reduce((result, current, i) => ({ ...result, [segments[i].name]: current }), {});
+            params = params.reduce((result, current, i) => ({ ...result, [segments[i]?.name]: current }), {});
         } else if (
             segments.length === 1
             && !params[segments[0].name]
@@ -266,8 +177,8 @@ class Router extends String {
      * @return {Object} Default route parameters.
      */
     _defaults(route) {
-        return route.parameterSegments.filter(({ name }) => this._config.defaultParameters[name])
-            .reduce((result, { name }, i) => ({ ...result, [name]: this._config.defaultParameters[name] }), {});
+        return route.parameterSegments.filter(({ name }) => this._config.defaults[name])
+            .reduce((result, { name }, i) => ({ ...result, [name]: this._config.defaults[name] }), {});
     }
 
     /**
@@ -282,8 +193,9 @@ class Router extends String {
      */
     _substituteBindings(params, bindings = {}) {
         return Object.entries(params).reduce((result, [key, value]) => {
-            // If the value isn't an object there's nothing to substitute, so we return it as-is
-            if (!value || typeof value !== 'object' || Array.isArray(value)) {
+            // If the value isn't an object, or if it's an object of explicit query
+            // parameters, there's nothing to substitute so we return it as-is
+            if (!value || typeof value !== 'object' || Array.isArray(value) || key === '_query') {
                 return { ...result, [key]: value };
             }
 
@@ -313,7 +225,7 @@ class Router extends String {
     _dehydrate(route) {
         let pathname = window.location.pathname
             // If this Laravel app is in a subdirectory, trim the subdirectory from the path
-            .replace(this._config.baseUrl.replace(/^\w*:\/\/[^/]+/, ''), '')
+            .replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '')
             .replace(/^\/+/, '');
 
         // Given part of a valid 'hydrated' URL containing all its parameter values,
@@ -338,20 +250,8 @@ class Router extends String {
         };
     }
 
-    toString() {
-        return this.url();
-    }
-
     valueOf() {
-        return this.url();
-    }
-
-    /**
-     * @deprecated since v1.0, pass parameters as the second argument to `route()` instead.
-     */
-    with(params) {
-        this._params = this._parse(params);
-        return this;
+        return this.toString();
     }
 
     /**
@@ -360,8 +260,4 @@ class Router extends String {
     check(name) {
         return this.has(name);
     }
-}
-
-export default function route(name, params, absolute, config) {
-    return new Router(name, params, absolute, config);
 }

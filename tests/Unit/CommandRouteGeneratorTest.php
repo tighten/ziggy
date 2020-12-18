@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class CommandRouteGeneratorTest extends TestCase
@@ -61,6 +62,19 @@ class CommandRouteGeneratorTest extends TestCase
         Artisan::call('ziggy:generate', ['--url' => 'http://example.org']);
 
         $this->assertFileEquals('./tests/fixtures/custom-url.js', base_path('resources/js/ziggy.js'));
+    }
+
+    /** @test */
+    public function can_generate_file_with_custom_pathname()
+    {
+        $router = app('router');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->getRoutes()->refreshNameLookups();
+        URL::defaults(['locale' => 'en']);
+
+        Artisan::call('ziggy:generate', ['--url' => '/foo/bar']);
+
+        $this->assertFileEquals('./tests/fixtures/custom-pathname.js', base_path('resources/js/ziggy.js'));
     }
 
     /** @test */

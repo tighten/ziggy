@@ -8,11 +8,11 @@ class BladeRouteGenerator
 
     public function generate($group = false, $nonce = false)
     {
-        $payload = (new Ziggy($group))->toJson();
+        $payload = new Ziggy($group);
         $nonce = $nonce ? ' nonce="' . $nonce . '"' : '';
 
         if (static::$generated) {
-            return $this->generateMergeJavascript($payload, $nonce);
+            return $this->generateMergeJavascript(json_encode($payload->toArray()['routes']), $nonce);
         }
 
         $routeFunction = $this->getRouteFunction();
@@ -21,7 +21,7 @@ class BladeRouteGenerator
 
         return <<<HTML
 <script type="text/javascript"{$nonce}>
-    var Ziggy = {$payload};
+    const Ziggy = {$payload->toJson()};
 
     $routeFunction
 </script>
@@ -32,11 +32,11 @@ HTML;
     {
         return <<<HTML
 <script type="text/javascript"{$nonce}>
-    (function() {
-        var routes = {$json};
+    (function () {
+        const routes = {$json};
 
-        for (var name in routes) {
-            Ziggy.namedRoutes[name] = routes[name];
+        for (let name in routes) {
+            Ziggy.routes[name] = routes[name];
         }
     })();
 </script>
@@ -45,7 +45,7 @@ HTML;
 
     private function getRouteFilePath()
     {
-        return __DIR__ . '/../dist/route.js';
+        return __DIR__ . '/../dist/index.js';
     }
 
     private function getRouteFunction()

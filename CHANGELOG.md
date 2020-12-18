@@ -4,9 +4,39 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html), and the format of this changelog is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+Breaking changes are marked with ⚠️.
+
 ## [Unreleased]
 
-Breaking changes are marked with ⚠️.
+## [v1.0.4] - 2020-12-06
+
+**Fixed**
+
+- Fix bug where `route().current()` could incorrectly return `true` on URLs with no parameters ([#377](https://github.com/tighten/ziggy/pull/377))
+- Fix several other bugs in `route().current()` with params ([#379](https://github.com/tighten/ziggy/pull/379))
+- Revert [#334](https://github.com/tighten/ziggy/pull/334), default Ziggy's `url` back to `url('/')` instead of the `APP_URL` environment variable ([#386](https://github.com/tighten/ziggy/pull/386))
+
+## [v1.0.3] - 2020-11-20
+
+**Fixed**
+
+- Filter out unnamed cached routes with randomly generated names ([#370](https://github.com/tighten/ziggy/pull/370))
+- Fix collision with JavaScript built-in method names like `shift` by casting empty `defaults` to an object ([#371](https://github.com/tighten/ziggy/pull/371))
+
+## [v1.0.2] - 2020-11-13
+
+**Fixed**
+
+- Make `ziggy:generate` URL behaviour consistent with Ziggy class and Blade directive ([#361](https://github.com/tighten/ziggy/pull/361))
+- Fix `route().current()` error on unknown/unnamed routes ([#362](https://github.com/tighten/ziggy/pull/362))
+
+## [v1.0.1] - 2020-11-10
+
+**Fixed**
+
+- Fix `route().current()` on routes at the domain root ([#356](https://github.com/tighten/ziggy/pull/356))
+
+## [v1.0.0] - 2020-11-06
 
 **Added**
 
@@ -27,7 +57,13 @@ Breaking changes are marked with ⚠️.
 - Use Jest instead of Mocha for JS tests ([#309](https://github.com/tighten/ziggy/pull/309))
 - Use [microbundle](https://github.com/developit/microbundle) instead of Webpack to build and distribute Ziggy ([#312](https://github.com/tighten/ziggy/pull/312))
 - ⚠️ Default Ziggy's `baseUrl` to the value of the `APP_URL` environment variable instead of `url('/')` ([#334](https://github.com/tighten/ziggy/pull/334))
-- ⚠️ Allow getting the route name with `current()` when the current URL has a query string ([#330](https://github.com/tighten/ziggy/pull/330))
+- ⚠️ Return a literal string from the `route()` function when any arguments are passed to it ([#336](https://github.com/tighten/ziggy/pull/336))
+- ⚠️ Rename `namedRoutes` → `routes`, `defaultParameters` → `defaults`, `baseUrl` → `url`, and `basePort` → `port` ([#338](https://github.com/tighten/ziggy/pull/338))
+- ⚠️ Make the `filter()` method on the `Ziggy` class return an instance of that class instead of a collection of routes ([#341](https://github.com/tighten/ziggy/pull/341))
+- ⚠️ Make the `nameKeyedRoutes()`, `resolveBindings()`, `applyFilters()`, and `group()` methods on the `Ziggy` class, and the `generate()` method on the `CommandRouteGenerator` class, private ([#341](https://github.com/tighten/ziggy/pull/341))
+- ⚠️ Export from `index.js` instead of `route.js` ([#344](https://github.com/tighten/ziggy/pull/344))
+- ⚠️ Encode boolean query parameters as integers ([#345](https://github.com/tighten/ziggy/pull/345))
+- ⚠️ Ensure `.current()` respects the value of the `absolute` option ([#353](https://github.com/tighten/ziggy/pull/353))
 
 **Deprecated**
 
@@ -39,7 +75,10 @@ Breaking changes are marked with ⚠️.
 - ⚠️ Remove the following undocumented public properties and methods from the `Router` class returned by the `route()` function ([#330](https://github.com/tighten/ziggy/pull/330)):
     - `name`, `absolute`, `ziggy`, `urlBuilder`, `template`, `urlParams`, `queryParams`, and `hydrated`
     - `normalizeParams()`, `hydrateUrl()`, `matchUrl()`, `constructQuery()`, `extractParams()`, `parse()`, and `trimParam()`
-- ⚠️ Remove the `UrlBuilder` class ([#330](https://github.com/tighten/ziggy/pull/330)):
+- ⚠️ Remove the `UrlBuilder` class ([#330](https://github.com/tighten/ziggy/pull/330))
+- ⚠️ Remove the `url()` method now that `route(...)` returns a string ([#336](https://github.com/tighten/ziggy/pull/336))
+- ⚠️ Remove the `baseDomain` and `baseProtocol` properties on the Ziggy config object ([#337](https://github.com/tighten/ziggy/pull/337))
+- ⚠️ Remove the `appendRouteToList()`, `isListedAs()`, `except()`, and `only()` methods from the `Ziggy` class ([#341](https://github.com/tighten/ziggy/pull/341))
 
 **Fixed**
 
@@ -47,14 +86,15 @@ Breaking changes are marked with ⚠️.
 - Fix port not being added to URL for routes with subdomains ([#293](https://github.com/tighten/ziggy/pull/293))
 - Fix getting parameters of routes in apps installed in subfolders ([#302](https://github.com/tighten/ziggy/pull/302))
 - Ensure fallback routes are always last, thanks [@davejamesmiller](https://github.com/davejamesmiller)! ([#310](https://github.com/tighten/ziggy/pull/310))
+- Allow getting the route name with `current()` when the current URL has a query string ([#330](https://github.com/tighten/ziggy/pull/330))
 
-## [0.9.4] - 2020-06-05
+## [v0.9.4] - 2020-06-05
 
 **Fixed**
 
 - Fix escaping of `.` characters in the `current()` method, thanks [@davejamesmiller](https://github.com/davejamesmiller)! ([#296](https://github.com/tighten/ziggy/pull/296))
 
-## [0.9.3] - 2020-05-08
+## [v0.9.3] - 2020-05-08
 
 **Added**
 
@@ -75,6 +115,11 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/0.9.4...HEAD
-[0.9.4]: https://github.com/tighten/ziggy/compare/0.9.3...0.9.4
-[0.9.3]: https://github.com/tighten/ziggy/compare/v0.9.2...0.9.3
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.0.4...HEAD
+[v1.0.4]: https://github.com/tighten/ziggy/compare/v1.0.3...v1.0.4
+[v1.0.3]: https://github.com/tighten/ziggy/compare/v1.0.2...v1.0.3
+[v1.0.2]: https://github.com/tighten/ziggy/compare/v1.0.1...v1.0.2
+[v1.0.1]: https://github.com/tighten/ziggy/compare/v1.0.0...v1.0.1
+[v1.0.0]: https://github.com/tighten/ziggy/compare/0.9.4...v1.0.0
+[v0.9.4]: https://github.com/tighten/ziggy/compare/0.9.3...0.9.4
+[v0.9.3]: https://github.com/tighten/ziggy/compare/v0.9.2...0.9.3
