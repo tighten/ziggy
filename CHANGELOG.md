@@ -8,6 +8,10 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+**Added**
+
+- Add support for appending 'extra' parameters to the query string ([#390](https://github.com/tighten/ziggy/pull/390))
+
 ## [v1.0.4] - 2020-12-06
 
 **Fixed**
