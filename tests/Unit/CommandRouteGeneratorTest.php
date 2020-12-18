@@ -80,9 +80,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_file_with_config_applied()
     {
-        config(['ziggy' => [
-            'except' => ['admin.*'],
-        ]]);
+        config(['ziggy.except' => ['admin.*']]);
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         $router->get('admin', $this->noop())->name('admin.dashboard'); // Excluded, should NOT be present in file
@@ -96,12 +94,10 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_file_for_specific_configured_route_group()
     {
-        config(['ziggy' => [
-            'except' => ['admin.*'],
-            'groups' => [
-                'admin' => ['admin.*'],
-            ],
-        ]]);
+        config([
+            'ziggy.except' => ['admin.*'],
+            'ziggy.groups' => ['admin' => ['admin.*']],
+        ]);
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         $router->get('admin', $this->noop())->name('admin.dashboard');
