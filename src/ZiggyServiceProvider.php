@@ -7,6 +7,11 @@ use Illuminate\View\Compilers\BladeCompiler;
 
 class ZiggyServiceProvider extends ServiceProvider
 {
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__ . '/../config/ziggy.php', 'ziggy');
+    }
+
     public function boot()
     {
         if ($this->app->resolved('blade.compiler')) {
