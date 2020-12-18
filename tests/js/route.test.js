@@ -473,6 +473,18 @@ describe('route()', () => {
 
         deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: '0' });
     });
+
+    test("can append 'extra' string/number parameter to query", () => {
+        // 'posts.index' has no parameters
+         same(route('posts.index', 'extra'), 'https://ziggy.dev/posts?extra=');
+         same(route('posts.index', 1), 'https://ziggy.dev/posts?1=');
+    });
+
+    test("can append 'extra' string/number elements in array of parameters to query", () => {
+        // 'posts.show' has exactly one parameter
+         same(route('posts.show', [1, 2]), 'https://ziggy.dev/posts/1?2=');
+         same(route('posts.show', ['my-first-post', 'foo', 'bar']), 'https://ziggy.dev/posts/my-first-post?foo=&bar=');
+    });
 });
 
 describe('has()', () => {
