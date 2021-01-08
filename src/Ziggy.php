@@ -156,7 +156,9 @@ class Ziggy implements JsonSerializable
             $bindings = [];
 
             foreach ($route->signatureParameters(UrlRoutable::class) as $parameter) {
-                $model = Reflector::getParameterClassName($parameter);
+                $model = class_exists(Reflector::class)
+                    ? Reflector::getParameterClassName($parameter)
+                    : $parameter->getType()->getName();
                 $override = $model === (new ReflectionMethod($model, 'getRouteKeyName'))->class;
 
                 // Avoid booting this model if it doesn't override the default route key name
