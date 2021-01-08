@@ -309,11 +309,15 @@ You can optionally create a webpack alias to make importing Ziggy's core source 
 // webpack.mix.js
 
 // Mix v6
+const path = require('path');
+
 mix.alias({
     ziggy: path.resolve('vendor/tightenco/ziggy/dist'),
 });
 
 // Mix v5
+const path = require('path');
+
 mix.webpackConfig({
     resolve: {
         alias: {
