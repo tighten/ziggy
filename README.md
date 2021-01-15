@@ -484,6 +484,18 @@ A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CS
 @routes(null, 'your-nonce-here')
 ```
 
+#### Using `@routes` with a custom URL
+
+You can also pass a custom base URL to the `@routes` Blade directive to override it regardless of the current request URL.
+
+```php
+// PHP ^8.0
+@routes(url: 'https://your-url-here.com')
+
+// PHP <=7.4
+@routes(null, null, 'https://your-url-here.com')
+```
+
 #### Disabling the `route()` helper
 
 If you only want to use the `@routes` directive to make your app's routes available in JavaScript, but don't need the `route()` helper function, set the `skip-route-function` config value to `true`:

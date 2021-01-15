@@ -206,5 +206,9 @@ HTML,
             "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(null, 'nonce'); ?>",
             app('blade.compiler')->compileString("@routes(null, 'nonce')")
         );
+        $this->assertSame(
+            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(url: 'http://example.com'); ?>",
+            app('blade.compiler')->compileString("@routes(url: 'http://example.com')")
+        );
     }
 }
