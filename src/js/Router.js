@@ -11,11 +11,11 @@ export default class Router extends String {
      * @param {Boolean} absolute - Whether to include the URL origin.
      * @param {Object} config - Ziggy configuration.
      */
-    constructor(name, params, absolute = true, config) {
+    constructor(name, params, absolute, config) {
         super();
 
         this._config = config ?? Ziggy ?? globalThis?.Ziggy;
-        this._config = { ...this._config, absolute };
+        this._config = { ...this._config, absolute: absolute ?? this._config.absolute };
 
         if (name) {
             if (!this._config.routes[name]) {

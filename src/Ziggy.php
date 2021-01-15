@@ -119,6 +119,7 @@ class Ziggy implements JsonSerializable
     {
         return [
             'url' => $this->url,
+            'absolute' => config('ziggy.absolute'),
             'port' => $this->port,
             'defaults' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
