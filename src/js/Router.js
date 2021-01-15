@@ -147,7 +147,7 @@ export default class Router extends String {
         if (Array.isArray(params)) {
             // If the parameters are an array they have to be in order, so we can transform them into
             // an object by keying them with the template segment names in the order they appear
-            params = params.reduce((result, current, i) => ({ ...result, [segments[i]?.name]: current }), {});
+            params = params.reduce((result, current, i) => !!segments[i] ? ({ ...result, [segments[i].name]: current }) : ({ ...result, [current]: '' }), {});
         } else if (
             segments.length === 1
             && !params[segments[0].name]
