@@ -9,6 +9,13 @@ use Tightenco\Ziggy\Ziggy;
 
 class BladeRouteGeneratorTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        BladeRouteGenerator::$generated = false;
+
+        parent::tearDown();
+    }
+
     /** @test */
     public function can_resolve_generator_from_container()
     {
@@ -28,7 +35,6 @@ class BladeRouteGeneratorTest extends TestCase
         $router->post('posts', $this->noop())->name('posts.store');
         $router->getRoutes()->refreshNameLookups();
 
-        BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate();
         $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
 
@@ -46,7 +52,6 @@ class BladeRouteGeneratorTest extends TestCase
         $router->get('posts', $this->noop())->name('posts.index');
         $router->getRoutes()->refreshNameLookups();
 
-        BladeRouteGenerator::$generated = false;
         (new BladeRouteGenerator)->generate();
         $script = (new BladeRouteGenerator)->generate();
 
@@ -110,7 +115,6 @@ class BladeRouteGeneratorTest extends TestCase
             'admin' => ['users.*'],
         ]]);
 
-        BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate('guest');
         $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
 
@@ -142,7 +146,6 @@ class BladeRouteGeneratorTest extends TestCase
     {
         $router = app('router');
         $router->get('posts', $this->noop())->name('posts.index');
-        BladeRouteGenerator::$generated = false;
 
         $json = (new Ziggy)->toJson();
         $routeFunction = file_get_contents(__DIR__ . '/../../dist/index.js');
@@ -181,6 +184,27 @@ HTML,
 </script>
 HTML,
             (new BladeRouteGenerator)->generate()
+        );
+    }
+
+    /** @test */
+    public function can_compile_blade_directive()
+    {
+        $this->assertSame(
+            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(); ?>",
+            app('blade.compiler')->compileString('@routes')
+        );
+        $this->assertSame(
+            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate('admin'); ?>",
+            app('blade.compiler')->compileString("@routes('admin')")
+        );
+        $this->assertSame(
+            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(['admin', 'guest']); ?>",
+            app('blade.compiler')->compileString("@routes(['admin', 'guest'])")
+        );
+        $this->assertSame(
+            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(null, 'nonce'); ?>",
+            app('blade.compiler')->compileString("@routes(null, 'nonce')")
         );
     }
 }
