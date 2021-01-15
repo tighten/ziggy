@@ -481,7 +481,7 @@ To expose multiple groups you can pass an array of group names:
 A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) may block inline scripts, including those output by Ziggy's `@routes` Blade directive. If you have a CSP and are using a nonce to flag safe inline scripts, you can pass the nonce as as the second argument to the `@routes` directive and it will be added to Ziggy's script tag:
 
 ```php
-@routes(false, 'your-nonce-here')
+@routes(null, 'your-nonce-here')
 ```
 
 #### Disabling the `route()` helper
