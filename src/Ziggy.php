@@ -150,7 +150,7 @@ class Ziggy implements JsonSerializable
      */
     private function resolveBindings(array $routes): array
     {
-        $scopedBindings = method_exists(head($routes), 'bindingFields');
+        $scopedBindings = method_exists(head($routes) ?: '', 'bindingFields');
 
         foreach ($routes as $name => $route) {
             $bindings = [];
