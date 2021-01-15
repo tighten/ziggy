@@ -9,6 +9,7 @@ const defaultWindow = {
 
 const defaultZiggy = {
     url: 'https://ziggy.dev',
+    absolute: true,
     port: null,
     defaults: { locale: 'en' },
     routes: {
@@ -144,6 +145,12 @@ describe('route()', () => {
 
     test('can generate a relative URL by passing absolute = false', () => {
         same(route('posts.index', [], false), '/posts');
+    });
+
+    test('can generate relative URLs by default using global config option', () => {
+        global.Ziggy.absolute = false;
+
+        same(route('posts.index'), '/posts');
     });
 
     test('can generate a URL with filled optional parameters', () => {

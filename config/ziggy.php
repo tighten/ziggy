@@ -33,4 +33,9 @@ return [
      */
     'skip-route-function' => false,
 
+    /**
+     * Output all URLs with the protocol and domain included.
+     */
+    'absolute' => true,
+
 ];
