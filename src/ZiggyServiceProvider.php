@@ -25,6 +25,8 @@ class ZiggyServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands(CommandRouteGenerator::class);
         }
+
+        $this->publishes([__DIR__ . '/../config/ziggy.php' => config_path('ziggy.php')], 'ziggy');
     }
 
     protected function registerDirective(BladeCompiler $bladeCompiler)
