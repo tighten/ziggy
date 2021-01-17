@@ -15,11 +15,19 @@ return [
      */
     'path' => 'resources/js/ziggy.js',
 
-    'only' => [],
-
-    'except' => [],
-
+    /**
+     * Define groups of route name patterns to pass to Ziggy
+     * to include or exclude custom groups of routes.
+     */
     'groups' => [],
+
+    /**
+     * Globally include or exclude route names matching the given patterns.
+     *
+     * Enable one (or neither) of these options, NOT both.
+     */
+    // 'only' => [],
+    // 'except' => [],
 
     /**
      * Include a list of each route's middleware in Ziggy's output.
