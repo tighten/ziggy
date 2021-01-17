@@ -5,7 +5,7 @@ return [
     /**
      * Base URL to use for all of Ziggy's route/URL generation.
      *
-     * Uncomment to override globally - defaults to `url('/')`.
+     * Enable to override globally - defaults to `url('/')`.
      */
     // 'url' => env('APP_URL'),
 
