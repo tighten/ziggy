@@ -59,13 +59,6 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
 
-      - name: Cache Composer dependencies
-        uses: actions/cache@v1
-        with:
-          path: ~/.composer/cache/files
-          key: php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-
-
       - name: Cache npm dependencies
         uses: actions/cache@v1
         with:

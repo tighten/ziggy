@@ -8,9 +8,19 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.0.5] - 2021-02-05
+
 **Added**
 
 - Add support for appending 'extra' parameters to the query string ([#390](https://github.com/tighten/ziggy/pull/390))
+
+**Changed**
+
+- Remove source maps ([#395](https://github.com/tighten/ziggy/pull/395))
+
+**Fixed**
+
+- Use Laravel's `Reflector` class to get model parameter class name ([#396](https://github.com/tighten/ziggy/pull/396))
 
 ## [v1.0.4] - 2020-12-06
 
@@ -119,7 +129,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.0.4...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.0.5...HEAD
+[v1.0.5]: https://github.com/tighten/ziggy/compare/v1.0.4...v1.0.5
 [v1.0.4]: https://github.com/tighten/ziggy/compare/v1.0.3...v1.0.4
 [v1.0.3]: https://github.com/tighten/ziggy/compare/v1.0.2...v1.0.3
 [v1.0.2]: https://github.com/tighten/ziggy/compare/v1.0.1...v1.0.2
