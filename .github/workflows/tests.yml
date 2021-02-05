@@ -42,7 +42,8 @@ jobs:
             laravel: 8.*
             testbench: 6.*
             phpunit: 9.*
-          - laravel: dev-master
+          - php: 7.4
+            laravel: dev-master
             testbench: dev-master
             phpunit: 9.*
           - php: 8.0
