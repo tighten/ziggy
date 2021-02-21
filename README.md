@@ -349,13 +349,13 @@ To use the `route()` helper in Vue components, you can use the Vue plugin:
 
 // Vue 2
 import Vue from 'vue'
-import {Vue2Plugin } from 'ziggy';
+import { Vue2Plugin } from 'ziggy';
 
 Vue.use(Vue2Plugin)
 
 // Vue 3
 import { createApp, h } from 'vue';
-import {Vue3Plugin } from 'ziggy';
+import { Vue3Plugin } from 'ziggy';
 import App from './App'
 
 createApp({
