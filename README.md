@@ -342,34 +342,32 @@ route('home', undefined, undefined, Ziggy);
 
 #### Vue
 
-To use the `route()` helper in Vue components, you can add a mixin to make it available globally:
+To use the `route()` helper in Vue components, you can use the Vue plugin:
 
 ```js
 // app.js
 
-import route from 'ziggy';
-import { Ziggy } from './ziggy';
+// Vue 2
+import Vue from 'vue'
+import {Vue2Plugin } from 'ziggy';
 
-Vue.mixin({
-    methods: {
-        route: (name, params, absolute, config = Ziggy) => route(name, params, absolute, config),
-    },
-});
+Vue.use(Vue2Plugin)
+
+// Vue 3
+import { createApp, h } from 'vue';
+import {Vue3Plugin } from 'ziggy';
+import App from './App'
+
+createApp({
+  render: () => h(App),
+}).use(Vue3Plugin)
 ```
-
-> Note: If you include the `@routes` Blade directive in your views, the `route()` helper will already be available globally, including in your Vue app, so you don't need to import `route` or `Ziggy`. For convenience, you can optionally create a simpler version of the above mixin to make `route()` easily accessibly inside your components:
->
-> ```js
-> Vue.mixin({ methods: { route }});
-> ```
 
 Now you can use the method in your Vue components like so:
 
 ```html
 <a class="nav-link" :href="route('home')">Home</a>
 ```
-
-Thanks to [Scott Christianson](https://github.com/Archer70) for originally sharing [this solution](https://github.com/tighten/ziggy/issues/70#issuecomment-369129032)!
 
 #### React
 
