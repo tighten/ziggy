@@ -2,8 +2,10 @@
 
 namespace Tightenco\Ziggy;
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Compilers\BladeCompiler;
+use Laravel\Octane\Events\RequestReceived;
 
 class ZiggyServiceProvider extends ServiceProvider
 {
@@ -16,6 +18,10 @@ class ZiggyServiceProvider extends ServiceProvider
                 $this->registerDirective($bladeCompiler);
             });
         }
+
+        Event::listen(RequestReceived::class, function () {
+            BladeRouteGenerator::$generated = false;
+        });
 
         if ($this->app->runningInConsole()) {
             $this->commands(CommandRouteGenerator::class);
