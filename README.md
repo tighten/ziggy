@@ -13,6 +13,7 @@ Ziggy provides a JavaScript `route()` helper function that works like Laravel's,
 Ziggy supports all versions of Laravel from `5.4` onward, and all modern browsers.
 
 - [**Installation**](#installation)
+- [**Video Tutorial**](#video-tutorial)
 - [**Usage**](#usage)
     - [The `route()` helper](#the-route-helper)
     - [The `Router` class](#the-router-class)
@@ -34,6 +35,9 @@ Ziggy supports all versions of Laravel from `5.4` onward, and all modern browser
 Install Ziggy into your Laravel app with `composer require tightenco/ziggy`.
 
 Add the `@routes` Blade directive to your main layout (_before_ your application's JavaScript), and the `route()` helper function will now be available globally!
+
+## Video Tutorial 
+Video tutorial can be found [here](https://youtu.be/NiAwFKv1oog)
 
 ## Usage
 
