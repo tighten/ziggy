@@ -6,7 +6,7 @@ class BladeRouteGenerator
 {
     public static $generated;
 
-    protected static $payload;
+    private static $payload;
 
     public function generate($group = false, $nonce = false)
     {
