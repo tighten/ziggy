@@ -5,8 +5,7 @@ namespace Tightenco\Ziggy;
 class BladeRouteGenerator
 {
     public static $generated;
-
-    private static $payload;
+    public static $payload;
 
     public function generate($group = false, $nonce = false)
     {
