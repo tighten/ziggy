@@ -5,23 +5,28 @@ namespace Tightenco\Ziggy;
 class BladeRouteGenerator
 {
     public static $generated;
+    public static $payload;
 
     public function generate($group = false, $nonce = false)
     {
-        $payload = new Ziggy($group);
+        if (! static::$payload) {
+            static::$payload = new Ziggy($group);
+        }
+
         $nonce = $nonce ? ' nonce="' . $nonce . '"' : '';
 
         if (static::$generated) {
-            return $this->generateMergeJavascript(json_encode($payload->toArray()['routes']), $nonce);
+            return $this->generateMergeJavascript(json_encode(static::$payload->toArray()['routes']), $nonce);
         }
 
+        $ziggy = static::$payload->toJson();
         $routeFunction = $this->getRouteFunction();
 
         static::$generated = true;
 
         return <<<HTML
 <script type="text/javascript"{$nonce}>
-    const Ziggy = {$payload->toJson()};
+    const Ziggy = {$ziggy};
 
     $routeFunction
 </script>
