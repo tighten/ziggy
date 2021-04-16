@@ -473,6 +473,12 @@ To expose multiple groups you can pass an array of group names:
 
 ## Other
 
+#### TLS/SSL termination and trusted proxies
+
+<!-- Or: What to do if your app is served over `https` but Ziggy's `route()` helper generates `http` URLs -->
+
+If your application is using [TLS/SSL termination](https://en.wikipedia.org/wiki/TLS_termination_proxy) or is behind a load balancer or proxy, or if it's hosted on a service that is, Ziggy may generate URLs with a scheme of `http` instead of `https`, even if your app URL uses `https`. To avoid this happening, set up your Laravel app's `TrustProxies` middleware according to the documentation on [Configuring Trusted Proxies](https://laravel.com/docs/requests#configuring-trusted-proxies).
+
 #### Using `@routes` with a Content Security Policy
 
 A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) may block inline scripts, including those output by Ziggy's `@routes` Blade directive. If you have a CSP and are using a nonce to flag safe inline scripts, you can pass the nonce as as the second argument to the `@routes` directive and it will be added to Ziggy's script tag:
