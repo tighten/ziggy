@@ -342,28 +342,27 @@ route('home', undefined, undefined, Ziggy);
 
 #### Vue
 
-To use the `route()` helper in Vue components, you can use the Vue plugin:
+Ziggy includes a Vue plugin to make it easy to use the `route()` helper throughout your Vue app:
 
 ```js
-// app.js
+import { createApp } from 'vue';
+import { ZiggyVue } from 'ziggy';
+import { Ziggy } from './ziggy';
+import App from './App';
+
+createApp(App).use(ZiggyVue, Ziggy);
 
 // Vue 2
 import Vue from 'vue'
-import { Vue2Plugin } from 'ziggy';
+import { ZiggyVue } from 'ziggy';
+import { Ziggy } from './ziggy';
 
-Vue.use(Vue2Plugin)
-
-// Vue 3
-import { createApp, h } from 'vue';
-import { Vue3Plugin } from 'ziggy';
-import App from './App'
-
-createApp({
-  render: () => h(App),
-}).use(Vue3Plugin)
+Vue.use(ZiggyVue, Ziggy);
 ```
 
-Now you can use the method in your Vue components like so:
+> Note: If you use the `@routes` Blade directive in your views, Ziggy's configuration will already be available globally, so you don't need to import the `Ziggy` config object and pass it into `use()`.
+
+Now you can use `route()` anywhere in your Vue components and templates, like so:
 
 ```html
 <a class="nav-link" :href="route('home')">Home</a>
