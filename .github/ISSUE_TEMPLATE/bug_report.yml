@@ -34,7 +34,7 @@ body:
     attributes:
       label: Ziggy configuration
       render: js
-      description: `console.log(Ziggy)` and paste the relevant parts here.
+      description: '`console.log(Ziggy)` and paste the relevant parts here.'
       placeholder: |
         // E.g.:
         {
