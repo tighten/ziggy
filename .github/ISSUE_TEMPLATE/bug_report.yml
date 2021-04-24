@@ -1,0 +1,61 @@
+name: Bug Report
+description: Report an issue that you think is a bug in Ziggy.
+body:
+  - type: input
+    attributes:
+      label: Ziggy version
+      placeholder: E.g. v1.1.0
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Laravel version
+      placeholder: E.g. v8.38.0
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Description
+      description: Clearly describe the current behaviour you’re seeing, any important steps to reproduce it, and what behaviour you expect instead.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Ziggy call and context
+      render: js
+      description: Where and how you’re using Ziggy when the issue appears.
+      placeholder: |
+        // E.g.:
+        // ApiClient is a wrapper around axios
+        ApiClient.get(route('home', { lang: 'en' }));
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Ziggy configuration
+      render: js
+      description: `console.log(Ziggy)` and paste the relevant parts here.
+      placeholder: |
+        // E.g.:
+        {
+          url: 'https://big-route-model-binding.com',
+          routes: {
+            dashboard: {
+              uri: 'dashboard',
+              methods: ['GET', 'HEAD'],
+            },
+            // etc...
+          },
+        }
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Route definition
+      render: php
+      description: Laravel route definitions of the routes related to the issue.
+      placeholder: |
+        // E.g.:
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    validations:
+      required: true
