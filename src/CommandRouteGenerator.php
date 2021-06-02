@@ -40,9 +40,7 @@ class CommandRouteGenerator extends Command
 const Ziggy = {$payload};
 
 if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
-    for (let name in window.Ziggy.routes) {
-        Ziggy.routes[name] = window.Ziggy.routes[name];
-    }
+    Object.assign(Ziggy.routes, window.Ziggy.routes);
 }
 
 export { Ziggy };
