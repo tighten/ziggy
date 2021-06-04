@@ -793,4 +793,31 @@ describe('current()', () => {
 
         same(route().current(), 'events.venues.index');
     });
+
+    test('can get the current route name without window', () => {
+        global.Ziggy = undefined;
+        global.window = undefined;
+
+        const config = {
+            url: 'https://ziggy.dev',
+            port: null,
+            routes: {
+                'events.venues.show': {
+                    uri: 'events/{event}/venues/{venue}',
+                    methods: ['GET', 'HEAD'],
+                    bindings: {
+                        event: 'id',
+                        venue: 'id',
+                    },
+                },
+            },
+            location: {
+                host: 'ziggy.dev',
+                pathname: '/events/1/venues/2',
+                search: '?user=Jacob&id=9',
+            },
+        };
+
+        same(route(undefined, undefined, undefined, config).current(), 'events.venues.show');
+    });
 });

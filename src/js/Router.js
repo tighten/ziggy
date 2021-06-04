@@ -15,7 +15,7 @@ export default class Router extends String {
         super();
 
         this._config = config ?? Ziggy ?? globalThis?.Ziggy;
-        this._config = { ...this._config, absolute };
+        this._config = { location: {}, ...this._config, absolute };
 
         if (name) {
             if (!this._config.routes[name]) {
@@ -70,8 +70,8 @@ export default class Router extends String {
      */
     current(name, params) {
         const url = this._config.absolute
-            ? window.location.host + window.location.pathname
-            : window.location.pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/');
+            ? this.location.host + this.location.pathname
+            : this.location.pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/');
 
         // Find the first route that matches the current URL
         const [current, route] = Object.entries(this._config.routes).find(
@@ -98,6 +98,23 @@ export default class Router extends String {
         // Check that all passed parameters match their values in the current window URL
         // Use weak equality because all values in the current window URL will be strings
         return Object.entries(params).every(([key, value]) => routeParams[key] == value);
+    }
+
+    /**
+     * Get the current location
+     *
+     * @return {Object}
+     */
+    get location() {
+        const defaultHost = typeof window === 'undefined' ? '' : window.location.host || '';
+        const defaultPathname = typeof window === 'undefined' ? '' : window.location.pathname || '';
+        const defaultSearch = typeof window === 'undefined' ? '' : window.location.search || '';
+
+        return {
+            host: this._config.location.host || defaultHost,
+            pathname: this._config.location.pathname || defaultPathname,
+            search: this._config.location.search || defaultSearch,
+        };
     }
 
     /**
@@ -223,7 +240,7 @@ export default class Router extends String {
      * @return {Object} Parameters.
      */
     _dehydrate(route) {
-        let pathname = window.location.pathname
+        let pathname = this.location.pathname
             // If this Laravel app is in a subdirectory, trim the subdirectory from the path
             .replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '')
             .replace(/^\/+/, '');
@@ -244,9 +261,9 @@ export default class Router extends String {
         }
 
         return {
-            ...dehydrate(window.location.host, route.domain, '.'), // Domain parameters
+            ...dehydrate(this.location.host, route.domain, '.'), // Domain parameters
             ...dehydrate(pathname, route.uri, '/'), // Path parameters
-            ...parse(window.location.search?.replace(/^\?/, '')), // Query parameters
+            ...parse(this.location.search?.replace(/^\?/, '')), // Query parameters
         };
     }
 
