@@ -106,14 +106,12 @@ export default class Router extends String {
      * @return {Object}
      */
     get location() {
-        const defaultHost = typeof window === 'undefined' ? '' : window.location.host || '';
-        const defaultPathname = typeof window === 'undefined' ? '' : window.location.pathname || '';
-        const defaultSearch = typeof window === 'undefined' ? '' : window.location.search || '';
+        const { host = '', pathname = '', search = '' } = typeof window !== 'undefined' ? window.location : {};
 
         return {
-            host: this._config.location.host || defaultHost,
-            pathname: this._config.location.pathname || defaultPathname,
-            search: this._config.location.search || defaultSearch,
+            host: this._config.location?.host ?? host,
+            pathname: this._config.location?.pathname ?? pathname,
+            search: this._config.location?.search ?? search,
         };
     }
 
