@@ -70,8 +70,8 @@ export default class Router extends String {
      */
     current(name, params) {
         const url = this._config.absolute
-            ? this.location.host + this.location.pathname
-            : this.location.pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/');
+            ? this._location.host + this._location.pathname
+            : this._location.pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/');
 
         // Find the first route that matches the current URL
         const [current, route] = Object.entries(this._config.routes).find(
@@ -105,7 +105,7 @@ export default class Router extends String {
      *
      * @return {Object}
      */
-    get location() {
+    get _location() {
         const { host = '', pathname = '', search = '' } = typeof window !== 'undefined' ? window.location : {};
 
         return {
@@ -238,7 +238,7 @@ export default class Router extends String {
      * @return {Object} Parameters.
      */
     _dehydrate(route) {
-        let pathname = this.location.pathname
+        let pathname = this._location.pathname
             // If this Laravel app is in a subdirectory, trim the subdirectory from the path
             .replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '')
             .replace(/^\/+/, '');
@@ -259,9 +259,9 @@ export default class Router extends String {
         }
 
         return {
-            ...dehydrate(this.location.host, route.domain, '.'), // Domain parameters
+            ...dehydrate(this._location.host, route.domain, '.'), // Domain parameters
             ...dehydrate(pathname, route.uri, '/'), // Path parameters
-            ...parse(this.location.search?.replace(/^\?/, '')), // Query parameters
+            ...parse(this._location.search?.replace(/^\?/, '')), // Query parameters
         };
     }
 
