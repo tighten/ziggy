@@ -15,7 +15,7 @@ export default class Router extends String {
         super();
 
         this._config = config ?? Ziggy ?? globalThis?.Ziggy;
-        this._config = { location: {}, ...this._config, absolute };
+        this._config = { ...this._config, absolute };
 
         if (name) {
             if (!this._config.routes[name]) {
