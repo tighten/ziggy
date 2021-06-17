@@ -83,6 +83,44 @@ class Ziggy implements JsonSerializable
     }
 
     /**
+     * Check if route names are filtered
+     */
+    private function checkFilters($routeName, $filterType) {
+
+        if (config()->has('ziggy.except') && config()->has('ziggy.only')) {
+            return $filterType === 'only';
+        }
+
+        if (config()->has('ziggy.except') && $filterType === 'except') {
+            $exclusions = config('ziggy.except');
+            $isExcluded = false;
+
+            foreach ($exclusions as $exclusion) {
+                if (Str::is($exclusion, $routeName)) {
+                    $isExcluded = true;
+                };
+            }
+
+            return $isExcluded;
+        }
+
+        if (config()->has('ziggy.only') && $filterType === 'only') {
+            $inclusions = config('ziggy.only');
+            $isIncluded = false;
+
+            foreach ($inclusions as $inclusion) {
+                if (Str::is($inclusion, $routeName)) {
+                    $isIncluded = true;
+                };
+            }
+
+            return $isIncluded;
+        }
+
+        return false;
+    }
+
+    /**
      * Get a list of the application's named routes, keyed by their names.
      */
     private function nameKeyedRoutes()
@@ -90,6 +128,12 @@ class Ziggy implements JsonSerializable
         [$fallbacks, $routes] = collect(app('router')->getRoutes()->getRoutesByName())
             ->reject(function ($route) {
                 return Str::startsWith($route->getName(), 'generated::');
+            })
+            ->reject(function ($route) {
+                return $this->checkFilters($route->getName(), 'except');
+            })
+            ->filter(function ($route) {
+                return $this->checkFilters($route->getName(), 'only');
             })
             ->partition(function ($route) {
                 return $route->isFallback;
