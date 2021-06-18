@@ -40,9 +40,7 @@ HTML;
     (function () {
         const routes = {$json};
 
-        for (let name in routes) {
-            Ziggy.routes[name] = routes[name];
-        }
+        Object.assign(Ziggy.routes, routes);
     })();
 </script>
 HTML;
