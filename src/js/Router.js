@@ -70,8 +70,8 @@ export default class Router extends String {
      */
     current(name, params) {
         const url = this._config.absolute
-            ? window.location.host + window.location.pathname
-            : window.location.pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/');
+            ? this._location.host + this._location.pathname
+            : this._location.pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/');
 
         // Find the first route that matches the current URL
         const [current, route] = Object.entries(this._config.routes).find(
@@ -98,6 +98,21 @@ export default class Router extends String {
         // Check that all passed parameters match their values in the current window URL
         // Use weak equality because all values in the current window URL will be strings
         return Object.entries(params).every(([key, value]) => routeParams[key] == value);
+    }
+
+    /**
+     * Get the current location
+     *
+     * @return {Object}
+     */
+    get _location() {
+        const { host = '', pathname = '', search = '' } = typeof window !== 'undefined' ? window.location : {};
+
+        return {
+            host: this._config.location?.host ?? host,
+            pathname: this._config.location?.pathname ?? pathname,
+            search: this._config.location?.search ?? search,
+        };
     }
 
     /**
@@ -223,7 +238,7 @@ export default class Router extends String {
      * @return {Object} Parameters.
      */
     _dehydrate(route) {
-        let pathname = window.location.pathname
+        let pathname = this._location.pathname
             // If this Laravel app is in a subdirectory, trim the subdirectory from the path
             .replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '')
             .replace(/^\/+/, '');
@@ -244,9 +259,9 @@ export default class Router extends String {
         }
 
         return {
-            ...dehydrate(window.location.host, route.domain, '.'), // Domain parameters
+            ...dehydrate(this._location.host, route.domain, '.'), // Domain parameters
             ...dehydrate(pathname, route.uri, '/'), // Path parameters
-            ...parse(window.location.search?.replace(/^\?/, '')), // Query parameters
+            ...parse(this._location.search?.replace(/^\?/, '')), // Query parameters
         };
     }
 
