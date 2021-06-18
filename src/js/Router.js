@@ -101,7 +101,8 @@ export default class Router extends String {
     }
 
     /**
-     * Get the current location
+     * Get an object representing the current location (by default this will be
+     * the JavaScript `window` global if it's available).
      *
      * @return {Object}
      */
