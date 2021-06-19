@@ -8,6 +8,12 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.3.1] - 2021-06-19
+
+**Changed**
+
+- Use `Object.assign()` to merge routes ([#429](https://github.com/tighten/ziggy/pull/429))
+
 ## [v1.3.0] - 2021-06-17
 
 **Added**
@@ -147,7 +153,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.3.1...HEAD
+[v1.3.1]: https://github.com/tighten/ziggy/compare/v1.3.0...v1.3.1
 [v1.3.0]: https://github.com/tighten/ziggy/compare/v1.2.0...v1.3.0
 [v1.2.0]: https://github.com/tighten/ziggy/compare/v1.1.0...v1.2.0
 [v1.1.0]: https://github.com/tighten/ziggy/compare/v1.0.5...v1.1.0
