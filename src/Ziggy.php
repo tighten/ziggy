@@ -82,18 +82,38 @@ class Ziggy implements JsonSerializable
         return $this;
     }
 
-    /**
+     /**
      * Check if route names are filtered
      */
-    private function checkFilters($routeName, $filterType) {
+    private function checkFilters($routeName)
+    {
+        $isExcluded = false;
 
+        // return unfiltered routes if user set both config options.
         if (config()->has('ziggy.except') && config()->has('ziggy.only')) {
-            return $filterType === 'only';
+            return $isExcluded;
         }
 
-        if (config()->has('ziggy.except') && $filterType === 'except') {
+        $groupInclusions = [];
+
+        // collect any route names included via groups
+        if (config()->has('ziggy.groups')) {
+            $groups = config('ziggy.groups');
+
+            foreach ($groups as $group) {
+                $groupInclusions = array_merge($groupInclusions, $group);
+            }
+        }
+
+        // filter out any routes in except, unless included in groups
+        if (config()->has('ziggy.except')) {
             $exclusions = config('ziggy.except');
-            $isExcluded = false;
+
+            $exclusions = Arr::where($exclusions, function ($value, $key) use ($groupInclusions) {
+                foreach ($groupInclusions as $group) {
+                    return ($value !== $group);
+                }
+            });
 
             foreach ($exclusions as $exclusion) {
                 if (Str::is($exclusion, $routeName)) {
@@ -104,20 +124,21 @@ class Ziggy implements JsonSerializable
             return $isExcluded;
         }
 
-        if (config()->has('ziggy.only') && $filterType === 'only') {
-            $inclusions = config('ziggy.only');
-            $isIncluded = false;
+        // filter out any routes not in only or groups
+        if (config()->has('ziggy.only')) {
+            $inclusions = array_merge(config('ziggy.only'), $groupInclusions);
+            $isExcluded = true;
 
             foreach ($inclusions as $inclusion) {
                 if (Str::is($inclusion, $routeName)) {
-                    $isIncluded = true;
+                    $isExcluded = false;
                 };
             }
 
-            return $isIncluded;
+            return $isExcluded;
         }
 
-        return false;
+        return $isExcluded;
     }
 
     /**
@@ -130,14 +151,12 @@ class Ziggy implements JsonSerializable
                 return Str::startsWith($route->getName(), 'generated::');
             })
             ->reject(function ($route) {
-                return $this->checkFilters($route->getName(), 'except');
-            })
-            ->filter(function ($route) {
-                return $this->checkFilters($route->getName(), 'only');
+                return $this->checkFilters($route->getName());
             })
             ->partition(function ($route) {
                 return $route->isFallback;
             });
+
 
         $bindings = $this->resolveBindings($routes->toArray());
 
