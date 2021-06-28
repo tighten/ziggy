@@ -109,11 +109,13 @@ class Ziggy implements JsonSerializable
         if (config()->has('ziggy.except')) {
             $exclusions = config('ziggy.except');
 
-            $exclusions = Arr::where($exclusions, function ($value, $key) use ($groupInclusions) {
-                foreach ($groupInclusions as $group) {
-                    return ($value !== $group);
-                }
-            });
+            if (!empty($groupInclusions)) {
+                $exclusions = Arr::where($exclusions, function ($value) use ($groupInclusions) {
+                    foreach ($groupInclusions as $group) {
+                        return ($value !== $group);
+                    }
+                });
+            }
 
             foreach ($exclusions as $exclusion) {
                 if (Str::is($exclusion, $routeName)) {
