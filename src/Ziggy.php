@@ -111,9 +111,7 @@ class Ziggy implements JsonSerializable
 
             if (!empty($groupInclusions)) {
                 $exclusions = Arr::where($exclusions, function ($value) use ($groupInclusions) {
-                    foreach ($groupInclusions as $group) {
-                        return ($value !== $group);
-                    }
+                    return !in_array($value, $groupInclusions);
                 });
             }
 
