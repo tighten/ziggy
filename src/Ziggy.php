@@ -83,9 +83,9 @@ class Ziggy implements JsonSerializable
     }
 
      /**
-     * Check if route names are filtered
+     * Check if route name is excluded
      */
-    private function checkFilters($routeName)
+    private function isExcluded($routeName)
     {
         $isExcluded = false;
 
@@ -151,7 +151,7 @@ class Ziggy implements JsonSerializable
                 return Str::startsWith($route->getName(), 'generated::');
             })
             ->reject(function ($route) {
-                return $this->checkFilters($route->getName());
+                return $this->isExcluded($route->getName());
             })
             ->partition(function ($route) {
                 return $route->isFallback;
