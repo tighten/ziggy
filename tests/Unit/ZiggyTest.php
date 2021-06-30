@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use Tightenco\Ziggy\Ziggy;
+use ReflectionClass;
 
 class ZiggyTest extends TestCase
 {
@@ -507,4 +508,114 @@ class ZiggyTest extends TestCase
         $response->assertSuccessful();
         $this->assertSame((new Ziggy)->toJson(), $response->getContent());
     }
+
+     public function isExcluded($routeName)
+     {
+         $class = new Ziggy;
+         $reflection = new ReflectionClass($class);
+
+         $method = $reflection->getMethod('isExcluded');
+         $method->setAccessible(true);
+
+         return $method->invokeArgs($class, [$routeName]);
+     }
+
+    /** @test */
+    public function isExcluded_can_identify_excluded_route_via_except()
+    {
+        config(['ziggy' => [
+            'except' => ['exclude.*'],
+        ]]);
+
+        // isExcluded should return true if a route is excluded, and false otherwise
+        $expected = $this->isExcluded('exclude.index');
+        $this->assertEquals(true, $expected);
+    }
+
+    /** @test */
+    public function isExcluded_can_identify_excluded_route_via_only()
+    {
+        config(['ziggy' => [
+            'only' => ['include.*'],
+        ]]);
+
+        $expected = $this->isExcluded('exclude.index');
+        $this->assertEquals(true, $expected);
+    }
+
+    /** @test */
+    public function isExcluded_can_identify_included_route_via_only()
+    {
+        config(['ziggy' => [
+            'only' => ['include.*'],
+        ]]);
+
+        $expected = $this->isExcluded('include.index');
+        $this->assertEquals(false, $expected);
+    }
+
+    /** @test */
+    public function isExcluded_can_identify_included_route_via_groups()
+    {
+        config(['ziggy' => [
+            'groups' => [
+                'group' => ['include.*'],
+            ],
+        ]]);
+
+        $expected = $this->isExcluded('include.index');
+        $this->assertEquals(false, $expected);
+    }
+
+     /** @test */
+     public function isExcluded_can_identify_included_route_via_groups_when_only_is_also_set()
+     {
+         config(['ziggy' => [
+             'only' => ['include.*'],
+             'groups' => [
+                 'group' => ['alsoInclude.*'],
+             ],
+         ]]);
+
+         $expected = $this->isExcluded('alsoInclude.index');
+         $this->assertEquals(false, $expected);
+     }
+
+
+    /** @test */
+    public function isExcluded_can_identify_route_in_both_excluded_and_groups_as_included()
+    {
+        config(['ziggy' => [
+            'except' => ['exclude.*', 'include.*'],
+            'groups' => [
+                'group' => ['include.*'],
+            ],
+        ]]);
+
+        $expected = $this->isExcluded('include.index');
+        $this->assertEquals(false, $expected);
+
+        $expected = $this->isExcluded('exclude.index');
+        $this->assertEquals(true, $expected);
+    }
+
+    /** @test */
+    public function isExcluded_can_ignore_excluded_route_when_both_except_and_only_are_set()
+    {
+        config(['ziggy' => [
+            'except' => ['exclude.*'],
+            'only' => ['include.*'],
+        ]]);
+
+        $expected = $this->isExcluded('exclude.index');
+        $this->assertEquals(false, $expected);
+    }
+
+    /** @test */
+    public function isExcluded_can_ignore_route_when_no_config_set()
+    {
+        $expected = $this->isExcluded('include.index');
+        $this->assertEquals(false, $expected);
+    }
+
 }
