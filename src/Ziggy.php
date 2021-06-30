@@ -88,57 +88,65 @@ class Ziggy implements JsonSerializable
     private function isExcluded($routeName)
     {
         $isExcluded = false;
+        $groups = $this->getGroups();
 
         // return unfiltered routes if user set both config options
         if (config()->has('ziggy.except') && config()->has('ziggy.only')) {
             return $isExcluded;
         }
 
-        $groupInclusions = [];
-
-        // collect any route names included via groups
-        if (config()->has('ziggy.groups')) {
-            $groups = config('ziggy.groups');
-
-            foreach ($groups as $group) {
-                $groupInclusions = array_merge($groupInclusions, $group);
-            }
-        }
-
         // exclude any routes in except, unless included in groups
         if (config()->has('ziggy.except')) {
             $exclusions = config('ziggy.except');
 
-            if (!empty($groupInclusions)) {
-                $exclusions = Arr::where($exclusions, function ($exclusion) use ($groupInclusions) {
-                    return !in_array($exclusion, $groupInclusions);
+            if (!empty($groups)) {
+                $exclusions = Arr::where($exclusions, function ($exclusion) use ($groups) {
+                    return !in_array($exclusion, $groups);
                 });
             }
 
-            foreach ($exclusions as $exclusion) {
-                if (Str::is($exclusion, $routeName)) {
-                    $isExcluded = true;
-                }
-            }
+            $isExcluded = $this->inRoutes($exclusions, $routeName);
 
             return $isExcluded;
         }
 
         // exclude any routes not in only or groups
         if (config()->has('ziggy.only')) {
-            $inclusions = array_merge(config('ziggy.only'), $groupInclusions);
-            $isExcluded = true;
-
-            foreach ($inclusions as $inclusion) {
-                if (Str::is($inclusion, $routeName)) {
-                    $isExcluded = false;
-                }
-            }
+            $inclusions = array_merge(config('ziggy.only'), $groups);
+            $isExcluded = !$this->inRoutes($inclusions, $routeName);
 
             return $isExcluded;
         }
 
         return $isExcluded;
+    }
+
+    // returns flat array of groups
+    private function getGroups()
+    {
+        $groups = [];
+
+        // collect any routes included via groups
+        if (config()->has('ziggy.groups')) {
+            $groups = config('ziggy.groups');
+
+            foreach ($groups as $group) {
+                $groups = array_merge($groups, $group);
+            }
+        }
+
+        return $groups;
+    }
+
+    private function inRoutes($routes, $routeName)
+    {
+        foreach ($routes as $route) {
+            if (Str::is($route, $routeName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
