@@ -89,7 +89,7 @@ class Ziggy implements JsonSerializable
     {
         $isExcluded = false;
 
-        // return unfiltered routes if user set both config options.
+        // return unfiltered routes if user set both config options
         if (config()->has('ziggy.except') && config()->has('ziggy.only')) {
             return $isExcluded;
         }
@@ -105,26 +105,26 @@ class Ziggy implements JsonSerializable
             }
         }
 
-        // filter out any routes in except, unless included in groups
+        // exclude any routes in except, unless included in groups
         if (config()->has('ziggy.except')) {
             $exclusions = config('ziggy.except');
 
             if (!empty($groupInclusions)) {
-                $exclusions = Arr::where($exclusions, function ($value) use ($groupInclusions) {
-                    return !in_array($value, $groupInclusions);
+                $exclusions = Arr::where($exclusions, function ($exclusion) use ($groupInclusions) {
+                    return !in_array($exclusion, $groupInclusions);
                 });
             }
 
             foreach ($exclusions as $exclusion) {
                 if (Str::is($exclusion, $routeName)) {
                     $isExcluded = true;
-                };
+                }
             }
 
             return $isExcluded;
         }
 
-        // filter out any routes not in only or groups
+        // exclude any routes not in only or groups
         if (config()->has('ziggy.only')) {
             $inclusions = array_merge(config('ziggy.only'), $groupInclusions);
             $isExcluded = true;
@@ -132,7 +132,7 @@ class Ziggy implements JsonSerializable
             foreach ($inclusions as $inclusion) {
                 if (Str::is($inclusion, $routeName)) {
                     $isExcluded = false;
-                };
+                }
             }
 
             return $isExcluded;
