@@ -45,7 +45,7 @@
         "watch": "npm run build watch",
         "build:npm": "microbundle --name route --format modern,es,umd --no-sourcemap",
         "build:npm:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --no-sourcemap",
-        "test": "jest",
+        "test": "jest --verbose",
         "prepublishOnly": "npm run build:npm && npm run build:npm:vue"
     },
     "mangle": {
@@ -57,7 +57,7 @@
     "devDependencies": {
         "@babel/preset-env": "^7.11.0",
         "babel-preset-power-assert": "^3.0.0",
-        "jest": "^26.2.2",
+        "jest": "^27.0.6",
         "microbundle": "^0.12.3",
         "power-assert": "^1.6.1"
     }
