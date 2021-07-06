@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import assert, { deepEqual, strictEqual as same, throws } from 'assert';
 import route from '../../src/js';
 
