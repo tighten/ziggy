@@ -123,6 +123,10 @@ const defaultZiggy = {
             uri: 'download/file{extension?}',
             methods: ['GET', 'HEAD'],
         },
+        'pages.requiredExtension': {
+            uri: 'strict-download/file{extension}',
+            methods: ['GET', 'HEAD'],
+        },
         'pages': {
             uri: '{page}',
             methods: ['GET', 'HEAD'],
@@ -495,10 +499,16 @@ describe('route()', () => {
     });
 
     test('can generate a URL for a route with parameters inside individual segments', () => {
+        same(route('pages.requiredExtension', 'x'), 'https://ziggy.dev/strict-download/filex');
+        same(route('pages.requiredExtension', '.html'), 'https://ziggy.dev/strict-download/file.html');
+        same(route('pages.requiredExtension', { extension: '.pdf' }), 'https://ziggy.dev/strict-download/file.pdf');
+    });
+
+    test('can generate a URL for a route with optional parameters inside individual segments', () => {
         same(route('pages.optionalExtension'), 'https://ziggy.dev/download/file');
         same(route('pages.optionalExtension', '.html'), 'https://ziggy.dev/download/file.html');
         same(route('pages.optionalExtension', { extension: '.pdf' }), 'https://ziggy.dev/download/file.pdf');
-    })
+    });
 });
 
 describe('has()', () => {
@@ -629,6 +639,26 @@ describe('current()', () => {
         same(route().current('pages.optional', { page: '' }), true);
         same(route().current('pages.optional', { page: undefined }), true);
         same(route().current('pages.optional', { page: 'foo' }), false);
+    });
+
+    test('can check the current route name at a URL with a non-delimited parameter', () => {
+        global.window.location.pathname = '/strict-download/file.html';
+
+        same(route().current(), 'pages.requiredExtension');
+        same(route().current('pages.requiredExtension', ''), false);
+        same(route().current('pages.requiredExtension*', ''), false);
+        same(route().current('pages.requiredExtension', '.html'), true);
+        same(route().current('pages.requiredExtension*', '.html'), true);
+        same(route().current('pages.requiredExtension', ['']), false);
+        same(route().current('pages.requiredExtension*', ['']), false);
+        same(route().current('pages.requiredExtension', ['.html']), true);
+        same(route().current('pages.requiredExtension*', ['.html']), true);
+        same(route().current('pages.requiredExtension', { extension: '' }), false);
+        same(route().current('pages.requiredExtension*', { extension: '' }), false);
+        same(route().current('pages.requiredExtension', { extension: '.pdf' }), false);
+        same(route().current('pages.requiredExtension*', { extension: '.pdf' }), false);
+        same(route().current('pages.requiredExtension', { extension: '.html' }), true);
+        same(route().current('pages.requiredExtension*', { extension: '.html' }), true);
     });
 
     test('can check the current route name at a URL with a missing non-delimited optional parameter', () => {
