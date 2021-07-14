@@ -246,7 +246,7 @@ export default class Router extends String {
 
         // Given part of a valid 'hydrated' URL containing all its parameter values,
         // a route template, and a delimiter, extract the parameters as an object
-        // E.g. dehydrate('events/{event}/{venue}', 'events/2/chicago', '/'); // { event: 2, venue: 'chicago' }
+        // E.g. dehydrate('events/2/chicago', 'events/{event}/{venue}', '/'); // { event: 2, venue: 'chicago' }
         const dehydrate = (hydrated, template = '', delimiter) => {
             const [values, segments] = [hydrated, template].map(s => s.split(delimiter));
 
