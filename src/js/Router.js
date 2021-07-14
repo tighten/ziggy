@@ -253,8 +253,13 @@ export default class Router extends String {
             return segments.reduce((result, current, i) => {
                 // Only include template segments that are route parameters
                 // AND have a value present in the passed hydrated string
-                return /^{[^}?]+\??}$/.test(current) && values[i]
-                    ? { ...result, [current.replace(/^{|\??}$/g, '')]: values[i] }
+                return /{[^}?]+\??}/.test(current) && values[i]
+                    ? {
+                        ...result,
+                        [current.replace(/.*{|\??}.*/g, '')]: values[i]
+                            .replace(current.match(/^[^{]*/g), '')
+                            .replace(current.match(/[^}]*$/g), ''),
+                    }
                     : result;
             }, {});
         }

@@ -60,6 +60,7 @@ export default class Route {
         // by replacing its parameter segments with matchers for parameter values
         const pattern = this.template
             .replace(/\/{[^}?]*\?}/g, '(\/[^/?]+)?')
+            .replace(/{[^}?]*\?}/g, '([^/?]+)?')
             .replace(/{[^}]+}/g, '[^/?]+')
             .replace(/^\w+:\/\//, '');
 
