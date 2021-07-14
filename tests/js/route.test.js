@@ -493,6 +493,12 @@ describe('route()', () => {
          same(route('posts.show', [1, 2]), 'https://ziggy.dev/posts/1?2=');
          same(route('posts.show', ['my-first-post', 'foo', 'bar']), 'https://ziggy.dev/posts/my-first-post?foo=&bar=');
     });
+
+    test('can generate a URL for a route with parameters inside individual segments', () => {
+        same(route('pages.optionalExtension'), 'https://ziggy.dev/download/file');
+        same(route('pages.optionalExtension', '.html'), 'https://ziggy.dev/download/file.html');
+        same(route('pages.optionalExtension', { extension: '.pdf' }), 'https://ziggy.dev/download/file.pdf');
+    })
 });
 
 describe('has()', () => {
