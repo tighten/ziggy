@@ -3,6 +3,7 @@
 ## Upgrading from `1.x` to `2.x`
 
 - The package namespace has changed from `Tightenco\Ziggy` to `Tighten\Ziggy`. Note that the Composer package name, `tightenco/ziggy`, has not changed.
+- The `makeDirectory` method of the `CommandRouteGenerator` class has been changed from `protected` to `private`. Overriding it is no longer supported.
 
 ## Upgrading from `0.9.x` to `1.x`
 
