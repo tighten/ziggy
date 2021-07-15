@@ -508,7 +508,7 @@ Ziggy can easily return its config object as JSON from an endpoint in your Larav
 ```php
 // routes/api.php
 
-use Tightenco\Ziggy\Ziggy;
+use Tighten\Ziggy\Ziggy;
 
 Route::get('api/ziggy', fn () => response()->json(new Ziggy));
 ```

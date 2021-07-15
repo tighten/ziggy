@@ -1,6 +1,6 @@
 <?php
 
-namespace Tightenco\Ziggy;
+namespace Tighten\Ziggy;
 
 class BladeRouteGenerator
 {

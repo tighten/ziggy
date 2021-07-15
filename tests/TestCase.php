@@ -5,7 +5,7 @@ namespace Tests;
 use Closure;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use PHPUnit\Framework\Constraint\StringContains;
-use Tightenco\Ziggy\ZiggyServiceProvider;
+use Tighten\Ziggy\ZiggyServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {

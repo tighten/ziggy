@@ -1,10 +1,9 @@
 <?php
 
-namespace Tightenco\Ziggy;
+namespace Tighten\Ziggy;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Tightenco\Ziggy\Ziggy;
 
 class CommandRouteGenerator extends Command
 {

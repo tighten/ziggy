@@ -4,8 +4,8 @@ namespace Tests\Unit;
 
 use Illuminate\Support\Str;
 use Tests\TestCase;
-use Tightenco\Ziggy\BladeRouteGenerator;
-use Tightenco\Ziggy\Ziggy;
+use Tighten\Ziggy\BladeRouteGenerator;
+use Tighten\Ziggy\Ziggy;
 
 class BladeRouteGeneratorTest extends TestCase
 {

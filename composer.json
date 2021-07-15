@@ -23,7 +23,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Tightenco\\Ziggy\\": "src/"
+            "Tighten\\Ziggy\\": "src/"
         }
     },
     "autoload-dev": {
@@ -38,7 +38,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Tightenco\\Ziggy\\ZiggyServiceProvider"
+                "Tighten\\Ziggy\\ZiggyServiceProvider"
             ]
         }
     },

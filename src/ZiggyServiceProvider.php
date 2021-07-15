@@ -1,6 +1,6 @@
 <?php
 
-namespace Tightenco\Ziggy;
+namespace Tighten\Ziggy;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
