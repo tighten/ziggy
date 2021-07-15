@@ -269,11 +269,4 @@ export default class Router extends String {
     valueOf() {
         return this.toString();
     }
-
-    /**
-     * @deprecated since v1.0, use `has()` instead.
-     */
-    check(name) {
-        return this.has(name);
-    }
 }

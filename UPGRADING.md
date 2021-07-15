@@ -4,6 +4,8 @@
 
 - The package namespace has changed from `Tightenco\Ziggy` to `Tighten\Ziggy`. Note that the Composer package name, `tightenco/ziggy`, has not changed.
 - The `makeDirectory` method of the `CommandRouteGenerator` class has been changed from `protected` to `private`. Overriding it is no longer supported.
+- The JavaScript module now provides named exports only, and no default export. In practice, this means you should replace `import route from 'ziggy'` with `import { route } from 'ziggy'`. The Vue plugin is now also part of the default module, so instead of importing it separately from `'ziggy/vue'`, you can import it alongside the `route()` function: `import { route, ZiggyVue } from 'ziggy'`.
+- The previously deprecated JavaScript `check()` method (e.g. `route().check('home')`) has been removed. Use `has()` instead.
 
 ## Upgrading from `0.9.x` to `1.x`
 
