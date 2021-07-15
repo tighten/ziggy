@@ -189,4 +189,31 @@ HTML,
             (new BladeRouteGenerator)->generate()
         );
     }
+
+    /** @test */
+    public function can_compile_blade_directive()
+    {
+        $this->assertSame(
+            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(); ?>",
+            app('blade.compiler')->compileString('@routes')
+        );
+
+        $this->assertSame(
+            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate('admin'); ?>",
+            app('blade.compiler')->compileString("@routes('admin')")
+        );
+        $this->assertSame(
+            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(['admin', 'guest']); ?>",
+            app('blade.compiler')->compileString("@routes(['admin', 'guest'])")
+        );
+
+        $this->assertSame(
+            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(null, 'nonce'); ?>",
+            app('blade.compiler')->compileString("@routes(null, 'nonce')")
+        );
+        $this->assertSame(
+            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(nonce: 'nonce'); ?>",
+            app('blade.compiler')->compileString("@routes(nonce: 'nonce')")
+        );
+    }
 }

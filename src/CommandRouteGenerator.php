@@ -7,9 +7,12 @@ use Illuminate\Filesystem\Filesystem;
 
 class CommandRouteGenerator extends Command
 {
-    protected $signature = 'ziggy:generate {path=./resources/js/ziggy.js} {--url=} {--group=}';
+    protected $signature = 'ziggy:generate
+                            {path=./resources/js/ziggy.js : Path to the generated JavaScript file.}
+                            {--url=}
+                            {--group=}';
 
-    protected $description = 'Generate js file for including in build process';
+    protected $description = 'Generate a JavaScript file containing Ziggy’s routes and configuration.';
 
     protected $files;
 
