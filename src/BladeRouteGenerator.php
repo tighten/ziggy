@@ -7,7 +7,7 @@ class BladeRouteGenerator
     public static $generated;
     public static $payload;
 
-    public function generate($group = false, $nonce = false)
+    public function generate($group = null, $nonce = null)
     {
         if (! static::$payload) {
             static::$payload = new Ziggy($group);

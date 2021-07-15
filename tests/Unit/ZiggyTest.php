@@ -92,9 +92,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function can_set_included_routes_using_only_config()
     {
-        config(['ziggy' => [
-            'only' => ['posts.s*', 'home'],
-        ]]);
+        config(['ziggy.only' => ['posts.s*', 'home']]);
         $routes = (new Ziggy)->toArray()['routes'];
 
         $expected = [
@@ -118,9 +116,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function can_set_excluded_routes_using_except_config()
     {
-        config(['ziggy' => [
-            'except' => ['posts.s*', 'home', 'admin.*'],
-        ]]);
+        config(['ziggy.except' => ['posts.s*', 'home', 'admin.*']]);
         $routes = (new Ziggy)->toArray()['routes'];
 
         $expected = [
@@ -142,10 +138,10 @@ class ZiggyTest extends TestCase
     /** @test */
     public function returns_unfiltered_routes_when_both_only_and_except_configs_set()
     {
-        config(['ziggy' => [
-            'except' => ['posts.s*'],
-            'only' => ['home'],
-        ]]);
+        config([
+            'ziggy.except' => ['posts.s*'],
+            'ziggy.only' => ['home'],
+        ]);
         $routes = (new Ziggy)->toArray()['routes'];
 
         $expected = [
@@ -183,11 +179,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function can_set_included_routes_using_groups_config()
     {
-        config(['ziggy' => [
-            'groups' => [
-                'authors' => ['home', 'posts.*'],
-            ],
-        ]]);
+        config(['ziggy.groups' => ['authors' => ['home', 'posts.*']]]);
         $routes = (new Ziggy('authors'))->toArray()['routes'];
 
         $expected = [
@@ -253,9 +245,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function can_include_middleware()
     {
-        config(['ziggy' => [
-            'middleware' => true,
-        ]]);
+        config(['ziggy.middleware' => true]);
         $routes = (new Ziggy)->toArray()['routes'];
 
         $expected = [
@@ -324,9 +314,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function can_include_only_middleware_set_in_config()
     {
-        config(['ziggy' => [
-            'middleware' => ['auth'],
-        ]]);
+        config(['ziggy.middleware' => ['auth']]);
         $routes = (new Ziggy)->toArray()['routes'];
 
         $expected = [
@@ -458,9 +446,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function route_payload_can_json_itself()
     {
-        config(['ziggy' => [
-            'only' => ['postComments.*'],
-        ]]);
+        config(['ziggy.only' => ['postComments.*']]);
 
         $expected = [
             'url' => 'http://ziggy.dev',
@@ -494,9 +480,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function route_payload_can_automatically_json_itself_in_a_response()
     {
-        config(['ziggy' => [
-            'only' => ['postComments.*'],
-        ]]);
+        config(['ziggy.only' => ['postComments.*']]);
 
         app('router')->get('json', function () {
             return response()->json(new Ziggy);
