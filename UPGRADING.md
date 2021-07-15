@@ -1,5 +1,9 @@
 # Upgrade Guide
 
+## Upgrading from `1.x` to `2.x`
+
+- The package namespace has changed from `Tightenco\Ziggy` to `Tighten\Ziggy`. Note that the Composer package name, `tightenco/ziggy`, has not changed.
+
 ## Upgrading from `0.9.x` to `1.x`
 
 Ziggy `1.0` includes significant improvements and changes, most of which won't require any changes to existing code!
