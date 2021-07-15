@@ -1,12 +1,9 @@
 {
     "name": "tightenco/ziggy",
-    "description": "Generates a Blade directive exporting all of your named Laravel routes. Also provides a nice route() helper function in JavaScript.",
+    "description": "Use your Laravel named routes in JavaScript.",
     "keywords": ["laravel", "routes", "javascript", "ziggy"],
     "homepage": "https://github.com/tighten/ziggy",
     "license": "MIT",
-    "require": {
-        "laravel/framework": ">=5.4@dev"
-    },
     "authors": [
         {
             "name": "Daniel Coulbourne",
@@ -21,6 +18,13 @@
             "email": "jacob@tighten.co"
         }
     ],
+    "require": {
+        "laravel/framework": ">=5.4@dev"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^9.2"
+    },
     "autoload": {
         "psr-4": {
             "Tighten\\Ziggy\\": "src/"
@@ -31,16 +35,17 @@
             "Tests\\": "tests/"
         }
     },
-    "require-dev": {
-        "orchestra/testbench": "^6.0",
-        "phpunit/phpunit": "^9.2"
-    },
     "extra": {
         "laravel": {
             "providers": [
                 "Tighten\\Ziggy\\ZiggyServiceProvider"
             ]
         }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true
