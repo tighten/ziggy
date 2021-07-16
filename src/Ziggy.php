@@ -82,6 +82,73 @@ class Ziggy implements JsonSerializable
         return $this;
     }
 
+     /**
+     * Check if route name is excluded
+     */
+    private function isExcluded($routeName)
+    {
+        $isExcluded = false;
+        $groups = $this->getGroups();
+
+        // return unfiltered routes if user set both config options
+        if (config()->has('ziggy.except') && config()->has('ziggy.only')) {
+            return $isExcluded;
+        }
+
+        // exclude any routes in except, unless included in groups
+        if (config()->has('ziggy.except')) {
+            $exclusions = config('ziggy.except');
+
+            if (!empty($groups)) {
+                $exclusions = Arr::where($exclusions, function ($exclusion) use ($groups) {
+                    return !in_array($exclusion, $groups);
+                });
+            }
+
+            $isExcluded = $this->inRoutes($exclusions, $routeName);
+
+            return $isExcluded;
+        }
+
+        // exclude any routes not in only or groups
+        if (config()->has('ziggy.only')) {
+            $inclusions = array_merge(config('ziggy.only'), $groups);
+            $isExcluded = !$this->inRoutes($inclusions, $routeName);
+
+            return $isExcluded;
+        }
+
+        return $isExcluded;
+    }
+
+    // returns flat array of groups
+    private function getGroups()
+    {
+        $groups = [];
+
+        // collect any routes included via groups
+        if (config()->has('ziggy.groups')) {
+            $groups = config('ziggy.groups');
+
+            foreach ($groups as $group) {
+                $groups = array_merge($groups, $group);
+            }
+        }
+
+        return $groups;
+    }
+
+    private function inRoutes($routes, $routeName)
+    {
+        foreach ($routes as $route) {
+            if (Str::is($route, $routeName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Get a list of the application's named routes, keyed by their names.
      */
@@ -91,9 +158,13 @@ class Ziggy implements JsonSerializable
             ->reject(function ($route) {
                 return Str::startsWith($route->getName(), 'generated::');
             })
+            ->reject(function ($route) {
+                return $this->isExcluded($route->getName());
+            })
             ->partition(function ($route) {
                 return $route->isFallback;
             });
+
 
         $bindings = $this->resolveBindings($routes->toArray());
 
