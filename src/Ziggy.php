@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Reflector;
 use Illuminate\Support\Str;
 use JsonSerializable;
+use ReflectionClass;
 use ReflectionMethod;
 
 class Ziggy implements JsonSerializable
@@ -159,7 +160,8 @@ class Ziggy implements JsonSerializable
                 $model = class_exists(Reflector::class)
                     ? Reflector::getParameterClassName($parameter)
                     : $parameter->getType()->getName();
-                $override = $model === (new ReflectionMethod($model, 'getRouteKeyName'))->class;
+                $override = (new ReflectionClass($model))->isInstantiable()
+                    && $model === (new ReflectionMethod($model, 'getRouteKeyName'))->class;
 
                 // Avoid booting this model if it doesn't override the default route key name
                 $bindings[$parameter->getName()] = $override ? app($model)->getRouteKeyName() : 'id';
