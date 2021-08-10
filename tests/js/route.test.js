@@ -489,6 +489,15 @@ describe('route()', () => {
          same(route('posts.show', [1, 2]), 'https://ziggy.dev/posts/1?2=');
          same(route('posts.show', ['my-first-post', 'foo', 'bar']), 'https://ziggy.dev/posts/my-first-post?foo=&bar=');
     });
+
+    test("can automatically append object with only 'extra' parameters to query", () => {
+        // Route has no parameters, the entire parameters object is 'extra' and should be used as the query string
+        same(route('hosting-contacts.index', { filter: { name: 'Dwyer' } }), 'https://ziggy.dev/hosting-contacts?filter[name]=Dwyer');
+    });
+
+    test("can append 'extra' object parameter to query", () => {
+        same(route('posts.show', { post: 2, filter: { name: 'Dwyer' } }), 'https://ziggy.dev/posts/2?filter[name]=Dwyer');
+    });
 });
 
 describe('has()', () => {
