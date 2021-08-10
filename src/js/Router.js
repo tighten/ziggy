@@ -209,9 +209,9 @@ export default class Router extends String {
      */
     _substituteBindings(params, { bindings, parameterSegments }) {
         return Object.entries(params).reduce((result, [key, value]) => {
-            // If the value isn't an object, if it's an object of explicit query parameters, or if the key
-            // is not a named route parameter, there's nothing to substitute so we return it as-is
-            if (!value || typeof value !== 'object' || Array.isArray(value) || key === '_query' || !parameterSegments.some(({ name }) => name === key)) {
+            // If the value isn't an object, or if the key isn't a named route parameter,
+            // there's nothing to substitute so we return it as-is
+            if (!value || typeof value !== 'object' || Array.isArray(value) || !parameterSegments.some(({ name }) => name === key)) {
                 return { ...result, [key]: value };
             }
 
