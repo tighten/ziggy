@@ -52,7 +52,7 @@
         "regex": "^_(?!query)"
     },
     "dependencies": {
-        "qs": "^6.8.0"
+        "qs": "^6.10.1"
     },
     "devDependencies": {
         "babel-preset-power-assert": "^3.0.0",
