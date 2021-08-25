@@ -60,6 +60,10 @@ export default class Route {
         // by replacing its parameter segments with matchers for parameter values
         const pattern = this.template
             .replace(/\/{[^}?]*\?}/g, '(\/[^/?]+)?')
+            // TODO: the above line with the leading slash is necessary to pick up completely optional *segments*,
+            // like in `/pages/{subPage?}`, so that those are handled first before the more permissive patterns
+            // below, but there's probably a way to do this in one shot
+            .replace(/{[^}?]*\?}/g, '([^/?]+)?')
             .replace(/{[^}]+}/g, '[^/?]+')
             .replace(/^\w+:\/\//, '');
 
