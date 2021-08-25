@@ -8,6 +8,12 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.4.0] - 2021-08-25
+
+**Added**
+
+-  Add support for parameters inside single route segments ([#444](https://github.com/tighten/ziggy/pull/444))
+
 ## [v1.3.6] - 2021-08-25
 
 **Fixed**
@@ -183,7 +189,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.3.6...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.4.0...HEAD
+[v1.4.0]: https://github.com/tighten/ziggy/compare/v1.3.6...v1.4.0
 [v1.3.6]: https://github.com/tighten/ziggy/compare/v1.3.5...v1.3.6
 [v1.3.5]: https://github.com/tighten/ziggy/compare/v1.3.4...v1.3.5
 [v1.3.4]: https://github.com/tighten/ziggy/compare/v1.3.3...v1.3.4
