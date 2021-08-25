@@ -178,7 +178,7 @@ export default class Router extends String {
 
         return {
             ...this._defaults(route),
-            ...this._substituteBindings(params, route.bindings),
+            ...this._substituteBindings(params, route),
         };
     }
 
@@ -201,17 +201,17 @@ export default class Router extends String {
      * Substitute Laravel route model bindings in the given parameters.
      *
      * @example
-     * _substituteBindings({ post: { id: 4, slug: 'hello-world', title: 'Hello, world!' } }, { post: 'slug' }); // { post: 'hello-world' }
+     * _substituteBindings({ post: { id: 4, slug: 'hello-world', title: 'Hello, world!' } }, { bindings: { post: 'slug' } }); // { post: 'hello-world' }
      *
      * @param {Object} params - Route parameters.
-     * @param {Object} bindings - Route model bindings.
+     * @param {Object} route - Route definition.
      * @return {Object} Normalized route parameters.
      */
-    _substituteBindings(params, bindings = {}) {
+    _substituteBindings(params, { bindings, parameterSegments }) {
         return Object.entries(params).reduce((result, [key, value]) => {
-            // If the value isn't an object, or if it's an object of explicit query
-            // parameters, there's nothing to substitute so we return it as-is
-            if (!value || typeof value !== 'object' || Array.isArray(value) || key === '_query') {
+            // If the value isn't an object, or if the key isn't a named route parameter,
+            // there's nothing to substitute so we return it as-is
+            if (!value || typeof value !== 'object' || Array.isArray(value) || !parameterSegments.some(({ name }) => name === key)) {
                 return { ...result, [key]: value };
             }
 
