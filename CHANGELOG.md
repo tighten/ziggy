@@ -12,7 +12,7 @@ Breaking changes are marked with ⚠️.
 
 **Added**
 
--  Add support for parameters inside single route segments ([#444](https://github.com/tighten/ziggy/pull/444))
+- Add support for parameters inside single route segments ([#444](https://github.com/tighten/ziggy/pull/444))
 
 ## [v1.3.6] - 2021-08-25
 
