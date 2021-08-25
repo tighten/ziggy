@@ -8,11 +8,23 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.3.6] - 2021-08-25
+
+**Fixed**
+
+- Fix nested object query params ([#451](https://github.com/tighten/ziggy/pull/451))
+
+## [v1.3.5] - 2021-07-20
+
+**Fixed**
+
+- Fix route model binding with abstract class ([#445](https://github.com/tighten/ziggy/pull/445))
+
 ## [v1.3.4] - 2021-07-06
 
 **Fixed**
 
-- Fix property mangling and implement ES5 compatibility ([#442](https://github.com/tighten/ziggy/pull/443))
+- Fix property mangling and implement ES5 compatibility ([#442](https://github.com/tighten/ziggy/pull/442))
 
 ## [v1.3.3] - 2021-07-02
 
@@ -171,7 +183,9 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.3.4...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.3.6...HEAD
+[v1.3.6]: https://github.com/tighten/ziggy/compare/v1.3.5...v1.3.6
+[v1.3.5]: https://github.com/tighten/ziggy/compare/v1.3.4...v1.3.5
 [v1.3.4]: https://github.com/tighten/ziggy/compare/v1.3.3...v1.3.4
 [v1.3.3]: https://github.com/tighten/ziggy/compare/v1.3.2...v1.3.3
 [v1.3.2]: https://github.com/tighten/ziggy/compare/v1.3.1...v1.3.2

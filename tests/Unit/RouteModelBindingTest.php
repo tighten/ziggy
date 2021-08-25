@@ -183,6 +183,23 @@ class RouteModelBindingTest extends TestCase
         $this->assertTrue(User::$wasBooted);
         $this->assertFalse(Tag::$wasBooted);
     }
+
+    /** @test */
+    public function can_handle_abstract_classes_in_route_model_bindings()
+    {
+        app('router')->get('models/{model}', function (Model $model) {
+            return '';
+        })->name('models');
+        app('router')->getRoutes()->refreshNameLookups();
+
+        $this->assertSame([
+            'uri' => 'models/{model}',
+            'methods' => ['GET', 'HEAD'],
+            'bindings' => [
+                'model' => 'id',
+            ],
+        ], (new Ziggy)->toArray()['routes']['models']);
+    }
 }
 
 class User extends Model

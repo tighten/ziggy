@@ -498,6 +498,15 @@ describe('route()', () => {
          same(route('posts.show', ['my-first-post', 'foo', 'bar']), 'https://ziggy.dev/posts/my-first-post?foo=&bar=');
     });
 
+    test("can automatically append object with only 'extra' parameters to query", () => {
+        // Route has no parameters, the entire parameters object is 'extra' and should be used as the query string
+        same(route('hosting-contacts.index', { filter: { name: 'Dwyer' } }), 'https://ziggy.dev/hosting-contacts?filter[name]=Dwyer');
+    });
+
+    test("can append 'extra' object parameter to query", () => {
+        same(route('posts.show', { post: 2, filter: { name: 'Dwyer' } }), 'https://ziggy.dev/posts/2?filter[name]=Dwyer');
+    });
+
     test('can generate a URL for a route with parameters inside individual segments', () => {
         same(route('pages.requiredExtension', 'x'), 'https://ziggy.dev/strict-download/filex');
         same(route('pages.requiredExtension', '.html'), 'https://ziggy.dev/strict-download/file.html');
