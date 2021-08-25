@@ -52,13 +52,12 @@
         "regex": "^_(?!query)"
     },
     "dependencies": {
-        "qs": "^6.8.0"
+        "qs": "^6.10.1"
     },
     "devDependencies": {
-        "@babel/preset-env": "^7.11.0",
         "babel-preset-power-assert": "^3.0.0",
         "jest": "^27.0.6",
-        "microbundle": "^0.12.3",
+        "microbundle": "^0.13.3",
         "power-assert": "^1.6.1"
     }
 }
