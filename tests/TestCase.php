@@ -10,6 +10,13 @@ use Tightenco\Ziggy\ZiggyServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {
+    public static function assertStringContainsString(string $needle, string $haystack, string $message = ''): void
+    {
+        $constraint = new StringContains($needle, false);
+
+        static::assertThat($haystack, $constraint, $message);
+    }
+
     protected function tearDown(): void
     {
         Ziggy::clearRoutes();
@@ -34,12 +41,5 @@ class TestCase extends OrchestraTestCase
         return function () {
             return '';
         };
-    }
-
-    public static function assertStringContainsString(string $needle, string $haystack, string $message = ''): void
-    {
-        $constraint = new StringContains($needle, false);
-
-        static::assertThat($haystack, $constraint, $message);
     }
 }

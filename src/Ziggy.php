@@ -14,7 +14,6 @@ class Ziggy implements JsonSerializable
 {
     protected static $cache;
 
-    protected $port;
     protected $url;
     protected $group;
     protected $routes;
@@ -24,7 +23,6 @@ class Ziggy implements JsonSerializable
         $this->group = $group;
 
         $this->url = rtrim($url ?? url('/'), '/');
-        $this->port = parse_url($this->url)['port'] ?? null;
 
         if (! static::$cache) {
             static::$cache = $this->nameKeyedRoutes();
@@ -131,7 +129,7 @@ class Ziggy implements JsonSerializable
     {
         return [
             'url' => $this->url,
-            'port' => $this->port,
+            'port' => parse_url($this->url)['port'] ?? null,
             'defaults' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
                 : [],
