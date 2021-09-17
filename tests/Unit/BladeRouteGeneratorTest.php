@@ -9,13 +9,6 @@ use Tightenco\Ziggy\Ziggy;
 
 class BladeRouteGeneratorTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        BladeRouteGenerator::$payload = null;
-
-        parent::tearDown();
-    }
-
     /** @test */
     public function can_resolve_generator_from_container()
     {
@@ -126,7 +119,6 @@ class BladeRouteGeneratorTest extends TestCase
         $this->assertArrayHasKey('posts.show', $ziggy['routes']);
 
         BladeRouteGenerator::$generated = false;
-        BladeRouteGenerator::$payload = null;
         $output = (new BladeRouteGenerator)->generate(['guest', 'admin']);
         $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
 
