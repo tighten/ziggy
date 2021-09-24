@@ -14,7 +14,7 @@ export default class Router extends String {
     constructor(name, params, absolute = true, config) {
         super();
 
-        this._config = config ?? Ziggy ?? globalThis?.Ziggy;
+        this._config = config ?? (typeof Ziggy !== 'undefined' ? Ziggy : globalThis?.Ziggy);
         this._config = { ...this._config, absolute };
 
         if (name) {
