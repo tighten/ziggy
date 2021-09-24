@@ -8,6 +8,13 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.4.1] - 2021-09-24
+
+**Fixed**
+
+- Fix `undefined` error if there's no global `Ziggy` variable ([#462](https://github.com/tighten/ziggy/pull/462))
+- Fix payload caching for Octane ([#460](https://github.com/tighten/ziggy/pull/460))
+
 ## [v1.4.0] - 2021-08-25
 
 **Added**
@@ -189,7 +196,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.4.1...HEAD
+[v1.4.1]: https://github.com/tighten/ziggy/compare/v1.4.0...v1.4.1
 [v1.4.0]: https://github.com/tighten/ziggy/compare/v1.3.6...v1.4.0
 [v1.3.6]: https://github.com/tighten/ziggy/compare/v1.3.5...v1.3.6
 [v1.3.5]: https://github.com/tighten/ziggy/compare/v1.3.4...v1.3.5
