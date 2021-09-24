@@ -12,7 +12,8 @@ use ReflectionMethod;
 
 class Ziggy implements JsonSerializable
 {
-    protected $port;
+    protected static $cache;
+
     protected $url;
     protected $group;
     protected $routes;
@@ -22,9 +23,17 @@ class Ziggy implements JsonSerializable
         $this->group = $group;
 
         $this->url = rtrim($url ?? url('/'), '/');
-        $this->port = parse_url($this->url)['port'] ?? null;
 
-        $this->routes = $this->nameKeyedRoutes();
+        if (! static::$cache) {
+            static::$cache = $this->nameKeyedRoutes();
+        }
+
+        $this->routes = static::$cache;
+    }
+
+    public static function clearRoutes()
+    {
+        static::$cache = null;
     }
 
     private function applyFilters($group)
@@ -120,7 +129,7 @@ class Ziggy implements JsonSerializable
     {
         return [
             'url' => $this->url,
-            'port' => $this->port,
+            'port' => parse_url($this->url)['port'] ?? null,
             'defaults' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
                 : [],

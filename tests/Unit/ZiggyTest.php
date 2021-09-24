@@ -491,4 +491,15 @@ class ZiggyTest extends TestCase
         $response->assertSuccessful();
         $this->assertSame((new Ziggy)->toJson(), $response->getContent());
     }
+
+    /** @test */
+    public function can_cache_compiled_route_list_internally_on_repeated_instantiations()
+    {
+        $routes = (new Ziggy)->toArray()['routes'];
+
+        app('router')->get('/users', $this->noop())->name('users.index');
+        app('router')->getRoutes()->refreshNameLookups();
+
+        $this->assertSame($routes, (new Ziggy)->toArray()['routes']);
+    }
 }
