@@ -58,6 +58,13 @@ const defaultZiggy = {
             uri: '{locale}/posts/{post}',
             methods: ['PUT', 'PATCH'],
         },
+        'events.venues-index': {
+            uri: 'events/{event}/venues-index',
+            methods: ['GET', 'HEAD'],
+            bindings: {
+                event: 'id',
+            },
+        },
         'events.venues.index': {
             uri: 'events/{event}/venues',
             methods: ['GET', 'HEAD'],
@@ -879,6 +886,25 @@ describe('current()', () => {
         global.window.location.pathname = '/events/1/venues/';
 
         same(route().current(), 'events.venues.index');
+    });
+
+    test('does not match similiar named routes', () => {
+        global.window.location.pathname = '/events/1/venues';
+
+        same(route().current('events.venues-index'), false);
+        same(route().current('events.venues.index'), true);
+
+        global.window.location.pathname = '/events/1/venues-index';
+
+        same(route().current('events.venues-index'), true);
+        same(route().current('events.venues.index'), false);
+    });
+
+    test('does not match similiar named routes with wildcards', () => {
+        global.window.location.pathname = '/events/1/venues-index';
+
+        same(route().current('events.venues-index'), true);
+        same(route().current('events.venues.*'), false);
     });
 
     test('can get the current route name without window', () => {

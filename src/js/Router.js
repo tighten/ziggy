@@ -83,7 +83,7 @@ export default class Router extends String {
 
         // Test the passed name against the current route, matching some
         // basic wildcards, e.g. passing `events.*` matches `events.show`
-        const match = new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`).test(current);
+        const match = new RegExp(`^${name.replace(/\./g, '\\.').replace(/\*/g, '.*')}$`).test(current);
 
         if ([null, undefined].includes(params) || !match) return match;
 
