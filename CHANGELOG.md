@@ -8,6 +8,12 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.4.2] - 2021-10-01
+
+**Fixed**
+
+- Fix `route().current()` matching route names with multiple periods ([#466](https://github.com/tighten/ziggy/pull/466))
+
 ## [v1.4.1] - 2021-09-24
 
 **Fixed**
@@ -196,7 +202,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.4.1...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.4.2...HEAD
+[v1.4.2]: https://github.com/tighten/ziggy/compare/v1.4.1...v1.4.2
 [v1.4.1]: https://github.com/tighten/ziggy/compare/v1.4.0...v1.4.1
 [v1.4.0]: https://github.com/tighten/ziggy/compare/v1.3.6...v1.4.0
 [v1.3.6]: https://github.com/tighten/ziggy/compare/v1.3.5...v1.3.6
