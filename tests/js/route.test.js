@@ -888,7 +888,7 @@ describe('current()', () => {
         same(route().current(), 'events.venues.index');
     });
 
-    test('does not match similiar named routes', () => {
+    test('matches route name with multiple periods', () => {
         global.window.location.pathname = '/events/1/venues';
 
         same(route().current('events.venues-index'), false);
@@ -900,7 +900,7 @@ describe('current()', () => {
         same(route().current('events.venues.index'), false);
     });
 
-    test('does not match similiar named routes with wildcards', () => {
+    test('matches route name with multiple periods and wildcards', () => {
         global.window.location.pathname = '/events/1/venues-index';
 
         same(route().current('events.venues-index'), true);
