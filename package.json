@@ -33,16 +33,13 @@
         "dist"
     ],
     "source": "src/js/index.js",
-    "main": "dist/index.js",
-    "umd:main": "dist/index.js",
-    "unpkg": "dist/index.js",
-    "browser": "dist/index.js",
-    "module": "dist/index.m.js",
-    "esmodule": "dist/index.es.js",
+    "main": "dist/ziggy.umd.js",
+    "module": "dist/ziggy.module.js",
+    "exports": "dist/ziggy.modern.js",
     "scripts": {
-        "build": "microbundle --name route --format modern,es,umd --external none --no-sourcemap",
+        "build": "microbundle --format modern,es,umd --external none --no-sourcemap",
         "watch": "npm run build watch",
-        "build:npm": "microbundle --name route --format modern,es,umd --no-sourcemap",
+        "build:npm": "microbundle --format modern,es,umd --no-sourcemap",
         "test": "jest --verbose",
         "prepublishOnly": "npm run build:npm"
     },

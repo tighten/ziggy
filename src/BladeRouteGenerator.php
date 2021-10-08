@@ -25,6 +25,7 @@ class BladeRouteGenerator
     const Ziggy = {$payload->toJson()};
 
     $routeFunction
+    const route = ziggyJs.route;
 </script>
 HTML;
     }
@@ -44,6 +45,6 @@ HTML;
 
     private function getRouteFunction(): string
     {
-        return config('ziggy.skip-route-function') ? '' : file_get_contents(__DIR__ . '/../dist/index.js');
+        return config('ziggy.skip-route-function') ? '' : file_get_contents(__DIR__ . '/../dist/ziggy.umd.js');
     }
 }

@@ -5,7 +5,7 @@ import Router from './Router';
 // able to `import { route } from 'ziggy'` and also still have the plain `route()`
 // function available globally.
 
-export function route(name, params, absolute, config) {
+export const route = (name, params, absolute, config) => {
     const router = new Router(name, params, absolute, config);
 
     return name ? router.toString() : router;
