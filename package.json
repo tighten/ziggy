@@ -50,7 +50,7 @@
         "regex": "^_(?!query)"
     },
     "dependencies": {
-        "qs": "^6.10.1"
+        "qs": "~6.9.0"
     },
     "devDependencies": {
         "babel-preset-power-assert": "^3.0.0",
