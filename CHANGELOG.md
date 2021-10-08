@@ -8,11 +8,42 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.4.2] - 2021-10-01
+
+**Fixed**
+
+- Fix `route().current()` matching route names with multiple periods ([#466](https://github.com/tighten/ziggy/pull/466))
+
+## [v1.4.1] - 2021-09-24
+
+**Fixed**
+
+- Fix `undefined` error if there's no global `Ziggy` variable ([#462](https://github.com/tighten/ziggy/pull/462))
+- Fix payload caching for Octane ([#460](https://github.com/tighten/ziggy/pull/460))
+
+## [v1.4.0] - 2021-08-25
+
+**Added**
+
+- Add support for parameters inside single route segments ([#444](https://github.com/tighten/ziggy/pull/444))
+
+## [v1.3.6] - 2021-08-25
+
+**Fixed**
+
+- Fix nested object query params ([#451](https://github.com/tighten/ziggy/pull/451))
+
+## [v1.3.5] - 2021-07-20
+
+**Fixed**
+
+- Fix route model binding with abstract class ([#445](https://github.com/tighten/ziggy/pull/445))
+
 ## [v1.3.4] - 2021-07-06
 
 **Fixed**
 
-- Fix property mangling and implement ES5 compatibility ([#442](https://github.com/tighten/ziggy/pull/443))
+- Fix property mangling and implement ES5 compatibility ([#442](https://github.com/tighten/ziggy/pull/442))
 
 ## [v1.3.3] - 2021-07-02
 
@@ -171,7 +202,12 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.3.4...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.4.2...HEAD
+[v1.4.2]: https://github.com/tighten/ziggy/compare/v1.4.1...v1.4.2
+[v1.4.1]: https://github.com/tighten/ziggy/compare/v1.4.0...v1.4.1
+[v1.4.0]: https://github.com/tighten/ziggy/compare/v1.3.6...v1.4.0
+[v1.3.6]: https://github.com/tighten/ziggy/compare/v1.3.5...v1.3.6
+[v1.3.5]: https://github.com/tighten/ziggy/compare/v1.3.4...v1.3.5
 [v1.3.4]: https://github.com/tighten/ziggy/compare/v1.3.3...v1.3.4
 [v1.3.3]: https://github.com/tighten/ziggy/compare/v1.3.2...v1.3.3
 [v1.3.2]: https://github.com/tighten/ziggy/compare/v1.3.1...v1.3.2

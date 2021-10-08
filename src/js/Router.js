@@ -14,7 +14,7 @@ export default class Router extends String {
     constructor(name, params, absolute = true, config) {
         super();
 
-        this._config = config ?? Ziggy ?? globalThis?.Ziggy;
+        this._config = config ?? (typeof Ziggy !== 'undefined' ? Ziggy : globalThis?.Ziggy);
         this._config = { ...this._config, absolute };
 
         if (name) {
@@ -83,7 +83,7 @@ export default class Router extends String {
 
         // Test the passed name against the current route, matching some
         // basic wildcards, e.g. passing `events.*` matches `events.show`
-        const match = new RegExp(`^${name.replace('.', '\\.').replace('*', '.*')}$`).test(current);
+        const match = new RegExp(`^${name.replace(/\./g, '\\.').replace(/\*/g, '.*')}$`).test(current);
 
         if ([null, undefined].includes(params) || !match) return match;
 
@@ -178,7 +178,7 @@ export default class Router extends String {
 
         return {
             ...this._defaults(route),
-            ...this._substituteBindings(params, route.bindings),
+            ...this._substituteBindings(params, route),
         };
     }
 
@@ -201,17 +201,17 @@ export default class Router extends String {
      * Substitute Laravel route model bindings in the given parameters.
      *
      * @example
-     * _substituteBindings({ post: { id: 4, slug: 'hello-world', title: 'Hello, world!' } }, { post: 'slug' }); // { post: 'hello-world' }
+     * _substituteBindings({ post: { id: 4, slug: 'hello-world', title: 'Hello, world!' } }, { bindings: { post: 'slug' } }); // { post: 'hello-world' }
      *
      * @param {Object} params - Route parameters.
-     * @param {Object} bindings - Route model bindings.
+     * @param {Object} route - Route definition.
      * @return {Object} Normalized route parameters.
      */
-    _substituteBindings(params, bindings = {}) {
+    _substituteBindings(params, { bindings, parameterSegments }) {
         return Object.entries(params).reduce((result, [key, value]) => {
-            // If the value isn't an object, or if it's an object of explicit query
-            // parameters, there's nothing to substitute so we return it as-is
-            if (!value || typeof value !== 'object' || Array.isArray(value) || key === '_query') {
+            // If the value isn't an object, or if the key isn't a named route parameter,
+            // there's nothing to substitute so we return it as-is
+            if (!value || typeof value !== 'object' || Array.isArray(value) || !parameterSegments.some(({ name }) => name === key)) {
                 return { ...result, [key]: value };
             }
 
@@ -246,15 +246,20 @@ export default class Router extends String {
 
         // Given part of a valid 'hydrated' URL containing all its parameter values,
         // a route template, and a delimiter, extract the parameters as an object
-        // E.g. dehydrate('events/{event}/{venue}', 'events/2/chicago', '/'); // { event: 2, venue: 'chicago' }
+        // E.g. dehydrate('events/2/chicago', 'events/{event}/{venue}', '/'); // { event: 2, venue: 'chicago' }
         const dehydrate = (hydrated, template = '', delimiter) => {
             const [values, segments] = [hydrated, template].map(s => s.split(delimiter));
 
             return segments.reduce((result, current, i) => {
                 // Only include template segments that are route parameters
                 // AND have a value present in the passed hydrated string
-                return /^{[^}?]+\??}$/.test(current) && values[i]
-                    ? { ...result, [current.replace(/^{|\??}$/g, '')]: values[i] }
+                return /{[^}?]+\??}/.test(current) && values[i]
+                    ? {
+                        ...result,
+                        [current.replace(/.*{|\??}.*/g, '')]: values[i]
+                            .replace(current.match(/^[^{]*/g), '')
+                            .replace(current.match(/[^}]*$/g), ''),
+                    }
                     : result;
             }, {});
         }

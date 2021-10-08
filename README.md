@@ -593,7 +593,7 @@ Thanks to [Caleb Porzio](http://twitter.com/calebporzio), [Adam Wathan](http://t
 
 ## Security
 
-If you discover any security related issues, please email <hello@tighten.co> instead of using the issue tracker.
+Please review our [security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## License
 

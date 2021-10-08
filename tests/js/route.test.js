@@ -58,6 +58,13 @@ const defaultZiggy = {
             uri: '{locale}/posts/{post}',
             methods: ['PUT', 'PATCH'],
         },
+        'events.venues-index': {
+            uri: 'events/{event}/venues-index',
+            methods: ['GET', 'HEAD'],
+            bindings: {
+                event: 'id',
+            },
+        },
         'events.venues.index': {
             uri: 'events/{event}/venues',
             methods: ['GET', 'HEAD'],
@@ -117,6 +124,14 @@ const defaultZiggy = {
         },
         'pages.optional': {
             uri: 'optionalpage/{page?}',
+            methods: ['GET', 'HEAD'],
+        },
+        'pages.optionalExtension': {
+            uri: 'download/file{extension?}',
+            methods: ['GET', 'HEAD'],
+        },
+        'pages.requiredExtension': {
+            uri: 'strict-download/file{extension}',
             methods: ['GET', 'HEAD'],
         },
         'pages': {
@@ -489,6 +504,27 @@ describe('route()', () => {
          same(route('posts.show', [1, 2]), 'https://ziggy.dev/posts/1?2=');
          same(route('posts.show', ['my-first-post', 'foo', 'bar']), 'https://ziggy.dev/posts/my-first-post?foo=&bar=');
     });
+
+    test("can automatically append object with only 'extra' parameters to query", () => {
+        // Route has no parameters, the entire parameters object is 'extra' and should be used as the query string
+        same(route('hosting-contacts.index', { filter: { name: 'Dwyer' } }), 'https://ziggy.dev/hosting-contacts?filter[name]=Dwyer');
+    });
+
+    test("can append 'extra' object parameter to query", () => {
+        same(route('posts.show', { post: 2, filter: { name: 'Dwyer' } }), 'https://ziggy.dev/posts/2?filter[name]=Dwyer');
+    });
+
+    test('can generate a URL for a route with parameters inside individual segments', () => {
+        same(route('pages.requiredExtension', 'x'), 'https://ziggy.dev/strict-download/filex');
+        same(route('pages.requiredExtension', '.html'), 'https://ziggy.dev/strict-download/file.html');
+        same(route('pages.requiredExtension', { extension: '.pdf' }), 'https://ziggy.dev/strict-download/file.pdf');
+    });
+
+    test('can generate a URL for a route with optional parameters inside individual segments', () => {
+        same(route('pages.optionalExtension'), 'https://ziggy.dev/download/file');
+        same(route('pages.optionalExtension', '.html'), 'https://ziggy.dev/download/file.html');
+        same(route('pages.optionalExtension', { extension: '.pdf' }), 'https://ziggy.dev/download/file.pdf');
+    });
 });
 
 describe('has()', () => {
@@ -619,6 +655,60 @@ describe('current()', () => {
         same(route().current('pages.optional', { page: '' }), true);
         same(route().current('pages.optional', { page: undefined }), true);
         same(route().current('pages.optional', { page: 'foo' }), false);
+    });
+
+    test('can check the current route name at a URL with a non-delimited parameter', () => {
+        global.window.location.pathname = '/strict-download/file.html';
+
+        same(route().current(), 'pages.requiredExtension');
+        same(route().current('pages.requiredExtension', ''), false);
+        same(route().current('pages.requiredExtension*', ''), false);
+        same(route().current('pages.requiredExtension', '.html'), true);
+        same(route().current('pages.requiredExtension*', '.html'), true);
+        same(route().current('pages.requiredExtension', ['']), false);
+        same(route().current('pages.requiredExtension*', ['']), false);
+        same(route().current('pages.requiredExtension', ['.html']), true);
+        same(route().current('pages.requiredExtension*', ['.html']), true);
+        same(route().current('pages.requiredExtension', { extension: '' }), false);
+        same(route().current('pages.requiredExtension*', { extension: '' }), false);
+        same(route().current('pages.requiredExtension', { extension: '.pdf' }), false);
+        same(route().current('pages.requiredExtension*', { extension: '.pdf' }), false);
+        same(route().current('pages.requiredExtension', { extension: '.html' }), true);
+        same(route().current('pages.requiredExtension*', { extension: '.html' }), true);
+    });
+
+    test('can check the current route name at a URL with a missing non-delimited optional parameter', () => {
+        global.window.location.pathname = '/download/file';
+
+        same(route().current(), 'pages.optionalExtension');
+        same(route().current('pages.optionalExtension', ''), true);
+        same(route().current('pages.optionalExtension*', ''), true);
+        same(route().current('pages.optionalExtension', ['']), true);
+        same(route().current('pages.optionalExtension*', ['']), true);
+        same(route().current('pages.optionalExtension', { extension: '' }), true);
+        same(route().current('pages.optionalExtension*', { extension: '' }), true);
+        same(route().current('pages.optionalExtension', { extension: '.html' }), false);
+        same(route().current('pages.optionalExtension*', { extension: '.pdf' }), false);
+    });
+
+    test('can check the current route name at a URL with a non-delimited optional parameter', () => {
+        global.window.location.pathname = '/download/file.html';
+
+        same(route().current(), 'pages.optionalExtension');
+        same(route().current('pages.optionalExtension', ''), false);
+        same(route().current('pages.optionalExtension*', ''), false);
+        same(route().current('pages.optionalExtension', '.html'), true);
+        same(route().current('pages.optionalExtension*', '.html'), true);
+        same(route().current('pages.optionalExtension', ['']), false);
+        same(route().current('pages.optionalExtension*', ['']), false);
+        same(route().current('pages.optionalExtension', ['.html']), true);
+        same(route().current('pages.optionalExtension*', ['.html']), true);
+        same(route().current('pages.optionalExtension', { extension: '' }), false);
+        same(route().current('pages.optionalExtension*', { extension: '' }), false);
+        same(route().current('pages.optionalExtension', { extension: '.pdf' }), false);
+        same(route().current('pages.optionalExtension*', { extension: '.pdf' }), false);
+        same(route().current('pages.optionalExtension', { extension: '.html' }), true);
+        same(route().current('pages.optionalExtension*', { extension: '.html' }), true);
     });
 
     test('can check the current route name with parameters on a URL with no parameters', () => {
@@ -796,6 +886,25 @@ describe('current()', () => {
         global.window.location.pathname = '/events/1/venues/';
 
         same(route().current(), 'events.venues.index');
+    });
+
+    test('matches route name with multiple periods', () => {
+        global.window.location.pathname = '/events/1/venues';
+
+        same(route().current('events.venues-index'), false);
+        same(route().current('events.venues.index'), true);
+
+        global.window.location.pathname = '/events/1/venues-index';
+
+        same(route().current('events.venues-index'), true);
+        same(route().current('events.venues.index'), false);
+    });
+
+    test('matches route name with multiple periods and wildcards', () => {
+        global.window.location.pathname = '/events/1/venues-index';
+
+        same(route().current('events.venues-index'), true);
+        same(route().current('events.venues.*'), false);
     });
 
     test('can get the current route name without window', () => {
