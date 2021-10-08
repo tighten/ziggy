@@ -42,17 +42,8 @@ HTML;
 HTML;
     }
 
-    private function getRouteFilePath()
+    private function getRouteFunction(): string
     {
-        return __DIR__ . '/../dist/index.js';
-    }
-
-    private function getRouteFunction()
-    {
-        if (config()->get('ziggy.skip-route-function')) {
-            return '';
-        }
-
-        return file_get_contents($this->getRouteFilePath());
+        return config('ziggy.skip-route-function') ? '' : file_get_contents(__DIR__ . '/../dist/index.js');
     }
 }
