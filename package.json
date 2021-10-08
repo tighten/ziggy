@@ -10,6 +10,10 @@
     "homepage": "https://github.com/tighten/ziggy",
     "bugs": "https://github.com/tighten/ziggy/issues",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tighten/ziggy.git"
+    },
     "authors": [
         {
             "name": "Daniel Coulbourne",
@@ -35,10 +39,6 @@
     "browser": "dist/index.js",
     "module": "dist/index.m.js",
     "esmodule": "dist/index.es.js",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/tighten/ziggy.git"
-    },
     "scripts": {
         "build": "microbundle --name route --format modern,es,umd --external none --no-sourcemap",
         "watch": "npm run build watch",
