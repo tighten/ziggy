@@ -17,12 +17,17 @@ export default class Router extends String {
         this._config = config ?? (typeof Ziggy !== 'undefined' ? Ziggy : globalThis?.Ziggy);
         this._config = { ...this._config, absolute };
 
+        // Sort routes initially and prefer exact domain definitions
+        this._config.routes = new Map(Object.entries(this._config.routes).sort(([a, routeA], [b, routeB]) => {
+            return (routeA.domain || '').indexOf('{') - (routeB.domain || '').indexOf('{');
+        }))
+
         if (name) {
-            if (!this._config.routes[name]) {
+            if (!this.has(name)) {
                 throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
             }
 
-            this._route = new Route(name, this._config.routes[name], this._config);
+            this._route = new Route(name, this._config.routes.get(name), this._config);
             this._params = this._parse(params);
         }
     }
@@ -74,7 +79,7 @@ export default class Router extends String {
             : this._location().pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/');
 
         // Find the first route that matches the current URL
-        const [current, route] = Object.entries(this._config.routes).find(
+        const [current, route] = Array.from(this._config.routes.entries()).find(
             ([_, route]) => new Route(name, route, this._config).matchesUrl(url)
         ) || [undefined, undefined];
 
@@ -126,7 +131,7 @@ export default class Router extends String {
      * @return {Object}
      */
     get params() {
-        return this._dehydrate(this._config.routes[this.current()]);
+        return this._dehydrate(this._config.routes.get(this.current()));
     }
 
     /**
@@ -136,7 +141,7 @@ export default class Router extends String {
      * @return {Boolean}
      */
     has(name) {
-        return Object.keys(this._config.routes).includes(name);
+        return !!this._config.routes.get(name);
     }
 
     /**
