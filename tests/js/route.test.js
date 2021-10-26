@@ -134,6 +134,16 @@ const defaultZiggy = {
             uri: 'strict-download/file{extension}',
             methods: ['GET', 'HEAD'],
         },
+        'pages.external': {
+            uri: 'shared',
+            methods: ['GET', 'HEAD'],
+            domain: '{customDomain}',
+        },
+        'pages.internal': {
+            uri: 'shared',
+            methods: ['GET', 'HEAD'],
+            domain: 'ziggy.dev',
+        },
         'pages': {
             uri: '{page}',
             methods: ['GET', 'HEAD'],
@@ -932,5 +942,19 @@ describe('current()', () => {
         };
 
         same(route(undefined, undefined, undefined, config).current(), 'events.venues.show');
+    });
+
+    test('prefers exact domain definitions', () => {
+        global.window.location.href = 'https://ziggy.dev/shared';
+        global.window.location.host = 'ziggy.dev';
+        global.window.location.pathname = '/shared';
+
+        assert(route().current() === 'pages.internal');
+
+        global.window.location.href = 'https://example.org/shared';
+        global.window.location.host = 'example.org';
+        global.window.location.pathname = '/shared';
+
+        assert(route().current() === 'pages.external');
     });
 });
