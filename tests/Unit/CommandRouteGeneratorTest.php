@@ -4,8 +4,8 @@ namespace Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 use Tests\TestCase;
+use Tests\Formatters\CustomFileFormatter;
 
 class CommandRouteGeneratorTest extends TestCase
 {
@@ -82,15 +82,9 @@ class CommandRouteGeneratorTest extends TestCase
     {
         config(['ziggy' => [
             'except' => ['admin.*'],
-            'templates' => [
-                'file' => <<<JAVASCRIPT
-// This is a custom template
-const Ziggy = :payload;
-
-export { Ziggy };
-
-JAVASCRIPT
-            ],
+            'formatters' => [
+                'file' => CustomFileFormatter::class,
+            ]
         ]]);
 
         $router = app('router');

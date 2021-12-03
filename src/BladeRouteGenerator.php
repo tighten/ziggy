@@ -2,49 +2,37 @@
 
 namespace Tightenco\Ziggy;
 
+use Tightenco\Ziggy\Formatters\MergeScriptFormatter;
+use Tightenco\Ziggy\Formatters\ScriptFormatter;
+
 class BladeRouteGenerator
 {
     public static $generated;
 
     public function generate($group = null, $nonce = null)
     {
-        $payload = new Ziggy($group);
+        $ziggy = new Ziggy($group);
 
         $nonce = $nonce ? ' nonce="' . $nonce . '"' : '';
 
         if (static::$generated) {
-            return $this->generateMergeJavascript(json_encode($payload->toArray()['routes']), $nonce);
+            return $this->generateMergeJavascript($ziggy, $nonce);
         }
 
         $routeFunction = $this->getRouteFunction();
-        $ziggy = $payload->toJson();
-        
-        $template = config()->get('ziggy.templates.file', <<<HTML
-<script type="text/javascript":nonce>
-    const Ziggy = :ziggy;
-
-    :routeFunction
-</script>
-HTML);
 
         static::$generated = true;
+        
+        $formatter = config()->get('ziggy.formatters.script', ScriptFormatter::class);
 
-        return strtr($template, [ ':ziggy' => $ziggy, ':nonce' => $nonce, ':routeFunction' => $routeFunction ]);
+        return (new $formatter($ziggy, $routeFunction, $nonce))->format();
     }
 
-    private function generateMergeJavascript($json, $nonce)
+    private function generateMergeJavascript(Ziggy $ziggy, $nonce)
     {
-        $template = config()->get('ziggy.templates.javascript', <<<HTML
-<script type="text/javascript":nonce>
-    (function () {
-        const routes = :json;
+        $formatter = config()->get('ziggy.formatters.mergeScript', MergeScriptFormatter::class);
 
-        Object.assign(Ziggy.routes, routes);
-    })();
-</script>
-HTML);
-
-        return strtr($template, [ ':json' => $json, ':nonce' => $nonce ]);
+        return (new $formatter($ziggy, $nonce))->format();
     }
 
     private function getRouteFilePath()
