@@ -46,10 +46,6 @@ jobs:
             testbench: dev-master
             phpunit: 9.*
           - php: '8.1'
-            laravel: 6.*
-            testbench: 4.*
-            phpunit: 9.*
-          - php: '8.1'
             laravel: 8.*
             testbench: 6.*
             phpunit: 9.*
