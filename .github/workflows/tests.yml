@@ -14,7 +14,6 @@ jobs:
         php: ['7.3', '7.4']
         laravel: [5.5.*, 5.6.*, 5.7.*, 5.8.*, 6.*, 7.*, 8.*]
         include:
-          - testbench: 6.*
           - phpunit: 9.*
           - laravel: 5.5.*
             testbench: 3.5.*
@@ -35,19 +34,27 @@ jobs:
           - php: '8.0'
             laravel: 6.*
             testbench: 4.*
+            # phpunit: 9.*
           - php: '8.0'
             laravel: 8.*
+            testbench: 6.*
+            # phpunit: 9.*
           - php: '8.0'
             laravel: dev-master
             testbench: dev-master
+            # phpunit: 9.*
           - php: '8.1'
             laravel: 6.*
             testbench: 4.*
+            # phpunit: 9.*
           - php: '8.1'
             laravel: 8.*
+            testbench: 6.*
+            # phpunit: 9.*
           - php: '8.1'
             laravel: dev-master
             testbench: dev-master
+            # phpunit: 9.*
     steps:
       - uses: actions/checkout@v2
       - uses: shivammathur/setup-php@v2
