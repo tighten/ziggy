@@ -70,6 +70,17 @@ class RouteModelBindingTest extends TestCase
     }
 
     /** @test */
+    public function can_ignore_route_action_parameters_without_corresponding_route_segment()
+    {
+        $this->assertSame([
+            'users.store' => [
+                'uri' => 'users',
+                'methods' => ['POST'],
+            ],
+        ], (new Ziggy)->filter(['users.store'])->toArray()['routes']);
+    }
+
+    /** @test */
     public function can_handle_bound_and_unbound_parameters_in_the_same_route()
     {
         $expected = [
