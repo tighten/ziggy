@@ -166,7 +166,7 @@ class Ziggy implements JsonSerializable
             $bindings = [];
 
             foreach ($route->signatureParameters(UrlRoutable::class) as $parameter) {
-                if (!in_array($parameter->getName(), $route->parameterNames())) {
+                if (! in_array($parameter->getName(), $route->parameterNames())) {
                     break;
                 }
 
