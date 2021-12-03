@@ -39,7 +39,7 @@ class CommandRouteGenerator extends Command
     private function generate($group = false)
     {
         $ziggy = (new Ziggy($group, $this->option('url') ? url($this->option('url')) : null));
-        
+
         $formatter = config()->get('ziggy.formatters.file', FileFormatter::class);
 
         return (new $formatter($ziggy))->format();

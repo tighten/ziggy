@@ -22,7 +22,7 @@ class BladeRouteGenerator
         $routeFunction = $this->getRouteFunction();
 
         static::$generated = true;
-        
+
         $formatter = config()->get('ziggy.formatters.script', ScriptFormatter::class);
 
         return (new $formatter($ziggy, $routeFunction, $nonce))->format();

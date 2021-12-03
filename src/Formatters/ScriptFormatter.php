@@ -6,26 +6,25 @@ use Tightenco\Ziggy\Ziggy;
 
 class ScriptFormatter
 {
-  protected $ziggy;
+    protected $ziggy;
+    protected $routeFunction;
+    protected $nonce;
 
-  protected string $routeFunction;
+    public function __construct(Ziggy $ziggy, string $routeFunction, string $nonce = '')
+    {
+        $this->ziggy = $ziggy;
+        $this->routeFunction = $routeFunction;
+        $this->nonce = $nonce;
+    }
 
-  protected string $nonce;
+    public function format()
+    {
+        return <<<HTML
+            <script type="text/javascript"{$this->nonce}>
+                const Ziggy = {$this->ziggy->toJson()};
 
-  public function __construct(Ziggy $ziggy, string $routeFunction, string $nonce = '')
-  {
-    $this->ziggy = $ziggy;
-    $this->routeFunction = $routeFunction;
-    $this->nonce = $nonce;
-  }
-
-  public function format() {
-    return <<<HTML
-<script type="text/javascript"{$this->nonce}>
-    const Ziggy = {$this->ziggy->toJson()};
-
-    {$this->routeFunction}
-</script>
-HTML;
-  }
+                {$this->routeFunction}
+            </script>
+            HTML;
+    }
 }
