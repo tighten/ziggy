@@ -6,7 +6,7 @@ use Tightenco\Ziggy\Ziggy;
 
 class MergeScriptFormatter
 {
-  protected Ziggy $ziggy;
+  protected $ziggy;
 
   protected string $nonce;
 

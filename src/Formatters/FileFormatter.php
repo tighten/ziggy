@@ -6,7 +6,7 @@ use Tightenco\Ziggy\Ziggy;
 
 class FileFormatter
 {
-  protected Ziggy $ziggy;
+  protected $ziggy;
 
   public function __construct(Ziggy $ziggy)
   {

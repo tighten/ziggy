@@ -6,7 +6,7 @@ use Tightenco\Ziggy\Ziggy;
 
 class ScriptFormatter
 {
-  protected Ziggy $ziggy;
+  protected $ziggy;
 
   protected string $routeFunction;
 
