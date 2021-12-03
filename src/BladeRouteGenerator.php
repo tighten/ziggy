@@ -17,29 +17,34 @@ class BladeRouteGenerator
         }
 
         $routeFunction = $this->getRouteFunction();
+        $ziggy = $payload->toJson();
+        
+        $template = config()->get('ziggy.templates.file', <<<HTML
+<script type="text/javascript":nonce>
+    const Ziggy = :ziggy;
+
+    :routeFunction
+</script>
+HTML);
 
         static::$generated = true;
 
-        return <<<HTML
-<script type="text/javascript"{$nonce}>
-    const Ziggy = {$payload->toJson()};
-
-    $routeFunction
-</script>
-HTML;
+        return strtr($template, [ ':ziggy' => $ziggy, ':nonce' => $nonce, ':routeFunction' => $routeFunction ]);
     }
 
     private function generateMergeJavascript($json, $nonce)
     {
-        return <<<HTML
-<script type="text/javascript"{$nonce}>
+        $template = config()->get('ziggy.templates.javascript', <<<HTML
+<script type="text/javascript":nonce>
     (function () {
-        const routes = {$json};
+        const routes = :json;
 
         Object.assign(Ziggy.routes, routes);
     })();
 </script>
-HTML;
+HTML);
+
+        return strtr($template, [ ':json' => $json, ':nonce' => $nonce ]);
     }
 
     private function getRouteFilePath()

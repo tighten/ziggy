@@ -38,9 +38,8 @@ class CommandRouteGenerator extends Command
     private function generate($group = false)
     {
         $payload = (new Ziggy($group, $this->option('url') ? url($this->option('url')) : null))->toJson();
-
-        return <<<JAVASCRIPT
-const Ziggy = {$payload};
+        $template = config()->get('ziggy.templates.file', <<<JAVASCRIPT
+const Ziggy = :payload;
 
 if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
     Object.assign(Ziggy.routes, window.Ziggy.routes);
@@ -48,7 +47,9 @@ if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
 
 export { Ziggy };
 
-JAVASCRIPT;
+JAVASCRIPT);
+
+        return strtr($template, [ ':payload' => $payload ]);
     }
 
     protected function makeDirectory($path)
