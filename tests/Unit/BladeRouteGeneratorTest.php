@@ -30,7 +30,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate();
-        $ziggy = json_decode(Str::between($output, 'Ziggy=', ';!'), true);
+        $ziggy = json_decode(Str::before(Str::after($output, 'Ziggy='), ';!'), true);
 
         $this->assertCount(4, $ziggy['routes']);
         $this->assertArrayHasKey('posts.index', $ziggy['routes']);
@@ -55,7 +55,7 @@ class BladeRouteGeneratorTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
             ],
-        ], json_decode(Str::between($script, 'Ziggy.routes,', ');'), true));
+        ], json_decode(Str::before(Str::after($script, 'Ziggy.routes,'), ');'), true));
     }
 
     /** @test */
@@ -111,7 +111,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate('guest');
-        $ziggy = json_decode(Str::between($output, 'Ziggy=', ';!'), true);
+        $ziggy = json_decode(Str::before(Str::after($output, 'Ziggy='), ';!'), true);
 
         $this->assertCount(2, $ziggy['routes']);
         $this->assertArrayHasKey('posts.index', $ziggy['routes']);
@@ -119,7 +119,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate(['guest', 'admin']);
-        $ziggy = json_decode(Str::between($output, 'Ziggy=', ';!'), true);
+        $ziggy = json_decode(Str::before(Str::after($output, 'Ziggy='), ';!'), true);
 
         $this->assertCount(3, $ziggy['routes']);
         $this->assertArrayHasKey('posts.index', $ziggy['routes']);
