@@ -28,14 +28,12 @@ jobs:
             laravel: 7.*
           - php: '8.0'
             laravel: 8.*
-          - php: '8.0'
-            laravel: dev-master
-            testbench: dev-master
+          # - php: '8.0'
+          #   laravel: dev-master
           - php: '8.1'
             laravel: 8.*
-          - php: '8.1'
-            laravel: dev-master
-            testbench: dev-master
+          # - php: '8.1'
+          #   laravel: dev-master
     steps:
       - uses: actions/checkout@v2
       - uses: shivammathur/setup-php@v2
@@ -47,8 +45,8 @@ jobs:
           key: php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: php-${{ matrix.php }}-composer-
       - run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench || '*' }}" phpunit/phpunit --no-update --no-interaction
-          composer update --${{ matrix.dependencies }} --prefer-dist --no-interaction --no-suggest
+          composer require laravel/framework:${{ matrix.laravel }} --no-update --no-interaction
+          composer update --${{ matrix.dependencies }} --prefer-dist --no-interaction
       - uses: actions/cache@v2
         with:
           path: ~/.npm
