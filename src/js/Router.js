@@ -1,5 +1,5 @@
 import { parse, stringify } from 'qs';
-import Route from './Route';
+import Route from './Route.js';
 
 /**
  * A collection of Laravel routes. This class constitutes Ziggy's main API.

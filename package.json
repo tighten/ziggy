@@ -1,6 +1,6 @@
 {
     "name": "ziggy-js",
-    "version": "2.0.0-beta.1",
+    "version": "2.0.0-alpha.0",
     "description": "Use your Laravel named routes in JavaScript.",
     "keywords": [
         "laravel",
@@ -32,16 +32,17 @@
         "src/js",
         "dist"
     ],
-    "source": "src/js/index.js",
-    "main": "dist/ziggy.umd.js",
-    "module": "dist/ziggy.module.js",
-    "exports": "dist/ziggy.modern.js",
+    "type": "module",
+    "source": "./src/js/index.js",
+    "module": "./dist/ziggy.esm.js",
+    "exports": "./dist/ziggy.modern.js",
     "scripts": {
-        "build": "microbundle --format modern,es,umd --external none --no-sourcemap",
-        "watch": "npm run build watch",
-        "build:npm": "microbundle --format modern,es,umd --no-sourcemap",
+        "build": "npm run build:esm && npm run build:umd",
+        "build:esm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --external none --no-sourcemap",
+        "build:umd": "microbundle -i ./src/js/browser.js -o ./dist/route.js --format umd --external none --no-sourcemap",
+        "build:npm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap",
         "test": "jest --verbose",
-        "prepublishOnly": "npm run build:npm"
+        "prepublishOnly": "rm -r ./dist/* && npm run build:npm"
     },
     "mangle": {
         "regex": "^_(?!query)"
@@ -54,5 +55,8 @@
         "jest": "^27.0.6",
         "microbundle": "^0.13.3",
         "power-assert": "^1.6.1"
+    },
+    "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
     }
 }

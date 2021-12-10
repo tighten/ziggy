@@ -1,9 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-
 import assert, { deepEqual, strictEqual as same, throws } from 'assert';
-import { route } from '../../src/js';
+import route from '../../src/js/index.js';
+// import { route } from '../../dist/index.esm.js';
+// import { route } from '../../dist/index.modern.js';
 
 const defaultWindow = {
     location: {
@@ -531,11 +532,6 @@ describe('has()', () => {
     test('can check if given named route exists', () => {
         assert(route().has('posts.show'));
         assert(!route().has('non.existing.route'));
-    });
-
-    test('can check if given named route exists with .check()', () => {
-        assert(route().check('posts.show'));
-        assert(!route().check('non.existing.route'));
     });
 });
 
