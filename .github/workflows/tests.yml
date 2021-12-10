@@ -45,7 +45,7 @@ jobs:
           key: php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: php-${{ matrix.php }}-composer-
       - run: |
-          composer require laravel/framework:${{ matrix.laravel }} --no-update --no-interaction
+          composer require laravel/framework:${{ matrix.laravel }} --no-interaction
           composer update --${{ matrix.dependencies }} --prefer-dist --no-interaction
       - uses: actions/cache@v2
         with:
