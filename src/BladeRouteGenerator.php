@@ -6,39 +6,25 @@ class BladeRouteGenerator
 {
     public static $generated;
 
-    public function generate($group = null, $nonce = null)
+    public function generate($group = null, string $nonce = null): string
     {
         $payload = new Ziggy($group);
-
         $nonce = $nonce ? " nonce=\"{$nonce}\"" : '';
 
         if (static::$generated) {
-            return $this->generateMergeJavascript(json_encode($payload->toArray()['routes']), $nonce);
-        }
+            $json = json_encode($payload->toArray()['routes']);
 
-        $routeFunction = $this->getRouteFunction();
+            return <<<HTML
+<script type="text/javascript"{$nonce}>Object.assign(Ziggy.routes,{$json});</script>
+HTML;
+        }
 
         static::$generated = true;
 
-        return <<<HTML
-<script type="text/javascript"{$nonce}>
-    const Ziggy={$payload->toJson()};
-    {$routeFunction}
-</script>
-HTML;
-    }
+        $function = config('ziggy.skip-route-function') ? '' : file_get_contents(__DIR__ . '/../dist/route.umd.js');
 
-    private function generateMergeJavascript($json, $nonce)
-    {
         return <<<HTML
-<script type="text/javascript"{$nonce}>
-    Object.assign(Ziggy.routes, {$json});
-</script>
+<script type="text/javascript"{$nonce}>const Ziggy={$payload->toJson()};{$function}</script>
 HTML;
-    }
-
-    private function getRouteFunction(): string
-    {
-        return config('ziggy.skip-route-function') ? '' : file_get_contents(__DIR__ . '/../dist/route.umd.js');
     }
 }
