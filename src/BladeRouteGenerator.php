@@ -10,7 +10,7 @@ class BladeRouteGenerator
     {
         $payload = new Ziggy($group);
 
-        $nonce = $nonce ? ' nonce="' . $nonce . '"' : '';
+        $nonce = $nonce ? " nonce=\"{$nonce}\"" : '';
 
         if (static::$generated) {
             return $this->generateMergeJavascript(json_encode($payload->toArray()['routes']), $nonce);
@@ -32,11 +32,7 @@ HTML;
     {
         return <<<HTML
 <script type="text/javascript"{$nonce}>
-    (function () {
-        const routes = {$json};
-
-        Object.assign(Ziggy.routes, routes);
-    })();
+    Object.assign(Ziggy.routes, {$json});
 </script>
 HTML;
     }
