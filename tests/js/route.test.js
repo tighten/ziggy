@@ -525,6 +525,10 @@ describe('route()', () => {
         same(route('pages.optionalExtension', '.html'), 'https://ziggy.dev/download/file.html');
         same(route('pages.optionalExtension', { extension: '.pdf' }), 'https://ziggy.dev/download/file.pdf');
     });
+
+    test('can skip encoding slashes inside last parameter when explicitly allowed', () => {
+        same(route('optional', ['1', 'foo/bar']), 'https://ziggy.dev/optional/1/foo/bar')
+    });
 });
 
 describe('has()', () => {
