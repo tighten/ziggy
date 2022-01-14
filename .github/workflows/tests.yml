@@ -7,7 +7,7 @@ on:
     paths-ignore: ['dist/**', '*.md']
 jobs:
   test:
-    name: PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}
+    name: PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}, ${{ matrix.dependencies }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -59,7 +59,7 @@ jobs:
           restore-keys: npm-
       - run: |
           composer require laravel/framework:"${{ matrix.laravel }}" --no-update --no-interaction
-          composer update --prefer-{{ matrix.dependencies }} --prefer-dist --no-interaction
+          composer update --prefer-${{ matrix.dependencies }} --prefer-dist --no-interaction
       - run: vendor/bin/phpunit --testdox --colors=always
       - run: npm ci && npm run build
       - run: npm test
