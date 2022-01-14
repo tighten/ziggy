@@ -11,6 +11,7 @@ export default class Route {
         this.name = name;
         this.definition = definition;
         this.bindings = definition.bindings ?? {};
+        this.wheres = definition.wheres ?? {};
         this.config = config;
     }
 
@@ -83,6 +84,10 @@ export default class Route {
             // If the parameter is missing but is not optional, throw an error
             if ([null, undefined].includes(params[segment]) && this.parameterSegments.find(({ name }) => name === segment).required) {
                 throw new Error(`Ziggy error: '${segment}' parameter is required for route '${this.name}'.`)
+            }
+
+            if (this.parameterSegments[this.parameterSegments.length - 1].name === segment && this.wheres[segment] === '.*') {
+                return params[segment] ?? '';
             }
 
             return encodeURIComponent(params[segment] ?? '');
