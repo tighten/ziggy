@@ -12,6 +12,8 @@ use ReflectionMethod;
 
 class Ziggy implements JsonSerializable
 {
+    protected const DEFAULT_ROUTE_KEY_NAME = 'id';
+
     protected static $cache;
 
     protected $url;
@@ -177,12 +179,25 @@ class Ziggy implements JsonSerializable
                     && $model === (new ReflectionMethod($model, 'getRouteKeyName'))->class;
 
                 // Avoid booting this model if it doesn't override the default route key name
-                $bindings[$parameter->getName()] = $override ? app($model)->getRouteKeyName() : 'id';
+                $bindings[$parameter->getName()] = $override
+                    ? $this->determineRouteKeyName($model)
+                    : self::DEFAULT_ROUTE_KEY_NAME;
             }
 
             $routes[$name] = $scopedBindings ? array_merge($bindings, $route->bindingFields()) : $bindings;
         }
 
         return $routes;
+    }
+
+    private function determineRouteKeyName(string $model): string
+    {
+        if (function_exists('enum_exists') && enum_exists($model)) {
+            return !empty($model::cases())
+                ? $model::cases()[0]->getRouteKeyName()
+                : self::DEFAULT_ROUTE_KEY_NAME;
+        }
+
+        return app($model)->getRouteKeyName();
     }
 }

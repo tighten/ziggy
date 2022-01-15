@@ -2,7 +2,8 @@
 <phpunit bootstrap="vendor/autoload.php" colors="true">
     <testsuites>
         <testsuite name="Ziggy Tests">
-            <directory suffix="Test.php">./tests</directory>
+            <directory suffix="Test.php">./tests/Unit</directory>
+            <directory suffix="Test.php" phpVersion="8.1" phpVersionOperator=">=">./tests/Unit81</directory>
         </testsuite>
     </testsuites>
     <php>
