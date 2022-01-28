@@ -16,7 +16,7 @@ const defaultZiggy = {
     port: null,
     defaults: { locale: 'en' },
     routes: {
-        'home': {
+        home: {
             uri: '/',
             methods: ['GET', 'HEAD'],
         },
@@ -96,11 +96,11 @@ const defaultZiggy = {
             uri: 'subscribers/{subscriber}/conversations/{type}/{conversation_id?}',
             methods: ['GET', 'HEAD'],
         },
-        'optional': {
+        optional: {
             uri: 'optional/{id}/{slug?}',
             methods: ['GET', 'HEAD'],
         },
-        'optionalId': {
+        optionalId: {
             uri: 'optionalId/{type}/{id?}',
             methods: ['GET', 'HEAD'],
         },
@@ -134,9 +134,16 @@ const defaultZiggy = {
             uri: 'strict-download/file{extension}',
             methods: ['GET', 'HEAD'],
         },
-        'pages': {
+        pages: {
             uri: '{page}',
             methods: ['GET', 'HEAD'],
+        },
+        slashes: {
+            uri: 'slashes/{encoded}/{slug}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                slug: '.*',
+            },
         },
     },
 };
@@ -524,6 +531,10 @@ describe('route()', () => {
         same(route('pages.optionalExtension'), 'https://ziggy.dev/download/file');
         same(route('pages.optionalExtension', '.html'), 'https://ziggy.dev/download/file.html');
         same(route('pages.optionalExtension', { extension: '.pdf' }), 'https://ziggy.dev/download/file.pdf');
+    });
+
+    test('can skip encoding slashes inside last parameter when explicitly allowed', () => {
+        same(route('slashes', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one%2Ftwo/three/four')
     });
 });
 
