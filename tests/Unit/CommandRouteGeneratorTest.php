@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class CommandRouteGeneratorTest extends TestCase
@@ -44,6 +43,7 @@ class CommandRouteGeneratorTest extends TestCase
     {
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->get('slashes/{slug}', $this->noop())->where('slug', '.*')->name('slashes');
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate');
@@ -83,6 +83,7 @@ class CommandRouteGeneratorTest extends TestCase
         config(['ziggy.except' => ['admin.*']]);
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->get('slashes/{slug}', $this->noop())->where('slug', '.*')->name('slashes');
         $router->get('admin', $this->noop())->name('admin.dashboard'); // Excluded, should NOT be present in file
         $router->getRoutes()->refreshNameLookups();
 

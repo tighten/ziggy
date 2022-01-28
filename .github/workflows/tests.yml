@@ -3,7 +3,7 @@ on:
   pull_request:
     paths-ignore: ['dist/**', '*.md']
   push:
-    branches: [0.9.x, main, next]
+    branches: [0.9.x, main, next, ci]
     paths-ignore: ['dist/**', '*.md']
 jobs:
   test:
@@ -11,41 +11,33 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: ['7.3', '7.4']
-        laravel: [5.5.*, 5.6.*, 5.7.*, 5.8.*, 6.*, 7.*, 8.*]
-        include:
-          - laravel: 5.5.*
-            testbench: 3.5.*
-          - laravel: 5.6.*
-            testbench: 3.6.*
-          - laravel: 5.7.*
-            testbench: 3.7.*
-          - laravel: 5.8.*
-            testbench: 3.8.*
-          - laravel: 6.*
-            testbench: 4.*
-          - laravel: 7.*
-            testbench: 5.*
-          - laravel: 8.*
-            testbench: 6.*
+        php: ['7.3', '7.4', '8.0', '8.1']
+        laravel: [5.5.*, 5.6.*, 5.7.*, 5.8.*, 6.*, 7.*, 8.*, 'dev-master as 9.0']
+        exclude:
+          - php: '7.3'
+            laravel: 'dev-master as 9.0'
+          - php: '7.4'
+            laravel: 'dev-master as 9.0'
           - php: '8.0'
+            laravel: 5.5.*
+          - php: '8.0'
+            laravel: 5.6.*
+          - php: '8.0'
+            laravel: 5.7.*
+          - php: '8.0'
+            laravel: 5.8.*
+          - php: '8.1'
+            laravel: 5.5.*
+          - php: '8.1'
+            laravel: 5.6.*
+          - php: '8.1'
+            laravel: 5.7.*
+          - php: '8.1'
+            laravel: 5.8.*
+          - php: '8.1'
             laravel: 6.*
-            testbench: 4.*
-          - php: '8.0'
+          - php: '8.1'
             laravel: 7.*
-            testbench: 5.*
-          - php: '8.0'
-            laravel: 8.*
-            testbench: 6.*
-          - php: '8.0'
-            laravel: dev-master
-            testbench: dev-master
-          - php: '8.1'
-            laravel: 8.*
-            testbench: 6.*
-          - php: '8.1'
-            laravel: dev-master
-            testbench: dev-master
     steps:
       - uses: actions/checkout@v2
       - uses: shivammathur/setup-php@v2
@@ -54,18 +46,18 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ~/.composer/cache/files
-          key: php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: php-${{ matrix.php }}-composer-
-      - run: |
-          composer require laravel/framework:${{ matrix.laravel }} orchestra/testbench:${{ matrix.testbench }} --no-update --no-interaction
-          composer update --prefer-dist --no-interaction
-      - uses: actions/cache@v2
+          key: php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-
+            php-${{ matrix.php }}-laravel-
+      - uses: actions/cache@v1
         with:
           path: ~/.npm
           key: npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: npm-
       - run: |
-          npm install
-          npm run build
+          composer require laravel/framework:"${{ matrix.laravel }}" --no-update --no-interaction
+          composer update --prefer-dist --no-interaction
       - run: vendor/bin/phpunit --testdox --colors=always
+      - run: npm ci && npm run build
       - run: npm test

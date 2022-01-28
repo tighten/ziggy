@@ -312,6 +312,27 @@ class ZiggyTest extends TestCase
     }
 
     /** @test */
+    public function can_include_wheres()
+    {
+        app('router')->post('slashes/{slug}', function () {
+            return response()->json(new Ziggy);
+        })->where('slug', '.*')->name('slashes');
+        app('router')->getRoutes()->refreshNameLookups();
+
+        $this->post('http://ziggy.dev/slashes/foo/bar')
+            ->assertJson([
+                'routes' => [
+                    'slashes' => [
+                        'uri' => 'slashes/{slug}',
+                        'wheres' => [
+                            'slug' => '.*',
+                        ],
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
     public function can_include_only_middleware_set_in_config()
     {
         config(['ziggy.middleware' => ['auth']]);
@@ -396,6 +417,9 @@ class ZiggyTest extends TestCase
         $expected['fallback'] = [
             'uri' => '{fallbackPlaceholder}',
             'methods' => ['GET', 'HEAD'],
+            'wheres' => [
+                'fallbackPlaceholder' => '.*',
+            ],
         ];
 
         $this->assertSame($expected, $routes);
