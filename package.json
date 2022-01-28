@@ -38,9 +38,9 @@
     "exports": "./dist/ziggy.modern.js",
     "scripts": {
         "build": "npm run build:esm && npm run build:umd",
-        "build:esm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --external none --no-sourcemap",
-        "build:umd": "microbundle -i ./src/js/browser.js -o ./dist/route.js --format umd --external none --no-sourcemap",
         "build:npm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap",
+        "build:umd": "microbundle -i ./src/js/browser.js -o ./dist/route.js --format umd --no-sourcemap --external none",
+        "build:esm": "npm run build:npm -- --external none",
         "test": "jest --verbose",
         "prepublishOnly": "rm -r ./dist/* && npm run build:npm"
     },
