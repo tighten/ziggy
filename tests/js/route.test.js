@@ -534,7 +534,8 @@ describe('route()', () => {
     });
 
     test('can skip encoding slashes inside last parameter when explicitly allowed', () => {
-        same(route('slashes', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one%2Ftwo/three/four')
+        same(route('slashes', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one%2Ftwo/three/four');
+        same(route('slashes', ['one/two', 'Fun&Games/venues']), 'https://ziggy.dev/slashes/one%2Ftwo/Fun%26Games/venues');
     });
 });
 

@@ -87,7 +87,7 @@ export default class Route {
             }
 
             if (this.parameterSegments[this.parameterSegments.length - 1].name === segment && this.wheres[segment] === '.*') {
-                return params[segment] ?? '';
+                return encodeURIComponent(params[segment] ?? '').replaceAll('%2F', '/');
             }
 
             return encodeURIComponent(params[segment] ?? '');
