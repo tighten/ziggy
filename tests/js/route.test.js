@@ -213,6 +213,12 @@ beforeEach(() => {
 });
 
 describe('route()', () => {
+    test('current route URL', () => {
+        global.window.location.pathname = '/subfolder/ph/en/products/4';
+        global.window.location.search = '?abc=test';
+        same(route().toString(), 'https://ziggy.dev/subfolder/ph/en/products/4?abc=test');
+    });
+
     test('can generate a URL with no parameters', () => {
         same(route('posts.index'), 'https://ziggy.dev/posts');
     });
@@ -1068,5 +1074,10 @@ describe('current()', () => {
         };
 
         same(route(undefined, undefined, undefined, config).current(), 'events.venues.show');
+    });
+
+
+    test('can resolve the same route(name, params) resolves to', () => {
+        same(route().resolve({name: 'postComments.show', params: [1, { uuid: 'correct-horse-etc-etc' }], query: {test: 'yes'}}), route('postComments.show', [1, { uuid: 'correct-horse-etc-etc'}, {test: 'yes'}]));
     });
 });
