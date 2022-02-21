@@ -2,9 +2,10 @@
 
 namespace Tightenco\Ziggy\Formatters;
 
+use Stringable;
 use Tightenco\Ziggy\Ziggy;
 
-class MergeScriptFormatter
+class MergeScriptFormatter implements Stringable
 {
     protected $ziggy;
     protected $nonce;
@@ -15,7 +16,7 @@ class MergeScriptFormatter
         $this->nonce = $nonce;
     }
 
-    public function format()
+    public function __toString()
     {
         $routes = json_encode($this->ziggy->toArray()['routes']);
 

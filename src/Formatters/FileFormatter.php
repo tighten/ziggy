@@ -2,9 +2,10 @@
 
 namespace Tightenco\Ziggy\Formatters;
 
+use Stringable;
 use Tightenco\Ziggy\Ziggy;
 
-class FileFormatter
+class FileFormatter implements Stringable
 {
     protected $ziggy;
 
@@ -13,7 +14,7 @@ class FileFormatter
         $this->ziggy = $ziggy;
     }
 
-    public function format()
+    public function __toString()
     {
         return <<<JAVASCRIPT
             const Ziggy = {$this->ziggy->toJson()};

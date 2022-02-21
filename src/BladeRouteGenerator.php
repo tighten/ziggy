@@ -25,14 +25,14 @@ class BladeRouteGenerator
 
         $formatter = config()->get('ziggy.formatters.script', ScriptFormatter::class);
 
-        return (new $formatter($ziggy, $routeFunction, $nonce))->format();
+        return (string)(new $formatter($ziggy, $routeFunction, $nonce));
     }
 
     private function generateMergeJavascript(Ziggy $ziggy, $nonce)
     {
         $formatter = config()->get('ziggy.formatters.mergeScript', MergeScriptFormatter::class);
 
-        return (new $formatter($ziggy, $nonce))->format();
+        return (string)(new $formatter($ziggy, $nonce));
     }
 
     private function getRouteFilePath()

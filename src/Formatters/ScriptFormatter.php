@@ -2,9 +2,10 @@
 
 namespace Tightenco\Ziggy\Formatters;
 
+use Stringable;
 use Tightenco\Ziggy\Ziggy;
 
-class ScriptFormatter
+class ScriptFormatter implements Stringable
 {
     protected $ziggy;
     protected $routeFunction;
@@ -17,7 +18,7 @@ class ScriptFormatter
         $this->nonce = $nonce;
     }
 
-    public function format()
+    public function __toString()
     {
         return <<<HTML
             <script type="text/javascript"{$this->nonce}>
