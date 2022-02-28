@@ -40,9 +40,7 @@ class CommandRouteGenerator extends Command
     {
         $ziggy = (new Ziggy($group, $this->option('url') ? url($this->option('url')) : null));
 
-        $formatter = config()->get('ziggy.formatters.file', File::class);
-
-        return (string) new $formatter($ziggy);
+        return (string) app(File::class, ['ziggy' => $ziggy]);
     }
 
     protected function makeDirectory($path)

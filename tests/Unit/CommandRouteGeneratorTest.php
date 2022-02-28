@@ -97,12 +97,8 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_file_with_custom_output_formatter()
     {
-        config(['ziggy' => [
-            'except' => ['admin.*'],
-            'formatters' => [
-                'file' => CustomFileFormatter::class,
-            ],
-        ]]);
+        config(['ziggy' => ['except' => ['admin.*']]]);
+        app()->bind(File::class, CustomFileFormatter::class);
 
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
@@ -137,10 +133,10 @@ class CustomFileFormatter extends File
     public function __toString(): string
     {
         return <<<JAVASCRIPT
-        // This is a custom template
-        const Ziggy = {$this->ziggy->toJson()};
-        export { Ziggy };
+// This is a custom template
+const Ziggy = {$this->ziggy->toJson()};
+export { Ziggy };
 
-        JAVASCRIPT;
+JAVASCRIPT;
     }
 }
