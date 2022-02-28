@@ -1,5 +1,6 @@
 node_modules/
 vendor/
+*.cache
 *.log
 composer.lock
 phpunit.xml

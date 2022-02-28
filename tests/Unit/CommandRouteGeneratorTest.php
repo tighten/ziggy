@@ -44,6 +44,7 @@ class CommandRouteGeneratorTest extends TestCase
     {
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->get('slashes/{slug}', $this->noop())->where('slug', '.*')->name('slashes');
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate');
@@ -89,6 +90,7 @@ class CommandRouteGeneratorTest extends TestCase
 
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->get('slashes/{slug}', $this->noop())->where('slug', '.*')->name('slashes');
         $router->get('admin', $this->noop())->name('admin.dashboard'); // Excluded, should NOT be present in file
         $router->getRoutes()->refreshNameLookups();
 

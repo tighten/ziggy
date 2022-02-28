@@ -1,6 +1,6 @@
 {
     "name": "ziggy-js",
-    "version": "1.4.2",
+    "version": "1.4.3",
     "description": "Use your Laravel named routes in JavaScript.",
     "keywords": [
         "laravel",
@@ -52,12 +52,12 @@
         "regex": "^_(?!query)"
     },
     "dependencies": {
-        "qs": "^6.10.1"
+        "qs": "~6.9.7"
     },
     "devDependencies": {
         "babel-preset-power-assert": "^3.0.0",
         "jest": "^27.0.6",
-        "microbundle": "^0.13.3",
+        "microbundle": "^0.14.2",
         "power-assert": "^1.6.1"
     }
 }
