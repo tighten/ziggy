@@ -1,11 +1,11 @@
 <?php
 
-namespace Tightenco\Ziggy\Formatters;
+namespace Tightenco\Ziggy\Output;
 
 use Stringable;
 use Tightenco\Ziggy\Ziggy;
 
-class FileFormatter implements Stringable
+class File implements Stringable
 {
     protected $ziggy;
 

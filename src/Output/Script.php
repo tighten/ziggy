@@ -1,20 +1,20 @@
 <?php
 
-namespace Tightenco\Ziggy\Formatters;
+namespace Tightenco\Ziggy\Output;
 
 use Stringable;
 use Tightenco\Ziggy\Ziggy;
 
-class ScriptFormatter implements Stringable
+class Script implements Stringable
 {
     protected $ziggy;
-    protected $routeFunction;
+    protected $function;
     protected $nonce;
 
-    public function __construct(Ziggy $ziggy, string $routeFunction, string $nonce = '')
+    public function __construct(Ziggy $ziggy, string $function, string $nonce = '')
     {
         $this->ziggy = $ziggy;
-        $this->routeFunction = $routeFunction;
+        $this->function = $function;
         $this->nonce = $nonce;
     }
 
@@ -24,7 +24,7 @@ class ScriptFormatter implements Stringable
 <script type="text/javascript"{$this->nonce}>
     const Ziggy = {$this->ziggy->toJson()};
 
-    {$this->routeFunction}
+    {$this->function}
 </script>
 HTML;
     }

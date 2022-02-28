@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
-use Tightenco\Ziggy\Formatters\FileFormatter;
+use Tightenco\Ziggy\Output\File;
 
 class CommandRouteGeneratorTest extends TestCase
 {
@@ -132,7 +132,7 @@ class CommandRouteGeneratorTest extends TestCase
     }
 }
 
-class CustomFileFormatter extends FileFormatter
+class CustomFileFormatter extends File
 {
     public function __toString(): string
     {

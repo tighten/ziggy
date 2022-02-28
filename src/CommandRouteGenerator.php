@@ -4,7 +4,7 @@ namespace Tightenco\Ziggy;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Tightenco\Ziggy\Formatters\FileFormatter;
+use Tightenco\Ziggy\Output\File;
 use Tightenco\Ziggy\Ziggy;
 
 class CommandRouteGenerator extends Command
@@ -40,7 +40,7 @@ class CommandRouteGenerator extends Command
     {
         $ziggy = (new Ziggy($group, $this->option('url') ? url($this->option('url')) : null));
 
-        $formatter = config()->get('ziggy.formatters.file', FileFormatter::class);
+        $formatter = config()->get('ziggy.formatters.file', File::class);
 
         return (string) new $formatter($ziggy);
     }

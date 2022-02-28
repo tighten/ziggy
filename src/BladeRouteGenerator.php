@@ -2,8 +2,8 @@
 
 namespace Tightenco\Ziggy;
 
-use Tightenco\Ziggy\Formatters\MergeScriptFormatter;
-use Tightenco\Ziggy\Formatters\ScriptFormatter;
+use Tightenco\Ziggy\Output\MergeScript;
+use Tightenco\Ziggy\Output\Script;
 
 class BladeRouteGenerator
 {
@@ -30,7 +30,7 @@ class BladeRouteGenerator
 
     private function generateMergeJavascript(Ziggy $ziggy, $nonce)
     {
-        $formatter = config()->get('ziggy.formatters.mergeScript', MergeScriptFormatter::class);
+        $formatter = config()->get('ziggy.formatters.mergeScript', MergeScript::class);
 
         return new $formatter($ziggy, $nonce);
     }

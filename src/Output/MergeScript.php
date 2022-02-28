@@ -1,11 +1,11 @@
 <?php
 
-namespace Tightenco\Ziggy\Formatters;
+namespace Tightenco\Ziggy\Output;
 
 use Stringable;
 use Tightenco\Ziggy\Ziggy;
 
-class MergeScriptFormatter implements Stringable
+class MergeScript implements Stringable
 {
     protected $ziggy;
     protected $nonce;
