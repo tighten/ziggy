@@ -14,17 +14,17 @@ class FileFormatter implements Stringable
         $this->ziggy = $ziggy;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return <<<JAVASCRIPT
-            const Ziggy = {$this->ziggy->toJson()};
+const Ziggy = {$this->ziggy->toJson()};
 
-            if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
-                Object.assign(Ziggy.routes, window.Ziggy.routes);
-            }
+if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
+    Object.assign(Ziggy.routes, window.Ziggy.routes);
+}
 
-            export { Ziggy };
+export { Ziggy };
 
-            JAVASCRIPT;
+JAVASCRIPT;
     }
 }

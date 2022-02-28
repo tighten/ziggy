@@ -16,18 +16,18 @@ class MergeScriptFormatter implements Stringable
         $this->nonce = $nonce;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $routes = json_encode($this->ziggy->toArray()['routes']);
 
         return <<<HTML
-            <script type="text/javascript"{$this->nonce}>
-                (function () {
-                    const routes = {$routes};
+<script type="text/javascript"{$this->nonce}>
+    (function () {
+        const routes = {$routes};
 
-                    Object.assign(Ziggy.routes, routes);
-                })();
-            </script>
-            HTML;
+        Object.assign(Ziggy.routes, routes);
+    })();
+</script>
+HTML;
     }
 }

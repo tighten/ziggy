@@ -18,14 +18,14 @@ class ScriptFormatter implements Stringable
         $this->nonce = $nonce;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return <<<HTML
-            <script type="text/javascript"{$this->nonce}>
-                const Ziggy = {$this->ziggy->toJson()};
+<script type="text/javascript"{$this->nonce}>
+    const Ziggy = {$this->ziggy->toJson()};
 
-                {$this->routeFunction}
-            </script>
-            HTML;
+    {$this->routeFunction}
+</script>
+HTML;
     }
 }

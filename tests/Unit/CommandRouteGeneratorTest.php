@@ -4,8 +4,8 @@ namespace Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\URL;
-use Tests\Formatters\CustomFileFormatter;
 use Tests\TestCase;
+use Tightenco\Ziggy\Formatters\FileFormatter;
 
 class CommandRouteGeneratorTest extends TestCase
 {
@@ -129,5 +129,18 @@ class CommandRouteGeneratorTest extends TestCase
         Artisan::call('ziggy:generate', ['path' => 'resources/js/admin.js', '--group' => 'admin']);
 
         $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
+    }
+}
+
+class CustomFileFormatter extends FileFormatter
+{
+    public function __toString(): string
+    {
+        return <<<JAVASCRIPT
+        // This is a custom template
+        const Ziggy = {$this->ziggy->toJson()};
+        export { Ziggy };
+
+        JAVASCRIPT;
     }
 }
