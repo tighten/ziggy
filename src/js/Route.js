@@ -1,4 +1,4 @@
-import {parse} from "qs";
+import {parse} from 'qs';
 
 /**
  * A Laravel route. This class represents one route and its configuration and metadata.
@@ -57,14 +57,16 @@ export default class Route {
      * @return {Array|false} If this route matches, returns the matched parameters.
      */
     matchesUrl(url) {
-        if (!this.definition.methods.includes('GET')) return false;
+        if (!this.definition.methods.includes('GET')) {
+            return false;
+        }
 
         // Transform the route's template into a regex that will match a hydrated URL,
         // by replacing its parameter segments with matchers for parameter values
         const pattern = this.template
             .replace(/(\/?){([^}?]*)(\??)}/g, (_, slash, segment, optional) => {
-              const regex = '(?<'+segment+'>' + (this.wheres[segment] || '[^/?]+') + ')';
-              return optional ? '(' + slash + regex + ')?' : slash + regex
+                const regex = '(?<' + segment + '>' + (this.wheres[segment] || '[^/?]+') + ')';
+                return optional ? '(' + slash + regex + ')?' : slash + regex;
             })
             .replace(/^\w+:\/\//, '');
 
@@ -88,7 +90,7 @@ export default class Route {
         return this.template.replace(/{([^}?]+)(\??)}/g, (_, segment, optional) => {
             // If the parameter is missing but is not optional, throw an error
             if (!optional && [null, undefined].includes(params[segment])) {
-                throw new Error(`Ziggy error: '${segment}' parameter is required for route '${this.name}'.`)
+                throw new Error(`Ziggy error: '${segment}' parameter is required for route '${this.name}'.`);
             }
 
             if (segments[segments.length - 1].name === segment && this.wheres[segment] === '.*') {
@@ -96,8 +98,8 @@ export default class Route {
             }
 
             if (this.wheres[segment] &&
-                !new RegExp('^'+(optional ? '(' + this.wheres[segment] + ')?' : this.wheres[segment])+'$').test(params[segment] ?? '')) {
-                throw new Error(`Ziggy error: '${segment}' parameter does not match required format '${this.wheres[segment]}' for route '${this.name}'.`)
+                !new RegExp('^' + (optional ? '(' + this.wheres[segment] + ')?' : this.wheres[segment]) + '$').test(params[segment] ?? '')) {
+                throw new Error(`Ziggy error: '${segment}' parameter does not match required format '${this.wheres[segment]}' for route '${this.name}'.`);
             }
 
             return encodeURIComponent(params[segment] ?? '');

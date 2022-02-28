@@ -45,8 +45,10 @@
         "watch": "npm run build watch",
         "build:npm": "microbundle --name route --format modern,es,umd --no-sourcemap",
         "build:npm:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --no-sourcemap",
-        "test": "jest --verbose",
-        "prepublishOnly": "npm run build:npm && npm run build:npm:vue"
+        "test": "npm run lint && jest --verbose",
+        "prepublishOnly": "npm run build:npm && npm run build:npm:vue",
+        "lint": "eslint --ext .ts,.js,.vue --ignore-path .gitignore .",
+        "lint:fix": "eslint --ext .ts,.js,.vue --fix --ignore-path .gitignore ."
     },
     "mangle": {
         "regex": "^_(?!query)"
@@ -55,9 +57,22 @@
         "qs": "~6.9.7"
     },
     "devDependencies": {
+        "@babel/core": "^7.16.12",
+        "@babel/eslint-parser": "^7.17.0",
         "babel-preset-power-assert": "^3.0.0",
-        "jest": "^27.0.6",
+        "eslint-plugin-import": "^2.25.4",
+        "eslint": "^8.9.0",
+        "jest": "^27.5.1",
         "microbundle": "^0.14.2",
-        "power-assert": "^1.6.1"
+        "power-assert": "^1.6.1",
+        "lint-staged": "^12.3.4"
+    },
+    "gitHooks": {
+        "pre-commit": "lint-staged"
+    },
+    "lint-staged": {
+        "*.{js,jsx,vue}": [
+            "npm run lint:fix"
+        ]
     }
 }

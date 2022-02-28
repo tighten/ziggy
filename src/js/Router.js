@@ -14,7 +14,7 @@ export default class Router extends String {
     constructor(name, params, absolute = true, config) {
         super();
 
-        this._config = config ?? (typeof Ziggy !== 'undefined' ? Ziggy : globalThis?.Ziggy);
+        this._config = config ?? ((globalThis ?? window ?? global).Ziggy);
         this._config = { ...this._config, absolute };
 
         if (name) {
@@ -86,7 +86,7 @@ export default class Router extends String {
         }
         let matchedParams = {};
         const [name, route] = Object.entries(this._config.routes).find(
-          (entry) => (matchedParams = new Route(entry[0], entry[1], this._config).matchesUrl(url))
+            (entry) => (matchedParams = new Route(entry[0], entry[1], this._config).matchesUrl(url))
         ) || [undefined, undefined];
 
         const {query, params} = matchedParams;
@@ -123,13 +123,17 @@ export default class Router extends String {
 
         const matchedParams = {...currentParams, ...query};
 
-        if (!name) return current;
+        if (!name) {
+            return current;
+        }
 
         // Test the passed name against the current route, matching some
         // basic wildcards, e.g. passing `events.*` matches `events.show`
         const match = new RegExp(`^${name.replace(/\./g, '\\.').replace(/\*/g, '.*')}$`).test(current);
 
-        if ([null, undefined].includes(params) || !match) return match;
+        if ([null, undefined].includes(params) || !match) {
+            return match;
+        }
 
         const routeObject = new Route(current, route, this._config);
         const routeParams = JSON.parse(JSON.stringify(matchedParams)); // Remove undefined params
@@ -137,7 +141,9 @@ export default class Router extends String {
         params = this._parse(params, routeObject);
 
         // If the current window URL has no route parameters, and the passed parameters are empty, return true
-        if (Object.values(params).every(p => !p) && !Object.values(routeParams).length) return true;
+        if (Object.values(params).every(p => !p) && !Object.values(routeParams).length) {
+            return true;
+        }
 
         // Check that all passed parameters match their values in the current window URL
         // Use weak equality because all values in the current window URL will be strings
@@ -212,7 +218,7 @@ export default class Router extends String {
         } else if (
             segments.length === 1
             && !params[segments[0].name]
-            && (params.hasOwnProperty(Object.values(route.bindings)[0]) || params.hasOwnProperty('id'))
+            && ({}.hasOwnProperty.call(params, Object.values(route.bindings)[0]) || {}.hasOwnProperty.call(params, 'id'))
         ) {
             // If there is only one template segment and `params` is an object, that object is
             // ambiguous—it could contain the parameter key and value, or it could be an object
@@ -239,7 +245,7 @@ export default class Router extends String {
      */
     _defaults(route) {
         return route.parameterSegments.filter(({ name }) => this._config.defaults[name])
-            .reduce((result, { name }, i) => ({ ...result, [name]: this._config.defaults[name] }), {});
+            .reduce((result, { name }) => ({ ...result, [name]: this._config.defaults[name] }), {});
     }
 
     /**
@@ -260,12 +266,12 @@ export default class Router extends String {
                 return { ...result, [key]: value };
             }
 
-            if (!value.hasOwnProperty(bindings[key])) {
-                if (value.hasOwnProperty('id')) {
+            if (!{}.hasOwnProperty.call(value, bindings[key])) {
+                if ({}.hasOwnProperty.call(value, 'id')) {
                     // As a fallback, we still accept an 'id' key not explicitly registered as a binding
                     bindings[key] = 'id';
                 } else {
-                    throw new Error(`Ziggy error: object passed as '${key}' parameter is missing route model binding key '${bindings[key]}'.`)
+                    throw new Error(`Ziggy error: object passed as '${key}' parameter is missing route model binding key '${bindings[key]}'.`);
                 }
             }
 

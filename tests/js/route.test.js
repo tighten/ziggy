@@ -571,8 +571,8 @@ describe('route()', () => {
 
     test("can append 'extra' string/number elements in array of parameters to query", () => {
         // 'posts.show' has exactly one parameter
-         same(route('posts.show', [1, 2]), 'https://ziggy.dev/posts/1?2=');
-         same(route('posts.show', ['my-first-post', 'foo', 'bar']), 'https://ziggy.dev/posts/my-first-post?foo=&bar=');
+        same(route('posts.show', [1, 2]), 'https://ziggy.dev/posts/1?2=');
+        same(route('posts.show', ['my-first-post', 'foo', 'bar']), 'https://ziggy.dev/posts/my-first-post?foo=&bar=');
     });
 
     test("can automatically append object with only 'extra' parameters to query", () => {
@@ -772,19 +772,19 @@ describe('current()', () => {
 
     test('can current route with complex requirements is dehydrated correctly', () => {
         global.window.location.pathname = '/where/word-12/required/file';
-        deepEqual(route().params, {digit: '12', word: 'word', required: 'required', optional: undefined, extension: undefined})
+        deepEqual(route().params, {digit: '12', word: 'word', required: 'required', optional: undefined, extension: undefined});
 
         global.window.location.pathname = '/where/complex-12/required/optional/file';
-        deepEqual(route().params, {digit: '12', word: 'complex', required: 'required', optional: 'optional', extension: undefined})
+        deepEqual(route().params, {digit: '12', word: 'complex', required: 'required', optional: 'optional', extension: undefined});
 
         global.window.location.pathname = '/where/123-abc/required/file.html';
-        deepEqual(route().params, {digit: '123', word: 'abc', required: 'required', optional: undefined, extension: '.html'})
+        deepEqual(route().params, {digit: '123', word: 'abc', required: 'required', optional: undefined, extension: '.html'});
 
         global.window.location.pathname = '/where/complex-12/different_but_required/optional/file';
-        deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined})
+        deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined});
 
         global.window.location.search = '?ab=cd&ef=1&dd';
-        deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined, ab: 'cd', ef: '1', 'dd': ''})
+        deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined, ab: 'cd', ef: '1', dd: ''});
     });
 
     test('can check the current route name at a URL with a non-delimited parameter', () => {
@@ -868,7 +868,7 @@ describe('current()', () => {
         same(route().current('posts.index', undefined), true);
         same(route().current('posts.index', null), true);
         same(route().current('posts.index', {}), true);
-        same(route().current('posts.index', { '0': 'test' }), true);
+        same(route().current('posts.index', { 0: 'test' }), true);
 
         same(route().current('posts.index', ''), false);
         same(route().current('posts.index', 'test'), false);
