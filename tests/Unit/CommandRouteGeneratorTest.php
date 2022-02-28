@@ -4,8 +4,8 @@ namespace Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\URL;
-use Tests\TestCase;
 use Tests\Formatters\CustomFileFormatter;
+use Tests\TestCase;
 
 class CommandRouteGeneratorTest extends TestCase
 {
@@ -81,16 +81,31 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_file_with_config_applied()
     {
-        config(['ziggy' => [
-            'except' => ['admin.*'],
-            'formatters' => [
-                'file' => CustomFileFormatter::class,
-            ]
-        ]]);
+        config(['ziggy.except' => ['admin.*']]);
 
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         $router->get('slashes/{slug}', $this->noop())->where('slug', '.*')->name('slashes');
+        $router->get('admin', $this->noop())->name('admin.dashboard'); // Excluded, should NOT be present in file
+        $router->getRoutes()->refreshNameLookups();
+
+        Artisan::call('ziggy:generate');
+
+        $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
+    }
+
+    /** @test */
+    public function can_generate_file_with_custom_output_formatter()
+    {
+        config(['ziggy' => [
+            'except' => ['admin.*'],
+            'formatters' => [
+                'file' => CustomFileFormatter::class,
+            ],
+        ]]);
+
+        $router = app('router');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         $router->get('admin', $this->noop())->name('admin.dashboard'); // Excluded, should NOT be present in file
         $router->getRoutes()->refreshNameLookups();
 
