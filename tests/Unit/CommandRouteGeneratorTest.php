@@ -82,7 +82,6 @@ class CommandRouteGeneratorTest extends TestCase
     public function can_generate_file_with_config_applied()
     {
         config(['ziggy.except' => ['admin.*']]);
-
         $router = app('router');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         $router->get('slashes/{slug}', $this->noop())->where('slug', '.*')->name('slashes');
