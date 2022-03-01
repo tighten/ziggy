@@ -7,14 +7,12 @@ on:
     paths-ignore: ['dist/**', '*.md']
 jobs:
   test:
-    name: PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}, ${{ matrix.dependencies }}
+    name: PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         php: ['7.3', '7.4', '8.0', '8.1']
         laravel: [5.5.*, 5.6.*, 5.7.*, 5.8.*, 6.*, 7.*, 8.*, 'dev-master as 9.0']
-        dependencies: [lowest, stable]
         exclude:
           - php: '7.3'
             laravel: 'dev-master as 9.0'
@@ -40,13 +38,6 @@ jobs:
             laravel: 6.*
           - php: '8.1'
             laravel: 7.*
-          - php: '7.4'
-            laravel: 7.*
-            dependencies: lowest
-        include:
-          - php: '7.4'
-            laravel: '^7.1'
-            dependencies: lowest
     steps:
       - uses: actions/checkout@v2
       - uses: shivammathur/setup-php@v2
@@ -55,7 +46,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ~/.composer/cache/files
-          key: php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}
+          key: php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-${{ hashFiles('composer.lock') }}
           restore-keys: |
             php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-
             php-${{ matrix.php }}-laravel-
@@ -66,7 +57,7 @@ jobs:
           restore-keys: npm-
       - run: |
           composer require laravel/framework:"${{ matrix.laravel }}" --no-update --no-interaction
-          composer update --prefer-${{ matrix.dependencies }} --prefer-dist --no-interaction
+          composer update --prefer-dist --no-interaction
       - run: vendor/bin/phpunit --testdox --colors=always
       - run: npm ci && npm run build
       - run: npm test
