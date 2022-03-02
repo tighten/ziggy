@@ -332,7 +332,7 @@ class ZiggyTest extends TestCase
     }
 
     /** @test */
-    public function returns_unfiltered_routes_when_except_groups_configs_set()
+    public function can_set_excluded_routes_using_except_groups_configs_set()
     {
         config([
             'ziggy.groups' => [
@@ -340,7 +340,7 @@ class ZiggyTest extends TestCase
                     'except' => ['home'],
                 ],
                 'authors' => [
-                    'except' => ['posts.s*'],
+                    'except' => ['posts.s*', 'admin.*'],
                 ],
             ],
         ]);
@@ -348,18 +348,6 @@ class ZiggyTest extends TestCase
         $routes = (new Ziggy(['admin', 'authors']))->toArray()['routes'];
 
         $expected = [
-            'home' => [
-                'uri' => 'home',
-                'methods' => ['GET', 'HEAD'],
-            ],
-            'posts.index' => [
-                'uri' => 'posts',
-                'methods' => ['GET', 'HEAD'],
-            ],
-            'posts.show' => [
-                'uri' => 'posts/{post}',
-                'methods' => ['GET', 'HEAD'],
-            ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
