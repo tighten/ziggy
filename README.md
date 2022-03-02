@@ -453,6 +453,9 @@ return [
     'groups' => [
         'admin' => ['admin.*', 'users.*'],
         'author' => ['posts.*'],
+        'guest' => [
+          'only' => ['posts.index', 'post.show']
+        ],
     ],
 ];
 ```
