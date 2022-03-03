@@ -342,6 +342,14 @@ import { Ziggy } from './ziggy';
 route('home', undefined, undefined, Ziggy);
 ```
 
+##### Watcher
+
+> :warning: **The following requires ext-inotify to be installed on your php handler**
+
+During development you may want to watch for changes in your routes and automatically regenerate the file, you just need to run the same command with the `--watch` option
+
+`php artisan ziggy:generate ./resources/js/admin.js ./resources/js/public.js --group=admin --group=public --watch`
+
 #### Vue
 
 Ziggy includes a Vue plugin to make it easy to use the `route()` helper throughout your Vue app:

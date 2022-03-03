@@ -18,7 +18,11 @@
             "email": "jacob@tighten.co"
         }
     ],
+    "suggest": {
+        "ext-inotify": "To use the watch option of the generate command"
+    },
     "require": {
+        "ext-json": "*",
         "laravel/framework": ">=5.4@dev"
     },
     "require-dev": {

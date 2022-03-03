@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 use Tightenco\Ziggy\Output\File;
@@ -130,6 +131,89 @@ class CommandRouteGeneratorTest extends TestCase
         Artisan::call('ziggy:generate', ['path' => 'resources/js/admin.js', '--group' => 'admin']);
 
         $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
+    }
+
+    /** @test */
+    public function can_generate_file_for_multiple_arguments()
+    {
+        config([
+            'ziggy.except' => ['admin.*'],
+            'ziggy.groups' => ['admin' => ['admin.*']],
+        ]);
+        $router = app('router');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->get('admin', $this->noop())->name('admin.dashboard');
+        $router->getRoutes()->refreshNameLookups();
+
+        Artisan::call('ziggy:generate', ['path' => ['resources/js/admin.js', 'resources/js/public.js'], '--group' => ['admin']]);
+
+        $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
+        $this->assertFileEquals('./tests/fixtures/public.js', base_path('resources/js/public.js'));
+    }
+
+    /** @test */
+    public function can_watch_file_for_changes()
+    {
+        if (!class_exists(\Fiber::class)) {
+            $this->markTestSkipped('Watcher test requires fibers and can only run on PHP >= 8.1');
+        }
+        if (!function_exists('inotify_init')) {
+            $this->markTestSkipped('Watcher test requires inotify extension');
+        }
+
+        $config = [
+            'reset' => true,
+            'ziggy.except' => ['admin.*'],
+            'ziggy.groups' => ['admin' => ['admin.*']],
+        ];
+        config($config);
+        $router = app('router');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->get('admin', $this->noop())->name('admin.dashboard');
+        $router->getRoutes()->refreshNameLookups();
+
+        file_put_contents(base_path('config/watched.php'), '<?php //1');
+
+        $fiber = new \Fiber(function() : void {
+            Artisan::call('ziggy:generate', ['path' => ['resources/js/admin.js', 'resources/js/public.js'], '--group' => ['admin'], '--watch' => 'config/watched.php']);
+        });
+        $fiber->start();
+
+        $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
+        $this->assertFileEquals('./tests/fixtures/public.js', base_path('resources/js/public.js'));
+
+        $router->get('admin/second', $this->noop())->name('admin.second');
+        $router->getRoutes()->refreshNameLookups();
+
+        $this->assertEquals('waiting', $fiber->resume(true));
+
+        file_put_contents(base_path('config/watched.php'), '<?php //2');
+
+        $this->assertEquals('before-generate', $fiber->resume(true));
+
+        // Config should be reset
+        $this->assertNull(config('reset'));
+
+        // So set it again
+        config($config);
+
+        $this->assertEquals('generated', $fiber->resume(true));
+
+        $this->assertFileEquals('./tests/fixtures/admin-watch.js', base_path('resources/js/admin.js'));
+        $this->assertFileEquals('./tests/fixtures/public.js', base_path('resources/js/public.js'));
+
+        $this->assertEquals('waiting', $fiber->resume(true));
+
+        file_put_contents(base_path('routes/watched.php'), '<?php //1');
+
+        $this->assertEquals('before-generate', $fiber->resume(true));
+        $this->assertEquals('generated', $fiber->resume(true));
+
+
+        $this->assertEquals('waiting', $fiber->resume(true));
+        $this->assertEquals('waiting', $fiber->resume(true));
+
+        $fiber->resume(false); // Exit watcher
     }
 }
 
