@@ -117,6 +117,7 @@ class CommandRouteGenerator extends Command
                 return inotify_rm_watch($fd, $watcher);
             }, $watchers);
             fclose($fd);
+            $this->info('Thanks for watching! ;)');
             return;
         } else if ($watch !== 'false') {
             $this->error('The watch option requires the PHP extension ext-inotify');

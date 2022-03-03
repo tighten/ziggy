@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 use Tightenco\Ziggy\Output\File;
@@ -145,7 +144,7 @@ class CommandRouteGeneratorTest extends TestCase
         $router->get('admin', $this->noop())->name('admin.dashboard');
         $router->getRoutes()->refreshNameLookups();
 
-        Artisan::call('ziggy:generate', ['path' => ['resources/js/admin.js', 'resources/js/public.js'], '--group' => ['admin']]);
+        Artisan::call('ziggy:generate', ['path' => ['resources/js/admin.js', 'resources/js/public.js'], '--group' => ['admin'], '--url' => [null, 'http://example.org']]);
 
         $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
         $this->assertFileEquals('./tests/fixtures/public.js', base_path('resources/js/public.js'));
@@ -175,7 +174,7 @@ class CommandRouteGeneratorTest extends TestCase
         file_put_contents(base_path('config/watched.php'), '<?php //1');
 
         $fiber = new \Fiber(function() : void {
-            Artisan::call('ziggy:generate', ['path' => ['resources/js/admin.js', 'resources/js/public.js'], '--group' => ['admin'], '--watch' => 'config/watched.php']);
+            Artisan::call('ziggy:generate', ['path' => ['resources/js/admin.js', 'resources/js/public.js'], '--group' => ['admin'], '--url' => [null, 'http://example.org'], '--watch' => 'config/watched.php']);
         });
         $fiber->start();
 
