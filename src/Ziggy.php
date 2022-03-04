@@ -70,13 +70,19 @@ class Ziggy implements JsonSerializable
 
             $groups = collect(config("ziggy.groups"))->filter(fn ($configGroup, $configGroupName) => in_array($configGroupName, $group));
 
-            if ($groups->filter(fn ($group) => isset($group['except']) && (isset($group['only']) || is_array($group)))->isNotEmpty()) {
+            $exceptGroups = $groups->filter(fn ($group) => isset($group['except']));
+
+            $onlyGroups = $groups->filter(fn ($group) => isset($group['only']) || ( is_array($group) && !isset($group['except']) ));
+
+            if ($onlyGroups->isNotEmpty() && $exceptGroups->isNotEmpty()) {
                 return $this->routes;
             }
 
-            $filtersCollection = $groups->flatten();
+            if ($exceptGroups->isNotEmpty()) {
+                return $this->filter($exceptGroups->flatten()->toArray(), false)->routes;
+            }
 
-            return $this->filter($filtersCollection->toArray(), true)->routes;
+            return $this->filter($onlyGroups->flatten()->toArray())->routes;
         }
 
         if (config()->has("ziggy.groups.{$group}.except") && config()->has("ziggy.groups.{$group}.only")) {

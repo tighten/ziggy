@@ -345,19 +345,15 @@ class ZiggyTest extends TestCase
             ],
         ]);
 
-        $routes = (new Ziggy(['admin', 'authors']))->toArray()['routes'];
+        $routes = (new Ziggy(['admins', 'authors']))->toArray()['routes'];
 
         $expected = [
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
+            'posts.index' => [
+                'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
             ],
-            'posts.store' => [
-                'uri' => 'posts',
-                'methods' => ['POST'],
-            ],
-            'admin.users.index' => [
-                'uri' => 'admin/users',
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
             ],
         ];
@@ -381,7 +377,7 @@ class ZiggyTest extends TestCase
             ],
         ]);
 
-        $routes = (new Ziggy(['admin', 'authors']))->toArray()['routes'];
+        $routes = (new Ziggy(['admins', 'authors']))->toArray()['routes'];
 
         $expected = [
             'home' => [
