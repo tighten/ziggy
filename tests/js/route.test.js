@@ -7,7 +7,9 @@ import route from '../../src/js';
 
 const defaultWindow = {
     location: {
+        protocol: 'https:',
         host: 'ziggy.dev',
+        hash: '',
     },
 };
 
@@ -134,6 +136,59 @@ const defaultZiggy = {
             uri: 'strict-download/file{extension}',
             methods: ['GET', 'HEAD'],
         },
+        'pages.optionalWhere': {
+            uri: 'where/optionalpage/{page?}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                page: '[0-9]+',
+            },
+        },
+        'pages.optionalExtensionWhere': {
+            uri: 'where/download/file{extension?}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                extension: '\\.(php|html)',
+            },
+        },
+        'pages.requiredExtensionWhere': {
+            uri: 'where/strict-download/file{extension}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                extension: '\\.(php|html)',
+            },
+        },
+        'pages.complexWhere': {
+            uri: 'where/{word}-{digit}/{required}/{optional?}/file{extension?}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                word: '[a-z_-]+',
+                digit: '[0-9]+',
+                required: 'required',
+                optional: 'optional',
+                extension: '\\.(php|html)',
+            },
+        },
+        'pages.complexWhereConflict1': {
+            uri: 'where/{digit}-{word}/{required}/{optional?}/file{extension?}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                word: '[a-z_-]+',
+                digit: '[0-9]+',
+                required: 'required',
+                optional: 'optional',
+                extension: '\\.(php|html)',
+            },
+        },
+        'pages.complexWhereConflict2': {
+            uri: 'where/complex-{digit}/{required}/{optional?}/file{extension?}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                digit: '[0-9]+',
+                required: 'different_but_required',
+                optional: 'optional',
+                extension: '\\.(php|html)',
+            },
+        },
         pages: {
             uri: '{page}',
             methods: ['GET', 'HEAD'],
@@ -155,7 +210,8 @@ beforeAll(() => {
 
 beforeEach(() => {
     window.location = { ...defaultWindow.location };
-    global.window.location = { ...defaultWindow.location };
+    window.location.toString = () => window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search + window.location.hash;
+    global.window.location = window.location;
     global.Ziggy = { ...defaultZiggy };
 });
 
@@ -502,8 +558,9 @@ describe('route()', () => {
 
     test("can append 'extra' string/number parameter to query", () => {
         // 'posts.index' has no parameters
-         same(route('posts.index', 'extra'), 'https://ziggy.dev/posts?extra=');
-         same(route('posts.index', 1), 'https://ziggy.dev/posts?1=');
+        same(route('posts.index', 'extra'), 'https://ziggy.dev/posts?extra=');
+        same(route('posts.index', [{extra: 2}]), 'https://ziggy.dev/posts?extra=2');
+        same(route('posts.index', 1), 'https://ziggy.dev/posts?1=');
     });
 
     test("can append 'extra' string/number elements in array of parameters to query", () => {
@@ -532,6 +589,19 @@ describe('route()', () => {
         same(route('pages.optionalExtension', '.html'), 'https://ziggy.dev/download/file.html');
         same(route('pages.optionalExtension', { extension: '.pdf' }), 'https://ziggy.dev/download/file.pdf');
     });
+
+    test('can generate a URL for a route with optional parameters inside individual segments respecting where requirements', () => {
+        same(route('pages.optionalExtensionWhere'), 'https://ziggy.dev/where/download/file');
+        same(route('pages.optionalExtensionWhere', '.html'), 'https://ziggy.dev/where/download/file.html');
+        throws(() => route('pages.optionalExtensionWhere', { extension: '.pdf' }), /'extension' parameter does not match required format/);
+    });
+
+    test('can generate a URL for a route with parameters inside individual segments', () => {
+        same(route('pages.requiredExtensionWhere', '.html'), 'https://ziggy.dev/where/strict-download/file.html');
+        throws(() => route('pages.requiredExtensionWhere', 'x'), /'extension' parameter does not match required format/);
+        throws(() => route('pages.requiredExtensionWhere', { extension: '.pdf' }), /'extension' parameter does not match required format/);
+    });
+
 
     test('can skip encoding slashes inside last parameter when explicitly allowed', () => {
         same(route('slashes', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one%2Ftwo/three/four');
@@ -667,6 +737,48 @@ describe('current()', () => {
         same(route().current('pages.optional', { page: '' }), true);
         same(route().current('pages.optional', { page: undefined }), true);
         same(route().current('pages.optional', { page: 'foo' }), false);
+
+        global.window.location.pathname = '/where/optionalpage';
+        same(route().current('pages.optionalWhere', { page: undefined }), true);
+        same(route().current('pages.optionalWhere', { page: 'foo' }), false);
+        global.window.location.pathname = '/where/optionalpage/23';
+        same(route().current('pages.optionalWhere', { page: 23 }), true);
+        same(route().current('pages.optionalWhere', { page: 22 }), false);
+    });
+
+    test('can check current route with complex requirements without conflicts', () => {
+        global.window.location.pathname = '/where/word-12/required/file';
+        same(route().current('pages.complexWhere'), true);
+        same(route().current('pages.complexWhereConflict1'), false);
+
+        global.window.location.pathname = '/where/complex-12/required/file';
+        same(route().current('pages.complexWhere', {word: 'complex', digit: '12', required: 'required'}), true);
+        same(route().current('pages.complexWhereConflict1'), false);
+
+        global.window.location.pathname = '/where/123-abc/required/file.html';
+        same(route().current('pages.complexWhereConflict1'), true);
+        same(route().current('pages.complexWhere'), false);
+
+        global.window.location.pathname = '/where/complex-12/different_but_required/optional/file';
+        same(route().current('pages.complexWhereConflict2'), true);
+        same(route().current('pages.complexWhere'), false);
+    });
+
+    test('can current route with complex requirements is dehydrated correctly', () => {
+        global.window.location.pathname = '/where/word-12/required/file';
+        deepEqual(route().params, {digit: '12', word: 'word', required: 'required', optional: undefined, extension: undefined})
+
+        global.window.location.pathname = '/where/complex-12/required/optional/file';
+        deepEqual(route().params, {digit: '12', word: 'complex', required: 'required', optional: 'optional', extension: undefined})
+
+        global.window.location.pathname = '/where/123-abc/required/file.html';
+        deepEqual(route().params, {digit: '123', word: 'abc', required: 'required', optional: undefined, extension: '.html'})
+
+        global.window.location.pathname = '/where/complex-12/different_but_required/optional/file';
+        deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined})
+
+        global.window.location.search = '?ab=cd&ef=1&dd';
+        deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined, ab: 'cd', ef: '1', 'dd': ''})
     });
 
     test('can check the current route name at a URL with a non-delimited parameter', () => {
@@ -721,6 +833,12 @@ describe('current()', () => {
         same(route().current('pages.optionalExtension*', { extension: '.pdf' }), false);
         same(route().current('pages.optionalExtension', { extension: '.html' }), true);
         same(route().current('pages.optionalExtension*', { extension: '.html' }), true);
+
+        global.window.location.pathname = '/where/download/file.html';
+        same(route().current('pages.optionalExtensionWhere', { extension: '.html' }), true);
+
+        global.window.location.pathname = '/where/download/file.pdf';
+        same(route().current('pages.optionalExtensionWhere', { extension: '.pdf' }), false);
     });
 
     test('can check the current route name with parameters on a URL with no parameters', () => {
@@ -919,6 +1037,14 @@ describe('current()', () => {
         same(route().current('events.venues.*'), false);
     });
 
+    test('can unresolve arbitrary urls to names and params', () => {
+        const resolved = route().unresolve('https://ziggy.dev/events/1/venues?test=yes');
+        deepEqual(resolved, { name: 'events.venues.index', params: {event: '1'}, query: {test: 'yes'}, route: resolved.route });
+        same(resolved.route.uri, 'events/{event}/venues');
+
+        same(route().unresolve('ziggy.dev/events/1/venues-index').name, 'events.venues-index');
+    });
+
     test('can get the current route name without window', () => {
         global.Ziggy = undefined;
         global.window = undefined;
@@ -937,6 +1063,7 @@ describe('current()', () => {
                 },
             },
             location: {
+                protocol: 'https:',
                 host: 'ziggy.dev',
                 pathname: '/events/1/venues/2',
                 search: '?user=Jacob&id=9',
