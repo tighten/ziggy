@@ -312,7 +312,22 @@ You can optionally create a webpack alias and a before script to make generating
 const {exec} = require('child_process');
 
 mix.before(async () => {
-  await exec('php artisan ziggy:generate');
+  return new Promise((resolve, reject) => {
+    const process = exec('php artisan ziggy:generate');
+    process.stdout.on('data', (data) => {
+      console.log(data);
+    });
+    process.stderr.on('data', (data) => {
+      console.error(data);
+    });
+    process.on('exit', code => {
+      if (code !== 0) {
+        reject();
+      } else {
+        resolve();
+      }
+    });
+  });
 });
 
 // Mix v6
