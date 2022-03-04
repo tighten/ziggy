@@ -36,15 +36,6 @@ class CommandRouteGenerator extends Command
         $this->info('File generated!');
     }
 
-    private function generate($group = false)
-    {
-        $ziggy = (new Ziggy($group, $this->option('url') ? url($this->option('url')) : null));
-
-        $output = config('ziggy.output.file', File::class);
-
-        return (string) new $output($ziggy);
-    }
-
     protected function makeDirectory($path)
     {
         if (! $this->files->isDirectory(dirname(base_path($path)))) {
@@ -52,5 +43,14 @@ class CommandRouteGenerator extends Command
         }
 
         return $path;
+    }
+
+    private function generate($group = false)
+    {
+        $ziggy = (new Ziggy($group, $this->option('url') ? url($this->option('url')) : null));
+
+        $output = config('ziggy.output.file', File::class);
+
+        return (string) new $output($ziggy);
     }
 }
