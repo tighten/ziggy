@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
+use Tightenco\Ziggy\Output\File;
 
 class CommandRouteGeneratorTest extends TestCase
 {
@@ -93,6 +94,28 @@ class CommandRouteGeneratorTest extends TestCase
     }
 
     /** @test */
+    public function can_generate_file_with_custom_output_formatter()
+    {
+        config([
+            'ziggy' => [
+                'except' => ['admin.*'],
+                'output' => [
+                    'file' => CustomFileFormatter::class,
+                ],
+            ],
+        ]);
+
+        $router = app('router');
+        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->get('admin', $this->noop())->name('admin.dashboard'); // Excluded, should NOT be present in file
+        $router->getRoutes()->refreshNameLookups();
+
+        Artisan::call('ziggy:generate');
+
+        $this->assertFileEquals('./tests/fixtures/ziggy-custom.js', base_path('resources/js/ziggy.js'));
+    }
+
+    /** @test */
     public function can_generate_file_for_specific_configured_route_group()
     {
         config([
@@ -107,5 +130,18 @@ class CommandRouteGeneratorTest extends TestCase
         Artisan::call('ziggy:generate', ['path' => 'resources/js/admin.js', '--group' => 'admin']);
 
         $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
+    }
+}
+
+class CustomFileFormatter extends File
+{
+    public function __toString(): string
+    {
+        return <<<JAVASCRIPT
+// This is a custom template
+const Ziggy = {$this->ziggy->toJson()};
+export { Ziggy };
+
+JAVASCRIPT;
     }
 }
