@@ -125,17 +125,13 @@ export default class Router extends String {
 
         const matchedParams = { ...currentParams, ...query };
 
-        if (!name) {
-          return current;
-        }
+        if (!name) return current;
 
         // Test the passed name against the current route, matching some
         // basic wildcards, e.g. passing `events.*` matches `events.show`
         const match = new RegExp(`^${name.replace(/\./g, '\\.').replace(/\*/g, '.*')}$`).test(current);
 
-        if ([null, undefined].includes(params) || !match) {
-          return match;
-        }
+        if ([null, undefined].includes(params) || !match) return match;
 
         const routeObject = new Route(current, route, this._config);
 
@@ -145,9 +141,7 @@ export default class Router extends String {
         Object.keys(routeParams).forEach((key) => routeParams[key] === undefined && delete routeParams[key]);
 
         // If the current window URL has no route parameters, and the passed parameters are empty, return true
-        if (Object.values(params).every(p => !p) && !Object.values(routeParams).length) {
-          return true;
-        }
+        if (Object.values(params).every(p => !p) && !Object.values(routeParams).length) return true;
 
         // Check that all passed parameters match their values in the current window URL
         // Use weak equality because all values in the current window URL will be strings
