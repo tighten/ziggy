@@ -1043,15 +1043,6 @@ describe('current()', () => {
         same(route().current('events.venues.*'), false);
     });
 
-
-    test('can unresolve arbitrary urls to names and params', () => {
-        const resolved = route().unresolve('https://ziggy.dev/events/1/venues?test=yes');
-        deepEqual(resolved, { name: 'events.venues.index', params: {event: '1'}, query: {test: 'yes'}, route: resolved.route });
-        same(resolved.route.uri, 'events/{event}/venues');
-
-        same(route().unresolve('ziggy.dev/events/1/venues-index').name, 'events.venues-index');
-    });
-
     test('can get the current route name without window', () => {
         global.Ziggy = undefined;
         global.window = undefined;
