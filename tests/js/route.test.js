@@ -216,12 +216,6 @@ beforeEach(() => {
 });
 
 describe('route()', () => {
-    test('current route URL', () => {
-        global.window.location.pathname = '/subfolder/ph/en/products/4';
-        global.window.location.search = '?abc=test';
-        same(route().toString(), 'https://ziggy.dev/subfolder/ph/en/products/4?abc=test');
-    });
-
     test('can generate a URL with no parameters', () => {
         same(route('posts.index'), 'https://ziggy.dev/posts');
     });
@@ -565,7 +559,7 @@ describe('route()', () => {
     test("can append 'extra' string/number parameter to query", () => {
         // 'posts.index' has no parameters
         same(route('posts.index', 'extra'), 'https://ziggy.dev/posts?extra=');
-        same(route('posts.index', {extra: 2}), 'https://ziggy.dev/posts?extra=2');
+        same(route('posts.index', [{extra: 2}]), 'https://ziggy.dev/posts?extra=2');
         same(route('posts.index', 1), 'https://ziggy.dev/posts?1=');
     });
 
@@ -1041,6 +1035,14 @@ describe('current()', () => {
 
         same(route().current('events.venues-index'), true);
         same(route().current('events.venues.*'), false);
+    });
+
+    test('can unresolve arbitrary urls to names and params', () => {
+        const resolved = route().unresolve('https://ziggy.dev/events/1/venues?test=yes');
+        deepEqual(resolved, { name: 'events.venues.index', params: {event: '1'}, query: {test: 'yes'}, route: resolved.route });
+        same(resolved.route.uri, 'events/{event}/venues');
+
+        same(route().unresolve('ziggy.dev/events/1/venues-index').name, 'events.venues-index');
     });
 
     test('can get the current route name without window', () => {
