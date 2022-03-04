@@ -12,12 +12,12 @@ jobs:
     strategy:
       matrix:
         php: ['7.3', '7.4', '8.0', '8.1']
-        laravel: [5.5.*, 5.6.*, 5.7.*, 5.8.*, 6.*, 7.*, 8.*, 'dev-master as 9.0']
+        laravel: [5.5.*, 5.6.*, 5.7.*, 5.8.*, 6.*, 7.*, 8.*, 9.*]
         exclude:
           - php: '7.3'
-            laravel: 'dev-master as 9.0'
+            laravel: 9.*
           - php: '7.4'
-            laravel: 'dev-master as 9.0'
+            laravel: 9.*
           - php: '8.0'
             laravel: 5.5.*
           - php: '8.0'
