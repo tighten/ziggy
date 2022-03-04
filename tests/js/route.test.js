@@ -7,9 +7,7 @@ import route from '../../src/js';
 
 const defaultWindow = {
     location: {
-        protocol: 'https:',
         host: 'ziggy.dev',
-        hash: '',
     },
 };
 
@@ -210,7 +208,6 @@ beforeAll(() => {
 
 beforeEach(() => {
     window.location = { ...defaultWindow.location };
-    window.location.toString = () => window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search + window.location.hash;
     global.window.location = window.location;
     global.Ziggy = { ...defaultZiggy };
 });
@@ -1043,6 +1040,7 @@ describe('current()', () => {
         same(resolved.route.uri, 'events/{event}/venues');
 
         same(route().unresolve('ziggy.dev/events/1/venues-index').name, 'events.venues-index');
+        same(route().unresolve('/events/1/venues-index').name, 'events.venues-index');
     });
 
     test('can get the current route name without window', () => {
@@ -1063,7 +1061,6 @@ describe('current()', () => {
                 },
             },
             location: {
-                protocol: 'https:',
                 host: 'ziggy.dev',
                 pathname: '/events/1/venues/2',
                 search: '?user=Jacob&id=9',

@@ -53,34 +53,36 @@ export default class Router extends String {
     }
 
     /**
-     * Find the first route that matches the URL
+     * Get the parameters, values, and metadata from the given URL.
      *
-     * @param {string} [url] The url to resolve, defaults to the current url
-     * @returns {{name: string, params: Object, query: Object, route: Route}}
+     * @param {String} [url] - The URL to inspect, defaults to the current window URL.
+     * @return {{ name: string, params: Object, query: Object, route: Route }}
      */
     unresolve(url) {
         if (!url) {
             url = this._currentUrl();
         } else if (this._config.absolute && url.startsWith('/')) {
-            const loc = this._location();
-            url += loc.host;
+            // If we are using absolute URLs and a relative URL
+            // is passed, prefix the host to make it absolute
+            url = this._location().host + url;
         }
+
         let matchedParams = {};
         const [name, route] = Object.entries(this._config.routes).find(
-          (entry) => (matchedParams = new Route(entry[0], entry[1], this._config).matchesUrl(url))
+          ([name, route]) => (matchedParams = new Route(name, route, this._config).matchesUrl(url))
         ) || [undefined, undefined];
 
-        const {query, params} = matchedParams;
-        return {name, params, query, route};
+        return { name, ...matchedParams, route };
     }
 
     _currentUrl() {
-        const loc = this._location();
+        const { host, pathname, search } = this._location();
 
-        return (this._config.absolute ? loc.host + loc.pathname :
-            loc.pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/')
-        ) + loc.search;
-
+        return (
+            this._config.absolute
+                ? host + pathname
+                : pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/')
+        ) + search;
     }
 
     /**
@@ -100,9 +102,9 @@ export default class Router extends String {
      * @return {(Boolean|String|undefined)}
      */
     current(name, params) {
-        const {name: current, params: currentParams, query, route} = this.unresolve();
+        const { name: current, params: currentParams, query, route } = this.unresolve();
 
-        const matchedParams = {...currentParams, ...query};
+        const matchedParams = { ...currentParams, ...query };
 
         // If a name wasn't passed, return the name of the current route
         if (!name) return current;
@@ -114,9 +116,11 @@ export default class Router extends String {
         if ([null, undefined].includes(params) || !match) return match;
 
         const routeObject = new Route(current, route, this._config);
-        const routeParams = JSON.parse(JSON.stringify(matchedParams)); // Remove undefined params
 
         params = this._parse(params, routeObject);
+        const routeParams = { ...currentParams, ...query };
+        // Remove undefined params
+        Object.keys(routeParams).forEach((key) => routeParams[key] === undefined && delete routeParams[key]);
 
         // If the current window URL has no route parameters, and the passed parameters are empty, return true
         if (Object.values(params).every(p => !p) && !Object.values(routeParams).length) return true;
@@ -152,8 +156,9 @@ export default class Router extends String {
      * @return {Object}
      */
     get params() {
-        const {params, query} = this.unresolve();
-        return {...params, ...query};
+        const { params, query } = this.unresolve();
+
+        return { ...params, ...query };
     }
 
     /**
@@ -190,7 +195,11 @@ export default class Router extends String {
         if (Array.isArray(params)) {
             // If the parameters are an array they have to be in order, so we can transform them into
             // an object by keying them with the template segment names in the order they appear
-            params = params.reduce((result, current, i) => segments[i] ? ({ ...result, [segments[i].name]: current }) : typeof current === 'object' ? ({ ...result, ...current }) : ({ ...result, [current]: '' }), {});
+            params = params.reduce((result, current, i) => segments[i]
+                ? ({ ...result, [segments[i].name]: current })
+                : typeof current === 'object'
+                    ? ({ ...result, ...current })
+                    : ({ ...result, [current]: '' }), {});
         } else if (
             segments.length === 1
             && !params[segments[0].name]

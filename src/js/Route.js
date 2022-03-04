@@ -1,4 +1,4 @@
-import {parse} from "qs";
+import { parse } from 'qs';
 
 /**
  * A Laravel route. This class represents one route and its configuration and metadata.
@@ -54,7 +54,7 @@ export default class Route {
      * Get whether this route's template matches the given URL.
      *
      * @param {String} url - URL to check.
-     * @return {Array|false} If this route matches, returns the matched parameters.
+     * @return {Object|false} - If this route matches, returns the matched parameters.
      */
     matchesUrl(url) {
         if (!this.definition.methods.includes('GET')) return false;
@@ -63,14 +63,16 @@ export default class Route {
         // by replacing its parameter segments with matchers for parameter values
         const pattern = this.template
             .replace(/(\/?){([^}?]*)(\??)}/g, (_, slash, segment, optional) => {
-              const regex = '(?<'+segment+'>' + (this.wheres[segment] || '[^/?]+') + ')';
-              return optional ? '(' + slash + regex + ')?' : slash + regex
+                const regex = `(?<${segment}>${this.wheres[segment] || '[^/?]+'})`;
+                return optional ? `(${slash}${regex})?` : `${slash}${regex}`;
             })
             .replace(/^\w+:\/\//, '');
 
-        const split = url.replace(/^\w+:\/\//, '').split('?');
-        const matches = new RegExp(`^${pattern}/?$`).exec(split[0]);
-        return matches ? {params: matches.groups, query: parse(split[1])} : false;
+        const [location, query] = url.replace(/^\w+:\/\//, '').split('?');
+
+        const matches = new RegExp(`^${pattern}/?$`).exec(location);
+
+        return matches ? { params: matches.groups, query: parse(query) } : false;
     }
 
     /**
@@ -81,9 +83,8 @@ export default class Route {
      */
     compile(params) {
         const segments = this.parameterSegments;
-        if (!segments.length) {
-            return this.template;
-        }
+
+        if (!segments.length) return this.template;
 
         return this.template.replace(/{([^}?]+)(\??)}/g, (_, segment, optional) => {
             // If the parameter is missing but is not optional, throw an error
@@ -95,8 +96,7 @@ export default class Route {
                 return encodeURIComponent(params[segment] ?? '').replaceAll('%2F', '/');
             }
 
-            if (this.wheres[segment] &&
-                !new RegExp('^'+(optional ? '(' + this.wheres[segment] + ')?' : this.wheres[segment])+'$').test(params[segment] ?? '')) {
+            if (this.wheres[segment] && !new RegExp(`^${optional ? `(${this.wheres[segment]})?` : this.wheres[segment]}$`).test(params[segment] ?? '')) {
                 throw new Error(`Ziggy error: '${segment}' parameter does not match required format '${this.wheres[segment]}' for route '${this.name}'.`)
             }
 
