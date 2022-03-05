@@ -1076,8 +1076,12 @@ describe('current()', () => {
         same(route(undefined, undefined, undefined, config).current(), 'events.venues.show');
     });
 
-
     test('can resolve the same route(name, params) resolves to', () => {
         same(route().resolve({name: 'postComments.show', params: [1, { uuid: 'correct-horse-etc-etc' }], query: {test: 'yes'}}), route('postComments.show', [1, { uuid: 'correct-horse-etc-etc'}, {test: 'yes'}]));
+        const url = 'https://ziggy.dev/events/1/venues-index';
+        same(route().resolve(route().unresolve(url)), url);
+        const obj = { name: 'events.venues.index', params: {event: '1'}, query: {test: 'yes'}};
+        const {route: _, ...unresolved} = route().unresolve(route().resolve(obj));
+        deepEqual(unresolved, obj);
     });
 });
