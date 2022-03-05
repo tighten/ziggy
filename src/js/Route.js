@@ -54,7 +54,7 @@ export default class Route {
      * Get whether this route's template matches the given URL.
      *
      * @param {String} url - URL to check.
-     * @return {Object|false} - If this route matches, returns the matched parameters.
+     * @return {{params: Object, query: Object}|false} - If this route matches, returns the matched parameters.
      */
     matchesUrl(url) {
         if (!this.definition.methods.includes('GET')) return false;

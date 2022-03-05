@@ -213,12 +213,6 @@ beforeEach(() => {
 });
 
 describe('route()', () => {
-    test('current route URL', () => {
-        global.window.location.pathname = '/subfolder/ph/en/products/4';
-        global.window.location.search = '?abc=test';
-        same(route().toString(), 'https://ziggy.dev/subfolder/ph/en/products/4?abc=test');
-    });
-
     test('can generate a URL with no parameters', () => {
         same(route('posts.index'), 'https://ziggy.dev/posts');
     });
@@ -279,7 +273,12 @@ describe('route()', () => {
         same(route('posts.show', 1), 'https://ziggy.dev/posts/1');
         // route with default parameters
         same(route('translatePosts.show', 1), 'https://ziggy.dev/en/posts/1');
+        same(route('translatePosts.show', [1]), 'https://ziggy.dev/en/posts/1');
     });
+
+    test('can override a default parameter', () => {
+        same(route('translatePosts.show', {locale: 'fr', id: 1}), 'https://ziggy.dev/fr/posts/1');
+    })
 
     test('can generate a URL using a string', () => {
         // route with required parameters
@@ -1083,5 +1082,13 @@ describe('current()', () => {
         const obj = { name: 'events.venues.index', params: {event: '1'}, query: {test: 'yes'}};
         const {route: _, ...unresolved} = route().unresolve(route().resolve(obj));
         deepEqual(unresolved, obj);
+    });
+
+    test('unresolve keeps current parameters and drops query if different name', () => {
+        global.window.location.pathname = '/events/1/venues?search=myvenue';
+        same(route().resolve({name: 'events.venues.show', params: {venue: 'venue-1'}}), 'https://ziggy.dev/events/1/venues/venue-1');
+        same(route().resolve({params: {event: 3}}), 'https://ziggy.dev/events/3/venues?search=myvenue');
+        same(route().resolve({name:'events.venues.index', params: {event: 3}}), 'https://ziggy.dev/events/3/venues?search=myvenue');
+        same(route().resolve({params: {event: 3}, query: {replace: 'yes'}}), 'https://ziggy.dev/events/3/venues?replace=yes');
     });
 });

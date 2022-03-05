@@ -16,6 +16,7 @@ export default class Router extends String {
 
         this._config = config ?? (typeof Ziggy !== 'undefined' ? Ziggy : globalThis?.Ziggy);
         this._config = { ...this._config, absolute };
+        this._unresolved = this.unresolve();
 
         if (name) {
             this._name = name;
@@ -46,7 +47,11 @@ export default class Router extends String {
      */
     resolve({name, params, query}) {
         if (!name) {
-            return window.location.toString();
+            name = this.unresolve().name
+
+        }
+        if (name === this.unresolve().name && !query) {
+            query = this.unresolve().query
         }
 
         if (!this._config.routes[name]) {
@@ -75,10 +80,11 @@ export default class Router extends String {
      * Get the parameters, values, and metadata from the given URL.
      *
      * @param {String} [url] - The URL to inspect, defaults to the current window URL.
-     * @return {{ name: string, params: Object, query: Object, route: Route }}
+     * @return {{ name: string, params?: Object, query?: Object, route: Route }}
      */
     unresolve(url) {
         if (!url) {
+            if (this._unresolved) return this._unresolved;
             url = this._currentUrl();
         } else if (this._config.absolute && url.startsWith('/')) {
             // If we are using absolute URLs and a relative URL
@@ -208,8 +214,16 @@ export default class Router extends String {
         // If `params` is a string or integer, wrap it in an array
         params = ['string', 'number'].includes(typeof params) ? [params] : params;
 
+        const keep = {};
+        const currentParams = this.unresolve().params || {};
+
         // Separate segments with and without defaults, and fill in the default values
-        const segments = route.parameterSegments.filter(({ name }) => !this._config.defaults[name]);
+        const segments = route.parameterSegments.filter(({ name }) => {
+            if (currentParams[name]) {
+                keep[name] = currentParams[name];
+            }
+            return !this._config.defaults[name];
+        });
 
         if (Array.isArray(params)) {
             // If the parameters are an array they have to be in order, so we can transform them into
@@ -233,6 +247,7 @@ export default class Router extends String {
 
         return {
             ...this._defaults(route),
+            ...keep,
             ...this._substituteBindings(params, route),
         };
     }
