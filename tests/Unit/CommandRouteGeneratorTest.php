@@ -16,6 +16,11 @@ class CommandRouteGeneratorTest extends TestCase
                 unlink($file);
             }, glob(base_path('resources/js/*')));
         }
+        foreach (['config/watched.php', 'routes/watched.php'] as $file) {
+            if (file_exists(base_path($file))) {
+                unlink(base_path($file));
+            }
+        }
 
         parent::tearDown();
     }
@@ -190,7 +195,7 @@ class CommandRouteGeneratorTest extends TestCase
 
         $this->assertEquals('before-generate', $fiber->resume(true));
 
-        // Config should be reset
+        // Manual config should be reset
         $this->assertNull(config('reset'));
 
         // So set it again
@@ -208,9 +213,20 @@ class CommandRouteGeneratorTest extends TestCase
         $this->assertEquals('before-generate', $fiber->resume(true));
         $this->assertEquals('generated', $fiber->resume(true));
 
+        // Should wait indefinitely
+        $this->assertEquals('waiting', $fiber->resume(true));
+        $this->assertEquals('waiting', $fiber->resume(true));
+        $this->assertEquals('waiting', $fiber->resume(true));
 
+        file_put_contents(base_path('config/watched.php'), '<?php { // Parse error ');
+
+        // Should not cause a generation and should still be in the loop
         $this->assertEquals('waiting', $fiber->resume(true));
-        $this->assertEquals('waiting', $fiber->resume(true));
+
+        file_put_contents(base_path('config/watched.php'), '<?php //2');
+
+        $this->assertEquals('before-generate', $fiber->resume(true));
+        $this->assertEquals('generated', $fiber->resume(true));
 
         $fiber->resume(false); // Exit watcher
     }

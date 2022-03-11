@@ -83,26 +83,30 @@ class CommandRouteGenerator extends Command
 
             do {
                 if (inotify_read($fd)) {
-                    // Reload config
-                    (new LoadConfiguration())->bootstrap($app);
+                    try {
+                        // Reload config
+                        (new LoadConfiguration())->bootstrap($app);
 
-                    // Reload routes with reflection magic
-                    $booted->setValue($app, false);
-                    $providers->setValue($app, $routeOnly);
-                    $app->boot();
-                    $providers->setValue($app, $backup);
+                        // Reload routes with reflection magic
+                        $booted->setValue($app, false);
+                        $providers->setValue($app, $routeOnly);
+                        $app->boot();
+                        $providers->setValue($app, $backup);
 
-                    // Clear ziggy cache and generate
-                    Ziggy::clearRoutes();
+                        // Clear ziggy cache and generate
+                        Ziggy::clearRoutes();
 
-                    if ($app->runningUnitTests() && class_exists(\Fiber::class)) {
-                        \Fiber::suspend('before-generate');
-                    }
+                        if ($app->runningUnitTests() && class_exists(\Fiber::class)) {
+                            \Fiber::suspend('before-generate');
+                        }
 
-                    $this->process();
-
-                    if ($app->runningUnitTests() && class_exists(\Fiber::class)) {
-                        \Fiber::suspend('generated');
+                        $this->process();
+                        if ($app->runningUnitTests() && class_exists(\Fiber::class)) {
+                            \Fiber::suspend('generated');
+                        }
+                    } catch (\Throwable $e) {
+                        $this->error($e->getMessage());
+                        // Don't exit the loop but display the error
                     }
                 }
                 if ($app->runningUnitTests() && class_exists(\Fiber::class)) {
