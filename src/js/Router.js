@@ -58,7 +58,7 @@ export default class Router extends String {
      * @param {String} [url] - The URL to inspect, defaults to the current window URL.
      * @return {{ name: string, params: Object, query: Object, route: Route }}
      */
-    unresolve(url) {
+    _unresolve(url) {
         if (!url) {
             url = this._currentUrl();
         } else if (this._config.absolute && url.startsWith('/')) {
@@ -102,7 +102,7 @@ export default class Router extends String {
      * @return {(Boolean|String|undefined)}
      */
     current(name, params) {
-        const { name: current, params: currentParams, query, route } = this.unresolve();
+        const { name: current, params: currentParams, query, route } = this._unresolve();
 
         const matchedParams = { ...currentParams, ...query };
 
@@ -156,7 +156,7 @@ export default class Router extends String {
      * @return {Object}
      */
     get params() {
-        const { params, query } = this.unresolve();
+        const { params, query } = this._unresolve();
 
         return { ...params, ...query };
     }
