@@ -10,7 +10,7 @@ export const ZiggyVue = {
             },
         });
 
-        if (parseInt(v.version > 2)) {
+        if (parseInt(v.version) > 2) {
             v.provide('route', r);
         }
     },
