@@ -2,10 +2,17 @@ import route from './index.js';
 
 export const ZiggyVue = {
     install: (v, options) => {
-        const version = parseInt(v.version.split('.')[0]);
-        const _route = (name, params, absolute, config = options) => route(name, params, absolute, config);
+        const r = (name, params, absolute, config = options) => route(name, params, absolute, config);
 
-        v.mixin && version === 2 && (v.mixin({ methods: { route: _route } }));
-        v.provide && version > 2 && (v.provide('route', _route));
+        v.mixin({
+            methods: {
+                route: r,
+            },
+        });
+
+        if (parseInt(v.version > 2)) {
+            v.provide('route', r);
+            v.config.globalProperties.$route = r;
+        }
     },
 };
