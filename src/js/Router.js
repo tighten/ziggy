@@ -119,7 +119,7 @@ export default class Router extends String {
         const routeParams = { ...currentParams, ...query };
 
         // If the current window URL has no route parameters, and the passed parameters are empty, return true
-        if (Object.values(params).every(p => !p) && !Object.values(routeParams).filter(v => v !== undefined).length) return true;
+        if (Object.values(params).every(p => !p) && !Object.values(routeParams).some(v => v !== undefined)) return true;
 
         // Check that all passed parameters match their values in the current window URL
         // Use weak equality because all values in the current window URL will be strings
