@@ -33,7 +33,7 @@ class CommandRouteGenerator extends Command
         $this->makeDirectory($path);
         try {
             $prevContent = $this->files->get(base_path($path));
-        } catch (FileNotFoundException) {
+        } catch (FileNotFoundException $e) {
             $prevContent = '';
         }
         if ($prevContent != $generatedRoutes) {
