@@ -54,10 +54,14 @@
     "dependencies": {
         "qs": "~6.9.7"
     },
+    "optionalDependencies": {
+        "webpack": "^5"
+    },
     "devDependencies": {
         "babel-preset-power-assert": "^3.0.0",
-        "jest": "^27.0.6",
+        "jest": "^27.5.1",
         "microbundle": "^0.14.2",
-        "power-assert": "^1.6.1"
+        "power-assert": "^1.6.1",
+        "webpack": "^5.70.0"
     }
 }

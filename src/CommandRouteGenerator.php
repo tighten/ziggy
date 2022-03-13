@@ -3,9 +3,9 @@
 namespace Tightenco\Ziggy;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Tightenco\Ziggy\Output\File;
-use Tightenco\Ziggy\Ziggy;
 
 class CommandRouteGenerator extends Command
 {
@@ -31,9 +31,15 @@ class CommandRouteGenerator extends Command
         $generatedRoutes = $this->generate($this->option('group'));
 
         $this->makeDirectory($path);
-        $this->files->put(base_path($path), $generatedRoutes);
-
-        $this->info('File generated!');
+        try {
+            $prevContent = $this->files->get(base_path($path));
+        } catch (FileNotFoundException) {
+            $prevContent = '';
+        }
+        if ($prevContent != $generatedRoutes) {
+            $this->files->put(base_path($path), $generatedRoutes);
+            $this->info('File '.$path.' generated!');
+        }
     }
 
     protected function makeDirectory($path)

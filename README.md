@@ -305,10 +305,16 @@ const Ziggy = {
 export { Ziggy };
 ```
 
-You can optionally create a webpack alias to make importing Ziggy's core source files easier:
+You can optionally create a webpack alias and our webpack plugin to make generating and importing Ziggy's core source files easier:
 
 ```js
 // webpack.mix.js
+const {exec} = require('child_process');
+
+const ZiggyWebpackPlugin = require('./vendor/tightenco/ziggy/webpackPlugin');
+mix.webpackConfig({
+  plugins: [new ZiggyWebpackPlugin('php artisan ziggy:generate')],
+});
 
 // Mix v6
 const path = require('path');
