@@ -26,7 +26,8 @@
     ],
     "files": [
         "src/js",
-        "dist"
+        "dist",
+        "webpackPlugin.js"
     ],
     "source": "src/js/index.js",
     "main": "dist/index.js",
