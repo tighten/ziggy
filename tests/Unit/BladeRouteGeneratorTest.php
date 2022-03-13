@@ -56,7 +56,7 @@ class BladeRouteGeneratorTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
             ],
-        ], json_decode(Str::after(Str::before($script, ";\n\n"), 'routes = '), true));
+        ], $payload);
     }
 
     /** @test */
