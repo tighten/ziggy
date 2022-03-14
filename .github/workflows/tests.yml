@@ -10,7 +10,6 @@ jobs:
     name: ${{ matrix.os[0] }}, PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}
     runs-on: ${{ matrix.os[1] }}
     strategy:
-      fail-fast: false
       matrix:
         os: [[Ubuntu, ubuntu-latest], [Windows, windows-latest]]
         php: ['7.3', '7.4', '8.0', '8.1']
