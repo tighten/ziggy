@@ -104,8 +104,6 @@ export default class Router extends String {
     current(name, params) {
         const { name: current, params: currentParams, query, route } = this._unresolve();
 
-        const matchedParams = { ...currentParams, ...query };
-
         // If a name wasn't passed, return the name of the current route
         if (!name) return current;
 
@@ -119,11 +117,9 @@ export default class Router extends String {
 
         params = this._parse(params, routeObject);
         const routeParams = { ...currentParams, ...query };
-        // Remove undefined params
-        Object.keys(routeParams).forEach((key) => routeParams[key] === undefined && delete routeParams[key]);
 
         // If the current window URL has no route parameters, and the passed parameters are empty, return true
-        if (Object.values(params).every(p => !p) && !Object.values(routeParams).length) return true;
+        if (Object.values(params).every(p => !p) && !Object.values(routeParams).some(v => v !== undefined)) return true;
 
         // Check that all passed parameters match their values in the current window URL
         // Use weak equality because all values in the current window URL will be strings
