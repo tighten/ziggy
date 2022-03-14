@@ -7,11 +7,15 @@ export const route = (name, params, absolute, config) => {
 }
 
 export const ZiggyVue = {
-    install: (v, options) => v.mixin({
-        methods: {
-            route: (name, params, absolute, config = options) => route(name, params, absolute, config),
-        },
-    }),
+    install: (v, options) => {
+        const r = (name, params, absolute, config = options) => route(name, params, absolute, config);
+
+        v.config.globalProperties.route = r;
+
+        if (parseInt(v.version) > 2) {
+            v.provide('route', r);
+        }
+    },
 };
 
 export const useRoute = (defaultConfig) => {
