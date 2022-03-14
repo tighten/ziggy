@@ -4,6 +4,7 @@ namespace Tightenco\Ziggy;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Tightenco\Ziggy\Output\File;
 use Tightenco\Ziggy\Ziggy;
 
 class CommandRouteGenerator extends Command
@@ -35,22 +36,6 @@ class CommandRouteGenerator extends Command
         $this->info('File generated!');
     }
 
-    private function generate($group = false)
-    {
-        $payload = (new Ziggy($group, $this->option('url') ? url($this->option('url')) : null))->toJson();
-
-        return <<<JAVASCRIPT
-const Ziggy = {$payload};
-
-if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
-    Object.assign(Ziggy.routes, window.Ziggy.routes);
-}
-
-export { Ziggy };
-
-JAVASCRIPT;
-    }
-
     protected function makeDirectory($path)
     {
         if (! $this->files->isDirectory(dirname(base_path($path)))) {
@@ -58,5 +43,14 @@ JAVASCRIPT;
         }
 
         return $path;
+    }
+
+    private function generate($group = false)
+    {
+        $ziggy = (new Ziggy($group, $this->option('url') ? url($this->option('url')) : null));
+
+        $output = config('ziggy.output.file', File::class);
+
+        return (string) new $output($ziggy);
     }
 }

@@ -2,57 +2,41 @@
 
 namespace Tightenco\Ziggy;
 
+use Tightenco\Ziggy\Output\MergeScript;
+use Tightenco\Ziggy\Output\Script;
+
 class BladeRouteGenerator
 {
     public static $generated;
 
     public function generate($group = null, $nonce = null)
     {
-        $payload = new Ziggy($group);
+        $ziggy = new Ziggy($group);
 
         $nonce = $nonce ? ' nonce="' . $nonce . '"' : '';
 
         if (static::$generated) {
-            return $this->generateMergeJavascript(json_encode($payload->toArray()['routes']), $nonce);
+            return (string) $this->generateMergeJavascript($ziggy, $nonce);
         }
 
-        $routeFunction = $this->getRouteFunction();
+        $function = $this->getRouteFunction();
 
         static::$generated = true;
 
-        return <<<HTML
-<script type="text/javascript"{$nonce}>
-    const Ziggy = {$payload->toJson()};
+        $output = config('ziggy.output.script', Script::class);
 
-    $routeFunction
-</script>
-HTML;
+        return (string) new $output($ziggy, $function, $nonce);
     }
 
-    private function generateMergeJavascript($json, $nonce)
+    private function generateMergeJavascript(Ziggy $ziggy, $nonce)
     {
-        return <<<HTML
-<script type="text/javascript"{$nonce}>
-    (function () {
-        const routes = {$json};
+        $output = config('ziggy.output.merge_script', MergeScript::class);
 
-        Object.assign(Ziggy.routes, routes);
-    })();
-</script>
-HTML;
-    }
-
-    private function getRouteFilePath()
-    {
-        return __DIR__ . '/../dist/index.js';
+        return new $output($ziggy, $nonce);
     }
 
     private function getRouteFunction()
     {
-        if (config()->get('ziggy.skip-route-function')) {
-            return '';
-        }
-
-        return file_get_contents($this->getRouteFilePath());
+        return config('ziggy.skip-route-function') ? '' : file_get_contents(__DIR__ . '/../dist/index.js');
     }
 }

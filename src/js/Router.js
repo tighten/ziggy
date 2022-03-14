@@ -1,4 +1,4 @@
-import { parse, stringify } from 'qs';
+import { stringify } from 'qs';
 import Route from './Route';
 
 /**
@@ -6,10 +6,10 @@ import Route from './Route';
  */
 export default class Router extends String {
     /**
-     * @param {String} name - Route name.
-     * @param {(String|Number|Array|Object)} params - Route parameters.
-     * @param {Boolean} absolute - Whether to include the URL origin.
-     * @param {Object} config - Ziggy configuration.
+     * @param {String} [name] - Route name.
+     * @param {(String|Number|Array|Object)} [params] - Route parameters.
+     * @param {Boolean} [absolute] - Whether to include the URL origin.
+     * @param {Object} [config] - Ziggy configuration.
      */
     constructor(name, params, absolute = true, config) {
         super();
@@ -53,6 +53,39 @@ export default class Router extends String {
     }
 
     /**
+     * Get the parameters, values, and metadata from the given URL.
+     *
+     * @param {String} [url] - The URL to inspect, defaults to the current window URL.
+     * @return {{ name: string, params: Object, query: Object, route: Route }}
+     */
+    _unresolve(url) {
+        if (!url) {
+            url = this._currentUrl();
+        } else if (this._config.absolute && url.startsWith('/')) {
+            // If we are using absolute URLs and a relative URL
+            // is passed, prefix the host to make it absolute
+            url = this._location().host + url;
+        }
+
+        let matchedParams = {};
+        const [name, route] = Object.entries(this._config.routes).find(
+          ([name, route]) => (matchedParams = new Route(name, route, this._config).matchesUrl(url))
+        ) || [undefined, undefined];
+
+        return { name, ...matchedParams, route };
+    }
+
+    _currentUrl() {
+        const { host, pathname, search } = this._location();
+
+        return (
+            this._config.absolute
+                ? host + pathname
+                : pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/')
+        ) + search;
+    }
+
+    /**
      * Get the name of the route matching the current window URL, or, given a route name
      * and parameters, check if the current window URL and parameters match that route.
      *
@@ -64,19 +97,14 @@ export default class Router extends String {
      * route().current('posts.show', { post: 1 }); // false
      * route().current('posts.show', { post: 4 }); // true
      *
-     * @param {String} name - Route name to check.
-     * @param {(String|Number|Array|Object)} params - Route parameters.
+     * @param {String} [name] - Route name to check.
+     * @param {(String|Number|Array|Object)} [params] - Route parameters.
      * @return {(Boolean|String|undefined)}
      */
     current(name, params) {
-        const url = this._config.absolute
-            ? this._location().host + this._location().pathname
-            : this._location().pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/');
+        const { name: current, params: currentParams, query, route } = this._unresolve();
 
-        // Find the first route that matches the current URL
-        const [current, route] = Object.entries(this._config.routes).find(
-            ([_, route]) => new Route(name, route, this._config).matchesUrl(url)
-        ) || [undefined, undefined];
+        const matchedParams = { ...currentParams, ...query };
 
         // If a name wasn't passed, return the name of the current route
         if (!name) return current;
@@ -90,7 +118,9 @@ export default class Router extends String {
         const routeObject = new Route(current, route, this._config);
 
         params = this._parse(params, routeObject);
-        const routeParams = this._dehydrate(route);
+        const routeParams = { ...currentParams, ...query };
+        // Remove undefined params
+        Object.keys(routeParams).forEach((key) => routeParams[key] === undefined && delete routeParams[key]);
 
         // If the current window URL has no route parameters, and the passed parameters are empty, return true
         if (Object.values(params).every(p => !p) && !Object.values(routeParams).length) return true;
@@ -126,7 +156,9 @@ export default class Router extends String {
      * @return {Object}
      */
     get params() {
-        return this._dehydrate(this._config.routes[this.current()]);
+        const { params, query } = this._unresolve();
+
+        return { ...params, ...query };
     }
 
     /**
@@ -163,7 +195,11 @@ export default class Router extends String {
         if (Array.isArray(params)) {
             // If the parameters are an array they have to be in order, so we can transform them into
             // an object by keying them with the template segment names in the order they appear
-            params = params.reduce((result, current, i) => !!segments[i] ? ({ ...result, [segments[i].name]: current }) : ({ ...result, [current]: '' }), {});
+            params = params.reduce((result, current, i) => segments[i]
+                ? ({ ...result, [segments[i].name]: current })
+                : typeof current === 'object'
+                    ? ({ ...result, ...current })
+                    : ({ ...result, [current]: '' }), {});
         } else if (
             segments.length === 1
             && !params[segments[0].name]
@@ -226,49 +262,6 @@ export default class Router extends String {
 
             return { ...result, [key]: value[bindings[key]] };
         }, {});
-    }
-
-    /**
-     * Get all parameters and their values from the current window URL, based on the given route definition.
-     *
-     * @example
-     * // at URL https://tighten.ziggy.dev/events/8/venues/chicago?zoom=true
-     * _dehydrate({ domain: '{team}.ziggy.dev', uri: 'events/{event}/venues/{venue?}' }); // { team: 'tighten', event: 8, venue: 'chicago', zoom: true }
-     *
-     * @param {Object} route - Route definition.
-     * @return {Object} Parameters.
-     */
-    _dehydrate(route) {
-        let pathname = this._location().pathname
-            // If this Laravel app is in a subdirectory, trim the subdirectory from the path
-            .replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '')
-            .replace(/^\/+/, '');
-
-        // Given part of a valid 'hydrated' URL containing all its parameter values,
-        // a route template, and a delimiter, extract the parameters as an object
-        // E.g. dehydrate('events/2/chicago', 'events/{event}/{venue}', '/'); // { event: 2, venue: 'chicago' }
-        const dehydrate = (hydrated, template = '', delimiter) => {
-            const [values, segments] = [hydrated, template].map(s => s.split(delimiter));
-
-            return segments.reduce((result, current, i) => {
-                // Only include template segments that are route parameters
-                // AND have a value present in the passed hydrated string
-                return /{[^}?]+\??}/.test(current) && values[i]
-                    ? {
-                        ...result,
-                        [current.replace(/.*{|\??}.*/g, '')]: values[i]
-                            .replace(current.match(/^[^{]*/g), '')
-                            .replace(current.match(/[^}]*$/g), ''),
-                    }
-                    : result;
-            }, {});
-        }
-
-        return {
-            ...dehydrate(this._location().host, route.domain, '.'), // Domain parameters
-            ...dehydrate(pathname, route.uri, '/'), // Path parameters
-            ...parse(this._location().search?.replace(/^\?/, '')), // Query parameters
-        };
     }
 
     valueOf() {
