@@ -120,7 +120,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate(['guest', 'admin']);
-        $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
+        $ziggy = json_decode(Str::after(Str::before($output, ';' . PHP_EOL), ' = '), true);
 
         $this->assertCount(3, $ziggy['routes']);
         $this->assertArrayHasKey('posts.index', $ziggy['routes']);
