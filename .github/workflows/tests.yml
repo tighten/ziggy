@@ -45,6 +45,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: fileinfo
       - uses: actions/cache@v2
         with:
           path: ~/.composer/cache/files
