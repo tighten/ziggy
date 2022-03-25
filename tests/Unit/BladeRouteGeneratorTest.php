@@ -50,13 +50,12 @@ class BladeRouteGeneratorTest extends TestCase
         (new BladeRouteGenerator)->generate();
         $script = (new BladeRouteGenerator)->generate();
 
-        $payload = json_decode(Str::after(Str::before($script, ";\n\n"), 'routes = '), true);
         $this->assertSame([
             'posts.index' => [
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
             ],
-        ], $payload);
+        ], json_decode(Str::after(Str::before($script, ';' . PHP_EOL), 'routes = '), true));
     }
 
     /** @test */
