@@ -10,6 +10,12 @@ Breaking changes are marked with ⚠️.
 
 ## [v1.4.5] - 2022-03-25
 
+**Fixed**
+
+- Remove dead code by @Tofandel in https://github.com/tighten/ziggy/pull/525
+- Fix `route().current()` with 'wheres' that include regex start/end anchors by @bakerkretzmar in https://github.com/tighten/ziggy/pull/535
+- Fix inherited custom route key name detection by @bakerkretzmar in https://github.com/tighten/ziggy/pull/540
+
 ## [v1.4.4] - 2022-03-11
 
 **Added**
