@@ -63,7 +63,7 @@ export default class Route {
         // by replacing its parameter segments with matchers for parameter values
         const pattern = this.template
             .replace(/(\/?){([^}?]*)(\??)}/g, (_, slash, segment, optional) => {
-                const regex = `(?<${segment}>${this.wheres[segment] || '[^/?]+'})`;
+                const regex = `(?<${segment}>${this.wheres[segment]?.replace(/(^\^)|(\$$)/g, '') || '[^/?]+'})`;
                 return optional ? `(${slash}${regex})?` : `${slash}${regex}`;
             })
             .replace(/^\w+:\/\//, '');

@@ -778,6 +778,27 @@ describe('current()', () => {
         deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined, ab: 'cd', ef: '1', 'dd': ''})
     });
 
+    test('can strip regex start and end of string tokens from wheres', () => {
+        global.Ziggy = undefined;
+        global.window.location.pathname = '/workspace/processes';
+
+        const config = {
+            url: 'https://ziggy.dev',
+            port: null,
+            routes: {
+                'workspaces.processes.index': {
+                    uri: '{workspace}/processes',
+                    methods: ['GET', 'HEAD'],
+                    wheres: {
+                        workspace: '^(?!api|nova-api|horizon).*$',
+                    },
+                },
+            },
+        };
+
+        same(route(undefined, undefined, undefined, config).current(), 'workspaces.processes.index');
+    });
+
     test('can check the current route name at a URL with a non-delimited parameter', () => {
         global.window.location.pathname = '/strict-download/file.html';
 
