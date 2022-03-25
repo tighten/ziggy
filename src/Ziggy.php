@@ -3,6 +3,7 @@
 namespace Tightenco\Ziggy;
 
 use Illuminate\Contracts\Routing\UrlRoutable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Reflector;
 use Illuminate\Support\Str;
@@ -174,7 +175,7 @@ class Ziggy implements JsonSerializable
                     ? Reflector::getParameterClassName($parameter)
                     : $parameter->getType()->getName();
                 $override = (new ReflectionClass($model))->isInstantiable()
-                    && $model === (new ReflectionMethod($model, 'getRouteKeyName'))->class;
+                    && (new ReflectionMethod($model, 'getRouteKeyName'))->class !== Model::class;
 
                 // Avoid booting this model if it doesn't override the default route key name
                 $bindings[$parameter->getName()] = $override ? app($model)->getRouteKeyName() : 'id';
