@@ -19,6 +19,7 @@
         }
     ],
     "require": {
+        "ext-json": "*",
         "laravel/framework": ">=5.4@dev"
     },
     "require-dev": {

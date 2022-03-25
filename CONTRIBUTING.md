@@ -33,6 +33,9 @@ You can run PHP tests with `vendor/bin/phpunit` and JavaScript tests with `npm t
 
 If you need any help with this please don't hesitate to ask.
 
+> :warning: If your filesystem uses CRLF instead of LF you will run into some issues when running the tests,
+> make sure you run `git config --global core.autocrlf input` prior to cloning the repository
+
 ## Requirements
 
 - **[PSR-2 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)** - The easiest way to apply the conventions is to install [PHP Code Sniffer](https://github.com/squizlabs/PHP_CodeSniffer).
