@@ -17,6 +17,9 @@ class RouteModelBindingTest extends TestCase
         $router->get('users/{user}', function (User $user) {
             return '';
         })->name('users');
+        $router->get('admins/{admin}', function (Admin $admin) {
+            return '';
+        })->name('admins');
         $router->get('tags/{tag}', function (Tag $tag) {
             return '';
         })->name('tags');
@@ -56,6 +59,22 @@ class RouteModelBindingTest extends TestCase
         ];
 
         $this->assertSame($expected, (new Ziggy)->filter('users')->toArray()['routes']);
+    }
+
+    /** @test */
+    public function register_inherited_custom_route_key_name()
+    {
+        $expected = [
+            'admins' => [
+                'uri' => 'admins/{admin}',
+                'methods' => ['GET', 'HEAD'],
+                'bindings' => [
+                    'admin' => 'uuid',
+                ],
+            ],
+        ];
+
+        $this->assertSame($expected, (new Ziggy)->filter('admins')->toArray()['routes']);
     }
 
     /** @test */
@@ -255,4 +274,9 @@ class Tag extends Model
         parent::boot();
         static::$wasBooted = true;
     }
+}
+
+class Admin extends User
+{
+    //
 }
