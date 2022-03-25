@@ -8,6 +8,31 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.4.5] - 2022-03-25
+
+## [v1.4.4] - 2022-03-11
+
+**Added**
+
+- Allow custom output via formatters by @jaulz in https://github.com/tighten/ziggy/pull/483
+- Add Vue 3 `provide`/`inject` support to the Vue plugin by @c-fitzmaurice in https://github.com/tighten/ziggy/pull/518
+
+**Fixed**
+
+- Encode non-slash characters in wildcard last parameter by @rodrigopedra in https://github.com/tighten/ziggy/pull/507
+- Update JS route matching to take 'wheres' into account by @Tofandel in https://github.com/tighten/ziggy/pull/514
+
+## [v1.4.3] - 2022-01-28
+
+**Added**
+
+- Test on PHP 8.1 by @bakerkretzmar in https://github.com/tighten/ziggy/pull/484
+- Don't encode slashes in wildcard last parameter by @bakerkretzmar in https://github.com/tighten/ziggy/pull/500
+
+**Fixed**
+
+- Ignore route action parameters without URI segments by @jaulz in https://github.com/tighten/ziggy/pull/482
+
 ## [v1.4.2] - 2021-10-01
 
 **Fixed**
@@ -202,7 +227,10 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.4.2...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.4.5...HEAD
+[v1.4.5]: https://github.com/tighten/ziggy/compare/v1.4.4...v1.4.5
+[v1.4.4]: https://github.com/tighten/ziggy/compare/v1.4.3...v1.4.4
+[v1.4.3]: https://github.com/tighten/ziggy/compare/v1.4.2...v1.4.3
 [v1.4.2]: https://github.com/tighten/ziggy/compare/v1.4.1...v1.4.2
 [v1.4.1]: https://github.com/tighten/ziggy/compare/v1.4.0...v1.4.1
 [v1.4.0]: https://github.com/tighten/ziggy/compare/v1.3.6...v1.4.0
