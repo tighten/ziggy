@@ -94,6 +94,25 @@ class Ziggy implements JsonSerializable
     }
 
     /**
+     * Prepare route for output.
+     */
+    public function route($route)
+    {
+        $bindings = $this->resolveBindings($route);
+
+        return collect($route)->only(['uri', 'methods', 'wheres'])
+            ->put('domain', $route->domain())
+            ->put('bindings', $bindings ?? [])
+            ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
+                if (is_array($middleware)) {
+                    return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values()->all());
+                }
+
+                return $collection->put('middleware', $route->middleware());
+            })->filter();
+    }
+
+    /**
      * Get a list of the application's named routes, keyed by their names.
      */
     private function nameKeyedRoutes()
@@ -106,20 +125,9 @@ class Ziggy implements JsonSerializable
                 return $route->isFallback;
             });
 
-        $bindings = $this->resolveBindings($routes->toArray());
-
         return $routes->merge($fallbacks)
-            ->map(function ($route) use ($bindings) {
-                return collect($route)->only(['uri', 'methods', 'wheres'])
-                    ->put('domain', $route->domain())
-                    ->put('bindings', $bindings[$route->getName()] ?? [])
-                    ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
-                        if (is_array($middleware)) {
-                            return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values()->all());
-                        }
-
-                        return $collection->put('middleware', $route->middleware());
-                    })->filter();
+            ->map(function ($route) {
+                return $this->route($route);
             });
     }
 
@@ -159,31 +167,26 @@ class Ziggy implements JsonSerializable
     /**
      * Resolve route key names for any route parameters using Eloquent route model binding.
      */
-    private function resolveBindings(array $routes): array
+    private function resolveBindings($route): array
     {
-        $scopedBindings = method_exists(head($routes) ?: '', 'bindingFields');
+        $scopedBindings = method_exists($route ?: '', 'bindingFields');
+        $bindings = [];
 
-        foreach ($routes as $name => $route) {
-            $bindings = [];
-
-            foreach ($route->signatureParameters(UrlRoutable::class) as $parameter) {
-                if (! in_array($parameter->getName(), $route->parameterNames())) {
-                    break;
-                }
-
-                $model = class_exists(Reflector::class)
-                    ? Reflector::getParameterClassName($parameter)
-                    : $parameter->getType()->getName();
-                $override = (new ReflectionClass($model))->isInstantiable()
-                    && (new ReflectionMethod($model, 'getRouteKeyName'))->class !== Model::class;
-
-                // Avoid booting this model if it doesn't override the default route key name
-                $bindings[$parameter->getName()] = $override ? app($model)->getRouteKeyName() : 'id';
+        foreach ($route->signatureParameters(UrlRoutable::class) as $parameter) {
+            if (! in_array($parameter->getName(), $route->parameterNames())) {
+                break;
             }
 
-            $routes[$name] = $scopedBindings ? array_merge($bindings, $route->bindingFields()) : $bindings;
+            $model = class_exists(Reflector::class)
+                ? Reflector::getParameterClassName($parameter)
+                : $parameter->getType()->getName();
+            $override = (new ReflectionClass($model))->isInstantiable()
+                && (new ReflectionMethod($model, 'getRouteKeyName'))->class !== Model::class;
+
+            // Avoid booting this model if it doesn't override the default route key name
+            $bindings[$parameter->getName()] = $override ? app($model)->getRouteKeyName() : 'id';
         }
 
-        return $routes;
+        return $scopedBindings ? array_merge($bindings, $route->bindingFields()) : $bindings;
     }
 }
