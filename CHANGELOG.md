@@ -8,6 +8,12 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.4.6] - 2022-04-08
+
+**Fixed**
+
+- Use global regex instead of `replaceAll` for better browser support by @bakerkretzmar in https://github.com/tighten/ziggy/pulls/548
+
 ## [v1.4.5] - 2022-03-25
 
 **Fixed**
@@ -233,7 +239,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.4.5...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.4.6...HEAD
+[v1.4.6]: https://github.com/tighten/ziggy/compare/v1.4.5...v1.4.6
 [v1.4.5]: https://github.com/tighten/ziggy/compare/v1.4.4...v1.4.5
 [v1.4.4]: https://github.com/tighten/ziggy/compare/v1.4.3...v1.4.4
 [v1.4.3]: https://github.com/tighten/ziggy/compare/v1.4.2...v1.4.3
