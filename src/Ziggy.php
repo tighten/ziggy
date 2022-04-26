@@ -74,6 +74,15 @@ class Ziggy implements JsonSerializable
             return $this->filter($filters, true)->routes;
         }
 
+        // return unfiltered routes if user set both config options.
+        if (config()->has("ziggy.groups.{$group}.except") && config()->has("ziggy.groups.{$group}.only")) {
+            return $this->routes;
+        }
+
+        if (config()->has("ziggy.groups.{$group}.except")) {
+            return $this->filter(config("ziggy.groups.{$group}.except"), false)->routes;
+        }
+
         if (config()->has("ziggy.groups.{$group}.only")) {
             return $this->filter(config("ziggy.groups.{$group}.only"), true)->routes;
         }
@@ -81,7 +90,6 @@ class Ziggy implements JsonSerializable
         if (config()->has("ziggy.groups.{$group}")) {
             return $this->filter(config("ziggy.groups.{$group}"), true)->routes;
         }
-
 
         return $this->routes;
     }

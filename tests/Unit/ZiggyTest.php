@@ -233,6 +233,75 @@ class ZiggyTest extends TestCase
     }
 
     /** @test */
+    public function can_set_excluded_routes_using_groups_except_config()
+    {
+        config(['ziggy.groups' => ['authors' => ['except' => ['home', 'posts.*']]]]);
+        $routes = (new Ziggy('authors'))->toArray()['routes'];
+
+        $expected = [
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+            ],
+        ];
+
+        $this->addPostCommentsRouteWithBindings($expected);
+
+        $this->assertSame($expected, $routes);
+    }
+
+    /** @test */
+    public function returns_unfiltered_routes_when_both_only_and_except_configs_set_in_groups()
+    {
+        config(['ziggy.groups' => [
+            'authors' => [
+                'only' => ['home'],
+                'except' => ['posts.*'],
+            ]],
+        ]);
+        $routes = (new Ziggy('authors'))->toArray()['routes'];
+
+        $expected = [
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+            ],
+        ];
+
+        $this->addPostCommentsRouteWithBindings($expected);
+
+        $this->assertSame($expected, $routes);
+    }
+
+    /** @test */
     public function can_ignore_passed_group_not_set_in_config()
     {
         // The 'authors' group doesn't exist
