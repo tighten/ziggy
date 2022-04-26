@@ -205,6 +205,34 @@ class ZiggyTest extends TestCase
     }
 
     /** @test */
+    public function can_set_included_routes_using_groups_only_config()
+    {
+        config(['ziggy.groups' => ['authors' => ['only' => ['home', 'posts.*']]]]);
+        $routes = (new Ziggy('authors'))->toArray()['routes'];
+
+        $expected = [
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+            ],
+        ];
+
+        $this->assertSame($expected, $routes);
+    }
+
+    /** @test */
     public function can_ignore_passed_group_not_set_in_config()
     {
         // The 'authors' group doesn't exist
@@ -432,7 +460,7 @@ class ZiggyTest extends TestCase
 
         $expected = [
             'url' => 'http://ziggy.dev',
-            'port' => null,
+            'port' => NULL,
             'defaults' => [],
             'routes' => [
                 'home' => [
@@ -474,7 +502,7 @@ class ZiggyTest extends TestCase
 
         $expected = [
             'url' => 'http://ziggy.dev',
-            'port' => null,
+            'port' => NULL,
             'defaults' => [],
             'routes' => [
                 'postComments.index' => [

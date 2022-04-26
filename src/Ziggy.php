@@ -19,13 +19,13 @@ class Ziggy implements JsonSerializable
     protected $group;
     protected $routes;
 
-    public function __construct($group = null, string $url = null)
+    public function __construct($group = NULL, string $url = NULL)
     {
         $this->group = $group;
 
         $this->url = rtrim($url ?? url('/'), '/');
 
-        if (! static::$cache) {
+        if (!static::$cache) {
             static::$cache = $this->nameKeyedRoutes();
         }
 
@@ -34,7 +34,7 @@ class Ziggy implements JsonSerializable
 
     public static function clearRoutes()
     {
-        static::$cache = null;
+        static::$cache = NULL;
     }
 
     private function applyFilters($group)
@@ -74,9 +74,14 @@ class Ziggy implements JsonSerializable
             return $this->filter($filters, true)->routes;
         }
 
+        if (config()->has("ziggy.groups.{$group}.only")) {
+            return $this->filter(config("ziggy.groups.{$group}.only"), true)->routes;
+        }
+
         if (config()->has("ziggy.groups.{$group}")) {
             return $this->filter(config("ziggy.groups.{$group}"), true)->routes;
         }
+
 
         return $this->routes;
     }
@@ -87,7 +92,7 @@ class Ziggy implements JsonSerializable
     public function filter($filters = [], $include = true): self
     {
         $this->routes = $this->routes->filter(function ($route, $name) use ($filters, $include) {
-            return Str::is(Arr::wrap($filters), $name) ? $include : ! $include;
+            return Str::is(Arr::wrap($filters), $name) ? $include : !$include;
         });
 
         return $this;
@@ -130,7 +135,7 @@ class Ziggy implements JsonSerializable
     {
         return [
             'url' => $this->url,
-            'port' => parse_url($this->url)['port'] ?? null,
+            'port' => parse_url($this->url)['port'] ?? NULL,
             'defaults' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
                 : [],
@@ -144,7 +149,7 @@ class Ziggy implements JsonSerializable
     public function jsonSerialize(): array
     {
         return array_merge($routes = $this->toArray(), [
-            'defaults' => (object) $routes['defaults'],
+            'defaults' => (object)$routes['defaults'],
         ]);
     }
 
@@ -167,7 +172,7 @@ class Ziggy implements JsonSerializable
             $bindings = [];
 
             foreach ($route->signatureParameters(UrlRoutable::class) as $parameter) {
-                if (! in_array($parameter->getName(), $route->parameterNames())) {
+                if (!in_array($parameter->getName(), $route->parameterNames())) {
                     break;
                 }
 
