@@ -25,7 +25,7 @@ class Ziggy implements JsonSerializable
 
         $this->url = rtrim($url ?? url('/'), '/');
 
-        if (! static::$cache) {
+        if (!static::$cache) {
             static::$cache = $this->nameKeyedRoutes();
         }
 
@@ -65,17 +65,41 @@ class Ziggy implements JsonSerializable
     private function group($group)
     {
         if (is_array($group)) {
-            $filters = [];
-
-            foreach ($group as $groupName) {
-                $filters = array_merge($filters, config("ziggy.groups.{$groupName}"));
+            if (!config("ziggy.groups")) {
+                return $this->routes;
             }
 
-            return $this->filter($filters, true)->routes;
+            $groups = collect(config("ziggy.groups"))->filter(fn ($configGroup, $configGroupName) => in_array($configGroupName, $group));
+
+            $exceptGroups = $groups->filter(fn ($group) => isset($group['except']));
+
+            $onlyGroups = $groups->filter(fn ($group) => isset($group['only']) || ( is_array($group) && !isset($group['except']) ));
+
+            if ($onlyGroups->isNotEmpty() && $exceptGroups->isNotEmpty()) {
+                return $this->routes;
+            }
+
+            if ($exceptGroups->isNotEmpty()) {
+                return $this->filter($exceptGroups->flatten()->toArray(), false)->routes;
+            }
+
+            return $this->filter($onlyGroups->flatten()->toArray())->routes;
+        }
+
+        if (config()->has("ziggy.groups.{$group}.except") && config()->has("ziggy.groups.{$group}.only")) {
+            return $this->routes;
+        }
+
+        if (config()->has("ziggy.groups.{$group}.except")) {
+            return $this->filter(config("ziggy.groups.{$group}.except"), false)->routes;
+        }
+
+        if (config()->has("ziggy.groups.{$group}.only")) {
+            return $this->filter(config("ziggy.groups.{$group}.only"))->routes;
         }
 
         if (config()->has("ziggy.groups.{$group}")) {
-            return $this->filter(config("ziggy.groups.{$group}"), true)->routes;
+            return $this->filter(config("ziggy.groups.{$group}"))->routes;
         }
 
         return $this->routes;
@@ -87,7 +111,7 @@ class Ziggy implements JsonSerializable
     public function filter($filters = [], $include = true): self
     {
         $this->routes = $this->routes->filter(function ($route, $name) use ($filters, $include) {
-            return Str::is(Arr::wrap($filters), $name) ? $include : ! $include;
+            return Str::is(Arr::wrap($filters), $name) ? $include : !$include;
         });
 
         return $this;
@@ -167,7 +191,7 @@ class Ziggy implements JsonSerializable
             $bindings = [];
 
             foreach ($route->signatureParameters(UrlRoutable::class) as $parameter) {
-                if (! in_array($parameter->getName(), $route->parameterNames())) {
+                if (!in_array($parameter->getName(), $route->parameterNames())) {
                     break;
                 }
 
