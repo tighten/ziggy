@@ -235,25 +235,15 @@ class ZiggyTest extends TestCase
     /** @test */
     public function can_set_excluded_routes_using_groups_except_config()
     {
-        config(['ziggy.groups' => ['authors' => ['except' => ['home', 'posts.*']]]]);
+        config(['ziggy.groups' => ['authors' => ['except' => ['home', 'posts.*', 'postComments.*']]]]);
         $routes = (new Ziggy('authors'))->toArray()['routes'];
 
         $expected = [
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD'],
-            ],
             'admin.users.index' => [
                 'uri' => 'admin/users',
                 'methods' => ['GET', 'HEAD'],
             ],
-            'postComments.show' => [
-                'uri' => 'posts/{post}/comments/{comment}',
-                'methods' => ['GET', 'HEAD'],
-            ],
         ];
-
-        $this->addPostCommentsRouteWithBindings($expected);
 
         $this->assertSame($expected, $routes);
     }
