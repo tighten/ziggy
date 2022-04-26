@@ -210,6 +210,7 @@ class ZiggyTest extends TestCase
         config(['ziggy.groups' => ['authors' => ['only' => ['home', 'posts.*']]]]);
         $routes = (new Ziggy('authors'))->toArray()['routes'];
 
+        
         $expected = [
             'home' => [
                 'uri' => 'home',
