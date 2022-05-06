@@ -390,6 +390,7 @@ Now you can use `route()` anywhere in your Vue components and templates, like so
 Ziggy includes a `useRoute()` hook to make it easy to use the `route()` helper in your React app:
 
 ```jsx
+// PostsLink.js
 import React from 'react';
 import { useRoute } from 'ziggy-js';
 import { Ziggy } from './ziggy';
@@ -397,9 +398,7 @@ import { Ziggy } from './ziggy';
 export default function PostsLink() {
     const route = useRoute(Ziggy);
 
-    return (
-        <a href={route('posts.index')}>Posts</a>
-    );
+    return <a href={route('posts.index')}>Posts</a>;
 }
 ```
 
@@ -408,7 +407,6 @@ If you make the `Ziggy` config object available globally, you can use the `useRo
 ```js
 // app.js
 import { Ziggy } from './ziggy';
-
 globalThis.Ziggy = Ziggy;
 ```
 
@@ -420,13 +418,11 @@ import { useRoute } from 'ziggy-js';
 export default function PostsLink() {
     const route = useRoute();
 
-    return (
-        <a href={route('posts.index')}>Posts</a>
-    );
+    return <a href={route('posts.index')}>Posts</a>;
 }
 ```
 
-> Note: If you include the `@routes` Blade directive in your views, Ziggy's configuration will already be available globally, so you don't need to import the `Ziggy` config object anywhere or make it global manually.
+> Note: If you include the `@routes` Blade directive in your views, Ziggy's configuration will already be available globally, so you don't need to import the `Ziggy` config object or make it global with `globalThis.Ziggy = Ziggy`.
 
 #### SPAs or separate repos
 
