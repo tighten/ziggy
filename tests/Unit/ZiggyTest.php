@@ -519,7 +519,7 @@ class ZiggyTest extends TestCase
 
         $expected = [
             'url' => 'http://ziggy.dev',
-            'port' => NULL,
+            'port' => null,
             'defaults' => [],
             'routes' => [
                 'home' => [
@@ -561,7 +561,7 @@ class ZiggyTest extends TestCase
 
         $expected = [
             'url' => 'http://ziggy.dev',
-            'port' => NULL,
+            'port' => null,
             'defaults' => [],
             'routes' => [
                 'postComments.index' => [
