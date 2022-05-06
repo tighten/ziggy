@@ -205,10 +205,10 @@ class ZiggyTest extends TestCase
     }
 
     /** @test */
-    public function can_set_included_routes_using_groups_only_config()
+    public function can_include_routes_from_multiple_groups()
     {
-        config(['ziggy.groups' => ['authors' => ['only' => ['home', 'posts.*']]]]);
-        $routes = (new Ziggy('authors'))->toArray()['routes'];
+        config(['ziggy.groups' => ['home' => ['home'], 'posts' => ['posts.*']]]);
+        $routes = (new Ziggy(['home', 'posts']))->toArray()['routes'];
 
         $expected = [
             'home' => [
@@ -233,9 +233,9 @@ class ZiggyTest extends TestCase
     }
 
     /** @test */
-    public function can_set_excluded_routes_using_groups_except_config()
+    public function can_set_excluded_routes_in_groups_using_negative_patterns()
     {
-        config(['ziggy.groups' => ['authors' => ['except' => ['home', 'posts.*', 'postComments.*']]]]);
+        config(['ziggy.groups' => ['authors' => ['!home', '!posts.*', '!postComments.*']]]);
         $routes = (new Ziggy('authors'))->toArray()['routes'];
 
         $expected = [
@@ -249,36 +249,35 @@ class ZiggyTest extends TestCase
     }
 
     /** @test */
-    public function returns_unfiltered_routes_when_both_only_and_except_configs_set_in_groups()
+    public function can_combine_filters_in_groups_with_positive_and_negative_patterns()
     {
-        config(['ziggy.groups' => [
-            'authors' => [
-                'only' => ['home'],
-                'except' => ['posts.*'],
-            ]],
-        ]);
+        config(['ziggy.groups' => ['authors' => ['posts.*', '!posts.index']]]);
         $routes = (new Ziggy('authors'))->toArray()['routes'];
 
         $expected = [
-            'home' => [
-                'uri' => 'home',
-                'methods' => ['GET', 'HEAD'],
-            ],
-            'posts.index' => [
-                'uri' => 'posts',
-                'methods' => ['GET', 'HEAD'],
-            ],
             'posts.show' => [
                 'uri' => 'posts/{post}',
-                'methods' => ['GET', 'HEAD'],
-            ],
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
             ],
             'posts.store' => [
                 'uri' => 'posts',
                 'methods' => ['POST'],
+            ],
+        ];
+
+        $this->assertSame($expected, $routes);
+    }
+
+    /** @test */
+    public function can_filter_routes_from_multiple_groups_using_negative_patterns()
+    {
+        config(['ziggy.groups' => ['home' => '!posts.*', 'posts' => '!home']]);
+        $routes = (new Ziggy(['home', 'posts']))->toArray()['routes'];
+
+        $expected = [
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
+                'methods' => ['GET', 'HEAD'],
             ],
             'admin.users.index' => [
                 'uri' => 'admin/users',

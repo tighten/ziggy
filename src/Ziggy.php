@@ -68,27 +68,14 @@ class Ziggy implements JsonSerializable
             $filters = [];
 
             foreach ($group as $groupName) {
-                $filters = array_merge($filters, config("ziggy.groups.{$groupName}"));
+                $filters = array_merge($filters, Arr::wrap(config("ziggy.groups.{$groupName}")));
             }
 
-            return $this->filter($filters, true)->routes;
-        }
-
-        // return unfiltered routes if user set both config options.
-        if (config()->has("ziggy.groups.{$group}.except") && config()->has("ziggy.groups.{$group}.only")) {
-            return $this->routes;
-        }
-
-        if (config()->has("ziggy.groups.{$group}.except")) {
-            return $this->filter(config("ziggy.groups.{$group}.except"), false)->routes;
-        }
-
-        if (config()->has("ziggy.groups.{$group}.only")) {
-            return $this->filter(config("ziggy.groups.{$group}.only"), true)->routes;
+            return $this->filter($filters)->routes;
         }
 
         if (config()->has("ziggy.groups.{$group}")) {
-            return $this->filter(config("ziggy.groups.{$group}"), true)->routes;
+            return $this->filter(config("ziggy.groups.{$group}"))->routes;
         }
 
         return $this->routes;
