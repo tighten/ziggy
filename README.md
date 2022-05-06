@@ -23,7 +23,6 @@ Ziggy supports all versions of Laravel from `5.4` onward, and all modern browser
     - [Vue](#vue)
     - [React](#react)
     - [SPAs or separate repos](#spas-or-separate-repos)
-    - [Recompiling on route changes](#recompiling-on-route-changes)
 - [**Filtering Routes**](#filtering-routes)
     - [Basic Filtering](#basic-filtering)
     - [Filtering using Groups](#filtering-using-groups)
@@ -413,32 +412,6 @@ const Ziggy = await response.toJson();
 // ...
 
 route('home', undefined, undefined, Ziggy);
-```
-
-#### Recompiling on route changes
-
-If you're generating a `ziggy.js` file and using Laravel Mix, you can watch your route files and regenerate your Ziggy configuration when they change by adding a custom Webpack plugin like the one below to your build:
-
-```js
-// webpack.mix.js
-const { exec } = require('child_process');
-const { resolve } = require('path');
-const glob = require('glob');
-
-mix.webpackConfig({
-    plugins: [
-        {
-            apply: (compiler) => {
-                compiler.hooks.compilation.tap('WatchRoutesPlugin', (compilation) => {
-                    glob.sync('./routes/*.php').map(file => compilation.fileDependencies.add(resolve(file)));
-                });
-                compiler.hooks.afterDone.tap('ZiggyGeneratePlugin', () => {
-                    exec('php artisan ziggy:generate');
-                });
-            }
-        },
-    ],
-});
 ```
 
 ## Filtering Routes
