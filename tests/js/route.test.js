@@ -322,6 +322,26 @@ describe('route()', () => {
         same(route('translateEvents.venues.show', [1, venue]), 'https://ziggy.dev/en/events/1/venues/2');
     });
 
+    test('can generate a URL with fragment from array', () => {
+        same(route('events.venues.show', [1, 2, '#foo']), 'https://ziggy.dev/events/1/venues/2#foo');
+        same(route('events.venues.show', [1, 2, '#foo#bar']), 'https://ziggy.dev/events/1/venues/2#foo#bar');
+        same(route('events.venues.show', [1, 2, '#foo', '#bar']), 'https://ziggy.dev/events/1/venues/2#bar');
+    });
+
+    test("can generate a URL with fragment defined by '_fragment' property", () => {
+        same(route('events.venues.show', [1, 2, { _fragment: '#foo' }]), 'https://ziggy.dev/events/1/venues/2#foo');
+        same(route('events.venues.show', [1, 2, { _fragment: '#foo#bar' }]), 'https://ziggy.dev/events/1/venues/2#foo#bar');
+        same(route('events.venues.show', [1, 2, { _fragment: '#foo' }, '#bar']), 'https://ziggy.dev/events/1/venues/2#bar');
+        same(route('events.venues.show', [1, 2, '#foo', { _fragment: '#bar' }]), 'https://ziggy.dev/events/1/venues/2#bar');
+    });
+
+    test("can generate a URL with fragment defined by '_fragment' property without preceding hash symbol", () => {
+        same(route('events.venues.show', [1, 2, { _fragment: 'foo' }]), 'https://ziggy.dev/events/1/venues/2#foo');
+        same(route('events.venues.show', [1, 2, { _fragment: 'foo#bar' }]), 'https://ziggy.dev/events/1/venues/2#foo#bar');
+        same(route('events.venues.show', [1, 2, { _fragment: 'foo' }, '#bar']), 'https://ziggy.dev/events/1/venues/2#bar');
+        same(route('events.venues.show', [1, 2, '#foo', { _fragment: 'bar' }]), 'https://ziggy.dev/events/1/venues/2#bar');
+    });
+
     test('can generate a URL for a route with domain parameters', () => {
         // route with required domain parameters
         same(route('team.user.show', { team: 'tighten', id: 1 }), 'https://tighten.ziggy.dev/users/1');
@@ -401,6 +421,19 @@ describe('route()', () => {
         );
         // ignore values explicitly set to `null`
         same(route('posts.index', { filled: 'filling', empty: null }), 'https://ziggy.dev/posts?filled=filling');
+    });
+
+    test('can automatically append fragment to the end', () => {
+        same(
+            route('events.venues.show', {
+                id: 2,
+                event: 1,
+                _fragment: 'foo#bar',
+                venue: 2,
+                search: 'rogers',
+            }),
+            'https://ziggy.dev/events/1/venues/2?id=2&search=rogers#foo#bar'
+        );
     });
 
     test('can cast boolean query parameters to integers', () => {
@@ -553,6 +586,40 @@ describe('route()', () => {
         deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: '0' });
     });
 
+    test('can extract fragment from the current URL', () => {
+        global.window.location.href = 'https://ziggy.dev/posts/1?guest[name]=Taylor#foo';
+        global.window.location.host = 'ziggy.dev';
+        global.window.location.pathname = '/posts/1';
+        global.window.location.search = '?guest[name]=Taylor';
+        global.window.location.hash = '#foo';
+
+        deepEqual(route().params, { post: '1', guest: { name: 'Taylor' }, _fragment: '#foo' });
+
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=0#foo';
+        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.search = '?id=5&vip=0';
+        global.window.location.hash = '#foo';
+
+        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: '0', _fragment: '#foo' });
+    });
+
+    test('can ignore missing query string and fragment prefixes of the current URL', () => {
+        global.window.location.href = 'https://ziggy.dev/posts/1?guest[name]=Taylor#foo';
+        global.window.location.host = 'ziggy.dev';
+        global.window.location.pathname = '/posts/1';
+        global.window.location.search = 'guest[name]=Taylor';
+        global.window.location.hash = 'foo';
+
+        deepEqual(route().params, { post: '1', guest: { name: 'Taylor' }, _fragment: '#foo' });
+
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=0#foo';
+        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.search = 'id=5&vip=0';
+        global.window.location.hash = 'foo';
+
+        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: '0', _fragment: '#foo' });
+    });
+
     test("can append 'extra' string/number parameter to query", () => {
         // 'posts.index' has no parameters
         same(route('posts.index', 'extra'), 'https://ziggy.dev/posts?extra=');
@@ -649,7 +716,15 @@ describe('current()', () => {
     });
 
     test('can ignore query string when getting current route name', () => {
-        global.window.location.pathname = '/events/1/venues?foo=2';
+        global.window.location.pathname = '/events/1/venues';
+        global.window.location.search = '?foo=2';
+
+        same(route().current(), 'events.venues.index');
+    });
+
+    test('can ignore fragment when getting current route name', () => {
+        global.window.location.pathname = '/events/1/venues';
+        global.window.location.hash = '#foo';
 
         same(route().current(), 'events.venues.index');
     });
@@ -1023,6 +1098,17 @@ describe('current()', () => {
         assert(!route().current('events.venues.show', { user: 'Matt', venue: { id: 9 } }));
         assert(!route().current('events.venues.show', { event: 5, id: 9, user: 'Jacob' }));
         assert(!route().current('events.venues.show', { id: 12, user: 'Matt' }));
+    });
+
+    test('can check the current route with fragment', () => {
+        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.hash = '#foo';
+
+        assert(route().current('events.venues.show'));
+        assert(route().current('events.venues.show', { _fragment: '#foo' }));
+        assert(route().current('events.venues.show', { _fragment: 'foo' }));
+
+        assert(!route().current('events.venues.show', { _fragment: '#bar' }));
     });
 
     test('can ignore routes that don’t allow GET requests', () => {

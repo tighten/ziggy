@@ -40,7 +40,7 @@ export default class Router extends String {
         // Get parameters that don't correspond to any route segments to append them to the query
         const unhandled = Object.keys(this._params)
             .filter((key) => !this._route.parameterSegments.some(({ name }) => name === key))
-            .filter((key) => key !== '_query')
+            .filter((key) => key !== '_query' && key !== '_fragment')
             .reduce((result, current) => ({ ...result, [current]: this._params[current] }), {});
 
         return this._route.compile(this._params) + stringify({ ...unhandled, ...this._params['_query'] }, {
@@ -49,7 +49,7 @@ export default class Router extends String {
             encodeValuesOnly: true,
             skipNulls: true,
             encoder: (value, encoder) => typeof value === 'boolean' ? Number(value) : encoder(value),
-        });
+        }) + (this._params['_fragment'] ?? '');
     }
 
     /**
@@ -76,13 +76,13 @@ export default class Router extends String {
     }
 
     _currentUrl() {
-        const { host, pathname, search } = this._location();
+        const { host, pathname, search, hash } = this._location();
 
         return (
             this._config.absolute
                 ? host + pathname
                 : pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/')
-        ) + search;
+        ) + search + hash;
     }
 
     /**
@@ -102,7 +102,7 @@ export default class Router extends String {
      * @return {(Boolean|String|undefined)}
      */
     current(name, params) {
-        const { name: current, params: currentParams, query, route } = this._unresolve();
+        const { name: current, params: currentParams, query, fragment, route } = this._unresolve();
 
         // If a name wasn't passed, return the name of the current route
         if (!name) return current;
@@ -116,7 +116,7 @@ export default class Router extends String {
         const routeObject = new Route(current, route, this._config);
 
         params = this._parse(params, routeObject);
-        const routeParams = { ...currentParams, ...query };
+        const routeParams = { ...currentParams, ...query, _fragment: fragment };
 
         // If the current window URL has no route parameters, and the passed parameters are empty, return true
         if (Object.values(params).every(p => !p) && !Object.values(routeParams).some(v => v !== undefined)) return true;
@@ -133,12 +133,13 @@ export default class Router extends String {
      * @return {Object}
      */
     _location() {
-        const { host = '', pathname = '', search = '' } = typeof window !== 'undefined' ? window.location : {};
+        const { host = '', pathname = '', search = '', hash = '' } = typeof window !== 'undefined' ? window.location : {};
 
         return {
             host: this._config.location?.host ?? host,
             pathname: this._config.location?.pathname ?? pathname,
-            search: this._config.location?.search ?? search,
+            search: (this._config.location?.search ?? search).replace(/^\??(?=.)/, '?'),
+            hash: (this._config.location?.hash ?? hash).replace(/^#?(?=.)/, '#'),
         };
     }
 
@@ -152,9 +153,9 @@ export default class Router extends String {
      * @return {Object}
      */
     get params() {
-        const { params, query } = this._unresolve();
+        const { params, query, fragment } = this._unresolve();
 
-        return { ...params, ...query };
+        return { ...params, ...query, ...(fragment ? { _fragment: fragment } : {}) };
     }
 
     /**
@@ -195,7 +196,9 @@ export default class Router extends String {
                 ? ({ ...result, [segments[i].name]: current })
                 : typeof current === 'object'
                     ? ({ ...result, ...current })
-                    : ({ ...result, [current]: '' }), {});
+                    : typeof current === 'string' && current.startsWith('#')
+                        ? ({ ...result, _fragment: current })
+                        : ({ ...result, [current]: '' }), {});
         } else if (
             segments.length === 1
             && !params[segments[0].name]
@@ -206,6 +209,11 @@ export default class Router extends String {
             // representing just the value (e.g. a model); we can inspect it to find out, and
             // if it's just the parameter value, we can wrap it in an object with its key
             params = { [segments[0].name]: params };
+        }
+
+        // Make sure that fragment, if exists, is always prepended with hash symbol (`#`)
+        if (params.hasOwnProperty('_fragment')) {
+            params['_fragment'] = params['_fragment'].replace(/^#?(?=.)/, '#');
         }
 
         return {

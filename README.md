@@ -136,6 +136,34 @@ route('events.venues.show', {
 // 'https://ziggy.test/events/1/venues/2?draft=0&overdue=1'
 ```
 
+**With URI fragment**
+
+```php
+// routes/web.php
+
+Route::get('events/{event}/venues/{venue}', fn (Request $request, Event $event, Venue $venue) => /* ... */)->name('events.venues.show');
+```
+
+```js
+// app.js
+
+route('events.venues.show', [1, 2, '#details']);
+// 'https://ziggy.test/events/1/venues/2#details'
+```
+
+Or, using object syntax:
+
+```js
+// app.js
+
+route('events.venues.show', {
+    event: 1,
+    venue: 2,
+    _fragment: '#details',
+});
+// 'https://ziggy.test/events/1/venues/2#details'
+```
+
 **With default parameter values**
 
 See the [Laravel documentation on default route parameter values](https://laravel.com/docs/urls#default-values).
@@ -186,11 +214,12 @@ The `current()` method optionally accepts parameters as its second argument, and
 
 ```js
 // Route called 'events.venues.show', with URI '/events/{event}/venues/{venue}'
-// Current window URL is https://myapp.com/events/1/venues/2?authors=all
+// Current window URL is https://myapp.com/events/1/venues/2?authors=all#details
 
-route().current('events.venues.show', { event: 1, venue: 2 }); // true
-route().current('events.venues.show', { authors: 'all' });     // true
-route().current('events.venues.show', { venue: 6 });           // false
+route().current('events.venues.show', { event: 1, venue: 2 });    // true
+route().current('events.venues.show', { authors: 'all' });        // true
+route().current('events.venues.show', { _fragment: '#details' }); // true
+route().current('events.venues.show', { venue: 6 });              // false
 ```
 
 **Checking if a route exists: `route().has()`**
@@ -206,9 +235,9 @@ route().has('orders'); // false
 
 ```js
 // Route called 'events.venues.show', with URI '/events/{event}/venues/{venue}'
-// Current window URL is https://myapp.com/events/1/venues/2?authors=all
+// Current window URL is https://myapp.com/events/1/venues/2?authors=all#details
 
-route().params; // { event: '1', venue: '2', authors: 'all' }
+route().params; // { event: '1', venue: '2', authors: 'all', _fragment: '#details' }
 ```
 
 > Note: parameter values retrieved with `route().params` will always be returned as strings.
