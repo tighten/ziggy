@@ -182,6 +182,8 @@ export default class Router extends String {
      * @return {Object} Normalized complete route parameters.
      */
     _parse(params = {}, route = this._route) {
+        params ??= {}
+
         // If `params` is a string or integer, wrap it in an array
         params = ['string', 'number'].includes(typeof params) ? [params] : params;
 
