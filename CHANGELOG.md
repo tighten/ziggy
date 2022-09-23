@@ -8,6 +8,20 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.5.0] - 2022-09-23
+
+**Added**
+
+- Add support for negating route filter patterns with `!` by @bakerkretzmar in https://github.com/tighten/ziggy/pull/559
+
+**Changed**
+
+- Test on PHP 8.2 by @bakerkretzmar in https://github.com/tighten/ziggy/pull/584
+
+**Fixed**
+
+- Allow `null` as entire params argument by @bakerkretzmar in https://github.com/tighten/ziggy/pull/582
+
 ## [v1.4.6] - 2022-04-08
 
 **Fixed**
@@ -239,7 +253,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.4.6...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.5.0...HEAD
+[v1.5.0]: https://github.com/tighten/ziggy/compare/v1.4.6...v1.5.0
 [v1.4.6]: https://github.com/tighten/ziggy/compare/v1.4.5...v1.4.6
 [v1.4.5]: https://github.com/tighten/ziggy/compare/v1.4.4...v1.4.5
 [v1.4.4]: https://github.com/tighten/ziggy/compare/v1.4.3...v1.4.4
