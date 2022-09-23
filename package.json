@@ -58,7 +58,7 @@
         "babel-preset-power-assert": "^3.0.0",
         "jest": "^29.0.3",
         "jest-environment-jsdom": "^29.0.3",
-        "microbundle": "^0.14.2",
+        "microbundle": "^0.15.1",
         "power-assert": "^1.6.1"
     }
 }
