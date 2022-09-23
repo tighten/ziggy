@@ -376,6 +376,12 @@ describe('route()', () => {
         same(route('optional', { id: 123, slug: null }), 'https://ziggy.dev/optional/123');
     });
 
+    test('can ignore a single optional parameter', () => {
+        same(route('pages.optional'), 'https://ziggy.dev/optionalpage');
+        same(route('pages.optional', {}), 'https://ziggy.dev/optionalpage');
+        same(route('pages.optional', undefined), 'https://ziggy.dev/optionalpage');
+    });
+
     test('can error if a route name doesn’t exist', () => {
         throws(() => route('unknown-route'), /Ziggy error: route 'unknown-route' is not in the route list\./);
     });
