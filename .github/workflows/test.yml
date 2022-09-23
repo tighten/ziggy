@@ -1,4 +1,4 @@
-name: Tests
+name: Test
 on:
   pull_request:
     paths-ignore: ['dist/**', '*.md']
@@ -9,10 +9,11 @@ jobs:
   test:
     name: ${{ matrix.os[0] }}, PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}
     runs-on: ${{ matrix.os[1] }}
+    continue-on-error: ${{ matrix.php == '8.2' }}
     strategy:
       matrix:
         os: [[Ubuntu, ubuntu-latest], [Windows, windows-latest]]
-        php: ['7.3', '7.4', '8.0', '8.1']
+        php: ['7.3', '7.4', '8.0', '8.1', '8.2']
         laravel: [5.5.*, 5.6.*, 5.7.*, 5.8.*, 6.*, 7.*, 8.*, 9.*]
         exclude:
           - php: '7.3'
@@ -40,23 +41,25 @@ jobs:
           - php: '8.1'
             laravel: 7.*
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           extensions: fileinfo
-      - uses: actions/cache@v2
+      - uses: actions/setup-node@v3
         with:
-          path: ~/.composer/cache/files
-          key: php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-${{ hashFiles('composer.lock') }}
+          node-version: 16
+          cache: 'npm'
+      - id: composer-cache-dir
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
-            php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-
-            php-${{ matrix.php }}-laravel-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: npm-
+            ${{ runner.os }}-php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-
+            ${{ runner.os }}-php-${{ matrix.php }}-laravel-
+            ${{ runner.os }}-php-
       - run: |
           composer require laravel/framework:"${{ matrix.laravel }}" --no-update --no-interaction
           composer update --prefer-dist --no-interaction
