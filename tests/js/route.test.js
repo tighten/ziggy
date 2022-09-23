@@ -380,6 +380,7 @@ describe('route()', () => {
         same(route('pages.optional'), 'https://ziggy.dev/optionalpage');
         same(route('pages.optional', {}), 'https://ziggy.dev/optionalpage');
         same(route('pages.optional', undefined), 'https://ziggy.dev/optionalpage');
+        same(route('pages.optional', null), 'https://ziggy.dev/optionalpage');
     });
 
     test('can error if a route name doesn’t exist', () => {
