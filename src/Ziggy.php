@@ -68,14 +68,14 @@ class Ziggy implements JsonSerializable
             $filters = [];
 
             foreach ($group as $groupName) {
-                $filters = array_merge($filters, config("ziggy.groups.{$groupName}"));
+                $filters = array_merge($filters, Arr::wrap(config("ziggy.groups.{$groupName}")));
             }
 
-            return $this->filter($filters, true)->routes;
+            return $this->filter($filters)->routes;
         }
 
         if (config()->has("ziggy.groups.{$group}")) {
-            return $this->filter(config("ziggy.groups.{$group}"), true)->routes;
+            return $this->filter(config("ziggy.groups.{$group}"))->routes;
         }
 
         return $this->routes;
@@ -86,9 +86,33 @@ class Ziggy implements JsonSerializable
      */
     public function filter($filters = [], $include = true): self
     {
-        $this->routes = $this->routes->filter(function ($route, $name) use ($filters, $include) {
-            return Str::is(Arr::wrap($filters), $name) ? $include : ! $include;
+        $filters = Arr::wrap($filters);
+
+        $reject = collect($filters)->every(function (string $pattern) {
+            return Str::startsWith($pattern, '!');
         });
+
+        $this->routes = $reject
+            ? $this->routes->reject(function ($route, $name) use ($filters) {
+                foreach ($filters as $pattern) {
+                    if (Str::is(substr($pattern, 1), $name)) {
+                        return true;
+                    }
+                }
+            })
+            : $this->routes->filter(function ($route, $name) use ($filters, $include) {
+                if ($include === false) {
+                    return ! Str::is($filters, $name);
+                }
+
+                foreach ($filters as $pattern) {
+                    if (Str::startsWith($pattern, '!') && Str::is(substr($pattern, 1), $name)) {
+                        return false;
+                    }
+                }
+
+                return Str::is($filters, $name);
+            });
 
         return $this;
     }
