@@ -205,6 +205,92 @@ class ZiggyTest extends TestCase
     }
 
     /** @test */
+    public function can_include_routes_from_multiple_groups()
+    {
+        config(['ziggy.groups' => ['home' => ['home'], 'posts' => ['posts.*']]]);
+        $routes = (new Ziggy(['home', 'posts']))->toArray()['routes'];
+
+        $expected = [
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+            ],
+        ];
+
+        $this->assertSame($expected, $routes);
+    }
+
+    /** @test */
+    public function can_set_excluded_routes_in_groups_using_negative_patterns()
+    {
+        config(['ziggy.groups' => ['authors' => ['!home', '!posts.*', '!postComments.*']]]);
+        $routes = (new Ziggy('authors'))->toArray()['routes'];
+
+        $expected = [
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+            ],
+        ];
+
+        $this->assertSame($expected, $routes);
+    }
+
+    /** @test */
+    public function can_combine_filters_in_groups_with_positive_and_negative_patterns()
+    {
+        config(['ziggy.groups' => ['authors' => ['posts.*', '!posts.index']]]);
+        $routes = (new Ziggy('authors'))->toArray()['routes'];
+
+        $expected = [
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+            ],
+        ];
+
+        $this->assertSame($expected, $routes);
+    }
+
+    /** @test */
+    public function can_filter_routes_from_multiple_groups_using_negative_patterns()
+    {
+        config(['ziggy.groups' => ['home' => '!posts.*', 'posts' => '!home']]);
+        $routes = (new Ziggy(['home', 'posts']))->toArray()['routes'];
+
+        $expected = [
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+            ],
+        ];
+
+        $this->addPostCommentsRouteWithBindings($expected);
+
+        $this->assertSame($expected, $routes);
+    }
+
+    /** @test */
     public function can_ignore_passed_group_not_set_in_config()
     {
         // The 'authors' group doesn't exist
