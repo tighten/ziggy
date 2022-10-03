@@ -76,13 +76,13 @@ export default class Router extends String {
     }
 
     _currentUrl() {
-        const { host, pathname, search, hash } = this._location();
+        const { host, pathname, search } = this._location();
 
         return (
             this._config.absolute
                 ? host + pathname
                 : pathname.replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/')
-        ) + search + hash;
+        ) + search;
     }
 
     /**
@@ -102,7 +102,7 @@ export default class Router extends String {
      * @return {(Boolean|String|undefined)}
      */
     current(name, params) {
-        const { name: current, params: currentParams, query, fragment, route } = this._unresolve();
+        const { name: current, params: currentParams, query, route } = this._unresolve();
 
         // If a name wasn't passed, return the name of the current route
         if (!name) return current;
@@ -116,7 +116,7 @@ export default class Router extends String {
         const routeObject = new Route(current, route, this._config);
 
         params = this._parse(params, routeObject);
-        const routeParams = { ...currentParams, ...query, _fragment: fragment };
+        const routeParams = { ...currentParams, ...query };
 
         // If the current window URL has no route parameters, and the passed parameters are empty, return true
         if (Object.values(params).every(p => !p) && !Object.values(routeParams).some(v => v !== undefined)) return true;
@@ -133,13 +133,12 @@ export default class Router extends String {
      * @return {Object}
      */
     _location() {
-        const { host = '', pathname = '', search = '', hash = '' } = typeof window !== 'undefined' ? window.location : {};
+        const { host = '', pathname = '', search = '' } = typeof window !== 'undefined' ? window.location : {};
 
         return {
             host: this._config.location?.host ?? host,
             pathname: this._config.location?.pathname ?? pathname,
             search: (this._config.location?.search ?? search).replace(/^\??(?=.)/, '?'),
-            hash: (this._config.location?.hash ?? hash).replace(/^#?(?=.)/, '#'),
         };
     }
 
@@ -153,9 +152,9 @@ export default class Router extends String {
      * @return {Object}
      */
     get params() {
-        const { params, query, fragment } = this._unresolve();
+        const { params, query } = this._unresolve();
 
-        return { ...params, ...query, ...(fragment ? { _fragment: fragment } : {}) };
+        return { ...params, ...query };
     }
 
     /**

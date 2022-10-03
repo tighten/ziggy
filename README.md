@@ -214,12 +214,11 @@ The `current()` method optionally accepts parameters as its second argument, and
 
 ```js
 // Route called 'events.venues.show', with URI '/events/{event}/venues/{venue}'
-// Current window URL is https://myapp.com/events/1/venues/2?authors=all#details
+// Current window URL is https://myapp.com/events/1/venues/2?authors=all
 
-route().current('events.venues.show', { event: 1, venue: 2 });    // true
-route().current('events.venues.show', { authors: 'all' });        // true
-route().current('events.venues.show', { _fragment: '#details' }); // true
-route().current('events.venues.show', { venue: 6 });              // false
+route().current('events.venues.show', { event: 1, venue: 2 }); // true
+route().current('events.venues.show', { authors: 'all' });     // true
+route().current('events.venues.show', { venue: 6 });           // false
 ```
 
 **Checking if a route exists: `route().has()`**
@@ -235,9 +234,9 @@ route().has('orders'); // false
 
 ```js
 // Route called 'events.venues.show', with URI '/events/{event}/venues/{venue}'
-// Current window URL is https://myapp.com/events/1/venues/2?authors=all#details
+// Current window URL is https://myapp.com/events/1/venues/2?authors=all
 
-route().params; // { event: '1', venue: '2', authors: 'all', _fragment: '#details' }
+route().params; // { event: '1', venue: '2', authors: 'all' }
 ```
 
 > Note: parameter values retrieved with `route().params` will always be returned as strings.

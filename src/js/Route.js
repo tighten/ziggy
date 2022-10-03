@@ -68,11 +68,11 @@ export default class Route {
             })
             .replace(/^\w+:\/\//, '');
 
-        const [, location, query, fragment] = url.match(/^(?:\w+:\/\/)?([^?#]+)(?:\?([^#]+)?)?(#.+)?/);
+        const [location, query] = url.replace(/^\w+:\/\//, '').split('?');
 
         const matches = new RegExp(`^${pattern}/?$`).exec(location);
 
-        return matches ? { params: matches.groups, query: parse(query), fragment } : false;
+        return matches ? { params: matches.groups, query: parse(query) } : false;
     }
 
     /**
