@@ -407,7 +407,7 @@ import route from 'ziggy-js';
 import { Ziggy } from './ziggy';
 // or...
 const response = await fetch('/api/ziggy');
-const Ziggy = await response.toJson();
+const Ziggy = await response.json();
 
 // ...
 
