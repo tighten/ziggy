@@ -11,7 +11,7 @@ class Script implements Stringable
     protected $function;
     protected $nonce;
 
-    public function __construct(Ziggy $ziggy, string $function, string $nonce = '')
+    public function __construct(Ziggy $ziggy, string $function = '', string $nonce = '')
     {
         $this->ziggy = $ziggy;
         $this->function = $function;
