@@ -5,6 +5,9 @@
         "lib": ["es2022"],
         "module": "es2022",
         "target": "es2022",
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "declarationDir": "dist",
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
@@ -18,10 +21,10 @@
         "noImplicitReturns": true,
         "noPropertyAccessFromIndexSignature": true,
         "noUncheckedIndexedAccess": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
+        // "noUnusedLocals": true,
+        // "noUnusedParameters": true,
         "importsNotUsedAsValues": "error",
         "checkJs": true
     },
-    "include": ["src/js/index.ts"]
+    "include": ["src/js/entry.ts"]
 }

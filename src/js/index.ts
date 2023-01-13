@@ -4,7 +4,7 @@ export type RouteDefinition = {
     uri: string;
     methods: Array<'GET'|'HEAD'|'POST'|'PUT'|'PATCH'|'DELETE'>;
     domain?: string;
-    // Does this need to handle booleans too? Are defaults/bindings only for route parameters (inside the path) or can they do query params too?
+    // Does this need to handle booleans too? Are defaults/bindings only for route parameters (inside the path) or can they do query params too? -- No, defaults and bindings are not for query params
     bindings?: Record<string, string|number>; // |boolean?
     wheres?: Record<string, string>;
 };

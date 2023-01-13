@@ -28,28 +28,19 @@
         "src/js",
         "dist"
     ],
-    "source": "src/js/index.js",
-    "main": "dist/index.js",
-    "umd:main": "dist/index.js",
-    "unpkg": "dist/index.js",
-    "browser": "dist/index.js",
-    "module": "dist/index.m.js",
-    "esmodule": "dist/index.es.js",
+    "type": "module",
+    "source": "src/js/entry.js",
     "repository": {
         "type": "git",
         "url": "https://github.com/tighten/ziggy.git"
     },
     "scripts": {
-        "build": "microbundle --name route --format modern,es,umd --external none --no-sourcemap",
-        "build:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --external none --no-sourcemap",
-        "watch": "npm run build watch",
-        "build:npm": "microbundle --name route --format modern,es,umd --no-sourcemap",
-        "build:npm:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --no-sourcemap",
-        "test": "jest --verbose",
+        "tsc": "tsc",
+        "bundle": "esbuild src/js/entry.ts --bundle --minify --format=esm --outfile=dist/entry.js",
+        "run-tests": "NODE_OPTIONS=--experimental-vm-modules jest --verbose",
+        "build": "npm run tsc && npm run bundle",
+        "test": "npm run build && npm run run-tests",
         "prepublishOnly": "npm run build:npm && npm run build:npm:vue"
-    },
-    "mangle": {
-        "regex": "^_(?!query)"
     },
     "dependencies": {
         "qs": "~6.9.7"
@@ -57,10 +48,11 @@
     "devDependencies": {
         "@types/qs": "^6.9.7",
         "babel-preset-power-assert": "^3.0.0",
-        "jest": "^29.0.3",
+        "esbuild": "^0.16.17",
+        "jest": "^29.3.1",
         "jest-environment-jsdom": "^29.0.3",
         "microbundle": "^0.15.1",
         "power-assert": "^1.6.1",
-        "typescript": "^4.8.4"
+        "typescript": "^4.9.4"
     }
 }
