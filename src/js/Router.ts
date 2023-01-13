@@ -1,6 +1,8 @@
 import { stringify } from 'qs';
 import Route from './Route';
-const Ziggy = {
+import type { RouteDefinition, ZiggyConfig } from '.'
+
+const Ziggy: ZiggyConfig = {
     url: 'https://google.com',
     absolute: false,
     defaults: {},
@@ -11,23 +13,31 @@ const Ziggy = {
         },
     },
 };
+
+type RouteParam = string | number | Record<string, any>;
+type RouteParamList = Record<string, RouteParam>;
+type RouteParams = RouteParam | Array<RouteParam> | RouteParamList;
+type NormalizedRouteParams = Record<string, string|number>;
+
 export default class Router {
-    #config;
-    #route;
-    #params;
-    constructor(name, params, absolute = true, config) {
+    #config: ZiggyConfig;
+    #route: Route|undefined;
+    #params: object|undefined;
+
+    constructor(name?: string|undefined, params?: RouteParams, absolute: boolean = true, config?: ZiggyConfig) {
         this.#config = config ?? Ziggy ?? globalThis?.Ziggy;
         this.#config.absolute = absolute;
+
         if (name) {
             if (Object.hasOwn(this.#config.routes, name)) {
-                this.#route = new Route(name, this.#config.routes[name], this.#config);
+                this.#route = new Route(name, this.#config.routes[name] as RouteDefinition, this.#config);
                 this.#params = this._parse(params);
-            }
-            else {
+            } else {
                 throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
             }
         }
     }
+
     /**
      * Get the compiled URL string for the current route and parameters.
      *
@@ -37,12 +47,13 @@ export default class Router {
      *
      * @return {String}
      */
-    toString() {
+    toString(): string {
         // Get parameters that don't correspond to any route segments to append them to the query
         const unhandled = Object.keys(this.#params)
             .filter((key) => !this.#route.parameterSegments.some(({ name }) => name === key))
             .filter((key) => key !== '_query')
             .reduce((result, current) => ({ ...result, [current]: this.#params[current] }), {});
+
         return this.#route.compile(this.#params) + stringify({ ...unhandled, ...this.#params['_query'] }, {
             addQueryPrefix: true,
             arrayFormat: 'indices',
@@ -51,28 +62,37 @@ export default class Router {
             encoder: (value, encoder) => typeof value === 'boolean' ? Number(value) : encoder(value),
         });
     }
+
     /**
      * Get the parameters, values, and metadata from the given URL.
      */
-    _unresolve(url) {
+    _unresolve(url?: string): { name?: string, params?: object, query?: object, route?: Route } {
         if (!url) {
             url = this._currentUrl();
-        }
-        else if (this.#config.absolute && url.startsWith('/')) {
+        } else if (this.#config.absolute && url.startsWith('/')) {
             // If we are using absolute URLs and a relative URL
             // is passed, prefix the host to make it absolute
             url = this._location().host + url;
         }
+
         let matchedParams = {};
-        const [name, route] = Object.entries(this.#config.routes).find(([name, route]) => (matchedParams = new Route(name, route, this.#config).matchesUrl(url))) || [undefined, undefined];
+        const [name, route] = Object.entries(this.#config.routes).find(
+          ([name, route]) => (matchedParams = new Route(name, route, this.#config).matchesUrl(url))
+        ) || [undefined, undefined];
+
         return { name, ...matchedParams, route };
     }
+
     _currentUrl() {
         const { host, pathname, search } = this._location();
-        return (this.#config.absolute
-            ? host + pathname
-            : pathname.replace(this.#config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/')) + search;
+
+        return (
+            this.#config.absolute
+                ? host + pathname
+                : pathname.replace(this.#config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/')
+        ) + search;
     }
+
     /**
      * Get the name of the route matching the current window URL, or, given a route name
      * and parameters, check if the current window URL and parameters match that route.
@@ -89,37 +109,44 @@ export default class Router {
      * @param {(String|Number|Array|Object)} [params] - Route parameters.
      * @return {(Boolean|String|undefined)}
      */
-    current(name, params) {
+    current(name?: string, params?: any) {
         const { name: current, params: currentParams, query, route } = this._unresolve();
+
         // If a name wasn't passed, return the name of the current route
-        if (!name)
-            return current;
+        if (!name) return current;
+
         // Test the passed name against the current route, matching some
         // basic wildcards, e.g. passing `events.*` matches `events.show`
         const match = new RegExp(`^${name.replace(/\./g, '\\.').replace(/\*/g, '.*')}$`).test(current);
-        if ([null, undefined].includes(params) || !match)
-            return match;
+
+        if ([null, undefined].includes(params) || !match) return match;
+
         const routeObject = new Route(current, route, this.#config);
+
         params = this._parse(params, routeObject);
         const routeParams = { ...currentParams, ...query };
+
         // If the current window URL has no route parameters, and the passed parameters are empty, return true
-        if (Object.values(params).every(p => !p) && !Object.values(routeParams).some(v => v !== undefined))
-            return true;
+        if (Object.values(params).every(p => !p) && !Object.values(routeParams).some(v => v !== undefined)) return true;
+
         // Check that all passed parameters match their values in the current window URL
         // Use weak equality because all values in the current window URL will be strings
         return Object.entries(params).every(([key, value]) => routeParams[key] == value);
     }
+
     /**
      * Get an object representing the current location (by default this will be the JavaScript `window` global if it's available).
      */
-    _location() {
+    _location(): { host: string, pathname: string, search: string } {
         const { host = '', pathname = '', search = '' } = typeof window !== 'undefined' ? window.location : {};
+
         return {
             host: this.#config.location?.host ?? host,
             pathname: this.#config.location?.pathname ?? pathname,
             search: this.#config.location?.search ?? search,
         };
     }
+
     /**
      * Get all parameter values from the current window URL.
      *
@@ -131,14 +158,17 @@ export default class Router {
      */
     get params() {
         const { params, query } = this._unresolve();
+
         return { ...params, ...query };
     }
+
     /**
      * Check whether the given route exists.
      */
-    has(name) {
+    has(name: string): boolean {
         return Object.hasOwn(this.#config.routes, name);
     }
+
     /**
      * Parse Laravel-style route parameters of any type into a normalized object.
      *
@@ -149,46 +179,63 @@ export default class Router {
      * _parse(['Taylor', 'Matt']); // { event: 'Taylor', venue: 'Matt' }
      * _parse([4, { uuid: 56789, name: 'Grand Canyon' }]); // { event: 4, venue: 56789 }
      *
-     * @param {(String|Number|Array|Object)} params - Route parameters.
      * @param {Route} route - Route instance.
      * @return {Object} Normalized complete route parameters.
      */
-    _parse(params, route = this.#route) {
+    _parse(params: RouteParams, route = this.#route): object {
         if (!route) {
             return {};
         }
-        // If `params` is a string or integer, wrap it in an array
-        params = ['string', 'number'].includes(typeof params) ? [params] : params;
+
+        // If `params` is a plain string or number, wrap it in an array
+        if (typeof params === 'string' || typeof params === 'number') {
+            params = [params];
+        }
+
         // Separate segments with and without defaults
         const segments = route.parameterSegments.filter(({ name }) => !this.#config.defaults[name]);
-        if (Array.isArray(params)) {
-            // If the parameters are an array they have to be in order, so we can transform them into
+
+        if (params instanceof Array) {
+            // If the parameters are an array they must be in order, so we can transform them into
             // an object by keying them with the template segment names in the order they appear
-            params = params.reduce((parameters, parameterValue, position) => {
-                if (segments[position]) {
-                    //
-                    return { ...parameters, [segments[position].name]: parameterValue };
+            params = params.reduce((allParameters: RouteParamList, parameterValue: RouteParam, position: number): RouteParamList => {
+                const segment = segments[position];
+
+                // If there is a route parameter segment at this index, this parameterValue belongs to it
+                if (segment) {
+                    return { ...allParameters, [segment.name]: parameterValue };
                 }
-                if (typeof parameterValue === 'object') {
-                    return { ...parameters, ...parameterValue };
-                }
-                return { ...parameters, [parameterValue]: '' };
+
+                // Parameter values with no matching route segment will be appended later as part of the query string,
+                // we are building an object so for plain values we use the value as the key and set it to an empty string
+                return {
+                    ...allParameters,
+                    ...(typeof parameterValue === 'object' ? parameterValue : { [parameterValue]: '' }),
+                };
             }, {});
-        }
-        else if (segments.length === 1
-            && !params[segments[0].name]
-            && (params.hasOwnProperty(Object.values(route.bindings)[0]) || params.hasOwnProperty('id'))) {
-            // If there is only one template segment and `params` is an object, that object is
+        } else if (segments.length === 1) {
+            const firstSegment = segments[0];
+            // If there is only one route parameter segment and `params` is an object, that object is
             // ambiguous—it could contain the parameter key and value, or it could be an object
             // representing just the value (e.g. a model); we can inspect it to find out, and
             // if it's just the parameter value, we can wrap it in an object with its key
-            params = { [segments[0].name]: params };
+            const routeBindingKey = Object.values(route.bindings)[0];
+            if (
+                firstSegment
+                && !Object.hasOwn(params, firstSegment.name)
+                && ((routeBindingKey && Object.hasOwn(params, routeBindingKey)) || Object.hasOwn(params, 'id'))
+            ) {
+                params = { [firstSegment.name]: params }; // TODO Why the whole object here, why not params[bindingkey]?
+                params;
+            }
         }
+
         return {
             ...this._defaults(route),
             ...this._substituteBindings(params, route),
         };
     }
+
     /**
      * Populate default parameters for the given route.
      *
@@ -199,32 +246,34 @@ export default class Router {
      * @param {Route} route
      * @return {Object} Default route parameters.
      */
-    _defaults(route) {
+    _defaults(route: Route) {
         return route.parameterSegments.filter(({ name }) => this.#config.defaults[name])
             .reduce((result, { name }) => ({ ...result, [name]: this.#config.defaults[name] }), {});
     }
+
     /**
-     * Substitute Laravel route model bindings in the given parameters.
+     * Substitute Laravel route model bindings within the given parameters.
      *
      * @example _substituteBindings({ post: { id: 4, slug: 'hello-world', title: 'Hello, world!' } }, { bindings: { post: 'slug' } }); // { post: 'hello-world' }
      */
-    _substituteBindings(params, { bindings, parameterSegments }) {
-        return Object.entries(params).reduce((result, [key, value]) => {
+    _substituteBindings(params: RouteParamList, { bindings, parameterSegments }: Route): RouteParamList {
+        return Object.entries(params).reduce((result, [key, value]: [string, RouteParam]) => {
             // If the value isn't an object, or if the key isn't a named route parameter,
             // there's nothing to substitute so we return it as-is
-            if (!value || Array.isArray(value) || typeof value !== 'object' || !parameterSegments.some(({ name }) => name === key)) {
+            if (!value || value instanceof Array || typeof value !== 'object' || !parameterSegments.some(({ name }) => name === key)) {
                 return { ...result, [key]: value };
             }
-            if (!Object.hasOwn(value, bindings[key])) { // |bool?
+
+            if (!Object.hasOwn(value, bindings[key] as string|number)) { // |bool?
                 if (Object.hasOwn(value, 'id')) {
                     // As a fallback, we still accept an 'id' key not explicitly registered as a binding
                     bindings[key] = 'id';
-                }
-                else {
-                    throw new Error(`Ziggy error: object passed as '${key}' parameter is missing route model binding key '${bindings[key]}'.`);
+                } else {
+                    throw new Error(`Ziggy error: object passed as '${key}' parameter is missing route model binding key '${bindings[key]}'.`)
                 }
             }
-            return { ...result, [key]: value[bindings[key]] }; // |bool?
+
+            return { ...result, [key]: value[bindings[key] as string|number] }; // |bool?
         }, {});
     }
 }
