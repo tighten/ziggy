@@ -1,7 +1,7 @@
 declare global {
     var Ziggy: Ziggy;
 }
-export type Ziggy = {
+type Ziggy = {
     url: string;
     port?: string | number;
     absolute: boolean;
@@ -9,6 +9,7 @@ export type Ziggy = {
     defaults: Record<string, string | number>;
     routes: Record<string, RouteDefinition>;
 };
+type RouteName = keyof typeof Ziggy['routes'];
 type RouteDefinition = {
     uri: string;
     methods: Array<'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'>;
@@ -16,7 +17,7 @@ type RouteDefinition = {
     bindings?: Record<string, string | number>;
     wheres?: Record<string, string>;
 };
-export type Router = {
+type Router = {
     params: object;
     current(): string | undefined;
     current(name: string): boolean;
@@ -24,7 +25,6 @@ export type Router = {
     has(name: string): boolean;
     check(name: string): boolean;
 };
-type RouteName = string;
 declare function route(): Router;
 declare function route(name: RouteName, params?: object, absolute?: boolean, config?: Ziggy): string;
 export { route };

@@ -1,19 +1,5 @@
 import { stringify, parse as qsparse } from 'qs';
 
-declare global {
-  var Ziggy: Ziggy;
-}
-
-export type Ziggy = {
-    url: string;
-    port?: string|number;
-    absolute: boolean;
-    location?: URL,
-    defaults: Record<string, string|number>; // |boolean?
-    routes: Record<string, RouteDefinition>,
-    // routes: RouteCollection;
-};
-
 type RouteDefinition = {
     uri: string;
     methods: Array<'GET'|'HEAD'|'POST'|'PUT'|'PATCH'|'DELETE'>;
@@ -23,7 +9,23 @@ type RouteDefinition = {
     wheres?: Record<string, string>;
 };
 
-export type Router = {
+type Ziggy = {
+    url: string;
+    port?: string|number;
+    absolute: boolean;
+    location?: URL,
+    defaults: Record<string, string|number>; // |boolean?
+    routes: Record<string, RouteDefinition>,
+    // routes: RouteCollection;
+};
+
+declare global {
+    var Ziggy: Ziggy;
+}
+
+type RouteName = keyof typeof Ziggy['routes'];
+
+type Router = {
     params: object;
     current(): string|undefined;
     current(name: string): boolean;
@@ -240,9 +242,6 @@ function compileUrl(name: string, inputParams: object, route: RouteDefinition, c
         encoder: (value, encoder) => typeof value === 'boolean' ? (value ? '1' : '0') : encoder(value),
     });
 }
-
-// type RouteName = keyof Ziggy['routes'];
-type RouteName = string;
 
 function route(): Router;
 function route(name: RouteName, params?: object, absolute?: boolean, config?: Ziggy): string;
