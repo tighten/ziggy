@@ -22,7 +22,9 @@ export type Router = {
     current(name: string): boolean;
     current(name: string, params: object): boolean;
     has(name: string): boolean;
+    check(name: string): boolean;
 };
+type RouteName = string;
 declare function route(): Router;
-declare function route(name: string, params?: object, absolute?: boolean, config?: Ziggy): string;
+declare function route(name: RouteName, params?: object, absolute?: boolean, config?: Ziggy): string;
 export { route };

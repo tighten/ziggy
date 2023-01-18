@@ -225,7 +225,7 @@ export default class Router {
                 && !Object.hasOwn(params, firstSegment.name)
                 && ((routeBindingKey && Object.hasOwn(params, routeBindingKey)) || Object.hasOwn(params, 'id'))
             ) {
-                params = { [firstSegment.name]: params }; // TODO Why the whole object here, why not params[bindingkey]?
+                params = { [firstSegment.name]: params }; // TODO Why the whole object here, why not params[bindingkey]? - Because if we get this far, they passed a model object and we only want to keep the id
                 params;
             }
         }
