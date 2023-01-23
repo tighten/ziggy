@@ -72,7 +72,15 @@ export default class Route {
 
         const matches = new RegExp(`^${pattern}/?$`).exec(location);
 
-        return matches ? { params: matches.groups, query: parse(query) } : false;
+        if (matches) {
+            const params = {};
+            if (matches.groups) {
+                Object.keys(matches.groups).forEach(k => params[k] = typeof matches.groups[k] === 'string' ? decodeURIComponent(matches.groups[k]) : matches.groups[k]);
+            }
+            return { params, query: parse(query) };
+        }
+
+        return false;
     }
 
     /**

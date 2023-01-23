@@ -545,6 +545,13 @@ describe('route()', () => {
         deepEqual(route().params, { event: '1', venue: '2' });
     });
 
+    test('can extract encoded parameters from the current URL', () => {
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/1%2B2%263';
+        global.window.location.pathname = '/events/1/venues/1%2B2%263';
+
+        deepEqual(route().params, { event: '1', venue: '1+2&3' });
+    });
+
     test('can extract query parameters from the current URL', () => {
         global.window.location.href = 'https://ziggy.dev/posts/1?guest[name]=Taylor';
         global.window.location.host = 'ziggy.dev';
@@ -553,11 +560,11 @@ describe('route()', () => {
 
         deepEqual(route().params, { post: '1', guest: { name: 'Taylor' } });
 
-        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=0';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=1%2B2%263';
         global.window.location.pathname = '/events/1/venues/2';
-        global.window.location.search = '?id=5&vip=0';
+        global.window.location.search = '?id=5&vip=1%2B2%263';
 
-        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: '0' });
+        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: '1+2&3' });
     });
 
     test("can append 'extra' string/number parameter to query", () => {
@@ -569,8 +576,8 @@ describe('route()', () => {
 
     test("can append 'extra' string/number elements in array of parameters to query", () => {
         // 'posts.show' has exactly one parameter
-         same(route('posts.show', [1, 2]), 'https://ziggy.dev/posts/1?2=');
-         same(route('posts.show', ['my-first-post', 'foo', 'bar']), 'https://ziggy.dev/posts/my-first-post?foo=&bar=');
+        same(route('posts.show', [1, 2]), 'https://ziggy.dev/posts/1?2=');
+        same(route('posts.show', ['my-first-post', 'foo', 'bar']), 'https://ziggy.dev/posts/my-first-post?foo=&bar=');
     });
 
     test("can automatically append object with only 'extra' parameters to query", () => {
