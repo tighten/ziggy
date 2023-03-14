@@ -327,6 +327,16 @@ mix.webpackConfig({
         },
     },
 });
+
+// Vite (vite.config.js)
+export default defineConfig({
+    resolve: {
+        alias: {
+            ziggy: path.resolve('vendor/tightenco/ziggy/dist/vue.es.js')
+        }
+    }
+    //
+});
 ```
 
 Finally, import and use Ziggy like any other JavaScript library. Because the Ziggy config object is not available globally in this setup, you'll usually have to pass it to the `route()` function manually:
@@ -362,7 +372,7 @@ import { Ziggy } from './ziggy';
 Vue.use(ZiggyVue, Ziggy);
 ```
 
-If you use this plugin with the Laravel Mix alias shown above, make sure to update the alias to `vendor/tightenco/ziggy/dist/vue`.
+If you use this plugin with the Laravel Mix alias shown above, make sure to update the alias to `vendor/tightenco/ziggy/dist/vue`, or `vendor/tightenco/ziggy/dist/vue.es.js` when using Vite.
 
 > Note: If you use the `@routes` Blade directive in your views, Ziggy's configuration will already be available globally, so you don't need to import the `Ziggy` config object and pass it into `use()`.
 
