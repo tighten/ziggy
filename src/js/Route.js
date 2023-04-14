@@ -26,13 +26,15 @@ export default class Route {
      * @return {String} Route template.
      */
     get template() {
+        return `${this.origin}/${this.definition.uri}`.replace(/\/+$/, '');
+    }
+    
+    get origin() {
         // If  we're building just a path there's no origin, otherwise: if this route has a
         // domain configured we construct the origin with that, if not we use the app URL
-        const origin = !this.config.absolute ? '' : this.definition.domain
+        return !this.config.absolute ? '' : this.definition.domain
             ? `${this.config.url.match(/^\w+:\/\//)[0]}${this.definition.domain}${this.config.port ? `:${this.config.port}` : ''}`
             : this.config.url;
-
-        return `${origin}/${this.definition.uri}`.replace(/\/+$/, '');
     }
 
     /**
@@ -101,6 +103,6 @@ export default class Route {
             }
 
             return encodeURIComponent(params[segment] ?? '');
-        }).replace(/\/+$/, '');
+        }).replace(`${this.origin}//`, `${this.origin}/`).replace(/\/+$/, '');
     }
 }
