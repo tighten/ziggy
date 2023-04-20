@@ -32,6 +32,12 @@ class RouteModelBindingTest extends TestCase
         $router->post('users', function (User $user) {
             return '';
         })->name('users.store');
+        $router->get('comments/{comment}', function (Comment $comment) {
+            return '';
+        })->name('comments');
+        $router->get('replies/{reply}', function (Reply $reply) {
+            return '';
+        })->name('replies');
 
         if ($this->laravelVersion(7)) {
             $router->get('blog/{category}/{post:slug}', function (PostCategory $category, Post $post) {
@@ -187,6 +193,20 @@ class RouteModelBindingTest extends TestCase
                 'uri' => 'users',
                 'methods' => ['POST'],
             ],
+            'comments' => [
+                'uri' => 'comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ],
+            'replies' => [
+                'uri' => 'replies/{reply}',
+                'methods' => ['GET', 'HEAD'],
+                'bindings' => [
+                    'reply' => 'uuid',
+                ],
+            ],
             'posts' => [
                 'uri' => 'blog/{category}/{post}',
                 'methods' => ['GET', 'HEAD'],
@@ -214,7 +234,7 @@ class RouteModelBindingTest extends TestCase
             $this->markTestSkipped('Requires Laravel >=7');
         }
 
-        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"bindings":{"user":"uuid"}},"admins":{"uri":"admins\/{admin}","methods":["GET","HEAD"],"bindings":{"admin":"uuid"}},"tags":{"uri":"tags\/{tag}","methods":["GET","HEAD"],"bindings":{"tag":"id"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"bindings":{"user":"uuid"}},"users.store":{"uri":"users","methods":["POST"]},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"bindings":{"category":"id","post":"slug","tag":"slug"}}}}';
+        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"bindings":{"user":"uuid"}},"admins":{"uri":"admins\/{admin}","methods":["GET","HEAD"],"bindings":{"admin":"uuid"}},"tags":{"uri":"tags\/{tag}","methods":["GET","HEAD"],"bindings":{"tag":"id"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"bindings":{"user":"uuid"}},"users.store":{"uri":"users","methods":["POST"]},"comments":{"uri":"comments\/{comment}","methods":["GET","HEAD"],"bindings":{"comment":"uuid"}},"replies":{"uri":"replies\/{reply}","methods":["GET","HEAD"],"bindings":{"reply":"uuid"}},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"bindings":{"category":"id","post":"slug","tag":"slug"}}}}';
 
         $this->assertSame($json, (new Ziggy)->toJson());
     }
@@ -243,6 +263,38 @@ class RouteModelBindingTest extends TestCase
                 'model' => 'id',
             ],
         ], (new Ziggy)->toArray()['routes']['models']);
+    }
+
+    /** @test */
+    public function can_use_custom_primary_key()
+    {
+        $expected = [
+            'comments' => [
+                'uri' => 'comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ],
+        ];
+
+        $this->assertSame($expected, (new Ziggy)->filter('comments')->toArray()['routes']);
+    }
+
+    /** @test */
+    public function can_use_get_key_name()
+    {
+        $expected = [
+            'replies' => [
+                'uri' => 'replies/{reply}',
+                'methods' => ['GET', 'HEAD'],
+                'bindings' => [
+                    'reply' => 'uuid',
+                ],
+            ],
+        ];
+
+        $this->assertSame($expected, (new Ziggy)->filter('replies')->toArray()['routes']);
     }
 }
 
@@ -286,4 +338,17 @@ class Tag extends Model
 class Admin extends User
 {
     //
+}
+
+class Comment extends Model
+{
+    protected $primaryKey = 'uuid';
+}
+
+class Reply extends Model
+{
+    public function getKeyName()
+    {
+        return 'uuid';
+    }
 }
