@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use JsonSerializable;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionProperty;
 
 class Ziggy implements JsonSerializable
 {
