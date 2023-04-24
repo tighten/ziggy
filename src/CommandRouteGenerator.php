@@ -27,7 +27,7 @@ class CommandRouteGenerator extends Command
 
     public function handle()
     {
-        $path = $this->argument('path');
+        $path = config('ziggy.output.path',$this->argument('path'));
         $generatedRoutes = $this->generate($this->option('group'));
 
         $this->makeDirectory($path);
