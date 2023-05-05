@@ -10,7 +10,7 @@ use Tightenco\Ziggy\Ziggy;
 class CommandRouteGenerator extends Command
 {
     protected $signature = 'ziggy:generate
-                            {path=./resources/js/ziggy.js : Path to the generated JavaScript file.}
+                            {path? : Path to the generated JavaScript file. Default: `resources/js/ziggy.js`.}
                             {--url=}
                             {--group=}';
 
@@ -27,7 +27,7 @@ class CommandRouteGenerator extends Command
 
     public function handle()
     {
-        $path = config('ziggy.output.path',$this->argument('path'));
+        $path = $this->argument('path') ?? config('ziggy.output.path', 'resources/js/ziggy.js');
         $generatedRoutes = $this->generate($this->option('group'));
 
         $this->makeDirectory($path);
@@ -38,7 +38,7 @@ class CommandRouteGenerator extends Command
 
     protected function makeDirectory($path)
     {
-        if (! $this->files->isDirectory(dirname(base_path($path)))) {
+        if (!$this->files->isDirectory(dirname(base_path($path)))) {
             $this->files->makeDirectory(dirname(base_path($path)), 0755, true, true);
         }
 
