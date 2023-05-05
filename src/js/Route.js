@@ -81,8 +81,15 @@ export default class Route {
         const [location, query] = url.replace(/^\w+:\/\//, '').split('?');
 
         const matches = new RegExp(`^${pattern}/?$`).exec(location);
+        
+        if (matches) {
+            for (const k in matches.groups) {
+                matches.groups[k] = typeof matches.groups[k] === 'string' ? decodeURIComponent(matches.groups[k]) : matches.groups[k];
+            }
+            return { params: matches.groups, query: parse(query) };
+        }
 
-        return matches ? { params: matches.groups, query: parse(query) } : false;
+        return false;
     }
 
     /**
