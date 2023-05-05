@@ -28,7 +28,15 @@ export default class Route {
     get template() {
         return `${this.origin}/${this.definition.uri}`.replace(/\/+$/, '');
     }
-    
+
+    /**
+     * Get a template of the origin for this route.
+     *
+     * @example
+     * https://{team}.ziggy.dev/
+     *
+     * @return {String} Route origin template.
+     */
     get origin() {
         // If  we're building just a path there's no origin, otherwise: if this route has a
         // domain configured we construct the origin with that, if not we use the app URL
