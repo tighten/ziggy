@@ -68,16 +68,7 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
-      - id: composer-cache-dir
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-composer-
-            ${{ runner.os }}-php-${{ matrix.php }}-laravel-
-            ${{ runner.os }}-php-
+      - uses: ramsey/composer-install@v2
       - run: |
           composer require laravel/framework:"${{ matrix.laravel }}" --no-update --no-interaction
           composer update --prefer-dist --no-interaction
