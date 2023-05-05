@@ -38,7 +38,7 @@ class CommandRouteGenerator extends Command
 
     protected function makeDirectory($path)
     {
-        if (!$this->files->isDirectory(dirname(base_path($path)))) {
+        if (! $this->files->isDirectory(dirname(base_path($path)))) {
             $this->files->makeDirectory(dirname(base_path($path)), 0755, true, true);
         }
 
