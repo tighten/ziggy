@@ -612,4 +612,19 @@ class ZiggyTest extends TestCase
 
         $this->assertSame($routes, (new Ziggy)->toArray()['routes']);
     }
+
+    /** @test */
+    public function optional_params_inside_path()
+    {
+        app('router')->get('{country?}/test/{language?}/products/{id}', $this->noop())->name('products.show');
+        app('router')->getRoutes()->refreshNameLookups();
+
+        $this->assertSame('http://ziggy.dev/ca/test/fr/products/1', route('products.show', ['country' => 'ca', 'language' => 'fr', 'id' => 1]));
+        // Optional param in the middle of a path
+        $this->assertSame('http://ziggy.dev/ca/test//products/1', route('products.show', ['country' => 'ca', 'id' => 1]));
+        // Optional param at the beginning of a path
+        $this->assertSame('http://ziggy.dev/test/fr/products/1', route('products.show', ['language' => 'fr', 'id' => 1]));
+        // Both
+        $this->assertSame('http://ziggy.dev/test//products/1', route('products.show', ['id' => 1]));
+    }
 }

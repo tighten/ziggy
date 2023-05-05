@@ -383,6 +383,15 @@ describe('route()', () => {
         same(route('pages.optional', null), 'https://ziggy.dev/optionalpage');
     });
 
+    test('missing optional parameter in first path segment', () => {
+        same(route('products.show', { country: 'ca', language: 'fr', id: 1 }), 'https://ziggy.dev/ca/fr/products/1');
+        // These URLs aren't valid but this matches the behavior of Laravel's PHP `route()` helper
+        same(route('products.show', { country: 'ca', id: 1 }), 'https://ziggy.dev/ca//products/1');
+        same(route('products.show', { id: 1 }), 'https://ziggy.dev//products/1');
+        // First param is handled correctly
+        same(route('products.show', { language: 'fr', id: 1 }), 'https://ziggy.dev/fr/products/1');
+    });
+
     test('can error if a route name doesn’t exist', () => {
         throws(() => route('unknown-route'), /Ziggy error: route 'unknown-route' is not in the route list\./);
     });
