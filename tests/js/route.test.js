@@ -545,7 +545,7 @@ describe('route()', () => {
         deepEqual(route().params, { event: '1', venue: '2' });
     });
 
-    test('can extract encoded parameters from the current URL', () => {
+    test('can decode parameters in the current URL', () => {
         global.window.location.href = 'https://ziggy.dev/events/1/venues/1%2B2%263';
         global.window.location.pathname = '/events/1/venues/1%2B2%263';
 

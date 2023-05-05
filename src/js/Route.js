@@ -71,13 +71,12 @@ export default class Route {
         const [location, query] = url.replace(/^\w+:\/\//, '').split('?');
 
         const matches = new RegExp(`^${pattern}/?$`).exec(location);
-
+        
         if (matches) {
-            const params = {};
-            if (matches.groups) {
-                Object.keys(matches.groups).forEach(k => params[k] = typeof matches.groups[k] === 'string' ? decodeURIComponent(matches.groups[k]) : matches.groups[k]);
+            for (const k in matches.groups) {
+                matches.groups[k] = typeof matches.groups[k] === 'string' ? decodeURIComponent(matches.groups[k]) : matches.groups[k];
             }
-            return { params, query: parse(query) };
+            return { params: matches.groups, query: parse(query) };
         }
 
         return false;
