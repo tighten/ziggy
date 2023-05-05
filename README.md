@@ -305,7 +305,19 @@ const Ziggy = {
 export { Ziggy };
 ```
 
-You can optionally create a webpack alias to make importing Ziggy's core source files easier:
+You can optionally create an alias to make importing Ziggy's core source files easier:
+
+```js
+// vite.config.js
+export default defineConfig({
+    resolve: {
+        alias: {
+            ziggy: 'vendor/tightenco/ziggy/dist',
+            // 'vendor/tightenco/ziggy/dist/vue.es.js' if using the Vue plugin
+        },
+    },
+});
+```
 
 ```js
 // webpack.mix.js
@@ -314,7 +326,8 @@ You can optionally create a webpack alias to make importing Ziggy's core source 
 const path = require('path');
 
 mix.alias({
-    ziggy: path.resolve('vendor/tightenco/ziggy/dist'), // or 'vendor/tightenco/ziggy/dist/vue' if you're using the Vue plugin
+    ziggy: path.resolve('vendor/tightenco/ziggy/dist'),
+    // 'vendor/tightenco/ziggy/dist/vue' if using the Vue plugin
 });
 
 // Mix v5
@@ -362,7 +375,7 @@ import { Ziggy } from './ziggy';
 Vue.use(ZiggyVue, Ziggy);
 ```
 
-If you use this plugin with the Laravel Mix alias shown above, make sure to update the alias to `vendor/tightenco/ziggy/dist/vue`.
+If you use this plugin with the `ziggy` import alias shown above, make sure to update the alias to `vendor/tightenco/ziggy/dist/vue.es.js` (Vite) or `vendor/tightenco/ziggy/dist/vue` (Laravel Mix).
 
 > Note: If you use the `@routes` Blade directive in your views, Ziggy's configuration will already be available globally, so you don't need to import the `Ziggy` config object and pass it into `use()`.
 
