@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "lib": ["DOM", "ES2020"],
+        "declaration": true,
+        "allowJs": true,
+        "strict": true,
+        "noImplicitAny": false,
+        "strictNullChecks": false,
+        "moduleResolution": "NodeNext",
+        "esModuleInterop": true
+    },
+    "exclude": ["node_modules"],
+    "include": ["src/js/*.ts", "test/js/*.ts"]
+}
