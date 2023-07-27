@@ -141,6 +141,44 @@ class CommandRouteGeneratorTest extends TestCase
 
         $this->assertFileExists(base_path('resources/js/custom.js'));
     }
+
+    /** @test */
+    public function can_generate_dts_file()
+    {
+        Artisan::call('ziggy:generate --declarations');
+
+        $this->assertFileExists(base_path('resources/js/ziggy.d.ts'));
+        $this->assertFileExists(base_path('resources/js/ziggy.js'));
+    }
+
+    /** @test */
+    public function can_generate_dts_file_without_routes()
+    {
+        Artisan::call('ziggy:generate --declarations-only');
+
+        $this->assertFileExists(base_path('resources/js/ziggy.d.ts'));
+        $this->assertFileDoesNotExist(base_path('resources/js/ziggy.js'));
+    }
+
+    /** @test */
+    public function can_derive_dts_file_path_from_given_dts()
+    {
+        config(['ziggy.output.path' => 'resources/js/custom.d.ts']);
+
+        Artisan::call('ziggy:generate --declarations-only');
+
+        $this->assertFileExists(base_path('resources/js/custom.d.ts'));
+    }
+
+    /** @test */
+    public function can_derive_dts_file_path_from_relative_file_without_extension()
+    {
+        config(['ziggy.output.path' => './ziggy']);
+
+        Artisan::call('ziggy:generate --declarations-only');
+
+        $this->assertFileExists(base_path('ziggy.d.ts'));
+    }
 }
 
 class CustomFileFormatter extends File

@@ -2,6 +2,7 @@
 
 namespace Tightenco\Ziggy;
 
+use Directory;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Tightenco\Ziggy\Output\File;
@@ -11,6 +12,8 @@ class CommandRouteGenerator extends Command
 {
     protected $signature = 'ziggy:generate
                             {path? : Path to the generated JavaScript file. Default: `resources/js/ziggy.js`.}
+                            {--t|declarations : Generate TypeScript declaration file.}
+                            {--T|declarations-only : Generate TypeScript declaration file without ziggy routes file.}
                             {--url=}
                             {--group=}';
 
@@ -27,11 +30,24 @@ class CommandRouteGenerator extends Command
 
     public function handle()
     {
-        $path = $this->argument('path') ?? config('ziggy.output.path', 'resources/js/ziggy.js');
-        $generatedRoutes = $this->generate($this->option('group'));
+        $group = $this->option('group');
+        $url = $this->option('url') ? url($this->option('url')) : null;
+        $ziggy = (new Ziggy($group, $url));
 
+        $declarationsOnly = $this->option('declarations-only');
+        $declarations = $declarationsOnly || $this->option('declarations');
+
+        $path = $this->argument('path') ?? config('ziggy.output.path', 'resources/js/ziggy.js');
         $this->makeDirectory($path);
-        $this->files->put(base_path($path), $generatedRoutes);
+
+        if(!$declarationsOnly){
+            $generatedRoutes = $this->generateJs($ziggy);
+            $this->files->put(base_path($path), $generatedRoutes);
+        }
+        if($declarations){
+            $generatedDeclarations = $this->generateDts($ziggy);
+            $this->files->put(base_path($this->deriveDtsFile($path)), $generatedDeclarations);
+        }
 
         $this->info('File generated!');
     }
@@ -45,12 +61,25 @@ class CommandRouteGenerator extends Command
         return $path;
     }
 
-    private function generate($group = false)
+    private function deriveDtsFile($path) {
+        if(str_ends_with($path, '.d.ts')) {
+            return $path;
+        } else {
+            $dir = dirname($path) ?? '.';
+            $file = preg_replace("/\.[^\.]+$/", '', basename($path)) . '.d.ts';
+            return join(DIRECTORY_SEPARATOR, [$dir, $file]);
+        }
+    }
+
+    private function generateJs(Ziggy $ziggy)
     {
-        $ziggy = (new Ziggy($group, $this->option('url') ? url($this->option('url')) : null));
-
         $output = config('ziggy.output.file', File::class);
-
         return (string) new $output($ziggy);
+    }
+
+    private function generateDts(Ziggy $ziggy)
+    {
+        $declarations = $ziggy->typescriptDeclarationGenerator();
+        return $declarations->generateDeclarations();
     }
 }

@@ -77,7 +77,7 @@ export default class Router<Name extends RouteName> extends String {
      * @return {Object}
      */
     get params(): {
-        [x: string]: ParameterValue | string[] | import("qs").ParsedQs | import("qs").ParsedQs[];
+        [x: string]: string[] | ParameterValue | import("qs").ParsedQs | import("qs").ParsedQs[];
         _query?: Record<string, any>;
     };
     /**

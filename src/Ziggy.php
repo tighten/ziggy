@@ -4,6 +4,7 @@ namespace Tightenco\Ziggy;
 
 use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Reflector;
 use Illuminate\Support\Str;
@@ -137,6 +138,7 @@ class Ziggy implements JsonSerializable
             ->map(function ($route) use ($bindings) {
                 return collect($route)->only(['uri', 'methods', 'wheres'])
                     ->put('domain', $route->domain())
+                    ->put('parameterNames', $route->parameterNames())
                     ->put('bindings', $bindings[$route->getName()] ?? [])
                     ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
                         if (is_array($middleware)) {
@@ -146,6 +148,15 @@ class Ziggy implements JsonSerializable
                         return $collection->put('middleware', $route->middleware());
                     })->filter();
             });
+    }
+
+    /**
+     * Generates the typescript declaration files for the route function.
+     */
+    public function typescriptDeclarationGenerator(): TypescriptDeclarationGenerator
+    {
+        $generator = new TypeScriptDeclarationGenerator($this->routes);
+        return $generator;
     }
 
     /**
@@ -159,7 +170,7 @@ class Ziggy implements JsonSerializable
             'defaults' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
                 : [],
-            'routes' => $this->applyFilters($this->group)->toArray(),
+            'routes' => $this->applyFilters($this->group)->map(fn ($route) => $route->except('parameterNames'))->toArray(),
         ];
     }
 
