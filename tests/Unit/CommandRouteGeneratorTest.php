@@ -157,7 +157,11 @@ class CommandRouteGeneratorTest extends TestCase
         Artisan::call('ziggy:generate', ['--declarations-only' => true]);
 
         $this->assertFileExists(base_path('resources/js/ziggy.d.ts'));
-        $this->assertFileDoesNotExist(base_path('resources/js/ziggy.js'));
+
+        if(method_exists($this, 'assertFileDoesNotExist'))
+            $this->assertFileDoesNotExist(base_path('resources/js/ziggy.js'));
+        else
+            $this->assertFileNotExists(base_path('resources/js/ziggy.js'));
     }
 
     /** @test */
