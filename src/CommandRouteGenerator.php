@@ -62,7 +62,7 @@ class CommandRouteGenerator extends Command
     }
 
     private function deriveDtsFile($path) {
-        if(str_ends_with($path, '.d.ts')) {
+        if(preg_match('/.d.ts$/', $path)) {
             return $path;
         } else {
             $dir = dirname($path) ?? '.';
