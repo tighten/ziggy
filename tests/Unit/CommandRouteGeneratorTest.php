@@ -145,7 +145,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_dts_file()
     {
-        Artisan::call('ziggy:generate',  ['--declarations']);
+        Artisan::call('ziggy:generate',  ['--declarations' => true]);
 
         $this->assertFileExists(base_path('resources/js/ziggy.d.ts'));
         $this->assertFileExists(base_path('resources/js/ziggy.js'));
@@ -154,7 +154,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_dts_file_without_routes()
     {
-        Artisan::call('ziggy:generat', ['--declarations-only']);
+        Artisan::call('ziggy:generate', ['--declarations-only' => true]);
 
         $this->assertFileExists(base_path('resources/js/ziggy.d.ts'));
         $this->assertFileDoesNotExist(base_path('resources/js/ziggy.js'));
@@ -165,7 +165,7 @@ class CommandRouteGeneratorTest extends TestCase
     {
         config(['ziggy.output.path' => 'resources/js/custom.d.ts']);
 
-        Artisan::call('ziggy:generate', ['--declarations-only']);
+        Artisan::call('ziggy:generate', ['--declarations-only' => true]);
 
         $this->assertFileExists(base_path('resources/js/custom.d.ts'));
     }
@@ -175,7 +175,7 @@ class CommandRouteGeneratorTest extends TestCase
     {
         config(['ziggy.output.path' => './ziggy']);
 
-        Artisan::call('ziggy:generate', ['--declarations-only']);
+        Artisan::call('ziggy:generate', ['--declarations-only' => true]);
 
         $this->assertFileExists(base_path('ziggy.d.ts'));
     }
