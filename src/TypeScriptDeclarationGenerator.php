@@ -17,13 +17,13 @@ class TypeScriptDeclarationGenerator
 
     private function preamble()
     {
-        return collect([
+        return join("\n", [
             "/*",
             " * Do not modify this file. It is auto-generated and corresponds to your routes",
             " * exposed by ziggy route helper. Changes will not be preserved.",
             " */",
             "export {}"
-        ])->join("\n");
+        ]);
     }
 
     private function generateArgsType($route)
@@ -39,7 +39,7 @@ class TypeScriptDeclarationGenerator
                 return "{ name: '$param' }";
             }
         });
-        return '['.$list->join(', ').']';
+        return '['.join(', ', $list->toArray()).']';
     }
 
     private function generateRouteDefinition() {
@@ -47,18 +47,18 @@ class TypeScriptDeclarationGenerator
             $routeArgs = $this->generateArgsType($route);
             return "'$name': $routeArgs,";
         });
-        return collect(["declare module 'ziggy-js' {",
+        return join("\n", ["declare module 'ziggy-js' {",
             $this->indent.'interface RouteLookup {',
-            str_repeat($this->indent, 2) . $overloads->join("\n" . str_repeat($this->indent, 2)),
+            str_repeat($this->indent, 2) . join("\n". str_repeat($this->indent, 2), $overloads->toArray()),
             $this->indent.'}',
-            "}"])->join("\n");
+            "}"]);
     }
 
     public function generateDeclarations()
     {
-        return collect([
+        return join("\n\n", [
             $this->preamble(),
             $this->generateRouteDefinition()
-        ])->join("\n\n");
+        ]);
     }
 }
