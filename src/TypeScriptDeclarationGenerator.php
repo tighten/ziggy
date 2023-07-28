@@ -6,11 +6,17 @@ use Illuminate\Support\Collection;
 
 class TypeScriptDeclarationGenerator
 {
-    private Collection $routes;
+    /**
+     * @var Collection
+     */
+    private $routes;
 
     protected $indent = "  ";
 
-    public function __construct(Collection $routes)
+    /**
+     * @param Collection $routes
+     */
+    public function __construct($routes)
     {
         $this->routes = $routes;
     }
