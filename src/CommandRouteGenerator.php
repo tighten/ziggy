@@ -12,8 +12,8 @@ class CommandRouteGenerator extends Command
 {
     protected $signature = 'ziggy:generate
                             {path? : Path to the generated JavaScript file. Default: `resources/js/ziggy.js`.}
-                            {--declarations : Generate TypeScript declaration file.}
-                            {--declarations-only : Generate TypeScript declaration file without ziggy routes file.}
+                            {--t|declarations : Generate TypeScript declaration file.}
+                            {--T|declarations-only : Generate TypeScript declaration file without ziggy routes file.}
                             {--url=}
                             {--group=}';
 
