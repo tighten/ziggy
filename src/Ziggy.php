@@ -133,7 +133,9 @@ class Ziggy implements JsonSerializable
 
         $bindings = $this->resolveBindings($routes->toArray());
 
-        $fallbacks->map(fn ($route, $name) => $routes->put($name, $route));
+        $fallbacks->map(function ($route, $name) use ($routes) {
+            $routes->put($name, $route);
+        });
 
         return $routes->map(function ($route) use ($bindings) {
             return collect($route)->only(['uri', 'methods', 'wheres'])
