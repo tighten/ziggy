@@ -627,4 +627,29 @@ class ZiggyTest extends TestCase
         // Both
         $this->assertSame('http://ziggy.dev/test//products/1', route('products.show', ['id' => 1]));
     }
+
+    /** @test */
+    public function filter_route_names_from_nested_groups()
+    {
+        app('router')->get('foo', $this->noop())->name('foo');
+        app('router')->name('foo.')->group(function () {
+            app('router')->get('foo/bar', $this->noop())->name('bar');
+            app('router')->name('bar.')->group(function () {
+                app('router')->get('foo/bar/baz', $this->noop())->name('baz');
+            });
+        });
+        app('router')->getRoutes()->refreshNameLookups();
+
+        config(['ziggy.except' => ['foo.bar.*']]);
+
+        $this->assertArrayHasKey('foo', (new Ziggy)->toArray()['routes']);
+        $this->assertArrayHasKey('foo.bar', (new Ziggy)->toArray()['routes']);
+        $this->assertArrayNotHasKey('foo.bar.baz', (new Ziggy)->toArray()['routes']);
+
+        config(['ziggy.except' => ['foo.*']]);
+
+        $this->assertArrayHasKey('foo', (new Ziggy)->toArray()['routes']);
+        $this->assertArrayNotHasKey('foo.bar', (new Ziggy)->toArray()['routes']);
+        $this->assertArrayNotHasKey('foo.bar.baz', (new Ziggy)->toArray()['routes']);
+    }
 }
