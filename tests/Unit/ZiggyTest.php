@@ -652,4 +652,38 @@ class ZiggyTest extends TestCase
         $this->assertArrayNotHasKey('foo.bar', (new Ziggy)->toArray()['routes']);
         $this->assertArrayNotHasKey('foo.bar.baz', (new Ziggy)->toArray()['routes']);
     }
+
+    /** @test */
+    public function numeric_route_names()
+    {
+        app('router')->get('a', $this->noop())->name('a');
+        app('router')->get('3', $this->noop())->name('3');
+        app('router')->get('b', $this->noop())->name('b');
+        app('router')->fallback($this->noop())->name('404');
+        app('router')->getRoutes()->refreshNameLookups();
+
+        config(['ziggy.except' => ['home', 'posts.*', 'postComments.*', 'admin.*']]);
+
+        $this->assertSame([
+            'a' => [
+                'uri' => 'a',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            3 => [
+                'uri' => '3',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'b' => [
+                'uri' => 'b',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            404 => [
+                'uri' => '{fallbackPlaceholder}',
+                'methods' => ['GET', 'HEAD'],
+                'wheres' => [
+                    'fallbackPlaceholder' => '.*',
+                ],
+            ],
+        ], (new Ziggy)->toArray()['routes']);
+    }
 }
