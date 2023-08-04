@@ -133,19 +133,22 @@ class Ziggy implements JsonSerializable
 
         $bindings = $this->resolveBindings($routes->toArray());
 
-        return $routes->merge($fallbacks)
-            ->map(function ($route) use ($bindings) {
-                return collect($route)->only(['uri', 'methods', 'wheres'])
-                    ->put('domain', $route->domain())
-                    ->put('bindings', $bindings[$route->getName()] ?? [])
-                    ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
-                        if (is_array($middleware)) {
-                            return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values()->all());
-                        }
+        $fallbacks->map(function ($route, $name) use ($routes) {
+            $routes->put($name, $route);
+        });
 
-                        return $collection->put('middleware', $route->middleware());
-                    })->filter();
-            });
+        return $routes->map(function ($route) use ($bindings) {
+            return collect($route)->only(['uri', 'methods', 'wheres'])
+                ->put('domain', $route->domain())
+                ->put('bindings', $bindings[$route->getName()] ?? [])
+                ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
+                    if (is_array($middleware)) {
+                        return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values()->all());
+                    }
+
+                    return $collection->put('middleware', $route->middleware());
+                })->filter();
+        });
     }
 
     /**
