@@ -37,6 +37,11 @@
     "esmodule": "dist/index.es.js",
     "types": "dist/types/index.d.ts",
     "exports": {
+        ".": {
+            "types": "./dist/types/index.d.ts",
+            "require": "./dist/index.js",
+            "import": "./dist/index.es.js"
+        },
         "./vite": {
             "types": "./dist/types/vite-plugin.d.ts",
             "require": "./dist/vite-plugin.js",
