@@ -627,4 +627,63 @@ class ZiggyTest extends TestCase
         // Both
         $this->assertSame('http://ziggy.dev/test//products/1', route('products.show', ['id' => 1]));
     }
+
+    /** @test */
+    public function filter_route_names_from_nested_groups()
+    {
+        app('router')->get('foo', $this->noop())->name('foo');
+        app('router')->name('foo.')->group(function () {
+            app('router')->get('foo/bar', $this->noop())->name('bar');
+            app('router')->name('bar.')->group(function () {
+                app('router')->get('foo/bar/baz', $this->noop())->name('baz');
+            });
+        });
+        app('router')->getRoutes()->refreshNameLookups();
+
+        config(['ziggy.except' => ['foo.bar.*']]);
+
+        $this->assertArrayHasKey('foo', (new Ziggy)->toArray()['routes']);
+        $this->assertArrayHasKey('foo.bar', (new Ziggy)->toArray()['routes']);
+        $this->assertArrayNotHasKey('foo.bar.baz', (new Ziggy)->toArray()['routes']);
+
+        config(['ziggy.except' => ['foo.*']]);
+
+        $this->assertArrayHasKey('foo', (new Ziggy)->toArray()['routes']);
+        $this->assertArrayNotHasKey('foo.bar', (new Ziggy)->toArray()['routes']);
+        $this->assertArrayNotHasKey('foo.bar.baz', (new Ziggy)->toArray()['routes']);
+    }
+
+    /** @test */
+    public function numeric_route_names()
+    {
+        app('router')->get('a', $this->noop())->name('a');
+        app('router')->get('3', $this->noop())->name('3');
+        app('router')->get('b', $this->noop())->name('b');
+        app('router')->fallback($this->noop())->name('404');
+        app('router')->getRoutes()->refreshNameLookups();
+
+        config(['ziggy.except' => ['home', 'posts.*', 'postComments.*', 'admin.*']]);
+
+        $this->assertSame([
+            'a' => [
+                'uri' => 'a',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            3 => [
+                'uri' => '3',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'b' => [
+                'uri' => 'b',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            404 => [
+                'uri' => '{fallbackPlaceholder}',
+                'methods' => ['GET', 'HEAD'],
+                'wheres' => [
+                    'fallbackPlaceholder' => '.*',
+                ],
+            ],
+        ], (new Ziggy)->toArray()['routes']);
+    }
 }
