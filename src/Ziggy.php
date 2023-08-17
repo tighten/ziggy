@@ -155,6 +155,10 @@ class Ziggy implements JsonSerializable
 
         $bindings = $this->resolveBindings($routes->toArray());
 
+        $fallbacks->map(function ($route, $name) use ($routes) {
+            $routes->put($name, $route);
+        });
+        
         return $routes->merge($fallbacks)
             ->map(function ($route) use ($bindings) {
                 $route = $this->skipPrefix($route);
