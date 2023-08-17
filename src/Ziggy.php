@@ -119,6 +119,28 @@ class Ziggy implements JsonSerializable
     }
 
     /**
+     * Skip route-prefixes from the route uri. (Defined in config/ziggy.php)
+     * 
+     * @param $route
+     * @return mixed
+     */
+    private function skipPrefix($route)
+    {
+        $skipPrefixes = config('ziggy.skip_prefix', []);
+
+        if (isset($route->action['prefix'])) {
+            foreach ($skipPrefixes as $skipPrefix) {
+                if ($route->action['prefix'] === $skipPrefix) {
+                    $route->uri = str_replace($skipPrefix . '/', '', $route->uri);
+                    break;
+                }
+            }
+        }
+
+        return $route;
+    }
+
+    /**
      * Get a list of the application's named routes, keyed by their names.
      */
     private function nameKeyedRoutes()
