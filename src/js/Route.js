@@ -114,7 +114,9 @@ export default class Route {
                     throw new Error(`Ziggy error: '${segment}' parameter does not match required format '${this.wheres[segment]}' for route '${this.name}'.`)
                 }
 
-                return encodeURIComponent(params[segment] ?? '').replace(/%2F/g, '/');
+                if (segments[segments.length - 1].name === segment) {
+                    return encodeURIComponent(params[segment] ?? '').replace(/%2F/g, '/');
+                }
             }
 
             return encodeURIComponent(params[segment] ?? '');
