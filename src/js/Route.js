@@ -110,7 +110,7 @@ export default class Route {
             }
 
             if (this.wheres[segment]) {
-                if(!new RegExp(`^${optional ? `(${this.wheres[segment]})?` : this.wheres[segment]}$`).test(params[segment] ?? '')) {
+                if (!new RegExp(`^${optional ? `(${this.wheres[segment]})?` : this.wheres[segment]}$`).test(params[segment] ?? '')) {
                     throw new Error(`Ziggy error: '${segment}' parameter does not match required format '${this.wheres[segment]}' for route '${this.name}'.`)
                 }
 
