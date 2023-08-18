@@ -198,6 +198,21 @@ const defaultZiggy = {
                 slug: '.*',
             },
         },
+        slashesOtherRegex: {
+            uri: 'slashes/{encoded}/{slug}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                slug: '.+',
+            },
+        },
+        slashesMiddleParam: {
+            uri: 'slashes/{encoded}/{slug}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                encoded: '.+',
+                slug: '.+',
+            },
+        },
     },
 };
 
@@ -622,11 +637,20 @@ describe('route()', () => {
         throws(() => route('pages.requiredExtensionWhere', { extension: '.pdf' }), /'extension' parameter does not match required format/);
     });
 
-
-    test('can skip encoding slashes inside last parameter when explicitly allowed', () => {
+    test('skip encoding slashes inside last parameter when explicitly allowed', () => {
         same(route('slashes', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one%2Ftwo/three/four');
         same(route('slashes', ['one/two', 'Fun&Games/venues']), 'https://ziggy.dev/slashes/one%2Ftwo/Fun%26Games/venues');
         same(route('slashes', ['one/two/three', 'Fun&Games/venues/outdoors']), 'https://ziggy.dev/slashes/one%2Ftwo%2Fthree/Fun%26Games/venues/outdoors');
+
+        same(route('slashesOtherRegex', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one%2Ftwo/three/four');
+        same(route('slashesOtherRegex', ['one/two', 'Fun&Games/venues']), 'https://ziggy.dev/slashes/one%2Ftwo/Fun%26Games/venues');
+        same(route('slashesOtherRegex', ['one/two/three', 'Fun&Games/venues/outdoors']), 'https://ziggy.dev/slashes/one%2Ftwo%2Fthree/Fun%26Games/venues/outdoors');
+    });
+
+    test.skip('skip encoding slashes inside middle parameter when explicitly allowed', () => {
+        same(route('slashesMiddleParam', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one/two/three/four');
+        same(route('slashesMiddleParam', ['one/two', 'Fun&Games/venues']), 'https://ziggy.dev/slashes/one/two/Fun%26Games/venues');
+        same(route('slashesMiddleParam', ['one/two/three', 'Fun&Games/venues/outdoors']), 'https://ziggy.dev/slashes/one/two/three/Fun%26Games/venues/outdoors');
     });
 });
 
