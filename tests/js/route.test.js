@@ -1114,7 +1114,8 @@ describe('current()', () => {
 
     test('can get the current route name without window', () => {
         global.Ziggy = undefined;
-        global.window = undefined;
+        const oldWindow = global.window;
+        delete global.window;
 
         const config = {
             url: 'https://ziggy.dev',
@@ -1137,5 +1138,7 @@ describe('current()', () => {
         };
 
         same(route(undefined, undefined, undefined, config).current(), 'events.venues.show');
+
+        global.window = oldWindow;
     });
 });
