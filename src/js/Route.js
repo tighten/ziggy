@@ -81,7 +81,7 @@ export default class Route {
         const [location, query] = url.replace(/^\w+:\/\//, '').split('?');
 
         const matches = new RegExp(`^${pattern}/?$`).exec(location);
-        
+
         if (matches) {
             for (const k in matches.groups) {
                 matches.groups[k] = typeof matches.groups[k] === 'string' ? decodeURIComponent(matches.groups[k]) : matches.groups[k];
@@ -109,12 +109,14 @@ export default class Route {
                 throw new Error(`Ziggy error: '${segment}' parameter is required for route '${this.name}'.`)
             }
 
-            if (segments[segments.length - 1].name === segment && this.wheres[segment] === '.*') {
-                return encodeURIComponent(params[segment] ?? '').replace(/%2F/g, '/');
-            }
+            if (this.wheres[segment]) {
+                if (!new RegExp(`^${optional ? `(${this.wheres[segment]})?` : this.wheres[segment]}$`).test(params[segment] ?? '')) {
+                    throw new Error(`Ziggy error: '${segment}' parameter does not match required format '${this.wheres[segment]}' for route '${this.name}'.`)
+                }
 
-            if (this.wheres[segment] && !new RegExp(`^${optional ? `(${this.wheres[segment]})?` : this.wheres[segment]}$`).test(params[segment] ?? '')) {
-                throw new Error(`Ziggy error: '${segment}' parameter does not match required format '${this.wheres[segment]}' for route '${this.name}'.`)
+                if (segments[segments.length - 1].name === segment) {
+                    return encodeURIComponent(params[segment] ?? '').replace(/%2F/g, '/');
+                }
             }
 
             return encodeURIComponent(params[segment] ?? '');
