@@ -1,27 +1,17 @@
 import { stringify } from 'qs';
-import { Config, NormalizedRouteParams, ParameterValue, RouteConfig, RouteDefinition, RouteMatchResult, RouteName, RouteParams, RouteParamsObject } from '.';
 import Route from './Route';
-
-type _Unresolve = RouteMatchResult & { name: string, route: RouteDefinition }
-declare global {
-    var Ziggy: Config
-}
 
 /**
  * A collection of Laravel routes. This class constitutes Ziggy's main API.
  */
-export default class Router<Name extends RouteName> extends String {
-    private readonly _config: RouteConfig;
-    private readonly _params: NormalizedRouteParams<Name>;
-    private readonly _route: Route<Name>
-
+export default class Router extends String {
     /**
-     * @param name Route name.
-     * @param params Route parameters.
-     * @param absolute Whether to include the URL origin.
-     * @param config Ziggy configuration.
+     * @param {String} [name] - Route name.
+     * @param {(String|Number|Array|Object)} [params] - Route parameters.
+     * @param {Boolean} [absolute] - Whether to include the URL origin.
+     * @param {Object} [config] - Ziggy configuration.
      */
-    constructor(name?: Name, params?: RouteParams<Name>, absolute = true, config?: Config) {
+    constructor(name, params, absolute = true, config) {
         super();
 
         this._config = config ?? (typeof Ziggy !== 'undefined' ? Ziggy : globalThis?.Ziggy);
@@ -33,7 +23,7 @@ export default class Router<Name extends RouteName> extends String {
             }
 
             this._route = new Route(name, this._config.routes[name], this._config);
-            this._params = this._parse(params, this._route);
+            this._params = this._parse(params);
         }
     }
 
@@ -53,13 +43,12 @@ export default class Router<Name extends RouteName> extends String {
             .filter((key) => key !== '_query')
             .reduce((result, current) => ({ ...result, [current]: this._params[current] }), {});
 
-        const query = this._params['_query'] ?? {};
-        return this._route.compile(this._params) + stringify({ ...unhandled, ...query }, {
+        return this._route.compile(this._params) + stringify({ ...unhandled, ...this._params['_query'] }, {
             addQueryPrefix: true,
             arrayFormat: 'indices',
             encodeValuesOnly: true,
             skipNulls: true,
-            encoder: (value, encoder) => typeof value === 'boolean' ? Number(value).toString() : encoder(value),
+            encoder: (value, encoder) => typeof value === 'boolean' ? Number(value) : encoder(value),
         });
     }
 
@@ -69,7 +58,7 @@ export default class Router<Name extends RouteName> extends String {
      * @param {String} [url] - The URL to inspect, defaults to the current window URL.
      * @return {{ name: string, params: Object, query: Object, route: Route }}
      */
-    _unresolve(url?: string): _Unresolve {
+    _unresolve(url) {
         if (!url) {
             url = this._currentUrl();
         } else if (this._config.absolute && url.startsWith('/')) {
@@ -78,14 +67,12 @@ export default class Router<Name extends RouteName> extends String {
             url = this._location().host + url;
         }
 
-        const routes = Object.entries(this._config.routes);
-        for (const [name, route] of routes) {
-            const matchedParams = new Route(name, route, this._config).matchesUrl(url);
-            if (matchedParams)
-                return { name, ...matchedParams, route };
-        }
+        let matchedParams = {};
+        const [name, route] = Object.entries(this._config.routes).find(
+          ([name, route]) => (matchedParams = new Route(name, route, this._config).matchesUrl(url))
+        ) || [undefined, undefined];
 
-        return {} as _Unresolve;
+        return { name, ...matchedParams, route };
     }
 
     _currentUrl() {
@@ -110,15 +97,12 @@ export default class Router<Name extends RouteName> extends String {
      * route().current('posts.show', { post: 1 }); // false
      * route().current('posts.show', { post: 4 }); // true
      *
-     * @param name Route name to check.
-     * @param params Route parameters.
+     * @param {String} [name] - Route name to check.
+     * @param {(String|Number|Array|Object)} [params] - Route parameters.
+     * @return {(Boolean|String|undefined)}
      */
-    current<CurrentName extends RouteName = Name>(name?: CurrentName, params?: RouteParams<CurrentName> | null): boolean | string | void {
-        params ??= {} as RouteParams<CurrentName>;
-        const unresolve = this._unresolve();
-        if (!unresolve) return;
-
-        const { name: current, params: currentParams, query, route } = unresolve;
+    current(name, params) {
+        const { name: current, params: currentParams, query, route } = this._unresolve();
 
         // If a name wasn't passed, return the name of the current route
         if (!name) return current;
@@ -129,17 +113,17 @@ export default class Router<Name extends RouteName> extends String {
 
         if ([null, undefined].includes(params) || !match) return match;
 
-        const routeObject = new Route(current as CurrentName, route, this._config);
+        const routeObject = new Route(current, route, this._config);
 
-        const normalizedParams = this._parse(params, routeObject);
+        params = this._parse(params, routeObject);
         const routeParams = { ...currentParams, ...query };
 
         // If the current window URL has no route parameters, and the passed parameters are empty, return true
-        if (Object.values(normalizedParams).every(p => !p) && !Object.values(routeParams).some(v => v !== undefined)) return true;
+        if (Object.values(params).every(p => !p) && !Object.values(routeParams).some(v => v !== undefined)) return true;
 
         // Check that all passed parameters match their values in the current window URL
         // Use weak equality because all values in the current window URL will be strings
-        return Object.entries(normalizedParams).every(([key, value]) => routeParams[key] == value);
+        return Object.entries(params).every(([key, value]) => routeParams[key] == value);
     }
 
     /**
@@ -168,7 +152,7 @@ export default class Router<Name extends RouteName> extends String {
      * @return {Object}
      */
     get params() {
-        const { params, query } = this._unresolve() || {};
+        const { params, query } = this._unresolve();
 
         return { ...params, ...query };
     }
@@ -194,29 +178,26 @@ export default class Router<Name extends RouteName> extends String {
      * _parse([4, { uuid: 56789, name: 'Grand Canyon' }]); // { event: 4, venue: 56789 }
      *
      * @param {(String|Number|Array|Object)} params - Route parameters.
-     * @param {CurrentName} route - Route instance.
+     * @param {Route} route - Route instance.
      * @return {Object} Normalized complete route parameters.
      */
-    _parse<CurrentName extends RouteName = Name>(params: ParameterValue | RouteParams<CurrentName>, route: Route<CurrentName>): NormalizedRouteParams<CurrentName> {
-        params ??= {} as RouteParamsObject<CurrentName>;
+    _parse(params = {}, route = this._route) {
+        params ??= {}
+
+        // If `params` is a string or integer, wrap it in an array
+        params = ['string', 'number'].includes(typeof params) ? [params] : params;
 
         // Separate segments with and without defaults, and fill in the default values
         const segments = route.parameterSegments.filter(({ name }) => !this._config.defaults[name]);
 
-        let paramsObject = {} as RouteParamsObject<CurrentName>
-
-        if (typeof params === 'number' || typeof params === 'string') {
-            const [segment] = segments;
-            paramsObject = (segment ? { [segment.name]: params } : { [params]: "" }) as RouteParamsObject<CurrentName>;
-        }
-        else if (params instanceof Array) {
+        if (Array.isArray(params)) {
             // If the parameters are an array they have to be in order, so we can transform them into
             // an object by keying them with the template segment names in the order they appear
-            paramsObject = params.reduce((result, current, i) => segments[i]
+            params = params.reduce((result, current, i) => segments[i]
                 ? ({ ...result, [segments[i].name]: current })
                 : typeof current === 'object'
                     ? ({ ...result, ...current })
-                    : ({ ...result, [current]: '' }), {} as RouteParamsObject<CurrentName>);
+                    : ({ ...result, [current]: '' }), {});
         } else if (
             segments.length === 1
             && !params[segments[0].name]
@@ -226,14 +207,12 @@ export default class Router<Name extends RouteName> extends String {
             // ambiguous—it could contain the parameter key and value, or it could be an object
             // representing just the value (e.g. a model); we can inspect it to find out, and
             // if it's just the parameter value, we can wrap it in an object with its key
-            paramsObject = { [segments[0].name]: params } as RouteParamsObject<CurrentName>;
-        } else if (params) {
-            paramsObject = params;
+            params = { [segments[0].name]: params };
         }
 
         return {
             ...this._defaults(route),
-            ...this._substituteBindings(paramsObject, route),
+            ...this._substituteBindings(params, route),
         };
     }
 
@@ -244,7 +223,7 @@ export default class Router<Name extends RouteName> extends String {
      * // with default parameters { locale: 'en', country: 'US' } and 'posts.show' route '{locale}/posts/{post}'
      * defaults(...); // { locale: 'en' }
      *
-     * @param {Name} route
+     * @param {Route} route
      * @return {Object} Default route parameters.
      */
     _defaults(route) {
@@ -258,11 +237,11 @@ export default class Router<Name extends RouteName> extends String {
      * @example
      * _substituteBindings({ post: { id: 4, slug: 'hello-world', title: 'Hello, world!' } }, { bindings: { post: 'slug' } }); // { post: 'hello-world' }
      *
-     * @param params Route parameters.
-     * @param route Route definition.
-     * @return Normalized route parameters.
+     * @param {Object} params - Route parameters.
+     * @param {Object} route - Route definition.
+     * @return {Object} Normalized route parameters.
      */
-    _substituteBindings<CurrentName extends RouteName = Name>(params: RouteParamsObject<CurrentName>, { bindings, parameterSegments }: Route<CurrentName>) {
+    _substituteBindings(params, { bindings, parameterSegments }) {
         return Object.entries(params).reduce((result, [key, value]) => {
             // If the value isn't an object, or if the key isn't a named route parameter,
             // there's nothing to substitute so we return it as-is
@@ -280,7 +259,7 @@ export default class Router<Name extends RouteName> extends String {
             }
 
             return { ...result, [key]: value[bindings[key]] };
-        }, {}) as NormalizedRouteParams<CurrentName>;
+        }, {});
     }
 
     valueOf() {
