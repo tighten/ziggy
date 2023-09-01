@@ -61,6 +61,7 @@ class RouteModelBindingTest extends TestCase
                 'bindings' => [
                     'user' => 'uuid',
                 ],
+                'parameterNames' => ['user'],
             ],
         ];
 
@@ -77,6 +78,7 @@ class RouteModelBindingTest extends TestCase
                 'bindings' => [
                     'admin' => 'uuid',
                 ],
+                'parameterNames' => ['admin'],
             ],
         ];
 
@@ -90,6 +92,7 @@ class RouteModelBindingTest extends TestCase
             'tokens' => [
                 'uri' => 'tokens/{token}',
                 'methods' => ['GET', 'HEAD'],
+                'parameterNames' => ['token'],
             ],
         ], (new Ziggy)->filter(['tokens'])->toArray()['routes']);
     }
@@ -115,6 +118,7 @@ class RouteModelBindingTest extends TestCase
                 'bindings' => [
                     'user' => 'uuid',
                 ],
+                'parameterNames' => ['user', 'number'],
             ],
         ];
 
@@ -136,6 +140,7 @@ class RouteModelBindingTest extends TestCase
                     'category' => 'id',
                     'post' => 'slug',
                 ],
+                'parameterNames' => ['category', 'post'],
             ],
             'posts.tags' => [
                 'uri' => 'blog/{category}/{post}/{tag}',
@@ -145,6 +150,7 @@ class RouteModelBindingTest extends TestCase
                     'post' => 'slug',
                     'tag' => 'slug',
                 ],
+                'parameterNames' => ['category', 'post', 'tag'],
             ],
         ], (new Ziggy)->filter('posts*')->toArray()['routes']);
     }
@@ -163,6 +169,7 @@ class RouteModelBindingTest extends TestCase
                 'bindings' => [
                     'user' => 'uuid',
                 ],
+                'parameterNames' => ['user'],
             ],
             'admins' => [
                 'uri' => 'admins/{admin}',
@@ -170,6 +177,7 @@ class RouteModelBindingTest extends TestCase
                 'bindings' => [
                     'admin' => 'uuid',
                 ],
+                'parameterNames' => ['admin'],
             ],
             'tags' => [
                 'uri' => 'tags/{tag}',
@@ -177,10 +185,12 @@ class RouteModelBindingTest extends TestCase
                 'bindings' => [
                     'tag' => 'id',
                 ],
+                'parameterNames' => ['tag'],
             ],
             'tokens' => [
                 'uri' => 'tokens/{token}',
                 'methods' => ['GET', 'HEAD'],
+                'parameterNames' => ['token'],
             ],
             'users.numbers' => [
                 'uri' => 'users/{user}/{number}',
@@ -188,6 +198,7 @@ class RouteModelBindingTest extends TestCase
                 'bindings' => [
                     'user' => 'uuid',
                 ],
+                'parameterNames' => ['user', 'number'],
             ],
             'users.store' => [
                 'uri' => 'users',
@@ -199,6 +210,7 @@ class RouteModelBindingTest extends TestCase
                 'bindings' => [
                     'comment' => 'uuid',
                 ],
+                'parameterNames' => ['comment'],
             ],
             'replies' => [
                 'uri' => 'replies/{reply}',
@@ -206,6 +218,7 @@ class RouteModelBindingTest extends TestCase
                 'bindings' => [
                     'reply' => 'uuid',
                 ],
+                'parameterNames' => ['reply'],
             ],
             'posts' => [
                 'uri' => 'blog/{category}/{post}',
@@ -214,6 +227,7 @@ class RouteModelBindingTest extends TestCase
                     'category' => 'id',
                     'post' => 'slug',
                 ],
+                'parameterNames' => ['category', 'post'],
             ],
             'posts.tags' => [
                 'uri' => 'blog/{category}/{post}/{tag}',
@@ -223,6 +237,7 @@ class RouteModelBindingTest extends TestCase
                     'post' => 'slug',
                     'tag' => 'slug',
                 ],
+                'parameterNames' => ['category', 'post', 'tag'],
             ],
         ], (new Ziggy)->toArray()['routes']);
     }
@@ -234,7 +249,7 @@ class RouteModelBindingTest extends TestCase
             $this->markTestSkipped('Requires Laravel >=7');
         }
 
-        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"bindings":{"user":"uuid"}},"admins":{"uri":"admins\/{admin}","methods":["GET","HEAD"],"bindings":{"admin":"uuid"}},"tags":{"uri":"tags\/{tag}","methods":["GET","HEAD"],"bindings":{"tag":"id"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"bindings":{"user":"uuid"}},"users.store":{"uri":"users","methods":["POST"]},"comments":{"uri":"comments\/{comment}","methods":["GET","HEAD"],"bindings":{"comment":"uuid"}},"replies":{"uri":"replies\/{reply}","methods":["GET","HEAD"],"bindings":{"reply":"uuid"}},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"bindings":{"category":"id","post":"slug","tag":"slug"}}}}';
+        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"bindings":{"user":"uuid"},"parameterNames":["user"]},"admins":{"uri":"admins\/{admin}","methods":["GET","HEAD"],"bindings":{"admin":"uuid"},"parameterNames":["admin"]},"tags":{"uri":"tags\/{tag}","methods":["GET","HEAD"],"bindings":{"tag":"id"},"parameterNames":["tag"]},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"],"parameterNames":["token"]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"bindings":{"user":"uuid"},"parameterNames":["user","number"]},"users.store":{"uri":"users","methods":["POST"]},"comments":{"uri":"comments\/{comment}","methods":["GET","HEAD"],"bindings":{"comment":"uuid"},"parameterNames":["comment"]},"replies":{"uri":"replies\/{reply}","methods":["GET","HEAD"],"bindings":{"reply":"uuid"},"parameterNames":["reply"]},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"bindings":{"category":"id","post":"slug"},"parameterNames":["category","post"]},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"bindings":{"category":"id","post":"slug","tag":"slug"},"parameterNames":["category","post","tag"]}}}';
 
         $this->assertSame($json, (new Ziggy)->toJson());
     }
@@ -262,6 +277,7 @@ class RouteModelBindingTest extends TestCase
             'bindings' => [
                 'model' => 'id',
             ],
+            'parameterNames' => ['model'],
         ], (new Ziggy)->toArray()['routes']['models']);
     }
 
@@ -275,6 +291,7 @@ class RouteModelBindingTest extends TestCase
                 'bindings' => [
                     'comment' => 'uuid',
                 ],
+                'parameterNames' => ['comment'],
             ],
         ];
 
@@ -291,6 +308,7 @@ class RouteModelBindingTest extends TestCase
                 'bindings' => [
                     'reply' => 'uuid',
                 ],
+                'parameterNames' => ['reply'],
             ],
         ];
 
