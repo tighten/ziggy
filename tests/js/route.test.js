@@ -206,6 +206,13 @@ const defaultZiggy: Config = {
                 slug: '.*',
             },
         },
+        slashesOtherRegex: {
+            uri: 'slashes/{encoded}/{slug}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                slug: '.+',
+            },
+        },
     },
 };
 
@@ -472,19 +479,19 @@ describe('route()', () => {
         same(route('events.venues.index', 1), 'https://test.thing/ab/cd/events/1/venues');
     });
 
-    test('can URL-encode named parameters', () => {
+    test('URL-encode query parameters', () => {
         global.Ziggy.url = 'https://test.thing/ab/cd';
 
         same(
             route('events.venues.index', { event: 'Fun&Games' }),
-            'https://test.thing/ab/cd/events/Fun%26Games/venues'
+            'https://test.thing/ab/cd/events/Fun&Games/venues'
         );
         same(
             route('events.venues.index', {
                 event: 'Fun&Games',
                 location: 'Blues&Clues',
             }),
-            'https://test.thing/ab/cd/events/Fun%26Games/venues?location=Blues%26Clues'
+            'https://test.thing/ab/cd/events/Fun&Games/venues?location=Blues%26Clues'
         );
     });
 
@@ -630,11 +637,35 @@ describe('route()', () => {
         throws(() => route('pages.requiredExtensionWhere', { extension: '.pdf' }), /'extension' parameter does not match required format/);
     });
 
+    test('skip encoding slashes inside last parameter when explicitly allowed', () => {
+        same(route('slashes', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one/two/three/four');
+        same(route('slashes', ['one/two', 'Fun&Games/venues']), 'https://ziggy.dev/slashes/one/two/Fun&Games/venues');
+        same(route('slashes', ['one/two/three', 'Fun&Games/venues/outdoors']), 'https://ziggy.dev/slashes/one/two/three/Fun&Games/venues/outdoors');
 
-    test('can skip encoding slashes inside last parameter when explicitly allowed', () => {
-        same(route('slashes', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one%2Ftwo/three/four');
-        same(route('slashes', ['one/two', 'Fun&Games/venues']), 'https://ziggy.dev/slashes/one%2Ftwo/Fun%26Games/venues');
-        same(route('slashes', ['one/two/three', 'Fun&Games/venues/outdoors']), 'https://ziggy.dev/slashes/one%2Ftwo%2Fthree/Fun%26Games/venues/outdoors');
+        same(route('slashesOtherRegex', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one/two/three/four');
+        same(route('slashesOtherRegex', ['one/two', 'Fun&Games/venues']), 'https://ziggy.dev/slashes/one/two/Fun&Games/venues');
+        same(route('slashesOtherRegex', ['one/two/three', 'Fun&Games/venues/outdoors']), 'https://ziggy.dev/slashes/one/two/three/Fun&Games/venues/outdoors');
+    });
+
+    test('skip encoding some characters in route parameters', () => {
+        // Laravel doesn't encode these characters in route parameters: / @ : ; , = + ! * | ? & # %
+        same(route('pages', 'a/b'), 'https://ziggy.dev/a/b');
+        same(route('pages', 'a@b'), 'https://ziggy.dev/a@b');
+        same(route('pages', 'a:b'), 'https://ziggy.dev/a:b');
+        same(route('pages', 'a;b'), 'https://ziggy.dev/a;b');
+        same(route('pages', 'a,b'), 'https://ziggy.dev/a,b');
+        same(route('pages', 'a=b'), 'https://ziggy.dev/a=b');
+        same(route('pages', 'a+b'), 'https://ziggy.dev/a+b');
+        same(route('pages', 'a!b'), 'https://ziggy.dev/a!b');
+        same(route('pages', 'a*b'), 'https://ziggy.dev/a*b');
+        same(route('pages', 'a|b'), 'https://ziggy.dev/a|b');
+        same(route('pages', 'a?b'), 'https://ziggy.dev/a?b');
+        same(route('pages', 'a&b'), 'https://ziggy.dev/a&b');
+        same(route('pages', 'a#b'), 'https://ziggy.dev/a#b');
+        same(route('pages', 'a%b'), 'https://ziggy.dev/a%b');
+
+        // Laravel does encode '$', but encodeURI() doesn't
+        same(route('pages', 'a$b'), 'https://ziggy.dev/a%24b');
     });
 });
 
@@ -1090,8 +1121,9 @@ describe('current()', () => {
     });
 
     test('can get the current route name without window', () => {
-        (global as any).Ziggy = undefined;
-        delete (global as any).window;
+        global.Ziggy = undefined;
+        const oldWindow = global.window;
+        delete global.window;
 
         const config: Config = {
             url: 'https://ziggy.dev',
@@ -1115,5 +1147,7 @@ describe('current()', () => {
         };
 
         same(route(undefined, undefined, undefined, config).current(), 'events.venues.show');
+
+        global.window = oldWindow;
     });
 });
