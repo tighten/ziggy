@@ -3,15 +3,7 @@
  */
 
 import assert, { deepEqual, strictEqual as same, throws } from 'assert';
-import route, { Config, RouteDefinition } from '../../src/js';
-
-declare global {
-    export interface Window {
-        Ziggy: Config;
-        location: Location;
-    }
-    export var Ziggy: Config;
-}
+import route from '../../src/js';
 
 const defaultWindow = {
     location: {
@@ -19,7 +11,7 @@ const defaultWindow = {
     },
 };
 
-const defaultZiggy: Config = {
+const defaultZiggy = {
     url: 'https://ziggy.dev',
     port: null,
     defaults: { locale: 'en' },
@@ -217,12 +209,12 @@ const defaultZiggy: Config = {
 };
 
 beforeAll(() => {
-    delete (window as any).location;
-    window.location = {} as Location;
+    delete window.location;
+    window.location = {};
 });
 
 beforeEach(() => {
-    (window as any).location = { ...defaultWindow.location };
+    window.location = { ...defaultWindow.location };
     global.window.location = window.location;
     global.Ziggy = { ...defaultZiggy };
 });
@@ -510,7 +502,7 @@ describe('route()', () => {
     });
 
     test('can accept a custom Ziggy configuration object', () => {
-        const config: Config = {
+        const config = {
             url: 'http://notYourAverage.dev',
             port: null,
             defaults: { locale: 'en' },
@@ -518,7 +510,7 @@ describe('route()', () => {
                 'tightenDev.packages.index': {
                     uri: 'tightenDev/{dev}/packages',
                     methods: ['GET', 'HEAD'],
-                } as RouteDefinition,
+                },
             },
         };
 
@@ -594,7 +586,7 @@ describe('route()', () => {
     test("can append 'extra' string/number parameter to query", () => {
         // 'posts.index' has no parameters
         same(route('posts.index', 'extra'), 'https://ziggy.dev/posts?extra=');
-        same(route('posts.index', [{ extra: 2 }]), 'https://ziggy.dev/posts?extra=2');
+        same(route('posts.index', [{extra: 2}]), 'https://ziggy.dev/posts?extra=2');
         same(route('posts.index', 1), 'https://ziggy.dev/posts?1=');
     });
 
@@ -745,18 +737,17 @@ describe('current()', () => {
     });
 
     test('can get the current route name with a custom Ziggy object', () => {
-        delete (global as any).Ziggy;
+        global.Ziggy = undefined;
         global.window.location.pathname = '/events/';
 
-        const config: Config = {
+        const config = {
             url: 'https://ziggy.dev',
             port: null,
-            defaults: {},
             routes: {
                 'events.index': {
                     uri: 'events',
                     methods: ['GET', 'HEAD'],
-                } as RouteDefinition,
+                },
             },
         };
 
@@ -813,7 +804,7 @@ describe('current()', () => {
         same(route().current('pages.complexWhereConflict1'), false);
 
         global.window.location.pathname = '/where/complex-12/required/file';
-        same(route().current('pages.complexWhere', { word: 'complex', digit: '12', required: 'required' }), true);
+        same(route().current('pages.complexWhere', {word: 'complex', digit: '12', required: 'required'}), true);
         same(route().current('pages.complexWhereConflict1'), false);
 
         global.window.location.pathname = '/where/123-abc/required/file.html';
@@ -827,29 +818,28 @@ describe('current()', () => {
 
     test('can current route with complex requirements is dehydrated correctly', () => {
         global.window.location.pathname = '/where/word-12/required/file';
-        deepEqual(route().params, { digit: '12', word: 'word', required: 'required', optional: undefined, extension: undefined })
+        deepEqual(route().params, {digit: '12', word: 'word', required: 'required', optional: undefined, extension: undefined})
 
         global.window.location.pathname = '/where/complex-12/required/optional/file';
-        deepEqual(route().params, { digit: '12', word: 'complex', required: 'required', optional: 'optional', extension: undefined })
+        deepEqual(route().params, {digit: '12', word: 'complex', required: 'required', optional: 'optional', extension: undefined})
 
         global.window.location.pathname = '/where/123-abc/required/file.html';
-        deepEqual(route().params, { digit: '123', word: 'abc', required: 'required', optional: undefined, extension: '.html' })
+        deepEqual(route().params, {digit: '123', word: 'abc', required: 'required', optional: undefined, extension: '.html'})
 
         global.window.location.pathname = '/where/complex-12/different_but_required/optional/file';
-        deepEqual(route().params, { digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined })
+        deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined})
 
         global.window.location.search = '?ab=cd&ef=1&dd';
-        deepEqual(route().params, { digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined, ab: 'cd', ef: '1', 'dd': '' })
+        deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined, ab: 'cd', ef: '1', 'dd': ''})
     });
 
     test('can strip regex start and end of string tokens from wheres', () => {
-        (global as any).Ziggy = undefined;
+        global.Ziggy = undefined;
         global.window.location.pathname = '/workspace/processes';
 
-        const config: Config = {
+        const config = {
             url: 'https://ziggy.dev',
             port: null,
-            defaults: {},
             routes: {
                 'workspaces.processes.index': {
                     uri: '{workspace}/processes',
@@ -857,7 +847,7 @@ describe('current()', () => {
                     wheres: {
                         workspace: '^(?!api|nova-api|horizon).*$',
                     },
-                } as RouteDefinition,
+                },
             },
         };
 
@@ -1120,15 +1110,23 @@ describe('current()', () => {
         same(route().current('events.venues.*'), false);
     });
 
+    test.skip('can unresolve arbitrary urls to names and params', () => {
+        const resolved = route().unresolve('https://ziggy.dev/events/1/venues?test=yes');
+        deepEqual(resolved, { name: 'events.venues.index', params: {event: '1'}, query: {test: 'yes'}, route: resolved.route });
+        same(resolved.route.uri, 'events/{event}/venues');
+
+        same(route().unresolve('ziggy.dev/events/1/venues-index').name, 'events.venues-index');
+        same(route().unresolve('/events/1/venues-index').name, 'events.venues-index');
+    });
+
     test('can get the current route name without window', () => {
         global.Ziggy = undefined;
         const oldWindow = global.window;
         delete global.window;
 
-        const config: Config = {
+        const config = {
             url: 'https://ziggy.dev',
             port: null,
-            defaults: {},
             routes: {
                 'events.venues.show': {
                     uri: 'events/{event}/venues/{venue}',
@@ -1137,13 +1135,13 @@ describe('current()', () => {
                         event: 'id',
                         venue: 'id',
                     },
-                } as RouteDefinition,
+                },
             },
             location: {
                 host: 'ziggy.dev',
                 pathname: '/events/1/venues/2',
                 search: '?user=Jacob&id=9',
-            } as Location,
+            },
         };
 
         same(route(undefined, undefined, undefined, config).current(), 'events.venues.show');
