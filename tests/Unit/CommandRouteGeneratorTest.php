@@ -145,43 +145,29 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_dts_file()
     {
-        Artisan::call('ziggy:generate',  ['--declarations' => true]);
+        Artisan::call('ziggy:generate',  ['--types' => true]);
 
-        $this->assertFileExists(base_path('resources/js/ziggy.d.ts'));
-        $this->assertFileExists(base_path('resources/js/ziggy.js'));
+        $this->assertFileEquals('./tests/fixtures/ziggy.d.ts', base_path('resources/js/ziggy.d.ts'));
     }
 
     /** @test */
     public function can_generate_dts_file_without_routes()
     {
-        Artisan::call('ziggy:generate', ['--declarations-only' => true]);
+        Artisan::call('ziggy:generate', ['--types-only' => true]);
 
         $this->assertFileExists(base_path('resources/js/ziggy.d.ts'));
-
-        if(method_exists($this, 'assertFileDoesNotExist'))
-            $this->assertFileDoesNotExist(base_path('resources/js/ziggy.js'));
-        else
-            $this->assertFileNotExists(base_path('resources/js/ziggy.js'));
+        $this->assertFileDoesNotExist(base_path('resources/js/ziggy.js'));
     }
 
     /** @test */
-    public function can_derive_dts_file_path_from_given_dts()
+    public function can_derive_dts_file_path_from_given_path()
     {
-        config(['ziggy.output.path' => 'resources/js/custom.d.ts']);
+        config(['ziggy.output.path' => 'resources/js/custom.js']);
 
-        Artisan::call('ziggy:generate', ['--declarations-only' => true]);
+        Artisan::call('ziggy:generate', ['--types-only' => true]);
 
         $this->assertFileExists(base_path('resources/js/custom.d.ts'));
-    }
-
-    /** @test */
-    public function can_derive_dts_file_path_from_relative_file_without_extension()
-    {
-        config(['ziggy.output.path' => './ziggy']);
-
-        Artisan::call('ziggy:generate', ['--declarations-only' => true]);
-
-        $this->assertFileExists(base_path('ziggy.d.ts'));
+        $this->assertFileDoesNotExist(base_path('resources/js/ziggy.d.ts'));
     }
 }
 

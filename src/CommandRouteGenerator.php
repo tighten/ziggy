@@ -2,9 +2,9 @@
 
 namespace Tightenco\Ziggy;
 
-use Directory;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use Tightenco\Ziggy\Output\File;
 use Tightenco\Ziggy\Ziggy;
 
@@ -12,8 +12,8 @@ class CommandRouteGenerator extends Command
 {
     protected $signature = 'ziggy:generate
                             {path? : Path to the generated JavaScript file. Default: `resources/js/ziggy.js`.}
-                            {--t|declarations : Generate TypeScript declaration file.}
-                            {--T|declarations-only : Generate TypeScript declaration file without ziggy routes file.}
+                            {--types : Generate a TypeScript declaration file.}
+                            {--types-only : Generate only a TypeScript declaration file.}
                             {--url=}
                             {--group=}';
 
@@ -30,26 +30,27 @@ class CommandRouteGenerator extends Command
 
     public function handle()
     {
-        $group = $this->option('group');
-        $url = $this->option('url') ? url($this->option('url')) : null;
-        $ziggy = (new Ziggy($group, $url));
+        $ziggy = new Ziggy($this->option('group'), $this->option('url') ? url($this->option('url')) : null);
+        
+        $this->makeDirectory(
+            $path = $this->argument('path') ?? config('ziggy.output.path', 'resources/js/ziggy.js')
+        );
 
-        $declarationsOnly = $this->option('declarations-only');
-        $declarations = $declarationsOnly || $this->option('declarations');
-
-        $path = $this->argument('path') ?? config('ziggy.output.path', 'resources/js/ziggy.js');
-        $this->makeDirectory($path);
-
-        if(!$declarationsOnly){
-            $generatedRoutes = $this->generateJs($ziggy);
-            $this->files->put(base_path($path), $generatedRoutes);
+        if (! $this->option('types-only')) {
+            $this->files->put(
+                base_path($path),
+                new (config('ziggy.output.file', File::class))($ziggy),
+            );
         }
-        if($declarations){
-            $generatedDeclarations = $this->generateDts($ziggy);
-            $this->files->put(base_path($this->deriveDtsFile($path)), $generatedDeclarations);
+        
+        if ($this->option('types') || $this->option('types-only')) {
+            $this->files->put(
+                base_path(Str::replaceLast('.js', '.d.ts', $path)),
+                $ziggy->typescriptDeclarationGenerator()->generateDeclarations(),
+            );
         }
 
-        $this->info('File generated!');
+        $this->info('Files generated!');
     }
 
     protected function makeDirectory($path)
@@ -59,27 +60,5 @@ class CommandRouteGenerator extends Command
         }
 
         return $path;
-    }
-
-    private function deriveDtsFile($path) {
-        if(preg_match('/.d.ts$/', $path)) {
-            return $path;
-        } else {
-            $dir = dirname($path) ?? '.';
-            $file = preg_replace("/\.[^\.]+$/", '', basename($path)) . '.d.ts';
-            return join(DIRECTORY_SEPARATOR, [$dir, $file]);
-        }
-    }
-
-    private function generateJs(Ziggy $ziggy)
-    {
-        $output = config('ziggy.output.file', File::class);
-        return (string) new $output($ziggy);
-    }
-
-    private function generateDts(Ziggy $ziggy)
-    {
-        $declarations = $ziggy->typescriptDeclarationGenerator();
-        return $declarations->generateDeclarations();
     }
 }
