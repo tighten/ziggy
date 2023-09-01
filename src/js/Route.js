@@ -113,13 +113,9 @@ export default class Route {
                 if (!new RegExp(`^${optional ? `(${this.wheres[segment]})?` : this.wheres[segment]}$`).test(params[segment] ?? '')) {
                     throw new Error(`Ziggy error: '${segment}' parameter does not match required format '${this.wheres[segment]}' for route '${this.name}'.`)
                 }
-
-                if (segments[segments.length - 1].name === segment) {
-                    return encodeURIComponent(params[segment] ?? '').replace(/%2F/g, '/');
-                }
             }
 
-            return encodeURIComponent(params[segment] ?? '');
+            return encodeURI(params[segment] ?? '').replace(/%7C/g, '|').replace(/%25/g, '%').replace(/\$/g, '%24');
         }).replace(`${this.origin}//`, `${this.origin}/`).replace(/\/+$/, '');
     }
 }
