@@ -422,7 +422,7 @@ export default function PostsLink() {
 }
 ```
 
-> Note: If you include the `@routes` Blade directive in your views, Ziggy's configuration will already be available globally, so you don't need to import the `Ziggy` config object or make it global with `globalThis.Ziggy = Ziggy`.
+> Note: If you include the `@routes` Blade directive in your views, Ziggy's configuration will already be available globally, so you don't need to import the `Ziggy` config object or make it available globally with `globalThis.Ziggy = Ziggy`—you can use the `useRoute()` hook exactly as shown in the `PostsLink.js` example directly above, without any other setup.
 
 #### SPAs or separate repos
 
