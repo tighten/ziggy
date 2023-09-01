@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 use Tightenco\Ziggy\Output\File;
+use Tightenco\Ziggy\Output\Types;
 use Tightenco\Ziggy\Ziggy;
 
 class CommandRouteGenerator extends Command
@@ -46,7 +47,7 @@ class CommandRouteGenerator extends Command
         if ($this->option('types') || $this->option('types-only')) {
             $this->files->put(
                 base_path(Str::replaceLast('.js', '.d.ts', $path)),
-                $ziggy->typescriptDeclarationGenerator()->generateDeclarations(),
+                new (config('ziggy.output.types', Types::class))($ziggy),
             );
         }
 

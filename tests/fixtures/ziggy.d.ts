@@ -1,11 +1,22 @@
-/*
- * Do not modify this file. It is auto-generated and corresponds to your routes
- * exposed by ziggy route helper. Changes will not be preserved.
- */
-export {}
+/* Do not modify this file, it is generated automatically. */
+export {};
 
 declare module 'ziggy-js' {
   interface RouteLookup {
-    
-  }
+    "posts.index": [],
+    "postComments.show": [
+        {
+            "name": "post"
+        },
+        {
+            "name": "comment",
+            "binding": "uuid"
+        }
+    ],
+    "postComments.store": [
+        {
+            "name": "post"
+        }
+    ]
+}
 }

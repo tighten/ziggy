@@ -145,6 +145,11 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_dts_file()
     {
+        app('router')->get('posts', $this->noop())->name('posts.index');
+        app('router')->get('posts/{post}/comments/{comment:uuid}', PostCommentController::class)->name('postComments.show');
+        app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
+        app('router')->getRoutes()->refreshNameLookups();
+
         Artisan::call('ziggy:generate',  ['--types' => true]);
 
         $this->assertFileEquals('./tests/fixtures/ziggy.d.ts', base_path('resources/js/ziggy.d.ts'));
@@ -153,6 +158,11 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_dts_file_without_routes()
     {
+        app('router')->get('posts', $this->noop())->name('posts.index');
+        app('router')->get('posts/{post}/comments/{comment:uuid}', PostCommentController::class)->name('postComments.show');
+        app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
+        app('router')->getRoutes()->refreshNameLookups();
+
         Artisan::call('ziggy:generate', ['--types-only' => true]);
 
         $this->assertFileExists(base_path('resources/js/ziggy.d.ts'));
@@ -163,6 +173,10 @@ class CommandRouteGeneratorTest extends TestCase
     public function can_derive_dts_file_path_from_given_path()
     {
         config(['ziggy.output.path' => 'resources/js/custom.js']);
+        app('router')->get('posts', $this->noop())->name('posts.index');
+        app('router')->get('posts/{post}/comments/{comment:uuid}', PostCommentController::class)->name('postComments.show');
+        app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
+        app('router')->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate', ['--types-only' => true]);
 
@@ -181,5 +195,12 @@ const Ziggy = {$this->ziggy->toJson()};
 export { Ziggy };
 
 JAVASCRIPT;
+    }
+}
+
+class PostCommentController
+{
+    public function __invoke($post, $comment) {
+        // 
     }
 }

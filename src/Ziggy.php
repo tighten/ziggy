@@ -4,7 +4,6 @@ namespace Tightenco\Ziggy;
 
 use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Reflector;
 use Illuminate\Support\Str;
@@ -27,7 +26,7 @@ class Ziggy implements JsonSerializable
 
         $this->url = rtrim($url ?? url('/'), '/');
 
-        if (!static::$cache) {
+        if (! static::$cache) {
             static::$cache = $this->nameKeyedRoutes();
         }
 
@@ -104,7 +103,7 @@ class Ziggy implements JsonSerializable
             })
             : $this->routes->filter(function ($route, $name) use ($filters, $include) {
                 if ($include === false) {
-                    return !Str::is($filters, $name);
+                    return ! Str::is($filters, $name);
                 }
 
                 foreach ($filters as $pattern) {
@@ -154,15 +153,6 @@ class Ziggy implements JsonSerializable
     }
 
     /**
-     * Generates the typescript declaration files for the route function.
-     */
-    public function typescriptDeclarationGenerator(): TypescriptDeclarationGenerator
-    {
-        $generator = new TypeScriptDeclarationGenerator($this->routes);
-        return $generator;
-    }
-
-    /**
      * Convert this Ziggy instance to an array.
      */
     public function toArray(): array
@@ -173,9 +163,7 @@ class Ziggy implements JsonSerializable
             'defaults' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
                 : [],
-            'routes' => $this->applyFilters($this->group)->map(function ($route) {
-                return $route->except('parameterNames');
-            })->toArray(),
+            'routes' => $this->applyFilters($this->group)->toArray(),
         ];
     }
 
@@ -208,7 +196,7 @@ class Ziggy implements JsonSerializable
             $bindings = [];
 
             foreach ($route->signatureParameters(UrlRoutable::class) as $parameter) {
-                if (!in_array($parameter->getName(), $route->parameterNames())) {
+                if (! in_array($parameter->getName(), $route->parameterNames())) {
                     break;
                 }
 
