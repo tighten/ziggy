@@ -32,23 +32,21 @@ class CommandRouteGenerator extends Command
     public function handle()
     {
         $ziggy = new Ziggy($this->option('group'), $this->option('url') ? url($this->option('url')) : null);
-        
+
         $this->makeDirectory(
             $path = $this->argument('path') ?? config('ziggy.output.path', 'resources/js/ziggy.js')
         );
 
         if (! $this->option('types-only')) {
-            $this->files->put(
-                base_path($path),
-                new (config('ziggy.output.file', File::class))($ziggy),
-            );
+            $output = config('ziggy.output.file', File::class);
+
+            $this->files->put(base_path($path), new $output($ziggy));
         }
-        
+
         if ($this->option('types') || $this->option('types-only')) {
-            $this->files->put(
-                base_path(Str::replaceLast('.js', '.d.ts', $path)),
-                new (config('ziggy.output.types', Types::class))($ziggy),
-            );
+            $types = config('ziggy.output.types', Types::class);
+
+            $this->files->put(base_path(Str::replaceLast('.js', '.d.ts', $path)), new $types($ziggy));
         }
 
         $this->info('Files generated!');
