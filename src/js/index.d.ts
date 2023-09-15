@@ -1,3 +1,5 @@
+import Router from './Router';
+
 /**
  * A list of routes and their parameters and bindings.
  *
@@ -73,14 +75,22 @@ type RouteParamsArray<N extends RouteName> = N extends KnownRouteName ? KnownRou
  */
 type RouteParams<N extends RouteName> = ParameterValue | RouteParamsObject<N> | RouteParamsArray<N>;
 
+type Config = {};
+
 /**
  * Ziggy's route helper.
  */
-// TODO
+// TODO 'default'
+export function route(): Router;
+export function route(
+    name: undefined,
+    params?: RouteParams<T> | undefined,
+    absolute?: boolean,
+    config?: Config,
+): Router;
 export function route<T extends RouteName>(
     name: T,
     params?: RouteParams<T> | undefined,
     absolute?: boolean,
-    config?: object,
+    config?: Config,
 ): string;
-export function route(): any;
