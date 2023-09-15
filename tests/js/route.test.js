@@ -376,6 +376,10 @@ describe('route()', () => {
         same(route('home'), 'https://ziggy.dev');
     });
 
+    test('can generate a relative URL to a root path', () => {
+        same(route('home', undefined, false), '/');
+    });
+
     // @todo duplicate
     test('can ignore an optional parameter', () => {
         same(route('optional', { id: 123 }), 'https://ziggy.dev/optional/123');
