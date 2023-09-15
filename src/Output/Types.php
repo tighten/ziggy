@@ -24,14 +24,13 @@ class Types implements Stringable
                     : ['name' => $param];
             });
         });
-        
-        return <<<JAVASCRIPT
-/* Do not modify this file, it is generated automatically. */
-export {};
 
+        return <<<JAVASCRIPT
+/* This file is generated automatically! */
 declare module 'ziggy-js' {
   interface RouteLookup {$routes->toJson(JSON_PRETTY_PRINT)}
 }
+export {};
 
 JAVASCRIPT;
     }

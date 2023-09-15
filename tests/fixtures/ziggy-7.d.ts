@@ -1,6 +1,4 @@
-/* Do not modify this file, it is generated automatically. */
-export {};
-
+/* This file is generated automatically! */
 declare module 'ziggy-js' {
   interface RouteLookup {
     "posts.index": [],
@@ -20,3 +18,4 @@ declare module 'ziggy-js' {
     ]
 }
 }
+export {};
