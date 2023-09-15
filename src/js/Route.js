@@ -26,7 +26,7 @@ export default class Route {
      * @return {String} Route template.
      */
     get template() {
-        return `${this.origin}/${this.definition.uri}`.replace(/\/+$/, '');
+        return `${this.origin}/${this.definition.uri}`.replace(/(?<=.)\/+$/, '');
     }
 
     /**
