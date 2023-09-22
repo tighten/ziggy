@@ -26,7 +26,7 @@ type ParameterInfo = { name: string, binding?: string };
 /**
  * A primitive route parameter value.
  */
-type ParameterValue = string | number;
+type ParameterValue = string | number | { id: number };
 // TODO: Technically booleans work too, does it make sense to add them here? What would that look like?
 
 /**
