@@ -28,7 +28,7 @@ class Types implements Stringable
         return <<<JAVASCRIPT
 /* This file is generated automatically! */
 declare module 'ziggy-js' {
-  interface RouteLookup {$routes->toJson(JSON_PRETTY_PRINT)}
+  interface RouteLookup {$routes->toJson()}
 }
 export {};
 
