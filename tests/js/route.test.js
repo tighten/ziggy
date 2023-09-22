@@ -594,10 +594,12 @@ describe('route()', () => {
         same(route('posts.index', 1), 'https://ziggy.dev/posts?1=');
     });
 
-    test("can append 'extra' string/number elements in array of parameters to query", () => {
+    test("can append 'extra' elements in array of parameters to query", () => {
         // 'posts.show' has exactly one parameter
         same(route('posts.show', [1, 2]), 'https://ziggy.dev/posts/1?2=');
         same(route('posts.show', ['my-first-post', 'foo', 'bar']), 'https://ziggy.dev/posts/my-first-post?foo=&bar=');
+
+        same(route('posts.show', ['my-first-post', 'foo', { bar: 'baz' }]), 'https://ziggy.dev/posts/my-first-post?foo=&bar=baz');
     });
 
     test("can automatically append object with only 'extra' parameters to query", () => {
