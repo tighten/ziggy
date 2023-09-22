@@ -50,10 +50,11 @@ type GenericRouteParamsObject = Record<keyof any, any> & HasQueryParam;
 /**
  * An object of parameters for a specific named route.
  */
-type KnownRouteParamsObject<I extends readonly ParameterInfo[]> = { [T in I[number] as T['name']]?: ValueOrBoundValue<T> } & HasQueryParam;
+type KnownRouteParamsObject<I extends readonly ParameterInfo[]> = { [T in I[number] as T['name']]?: ValueOrBoundValue<T> } & GenericRouteParamsObject;
 // `readonly` allows TypeScript to determine the actual values of all the
 // parameter names inside the array, instead of just seeing `string`.
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1329978447.
+// TODO: The keys here could be non-optional (or more detailed) if we can determine which params are required/not.
 /**
  * An object of route parameters.
  */
