@@ -45,6 +45,8 @@ type ParameterValue = RawParameterValue | ModelParameterValue;
 type ValueOrBoundValue<I extends ParameterInfo> = I extends { binding: string }
     ? { [K in I['binding']]: RawParameterValue } | RawParameterValue
     : ParameterValue;
+
+// Uncomment to test:
 // type A = ValueOrBoundValue<{ name: 'foo', binding: 'bar' }>;
 // = ParameterValue | { bar: RawParameterValue }
 
@@ -81,8 +83,22 @@ type KnownRouteParamsArray<I extends readonly ParameterInfo[]> = { [K in keyof I
 // Because `K in keyof I` for a `readonly` array is always a number, even though
 // this looks like `{ 0: T, 1: U, 2: V }` TypeScript generates `[T, U, V]`.
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1330002370.
+
+// Uncomment to test:
 // type B = KnownRouteParamsArray<[{ name: 'post', binding: 'uuid' }]>;
 // = [ParameterValue | { uuid: RawParameterValue }]
+
+/**
+ * TODO
+ * For `KnownRouteParamsArray`, we need a more accurate type—one that behaves the same for the
+ * first n items in the array of parameters, where n is the number of required parameters, but
+ * allows *additional* array elements, because you can actually pass Ziggy an array containing
+ * whatever extra stuff you want. This type is closer but not completely correct:
+ * `{ [K in keyof I as number]: K extends keyof I ? ValueOrBoundValue<I[K]> : Record<keyof any, any> }`.
+ * It allows additional array elements but insists that they all be `ValueOrBoundValue`,
+ * so `as number` seems to be working but `Record<keyof any, any>` doesn't?
+ */
+
 /**
  * An array of route parameters.
  */
