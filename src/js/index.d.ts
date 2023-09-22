@@ -24,19 +24,29 @@ type RouteName = KnownRouteName | (string & {});
 type ParameterInfo = { name: string, binding?: string };
 
 /**
- * A primitive route parameter value.
+ * A primitive route parameter value, as it would appear in a URL.
  */
-type ParameterValue = string | number | { id: number };
+type RawParameterValue = string | number;
 // TODO: Technically booleans work too, does it make sense to add them here? What would that look like?
 
 /**
- * A parseable route parameter, either as a plain value or nested inside an object under its binding key.
+ * An object parameter value containing the 'default' binding key `id`, e.g. representing an Eloquent model.
+ */
+type ModelParameterValue = { id: number } & Record<keyof any, any>;
+
+/**
+ * A route parameter value.
+ */
+type ParameterValue = RawParameterValue | ModelParameterValue;
+
+/**
+ * A parseable route parameter, either plain or nested inside an object under its binding key.
  */
 type ValueOrBoundValue<I extends ParameterInfo> = I extends { binding: string }
-    ? { [K in I['binding']]: ParameterValue } | ParameterValue
+    ? { [K in I['binding']]: RawParameterValue } | RawParameterValue
     : ParameterValue;
 // type A = ValueOrBoundValue<{ name: 'foo', binding: 'bar' }>;
-// = ParameterValue | { bar: ParameterValue }
+// = ParameterValue | { bar: RawParameterValue }
 
 /**
  * An object containing a special '_query' key to target the query string of a URL.
@@ -72,7 +82,7 @@ type KnownRouteParamsArray<I extends readonly ParameterInfo[]> = { [K in keyof I
 // this looks like `{ 0: T, 1: U, 2: V }` TypeScript generates `[T, U, V]`.
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1330002370.
 // type B = KnownRouteParamsArray<[{ name: 'post', binding: 'uuid' }]>;
-// = [ParameterValue | { uuid: ParameterValue }]
+// = [ParameterValue | { uuid: RawParameterValue }]
 /**
  * An array of route parameters.
  */
