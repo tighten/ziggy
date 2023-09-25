@@ -31,7 +31,10 @@ Ziggy supports all versions of Laravel from `5.4` onward, and all modern browser
 
 ## Installation
 
-Install Ziggy into your Laravel app with `composer require tightenco/ziggy`.
+Install Ziggy into your Laravel app with 
+```shell
+composer require tightenco/ziggy
+```
 
 Add the `@routes` Blade directive to your main layout (_before_ your application's JavaScript), and the `route()` helper function will now be available globally!
 
