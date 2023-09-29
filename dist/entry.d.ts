@@ -1,15 +1,3 @@
-declare global {
-    var Ziggy: Ziggy;
-}
-type Ziggy = {
-    url: string;
-    port?: string | number;
-    absolute: boolean;
-    location?: URL;
-    defaults: Record<string, string | number>;
-    routes: Record<string, RouteDefinition>;
-};
-type RouteName = keyof typeof Ziggy['routes'];
 type RouteDefinition = {
     uri: string;
     methods: Array<'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'>;
@@ -17,6 +5,18 @@ type RouteDefinition = {
     bindings?: Record<string, string | number>;
     wheres?: Record<string, string>;
 };
+type Ziggy = {
+    url: string;
+    port?: string | number;
+    absolute: boolean;
+    location?: string | URL;
+    defaults: Record<string, string | number>;
+    routes: Record<string, RouteDefinition>;
+};
+declare global {
+    var Ziggy: Ziggy;
+}
+type RouteName = keyof typeof Ziggy['routes'];
 type Router = {
     params: object;
     current(): string | undefined;

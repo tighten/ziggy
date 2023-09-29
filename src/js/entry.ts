@@ -13,7 +13,7 @@ type Ziggy = {
     url: string;
     port?: string|number;
     absolute: boolean;
-    location?: URL,
+    location?: string | URL,
     defaults: Record<string, string|number>; // |boolean?
     routes: Record<string, RouteDefinition>,
     // routes: RouteCollection;
@@ -34,40 +34,27 @@ type Router = {
     check(name: string): boolean;
 }
 
-function location(config: Ziggy): { host: string, pathname: string, search: string } {
-    const { host = '', pathname = '', search = '' } = typeof window !== 'undefined' ? window.location : {};
-    return {
-        host: config.location?.host ?? host,
-        pathname: config.location?.pathname ?? pathname,
-        search: config.location?.search ?? search,
-    };
-}
-
-/**
- * Get the current URL.
+/*
+    (\/?)          # optional preceding `/`
+    {              # entire route parameter wrapped in `{}`
+        ([^}?]+)   # parameter name inside `{}` with any characters except `}` or `?`
+        (\??)      # optional trailing `?` to indicate that the parameter itself is optional
+    }
  */
-function currentUrl(config: Ziggy): string {
-    const { host, pathname, search } = location(config);
-    return (
-        config.absolute
-            ? host + pathname
-            : pathname.replace(config.url.replace(/^\w*:\/\/[^/]+/, ''), '').replace(/^\/+/, '/')
-    ) + search;
-}
+const PARAMETERS = /(\/?){([^}?]+)(\??)}/g;
 
 /**
-     * Get a 'template' of the complete URL for this route.
-     *
-     * @example https://{team}.ziggy.dev/user/{user}
-     */
-function template(route: RouteDefinition, config: Ziggy): string {
-    // If  we're building just a path there's no origin, otherwise: if this route has a
-    // domain configured we construct the origin with that, if not we use the app URL
-    const origin = !config.absolute ? '' : route.domain
-        // Todo is there a TS way to ensure this will always always always match? (remove `?.`)
-        ? `${config.url.match(/^\w+:\/\//)?.[0]}${route.domain}${config.port ? `:${config.port}` : ''}`
-        : config.url;
-
+ * Get a 'template' of the complete URL for this route.
+ *
+ * @example
+ * https://{team}.ziggy.dev/user/{user}
+ */
+function template(route: RouteDefinition, config: Ziggy) {
+    // if we're building a relative URL (path only) there's no origin, otherwise: if this route
+    // has a domain configured we construct the origin with that, if not we use the app URL
+    const origin = config.absolute
+        ? (route.domain ? `${/^\w+:\/\//.exec(config.url)}${route.domain}${config.port ? `:${config.port}` : ''}` : config.url)
+        : '';
     return `${origin}/${route.uri}`.replace(/\/+$/, '');
 }
 
@@ -75,27 +62,25 @@ type UrlRouteMatchResult = { matched: false }|{ matched: true, params: Record<st
 /**
      * Get whether this route's template matches the given URL.
      */
-function attemptUrlRouteMatch(url: string, route: RouteDefinition, config: Ziggy): UrlRouteMatchResult {
+function attemptUrlRouteMatch(url: URL, route: RouteDefinition, config: Ziggy): UrlRouteMatchResult {
     // It's impossible to be 'on' a POST/etc. URL in the browser
     if (route.methods.includes('GET')) {
         // Transform the route's template into a regex that will match a hydrated URL,
         // by replacing its parameter segments with matchers for parameter values
         const pattern = template(route, config)
-            .replace(/(\/?){([^}?]*)(\??)}/g, (_, slash, segment, optional) => {
+            .replace(PARAMETERS, (_, slash, segment, optional) => {
                 const regex = `(?<${segment}>${route.wheres?.[segment]?.replace(/(^\^)|(\$$)/g, '') || '[^/?]+'})`;
                 return optional ? `(${slash}${regex})?` : `${slash}${regex}`;
             })
             .replace(/^\w+:\/\//, '');
 
-        const [location, query] = url.replace(/^\w+:\/\//, '').split('?');
-
-        const matches = new RegExp(`^${pattern}/?$`).exec(location as string); // todo
+        const matches = new RegExp(`^${pattern}/?$`).exec(`${config.absolute ? url.host : ''}${url.pathname}`); // todo
 
         if (matches) {
             return {
                 matched: true,
                 params: matches.groups ?? {},
-                query: qsparse(query as string), // todo
+                query: qsparse(url.search.replace(/^\?/, '')), // todo just use url.searchParams?
             };
         }
     };
@@ -117,9 +102,9 @@ type ParsedUrlInfo = {
  */
 // Get rid of all `?`!
 function parseCurrentUrl(config: Ziggy): ParsedUrlInfo {
-    const url = currentUrl(config);
+    const url = new URL(config.location ?? window.location.href);
     let params = { params: {}, query: {} };
-    const [name, route] = Object.entries(config.routes).find(([name, route]) => {
+    const [name, route] = Object.entries(config.routes).find(([, route]) => {
         const result = attemptUrlRouteMatch(url, route, config)
         if (result.matched) {
             params = { params: result.params, query: result.query }
@@ -130,21 +115,23 @@ function parseCurrentUrl(config: Ziggy): ParsedUrlInfo {
 }
 
 function defaults(route: RouteDefinition, config: Ziggy): object {
-    return extractParametersFromTemplate(template(route, config))
+    return getParameters(route, config)
         .filter(({ name }) => Object.hasOwn(config.defaults, name))
         .reduce((defaults, param) => ({ ...defaults, [param.name]: config.defaults[param.name] }), {});
 }
 
-function extractParametersFromTemplate(template: string): Array<{ name: string, required: boolean }> {
-    return template.match(/{[^}?]+\??}/g)?.map((segment) => ({
-        name: segment.replace(/{|\??}/g, ''),
-        required: !/\?}$/.test(segment),
-    })) ?? [];
+function getParameters(route: RouteDefinition, config: Ziggy) {
+    // doesn't have to include the protocol or be formatted nicely, we just need the parameters
+    const template = `${config.absolute ? (route.domain ?? config.url) : ''}${route.uri}`;
+    // get the parameters
+    const matches = template.matchAll(PARAMETERS);
+    // return simple objects
+    return Array.from(matches).map(([,, name, optional]) => ({ name: name!, required: !optional })) ?? [];
 }
 
 function substiteBindings(inputParams: object, route: RouteDefinition, config: Ziggy): object {
     return Object.entries(inputParams).reduce((result, [key, value]: [string, any]) => {
-        if (!value || value instanceof Array || typeof value !== 'object' || !extractParametersFromTemplate(template(route, config)).some(({ name }) => name === key)) {
+        if (!value || value instanceof Array || typeof value !== 'object' || !getParameters(route, config).some(({ name }) => name === key)) {
             return { ...result, [key]: value };
         }
         route.bindings ??= {};
@@ -160,11 +147,11 @@ function substiteBindings(inputParams: object, route: RouteDefinition, config: Z
     }, {});
 }
 
-function normalizeRouteParameters(inputParams: any, route: RouteDefinition, config: Ziggy): Record<string, any> {
+function normalizeInput(inputParams: any, route: RouteDefinition, config: Ziggy): Record<string, any> {
     if (typeof inputParams === 'string' || typeof inputParams === 'number') {
         inputParams = [inputParams];
     }
-    const parameters = extractParametersFromTemplate(template(route, config)).filter(({ name }) => !Object.hasOwn(config.defaults, name));
+    const parameters = getParameters(route, config).filter(({ name }) => !Object.hasOwn(config.defaults, name));
     if (inputParams instanceof Array) {
         inputParams = inputParams.reduce((allParams, value, position) => {
             const parameter = parameters[position];
@@ -203,7 +190,7 @@ function normalizeRouteParameters(inputParams: any, route: RouteDefinition, conf
 
 function compileRouteUrl(name: string, inputParams: Record<string, any>, route: RouteDefinition, config: Ziggy): string {
     const routeTemplate = template(route, config);
-    const segments = extractParametersFromTemplate(routeTemplate);
+    const segments = getParameters(route, config);
 
     if (!segments.length) return routeTemplate;
 
@@ -227,13 +214,16 @@ function compileRouteUrl(name: string, inputParams: Record<string, any>, route: 
     }).replace(/\/+$/, '');
 }
 
-function compileUrl(name: string, inputParams: object, route: RouteDefinition, config: Ziggy): string {
-    const params = normalizeRouteParameters(inputParams, route, config);
+function compileUrl(name: string, inputParams: object|undefined, config: Ziggy): string {
+    const route = config.routes[name];
+    if (!route) {
+        throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
+    }
+    const params = normalizeInput(inputParams ?? {}, route, config);
     const unhandled = Object.keys(params)
-        .filter((key) => !extractParametersFromTemplate(template(route, config)).some(({ name }) => name === key))
+        .filter((key) => !getParameters(route, config).some(({ name }) => name === key))
         .filter((key) => key !== '_query')
         .reduce((result, current) => ({ ...result, [current]: params[current] }), {});
-
     return compileRouteUrl(name, params, route, config) + stringify({ ...unhandled, ...params['_query'] }, {
         addQueryPrefix: true,
         arrayFormat: 'indices',
@@ -246,17 +236,11 @@ function compileUrl(name: string, inputParams: object, route: RouteDefinition, c
 function route(): Router;
 function route(name: RouteName, params?: object, absolute?: boolean, config?: Ziggy): string;
 function route(name?: RouteName, params?: object, absolute: boolean = true, config?: Ziggy): Router|string {
-    // Re-assignment necessary to convince TypeScript it can't be undefined https://stackoverflow.com/a/57386066/6484459
+    // Check if this is still undefined and throw an error telling the user to set it up properly?
     const resolvedConfig = config ?? Ziggy ?? globalThis?.Ziggy;
-
     resolvedConfig.absolute = absolute;
-
     if (name) {
-        const route = resolvedConfig.routes[name];
-        if (route) {
-            return compileUrl(name, params ?? {}, route, resolvedConfig);
-        }
-        throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
+        return compileUrl(name, params, resolvedConfig);
     }
 
     /**
@@ -267,6 +251,7 @@ function route(name?: RouteName, params?: object, absolute: boolean = true, conf
     function current(name: string): boolean
     function current(name: string, params: object): boolean
     function current(name?: string, params?: object): string|undefined|boolean {
+        // Move inner contents of this function into a wrapper that lives outside `route`?
         const current = parseCurrentUrl(resolvedConfig);
         if (!current.matched) {
             // The current URL doesn't match any named routes
@@ -282,7 +267,7 @@ function route(name?: RouteName, params?: object, absolute: boolean = true, conf
             // or name doesn't match, so return without checking paramaters
             return match;
         }
-        params = normalizeRouteParameters(params, current.route, resolvedConfig);
+        params = normalizeInput(params, current.route, resolvedConfig);
         const routeParams: Record<string, any> = { ...current.params, ...current.query };
         if (Object.values(params).every(p => !p) && !Object.values(routeParams).some(v => v !== undefined)) {
             return true;
@@ -304,5 +289,25 @@ function route(name?: RouteName, params?: object, absolute: boolean = true, conf
         },
     };
 }
+
+// const Ziggy = {
+//     url: 'foo',
+//     absolute: false,
+//     defaults: {},
+//     routes: {
+//         home: {
+//             uri: '/',
+//             methods: ['GET'],
+//         },
+//         posts: {
+//             uri: 'blog',
+//             methods: ['GET'],
+//         },
+//     },
+// };
+
+// route('home');
+// // @ts-expect-error
+// route('users');
 
 export { route };

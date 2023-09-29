@@ -7,7 +7,7 @@ import { route } from '../../dist/entry.js';
 
 const defaultWindow = {
     location: {
-        host: 'ziggy.dev',
+        href: 'https://ziggy.dev',
     },
 };
 
@@ -508,8 +508,6 @@ describe('route()', () => {
         global.Ziggy.url = 'https://ziggy.dev/subfolder';
 
         global.window.location.href = 'https://ziggy.dev/subfolder/ph/en/products/4';
-        global.window.location.host = 'ziggy.dev';
-        global.window.location.pathname = '/subfolder/ph/en/products/4';
 
         deepEqual(route().params, { country: 'ph', language: 'en', id: '4' });
     });
@@ -518,29 +516,22 @@ describe('route()', () => {
         global.Ziggy.url = 'https://ziggy.dev/nested/subfolder';
 
         global.window.location.href = 'https://ziggy.dev/nested/subfolder/ph/en/products/4';
-        global.window.location.host = 'ziggy.dev';
-        global.window.location.pathname = '/nested/subfolder/ph/en/products/4';
 
         deepEqual(route().params, { country: 'ph', language: 'en', id: '4' });
     });
 
     test('can extract domain parameters from the current URL', () => {
         global.window.location.href = 'https://tighten.ziggy.dev/users/1';
-        global.window.location.host = 'tighten.ziggy.dev';
-        global.window.location.pathname = '/users/1';
 
         deepEqual(route().params, { team: 'tighten', id: '1' });
     });
 
     test('can extract named parameters from the current URL', () => {
         global.window.location.href = 'https://ziggy.dev/posts/1';
-        global.window.location.host = 'ziggy.dev';
-        global.window.location.pathname = '/posts/1';
 
         deepEqual(route().params, { post: '1' });
 
         global.window.location.href = 'https://ziggy.dev/events/1/venues/2';
-        global.window.location.pathname = '/events/1/venues/2';
 
         deepEqual(route().params, { event: '1', venue: '2' });
     });
@@ -628,49 +619,36 @@ describe('has()', () => {
 
 describe('current()', () => {
     test('can get the current route name', () => {
-        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2';
 
         same(route().current(), 'events.venues.show');
     });
 
     test('can get the current route name on a route with multiple allowed HTTP methods', () => {
-        global.window.location.pathname = '/posts/1';
+        global.window.location.href = 'https://ziggy.dev/posts/1';
 
         same(route().current(), 'posts.show');
     });
 
-    test('can get the current route name with a missing protocol', () => {
-        global.window.location.pathname = '/events/1/venues/';
-        global.window.location.protocol = '';
-
-        same(route().current(), 'events.venues.index');
-    });
-
     test('can get the current route name at the domain root', () => {
         global.window.location.href = 'https://ziggy.dev';
-        global.window.location.host = 'ziggy.dev';
-        global.window.location.pathname = '/';
 
         same(route().current(), 'home');
         same(route().current('home'), true);
     });
 
     test('can ignore query string when getting current route name', () => {
-        global.window.location.pathname = '/events/1/venues?foo=2';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues?foo=2';
 
         same(route().current(), 'events.venues.index');
     });
 
     test('can ignore domain when getting current route name and absolute is false', () => {
         global.window.location.href = 'https://tighten.ziggy.dev/events/1/venues?foo=2';
-        global.window.location.host = 'tighten.ziggy.dev';
-        global.window.location.pathname = '/events/1/venues?foo=2';
 
         same(route(undefined, undefined, false).current(), 'events.venues.index');
 
         global.window.location.href = 'https://example.com/events/1/venues?foo=2';
-        global.window.location.host = 'example.com';
-        global.window.location.pathname = '/events/1/venues?foo=2';
 
         same(route(undefined, undefined, false).current(), 'events.venues.index');
     });
@@ -678,20 +656,18 @@ describe('current()', () => {
     test('can ignore domain when getting current route name, absolute is false, and app is in a subfolder', () => {
         global.Ziggy.url = 'https://tighten.ziggy.dev/subfolder';
         global.window.location.href = 'https://tighten.ziggy.dev/subfolder/events/1/venues?foo=2';
-        global.window.location.pathname = '/subfolder/events/1/venues?foo=2';
 
         same(route(undefined, undefined, false).current(), 'events.venues.index');
 
         global.Ziggy.url = 'https://example.com/nested/subfolder';
         global.window.location.href = 'https://example.com/nested/subfolder/events/1/venues?foo=2';
-        global.window.location.pathname = '/nested/subfolder/events/1/venues?foo=2';
 
         same(route(undefined, undefined, false).current(), 'events.venues.index');
     });
 
     test('can get the current route name with a custom Ziggy object', () => {
         global.Ziggy = undefined;
-        global.window.location.pathname = '/events/';
+        global.window.location.href = 'https://ziggy.dev/events/';
 
         const config = {
             url: 'https://ziggy.dev',
@@ -708,20 +684,20 @@ describe('current()', () => {
     });
 
     test('can return undefined when getting the current route name on an unknown URL', () => {
-        global.window.location.pathname = '/unknown/path';
+        global.window.location.href = 'https://ziggy.dev/unknown/path';
 
         same(route().current(), undefined);
     });
 
     test('can check the current route name on a route/URL made up entirely of a single parameter', () => {
-        global.window.location.pathname = '/some-page';
+        global.window.location.href = 'https://ziggy.dev/some-page';
 
         same(route().current(), 'pages');
         same(route().current('pages', { page: 'some-page' }), true);
     });
 
     test('can check the current route name on a route/URL made up entirely of a single optional parameter', () => {
-        global.window.location.pathname = '/optionalpage/foo';
+        global.window.location.href = 'https://ziggy.dev/optionalpage/foo';
 
         same(route().current(), 'pages.optional');
         same(route().current('pages.optional', ''), false);
@@ -733,7 +709,7 @@ describe('current()', () => {
     });
 
     test('can check the current route name on a route/URL made up entirely of a single optional parameter and with that parameter missing', () => {
-        global.window.location.pathname = '/optionalpage';
+        global.window.location.href = 'https://ziggy.dev/optionalpage';
 
         same(route().current(), 'pages.optional');
         same(route().current('pages.optional', ''), true);
@@ -743,52 +719,52 @@ describe('current()', () => {
         same(route().current('pages.optional', { page: undefined }), true);
         same(route().current('pages.optional', { page: 'foo' }), false);
 
-        global.window.location.pathname = '/where/optionalpage';
+        global.window.location.href = 'https://ziggy.dev/where/optionalpage';
         same(route().current('pages.optionalWhere', { page: undefined }), true);
         same(route().current('pages.optionalWhere', { page: 'foo' }), false);
-        global.window.location.pathname = '/where/optionalpage/23';
+        global.window.location.href = 'https://ziggy.dev/where/optionalpage/23';
         same(route().current('pages.optionalWhere', { page: 23 }), true);
         same(route().current('pages.optionalWhere', { page: 22 }), false);
     });
 
     test('can check current route with complex requirements without conflicts', () => {
-        global.window.location.pathname = '/where/word-12/required/file';
+        global.window.location.href = 'https://ziggy.dev/where/word-12/required/file';
         same(route().current('pages.complexWhere'), true);
         same(route().current('pages.complexWhereConflict1'), false);
 
-        global.window.location.pathname = '/where/complex-12/required/file';
+        global.window.location.href = 'https://ziggy.dev/where/complex-12/required/file';
         same(route().current('pages.complexWhere', {word: 'complex', digit: '12', required: 'required'}), true);
         same(route().current('pages.complexWhereConflict1'), false);
 
-        global.window.location.pathname = '/where/123-abc/required/file.html';
+        global.window.location.href = 'https://ziggy.dev/where/123-abc/required/file.html';
         same(route().current('pages.complexWhereConflict1'), true);
         same(route().current('pages.complexWhere'), false);
 
-        global.window.location.pathname = '/where/complex-12/different_but_required/optional/file';
+        global.window.location.href = 'https://ziggy.dev/where/complex-12/different_but_required/optional/file';
         same(route().current('pages.complexWhereConflict2'), true);
         same(route().current('pages.complexWhere'), false);
     });
 
     test('can current route with complex requirements is dehydrated correctly', () => {
-        global.window.location.pathname = '/where/word-12/required/file';
+        global.window.location.href = 'https://ziggy.dev/where/word-12/required/file';
         deepEqual(route().params, {digit: '12', word: 'word', required: 'required', optional: undefined, extension: undefined})
 
-        global.window.location.pathname = '/where/complex-12/required/optional/file';
+        global.window.location.href = 'https://ziggy.dev/where/complex-12/required/optional/file';
         deepEqual(route().params, {digit: '12', word: 'complex', required: 'required', optional: 'optional', extension: undefined})
 
-        global.window.location.pathname = '/where/123-abc/required/file.html';
+        global.window.location.href = 'https://ziggy.dev/where/123-abc/required/file.html';
         deepEqual(route().params, {digit: '123', word: 'abc', required: 'required', optional: undefined, extension: '.html'})
 
-        global.window.location.pathname = '/where/complex-12/different_but_required/optional/file';
+        global.window.location.href = 'https://ziggy.dev/where/complex-12/different_but_required/optional/file';
         deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined})
-
-        global.window.location.search = '?ab=cd&ef=1&dd';
+        
+        global.window.location.href = 'https://ziggy.dev/where/complex-12/different_but_required/optional/file?ab=cd&ef=1&dd';
         deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined, ab: 'cd', ef: '1', 'dd': ''})
     });
 
     test('can strip regex start and end of string tokens from wheres', () => {
         global.Ziggy = undefined;
-        global.window.location.pathname = '/workspace/processes';
+        global.window.location.href = 'https://ziggy.dev/workspace/processes';
 
         const config = {
             url: 'https://ziggy.dev',
@@ -808,7 +784,7 @@ describe('current()', () => {
     });
 
     test('can check the current route name at a URL with a non-delimited parameter', () => {
-        global.window.location.pathname = '/strict-download/file.html';
+        global.window.location.href = 'https://ziggy.dev/strict-download/file.html';
 
         same(route().current(), 'pages.requiredExtension');
         same(route().current('pages.requiredExtension', ''), false);
@@ -828,7 +804,7 @@ describe('current()', () => {
     });
 
     test('can check the current route name at a URL with a missing non-delimited optional parameter', () => {
-        global.window.location.pathname = '/download/file';
+        global.window.location.href = 'https://ziggy.dev/download/file';
 
         same(route().current(), 'pages.optionalExtension');
         same(route().current('pages.optionalExtension', ''), true);
@@ -842,7 +818,7 @@ describe('current()', () => {
     });
 
     test('can check the current route name at a URL with a non-delimited optional parameter', () => {
-        global.window.location.pathname = '/download/file.html';
+        global.window.location.href = 'https://ziggy.dev/download/file.html';
 
         same(route().current(), 'pages.optionalExtension');
         same(route().current('pages.optionalExtension', ''), false);
@@ -860,30 +836,27 @@ describe('current()', () => {
         same(route().current('pages.optionalExtension', { extension: '.html' }), true);
         same(route().current('pages.optionalExtension*', { extension: '.html' }), true);
 
-        global.window.location.pathname = '/where/download/file.html';
+        global.window.location.href = 'https://ziggy.dev/where/download/file.html';
         same(route().current('pages.optionalExtensionWhere', { extension: '.html' }), true);
 
-        global.window.location.pathname = '/where/download/file.pdf';
+        global.window.location.href = 'https://ziggy.dev/where/download/file.pdf';
         same(route().current('pages.optionalExtensionWhere', { extension: '.pdf' }), false);
     });
 
     test('can check the current route name with parameters on a URL with no parameters', () => {
         global.window.location.href = 'https://ziggy.dev';
-        global.window.location.host = 'ziggy.dev';
-        global.window.location.pathname = '/';
 
         same(route().current('home', { page: 'test' }), false);
         same(route().current('pages', { page: 'test' }), false);
 
-        global.window.location.pathname = '/posts/';
+        global.window.location.href = 'https://ziggy.dev/posts/';
 
         same(route().current('posts.index', { post: 1 }), false);
         same(route().current('posts.show', { post: 1 }), false);
     });
 
     test('can check the current route name with positional parameters on a URL with no parameters', () => {
-        global.window.location.pathname = '/posts';
-        global.window.location.search = '?0=test';
+        global.window.location.href = 'https://ziggy.dev/posts?0=test';
 
         same(route().current('posts.index', undefined), true);
         same(route().current('posts.index', null), true);
@@ -898,13 +871,13 @@ describe('current()', () => {
     });
 
     test('can return false when checking the current route name on an unknown route', () => {
-        global.window.location.pathname = '/unknown/';
+        global.window.location.href = 'https://ziggy.dev/unknown/';
 
         same(route().current('posts.delete'), false);
     });
 
     test('can return false when checking the current route name and params on an unknown URL', () => {
-        global.window.location.pathname = '/unknown/path';
+        global.window.location.href = 'https://ziggy.dev/unknown/path';
 
         same(route().current('posts.show', { post: 2 }), false);
         same(route().current('posts.show', 2), false);
@@ -913,19 +886,19 @@ describe('current()', () => {
     });
 
     test('can return false when checking a non-existent route name on a known URL', () => {
-        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2';
 
         same(route().current('random-route'), false);
     });
 
     test('can return false when checking a non-existent route name on an unknown URL', () => {
-        global.window.location.pathname = '/unknown/test';
+        global.window.location.href = 'https://ziggy.dev/unknown/test';
 
         same(route().current('random-route'), false);
     });
 
     test('can return false when checking a non-existent route name and params on a known URL', () => {
-        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2';
 
         same(route().current('random-route', { post: 2 }), false);
         same(route().current('random-route', 2), false);
@@ -934,7 +907,7 @@ describe('current()', () => {
     });
 
     test('can return false when checking a non-existent route name and params on an unknown URL', () => {
-        global.window.location.pathname = '/unknown/params';
+        global.window.location.href = 'https://ziggy.dev/unknown/params';
 
         same(route().current('random-route', { post: 2 }), false);
         same(route().current('random-route', 2), false);
@@ -943,7 +916,7 @@ describe('current()', () => {
     });
 
     test('can check the current route name against a pattern', () => {
-        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2';
 
         assert(route().current('events.venues.show'));
         assert(route().current('events.venues.*'));
@@ -957,7 +930,7 @@ describe('current()', () => {
         assert(!route().current('events'));
         assert(!route().current('show'));
 
-        global.window.location.pathname = '/hosting-contacts';
+        global.window.location.href = 'https://ziggy.dev/hosting-contacts';
 
         assert(route().current('hosting-contacts.index'));
         assert(route().current('*.index'));
@@ -966,13 +939,13 @@ describe('current()', () => {
     });
 
     test('can check the current route name on a route with filled optional parameters', () => {
-        global.window.location.pathname = '/optional/1/foo';
+        global.window.location.href = 'https://ziggy.dev/optional/1/foo';
 
         assert(route().current('optional'));
     });
 
     test('can check the current route name on a route with trailing empty optional parameters', () => {
-        global.window.location.pathname = '/optional/1';
+        global.window.location.href = 'https://ziggy.dev/optional/1';
 
         assert(route().current('optional'));
     });
@@ -982,14 +955,12 @@ describe('current()', () => {
 
         // Missing the optional 'language' parameter (e.g. subfolder/ph/en/products...)
         global.window.location.href = 'https://ziggy.dev/subfolder/ph/products/4';
-        global.window.location.host = 'ziggy.dev';
-        global.window.location.pathname = '/subfolder/ph/products/4';
 
         assert(route().current('products.show'));
     });
 
     test('can check the current route with parameters', () => {
-        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2';
 
         same(route().current('events.venues.show', { event: 1, venue: 2 }), true);
         same(route().current('events.venues.show', [1, 2]), true);
@@ -1010,14 +981,13 @@ describe('current()', () => {
     });
 
     test('can check the current route with parameters with incorrect parameter names', () => {
-        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2';
 
         same(route().current('events.venues.show', { eventz: 2 }), false);
     });
 
     test('can check the current route with query parameters', () => {
-        global.window.location.pathname = '/events/1/venues/2';
-        global.window.location.search = '?user=Jacob&id=9';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?user=Jacob&id=9';
 
         assert(route().current('events.venues.show', { event: 1, venue: 2, user: 'Jacob' }));
         assert(route().current('events.venues.show', {
@@ -1033,31 +1003,31 @@ describe('current()', () => {
     });
 
     test('can ignore routes that don’t allow GET requests', () => {
-        global.window.location.pathname = '/posts/1';
+        global.window.location.href = 'https://ziggy.dev/posts/1';
 
         assert(!route().current('posts.update'));
     });
 
     test('can ignore trailing slashes', () => {
-        global.window.location.pathname = '/events/1/venues/';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/';
 
         same(route().current(), 'events.venues.index');
     });
 
     test('matches route name with multiple periods', () => {
-        global.window.location.pathname = '/events/1/venues';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues';
 
         same(route().current('events.venues-index'), false);
         same(route().current('events.venues.index'), true);
 
-        global.window.location.pathname = '/events/1/venues-index';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues-index';
 
         same(route().current('events.venues-index'), true);
         same(route().current('events.venues.index'), false);
     });
 
     test('matches route name with multiple periods and wildcards', () => {
-        global.window.location.pathname = '/events/1/venues-index';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues-index';
 
         same(route().current('events.venues-index'), true);
         same(route().current('events.venues.*'), false);
@@ -1089,11 +1059,7 @@ describe('current()', () => {
                     },
                 },
             },
-            location: {
-                host: 'ziggy.dev',
-                pathname: '/events/1/venues/2',
-                search: '?user=Jacob&id=9',
-            },
+            location: 'http://ziggy.dev/events/1/venues/2?user=Jacob&id=9',
         };
 
         same(route(undefined, undefined, undefined, config).current(), 'events.venues.show');

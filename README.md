@@ -1,3 +1,26 @@
+**TS**
+- use something like `keyof config.routes` or `keyof typeof config.routes` to give users route autocompletion in their editor
+
+Use Cases
+- `@routes` Blade directive and nothing else
+    - You're done!
+    - If your IDE is complaining in TypeScript files that the `route` function doesn't exist, add a `declare global { ... }` to shut it up (we can provide an example of this `declare` in our docs).
+    - If your IDE is complaining in JavaScript files that the `route` function doesn't exist, ???
+    - You can't have route name autocompletion, sorry. (Right???)
+- `php artisan ziggy:generate` to create a `ziggy.js` file
+    - Import the `route` function from that file and you're done. The function will have autocompletion for route names because it will contain both Ziggy's core _and_ your actual route config, all smushed together.
+        - Note: don't import/alias stuff from Ziggy's vendor folder, everything is in the generated file.
+- `php artisan ziggy:generate` to create a `ziggy.ts` file
+    - Import the `route` function from that file and you're done. The function will have autocompletion and type safety for route names because it will contain both Ziggy's core _and_ your actual route config, all smushed together.
+        - Note: don't import/alias stuff from Ziggy's vendor folder, everything is in the generated file.
+- Frontent and backend in different repos and you absolutely NEED an npm package
+    - Import the `route` function from the `ziggy-js` npm package. You can't have route name autocompletion or type safety, sorry. (Right??? Because there has to be a Ziggy config object with a list of routes available _during development_)
+        - Unless we expose a `routeFactory()` function that takes in your config and returns a correctly typed `route()` helper...
+
+https://gist.github.com/iDevelopThings/aa0a288a4075371d875782c72f2c0389
+https://github.com/nabilanam/ziggy-routes/blob/main/src/RouteProvider.ts
+https://stackoverflow.com/a/57386066/6484459
+
 ![Ziggy - Use your Laravel named routes in JavaScript](https://raw.githubusercontent.com/tighten/ziggy/main/ziggy-banner.png)
 
 # Ziggy – Use your Laravel routes in JavaScript

@@ -36,7 +36,7 @@
     },
     "scripts": {
         "tsc": "tsc",
-        "bundle": "esbuild src/js/entry.ts --bundle --format=esm --outfile=dist/entry.js",
+        "bundle": "esbuild src/js/entry.ts --bundle --minify --format=esm --outfile=dist/entry.js",
         "run-tests": "NODE_OPTIONS=--experimental-vm-modules jest --verbose",
         "build": "npm run tsc && npm run bundle",
         "test": "npm run build && npm run run-tests",
