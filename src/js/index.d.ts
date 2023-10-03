@@ -1,7 +1,7 @@
 /**
  * A list of routes and their parameters and bindings.
  *
- * Extended and filled by the route list generated automatically by Ziggy.
+ * Extended and filled by the route list generated with `php artisan ziggy:generate --types`.
  */
 export interface RouteList {}
 
@@ -48,7 +48,7 @@ type Routable<I extends ParameterInfo> = I extends { binding: string }
 
 // Uncomment to test:
 // type A = Routable<{ name: 'foo', binding: 'bar' }>;
-// = ParameterValue | { bar: RawParameterValue }
+// = RawParameterValue | { bar: RawParameterValue }
 // type B = Routable<{ name: 'foo' }>;
 // = RawParameterValue | DefaultRoutable
 
@@ -64,11 +64,11 @@ type GenericRouteParamsObject = Record<keyof any, unknown> & HasQueryParam;
 /**
  * An object of parameters for a specific named route.
  */
+// TODO: The keys here could be non-optional (or more detailed) if we can determine which params are required/not.
 type KnownRouteParamsObject<I extends readonly ParameterInfo[]> = { [T in I[number] as T['name']]?: Routable<T> } & GenericRouteParamsObject;
 // `readonly` allows TypeScript to determine the actual values of all the
 // parameter names inside the array, instead of just seeing `string`.
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1329978447.
-// TODO: The keys here could be non-optional (or more detailed) if we can determine which params are required/not.
 /**
  * An object of route parameters.
  */
@@ -84,13 +84,15 @@ type GenericRouteParamsArray = unknown[];
  * An array of parameters for a specific named route.
  */
 type KnownRouteParamsArray<I extends readonly ParameterInfo[]> = [...{ [K in keyof I]: Routable<I[K]> }, ...unknown[]];
-// Because `K in keyof I` for a `readonly` array is always a number, even though
-// this looks like `{ 0: T, 1: U, 2: V }` TypeScript generates `[T, U, V]`.
+// Because `K in keyof I` for a `readonly` array is always a number, even though this
+// looks like `{ 0: T, 1: U, 2: V }` TypeScript generates `[T, U, V]`. The nested
+// array destructing lets us type the first n items in the array, which are known
+// route parameters, and then allow arbitrary additional items.
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1330002370.
 
 // Uncomment to test:
 // type B = KnownRouteParamsArray<[{ name: 'post', binding: 'uuid' }]>;
-// = [ParameterValue | { uuid: RawParameterValue }]
+// = [RawParameterValue | { uuid: RawParameterValue }, ...unknown[]]
 
 /**
  * An array of route parameters.
@@ -102,6 +104,9 @@ type RouteParamsArray<N extends RouteName> = N extends KnownRouteName ? KnownRou
  */
 type RouteParams<N extends RouteName> = ParameterValue | RouteParamsObject<N> | RouteParamsArray<N>;
 
+/**
+ * A route.
+ */
 interface Route {
     uri: string,
     methods: ('GET' | 'HEAD' | 'POST' | 'PATCH' | 'PUT' | 'OPTIONS' | 'DELETE')[],
@@ -112,6 +117,9 @@ interface Route {
     middleware?: string[],
 }
 
+/**
+ * Ziggy's config object.
+ */
 interface Config {
     url: string,
     port: number | null,
@@ -124,6 +132,9 @@ interface Config {
     },
 }
 
+/**
+ * Ziggy's Router class.
+ */
 interface Router {
     current(): RouteName | undefined,
     current<T extends RouteName>(name: T, params?: RouteParams<T>): boolean,
@@ -131,13 +142,7 @@ interface Router {
     has<T extends RouteName>(name: T): boolean,
 }
 
-// For the best autocomplete experience, the order of the function overloads below *does* matter
-
-// NOTES
-// - The `route()` function below and the `RouteList` interface at the top of this file are the only
-//   exports - this is intentional. The implementation of the types inside this file is internal
-//   and experimental, and should be free to change as long as the externally visible behaviour
-//   stays the same.
+// For the best autocomplete experience, the order of these function overloads *does* matter
 
 /**
  * Ziggy's route helper.
@@ -158,3 +163,9 @@ export default function route(
     absolute?: boolean,
     config?: Config,
 ): Router;
+
+// NOTES
+// - The `route()` function above and the `RouteList` interface at the top of this file are the only
+//   exports - this is intentional. The implementation of the types inside this file is internal
+//   and experimental, and should be free to change as long as the externally visible behaviour
+//   stays the same.
