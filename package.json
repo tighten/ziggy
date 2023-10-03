@@ -25,7 +25,7 @@
         }
     ],
     "files": [
-        "src/js",
+        "src/js/index.d.ts",
         "dist"
     ],
     "source": "src/js/index.js",
@@ -35,19 +35,19 @@
     "browser": "dist/index.js",
     "module": "dist/index.m.js",
     "esmodule": "dist/index.es.js",
-    "types": "dist/types/index.d.ts",
+    "types": "src/js/index.d.ts",
     "repository": {
         "type": "git",
         "url": "https://github.com/tighten/ziggy.git"
     },
     "scripts": {
-        "build": "microbundle --name route --format modern,es,umd --external none --no-sourcemap",
-        "build:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --external none --no-sourcemap",
-        "build:react": "microbundle --entry src/js/react.js --output dist/react.js --name ZiggyReact --format modern,es,umd --external none --no-sourcemap",
+        "build": "microbundle --name route --format modern,es,umd --external none --no-sourcemap --no-generateTypes",
+        "build:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --external none --no-sourcemap --no-generateTypes",
+        "build:react": "microbundle --entry src/js/react.js --output dist/react.js --name ZiggyReact --format modern,es,umd --external none --no-sourcemap --no-generateTypes",
         "watch": "npm run build watch",
-        "build:npm": "microbundle --name route --format modern,es,umd --no-sourcemap",
-        "build:npm:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --no-sourcemap",
-        "build:npm:react": "microbundle --entry src/js/react.js --output dist/react.js --name ZiggyReact --format modern,es,umd --no-sourcemap",
+        "build:npm": "microbundle --name route --format modern,es,umd --no-sourcemap --no-generateTypes",
+        "build:npm:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --no-sourcemap --no-generateTypes",
+        "build:npm:react": "microbundle --entry src/js/react.js --output dist/react.js --name ZiggyReact --format modern,es,umd --no-sourcemap --no-generateTypes",
         "test": "jest --verbose",
         "prepublishOnly": "npm run build:npm && npm run build:npm:vue && npm run build:npm:react"
     },
