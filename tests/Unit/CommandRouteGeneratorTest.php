@@ -151,6 +151,14 @@ class CommandRouteGeneratorTest extends TestCase
 
         Artisan::call('ziggy:generate',  ['--types' => true]);
 
+        // Normalize line endings (`json_encode` always uses Unix line endings)
+        if (PHP_OS_FAMILY === 'Windows') {
+            file_put_contents(
+                base_path('resources/js/ziggy.d.ts'),
+                preg_replace('/\r?\n/', "\r\n", file_get_contents(base_path('resources/js/ziggy.d.ts'))),
+            );
+        }
+
         $this->assertFileEquals('./tests/fixtures/ziggy.d.ts', base_path('resources/js/ziggy.d.ts'));
     }
 
@@ -167,6 +175,14 @@ class CommandRouteGeneratorTest extends TestCase
         app('router')->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate',  ['--types' => true]);
+
+        // Normalize line endings (`json_encode` always uses Unix line endings)
+        if (PHP_OS_FAMILY === 'Windows') {
+            file_put_contents(
+                base_path('resources/js/ziggy.d.ts'),
+                preg_replace('/\r?\n/', "\r\n", file_get_contents(base_path('resources/js/ziggy.d.ts'))),
+            );
+        }
 
         $this->assertFileEquals('./tests/fixtures/ziggy-7.d.ts', base_path('resources/js/ziggy.d.ts'));
     }
