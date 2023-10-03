@@ -81,7 +81,7 @@ type GenericRouteParamsArray = Routable<ParameterInfo>[];
 /**
  * An array of parameters for a specific named route.
  */
-type KnownRouteParamsArray<I extends readonly ParameterInfo[]> = [...{ [K in keyof I]: Routable<I[K]> }, ...Array<unknown>];
+type KnownRouteParamsArray<I extends readonly ParameterInfo[]> = [...{ [K in keyof I]: Routable<I[K]> }, ...unknown[]];
 // Because `K in keyof I` for a `readonly` array is always a number, even though
 // this looks like `{ 0: T, 1: U, 2: V }` TypeScript generates `[T, U, V]`.
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1330002370.
