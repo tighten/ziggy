@@ -32,9 +32,7 @@ type RawParameterValue = string | number;
 /**
  * An object parameter value containing the 'default' binding key `id`, e.g. representing an Eloquent model.
  */
-interface DefaultRoutable {
-    id: RawParameterValue,
-}
+type DefaultRoutable = { id: RawParameterValue } & Record<keyof any, unknown>;
 
 /**
  * A route parameter value.
@@ -57,11 +55,11 @@ type Routable<I extends ParameterInfo> = I extends { binding: string }
 /**
  * An object containing a special '_query' key to target the query string of a URL.
  */
-type HasQueryParam = { _query?: Record<string, any> };
+type HasQueryParam = { _query?: Record<string, unknown> };
 /**
  * An object of parameters for an unspecified route.
  */
-type GenericRouteParamsObject = Record<keyof any, any> & HasQueryParam;
+type GenericRouteParamsObject = Record<keyof any, unknown> & HasQueryParam;
 // `keyof any` essentially makes it function as a plain `Record`
 /**
  * An object of parameters for a specific named route.
@@ -119,7 +117,7 @@ interface Route {
     domain?: string,
     bindings?: Record<string, string>,
     parameterNames?: string[],
-    wheres?: Record<string, any>,
+    wheres?: Record<string, unknown>,
     middleware?: string[],
 }
 
@@ -138,7 +136,7 @@ interface Config {
 interface Router {
     current(): RouteName | undefined,
     current<T extends RouteName>(name: T, params?: RouteParams<T>): boolean,
-    get params(): Record<string, any>,
+    get params(): Record<string, unknown>,
     has<T extends RouteName>(name: T): boolean,
      /** @deprecated since v1.0, use `has()` instead */
     check<T extends RouteName>(name: T): boolean,
