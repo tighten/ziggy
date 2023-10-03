@@ -27,7 +27,7 @@ type ParameterInfo = { name: string, binding?: string };
  * A primitive route parameter value, as it would appear in a URL.
  */
 type RawParameterValue = string | number;
-// TODO: Technically booleans work too, does it make sense to add them here? What would that look like?
+// TODO: Technically booleans work too, does it make sense to add them? Here? What would that look like?
 
 /**
  * An object parameter value containing the 'default' binding key `id`, e.g. representing an Eloquent model.
@@ -91,17 +91,6 @@ type KnownRouteParamsArray<I extends readonly ParameterInfo[]> = [...{ [K in key
 // = [ParameterValue | { uuid: RawParameterValue }]
 
 /**
- * TODO
- * For `KnownRouteParamsArray`, we need a more accurate type—one that behaves the same for the
- * first n items in the array of parameters, where n is the number of required parameters, but
- * allows *additional* array elements, because you can actually pass Ziggy an array containing
- * whatever extra stuff you want. This type is closer but not completely correct:
- * `{ [K in keyof I as number]: K extends keyof I ? Routable<I[K]> : Record<keyof any, any> }`.
- * It allows additional array elements but insists that they all be `Routable`,
- * so `as number` seems to be working but `Record<keyof any, any>` doesn't?
- */
-
-/**
  * An array of route parameters.
  */
 type RouteParamsArray<N extends RouteName> = N extends KnownRouteName ? KnownRouteParamsArray<RouteList[N]> : GenericRouteParamsArray;
@@ -138,8 +127,6 @@ interface Router {
     current<T extends RouteName>(name: T, params?: RouteParams<T>): boolean,
     get params(): Record<string, unknown>,
     has<T extends RouteName>(name: T): boolean,
-     /** @deprecated since v1.0, use `has()` instead */
-    check<T extends RouteName>(name: T): boolean,
 }
 
 // For the best autocomplete experience, the order of the function overloads below *does* matter
