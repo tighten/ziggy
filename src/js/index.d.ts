@@ -111,8 +111,8 @@ interface Route {
     uri: string,
     methods: ('GET' | 'HEAD' | 'POST' | 'PATCH' | 'PUT' | 'OPTIONS' | 'DELETE')[],
     domain?: string,
+    parameters?: string[],
     bindings?: Record<string, string>,
-    parameterNames?: string[],
     wheres?: Record<string, unknown>,
     middleware?: string[],
 }

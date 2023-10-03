@@ -18,7 +18,7 @@ class Types implements Stringable
     public function __toString(): string
     {
         $routes = collect($this->ziggy->toArray()['routes'])->map(function ($route) {
-            return collect($route['parameterNames'] ?? [])->map(function ($param) use ($route) {
+            return collect($route['parameters'] ?? [])->map(function ($param) use ($route) {
                 return Arr::has($route, "bindings.{$param}")
                     ? ['name' => $param, 'binding' => $route['bindings'][$param]]
                     : ['name' => $param];

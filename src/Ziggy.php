@@ -140,8 +140,8 @@ class Ziggy implements JsonSerializable
         return $routes->map(function ($route) use ($bindings) {
             return collect($route)->only(['uri', 'methods', 'wheres'])
                 ->put('domain', $route->domain())
+                ->put('parameters', $route->parameterNames())
                 ->put('bindings', $bindings[$route->getName()] ?? [])
-                ->put('parameterNames', $route->parameterNames())
                 ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
                     if (is_array($middleware)) {
                         return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values()->all());

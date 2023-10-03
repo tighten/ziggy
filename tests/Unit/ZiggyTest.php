@@ -36,10 +36,10 @@ class ZiggyTest extends TestCase
             $routes['postComments.show'] = [
                 'uri' => 'posts/{post}/comments/{comment}',
                 'methods' => ['GET', 'HEAD'],
+                'parameters' => ['post', 'comment'],
                 'bindings' => [
                     'comment' => 'uuid',
                 ],
-                'parameterNames' => ['post', 'comment'],
             ];
         }
     }
@@ -58,7 +58,7 @@ class ZiggyTest extends TestCase
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'posts.store' => [
                 'uri' => 'posts',
@@ -83,7 +83,7 @@ class ZiggyTest extends TestCase
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
         ];
 
@@ -106,7 +106,7 @@ class ZiggyTest extends TestCase
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'posts.store' => [
                 'uri' => 'posts',
@@ -131,7 +131,7 @@ class ZiggyTest extends TestCase
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
         ];
 
@@ -161,12 +161,12 @@ class ZiggyTest extends TestCase
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'posts.store' => [
                 'uri' => 'posts',
@@ -201,7 +201,7 @@ class ZiggyTest extends TestCase
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'posts.store' => [
                 'uri' => 'posts',
@@ -230,7 +230,7 @@ class ZiggyTest extends TestCase
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'posts.store' => [
                 'uri' => 'posts',
@@ -267,7 +267,7 @@ class ZiggyTest extends TestCase
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'posts.store' => [
                 'uri' => 'posts',
@@ -288,7 +288,7 @@ class ZiggyTest extends TestCase
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'admin.users.index' => [
                 'uri' => 'admin/users',
@@ -319,12 +319,12 @@ class ZiggyTest extends TestCase
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'posts.store' => [
                 'uri' => 'posts',
@@ -359,12 +359,12 @@ class ZiggyTest extends TestCase
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'posts.store' => [
                 'uri' => 'posts',
@@ -451,12 +451,12 @@ class ZiggyTest extends TestCase
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'posts.store' => [
                 'uri' => 'posts',
@@ -495,12 +495,12 @@ class ZiggyTest extends TestCase
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
-                'parameterNames' => ['post'],
+                'parameters' => ['post'],
             ],
             'posts.store' => [
                 'uri' => 'posts',
@@ -525,7 +525,7 @@ class ZiggyTest extends TestCase
             'wheres' => [
                 'fallbackPlaceholder' => '.*',
             ],
-            'parameterNames' => ['fallbackPlaceholder'],
+            'parameters' => ['fallbackPlaceholder'],
         ];
 
         $this->assertSame($expected, $routes);
@@ -552,12 +552,12 @@ class ZiggyTest extends TestCase
                 'posts.show' => [
                     'uri' => 'posts/{post}',
                     'methods' => ['GET', 'HEAD'],
-                    'parameterNames' => ['post'],
+                    'parameters' => ['post'],
                 ],
                 'postComments.index' => [
                     'uri' => 'posts/{post}/comments',
                     'methods' => ['GET', 'HEAD'],
-                    'parameterNames' => ['post'],
+                    'parameters' => ['post'],
                 ],
                 'posts.store' => [
                     'uri' => 'posts',
@@ -588,19 +588,19 @@ class ZiggyTest extends TestCase
                 'postComments.index' => [
                     'uri' => 'posts/{post}/comments',
                     'methods' => ['GET', 'HEAD'],
-                    'parameterNames' => ['post'],
+                    'parameters' => ['post'],
                 ],
             ],
         ];
 
         $this->addPostCommentsRouteWithBindings($expected['routes']);
 
-        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"parameterNames":["post"]}}}';
+        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"parameters":["post"]}}}';
 
         if ($this->laravelVersion(7)) {
             $json = str_replace(
                 '}}}',
-                '},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"bindings":{"comment":"uuid"},"parameterNames":["post","comment"]}}}',
+                '},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"parameters":["post","comment"],"bindings":{"comment":"uuid"}}}}',
                 $json,
             );
         }
@@ -706,7 +706,7 @@ class ZiggyTest extends TestCase
                 'wheres' => [
                     'fallbackPlaceholder' => '.*',
                 ],
-                'parameterNames' => ['fallbackPlaceholder'],
+                'parameters' => ['fallbackPlaceholder'],
             ],
         ], (new Ziggy)->toArray()['routes']);
     }
