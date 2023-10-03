@@ -32,23 +32,27 @@ type RawParameterValue = string | number;
 /**
  * An object parameter value containing the 'default' binding key `id`, e.g. representing an Eloquent model.
  */
-type ModelParameterValue = { id: number } & Record<keyof any, any>;
+interface DefaultRoutable {
+    id: RawParameterValue,
+}
 
 /**
  * A route parameter value.
  */
-type ParameterValue = RawParameterValue | ModelParameterValue;
+type ParameterValue = RawParameterValue | DefaultRoutable;
 
 /**
  * A parseable route parameter, either plain or nested inside an object under its binding key.
  */
-type ValueOrBoundValue<I extends ParameterInfo> = I extends { binding: string }
+type Routable<I extends ParameterInfo> = I extends { binding: string }
     ? { [K in I['binding']]: RawParameterValue } | RawParameterValue
     : ParameterValue;
 
 // Uncomment to test:
-// type A = ValueOrBoundValue<{ name: 'foo', binding: 'bar' }>;
+// type A = Routable<{ name: 'foo', binding: 'bar' }>;
 // = ParameterValue | { bar: RawParameterValue }
+// type B = Routable<{ name: 'foo' }>;
+// = RawParameterValue | DefaultRoutable
 
 /**
  * An object containing a special '_query' key to target the query string of a URL.
@@ -62,7 +66,7 @@ type GenericRouteParamsObject = Record<keyof any, any> & HasQueryParam;
 /**
  * An object of parameters for a specific named route.
  */
-type KnownRouteParamsObject<I extends readonly ParameterInfo[]> = { [T in I[number] as T['name']]?: ValueOrBoundValue<T> } & GenericRouteParamsObject;
+type KnownRouteParamsObject<I extends readonly ParameterInfo[]> = { [T in I[number] as T['name']]?: Routable<T> } & GenericRouteParamsObject;
 // `readonly` allows TypeScript to determine the actual values of all the
 // parameter names inside the array, instead of just seeing `string`.
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1329978447.
@@ -75,11 +79,11 @@ type RouteParamsObject<N extends RouteName> = N extends KnownRouteName ? KnownRo
 /**
  * An array of parameters for an unspecified route.
  */
-type GenericRouteParamsArray = ValueOrBoundValue<ParameterInfo>[];
+type GenericRouteParamsArray = Routable<ParameterInfo>[];
 /**
  * An array of parameters for a specific named route.
  */
-type KnownRouteParamsArray<I extends readonly ParameterInfo[]> = { [K in keyof I]: ValueOrBoundValue<I[K]> };
+type KnownRouteParamsArray<I extends readonly ParameterInfo[]> = { [K in keyof I]: Routable<I[K]> };
 // Because `K in keyof I` for a `readonly` array is always a number, even though
 // this looks like `{ 0: T, 1: U, 2: V }` TypeScript generates `[T, U, V]`.
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1330002370.
@@ -94,8 +98,8 @@ type KnownRouteParamsArray<I extends readonly ParameterInfo[]> = { [K in keyof I
  * first n items in the array of parameters, where n is the number of required parameters, but
  * allows *additional* array elements, because you can actually pass Ziggy an array containing
  * whatever extra stuff you want. This type is closer but not completely correct:
- * `{ [K in keyof I as number]: K extends keyof I ? ValueOrBoundValue<I[K]> : Record<keyof any, any> }`.
- * It allows additional array elements but insists that they all be `ValueOrBoundValue`,
+ * `{ [K in keyof I as number]: K extends keyof I ? Routable<I[K]> : Record<keyof any, any> }`.
+ * It allows additional array elements but insists that they all be `Routable`,
  * so `as number` seems to be working but `Record<keyof any, any>` doesn't?
  */
 
