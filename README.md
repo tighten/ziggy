@@ -20,6 +20,7 @@ Ziggy supports all versions of Laravel from `5.4` onward, and all modern browser
     - [TypeScript support](#typescript-support)
 - [**Advanced Setup**](#advanced-setup)
     - [JavaScript frameworks](#javascript-frameworks)
+    - [TypeScript](#typescript)
     - [Vue](#vue)
     - [React](#react)
     - [SPAs or separate repos](#spas-or-separate-repos)
@@ -31,7 +32,11 @@ Ziggy supports all versions of Laravel from `5.4` onward, and all modern browser
 
 ## Installation
 
-Install Ziggy into your Laravel app with `composer require tightenco/ziggy`.
+Install Ziggy in your Laravel app:
+
+```bash
+composer require tightenco/ziggy
+```
 
 Add the `@routes` Blade directive to your main layout (_before_ your application's JavaScript), and the `route()` helper function will now be available globally!
 
@@ -353,6 +358,18 @@ import { Ziggy } from './ziggy';
 // ...
 
 route('home', undefined, undefined, Ziggy);
+```
+
+#### TypeScript
+
+> **This functionality is currently experimental.**
+
+Ziggy includes TypeScript type definitions, and a helper command that can generate additional type definitions to enable route name and parameter autocompletion.
+
+To generate the route types, run Ziggy's Artisan command with the `--types` or `--types-only` option:
+
+```bash
+php artisan ziggy:generate --types
 ```
 
 #### Vue

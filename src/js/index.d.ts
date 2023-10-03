@@ -131,6 +131,12 @@ interface Router {
 
 // For the best autocomplete experience, the order of the function overloads below *does* matter
 
+// NOTES
+// - The `route()` function below and the `RouteList` interface at the top of this file are the only
+//   exports - this is intentional. The implementation of the types inside this file is internal
+//   and experimental, and should be free to change as long as the externally visible behaviour
+//   stays the same.
+
 /**
  * Ziggy's route helper.
  */
