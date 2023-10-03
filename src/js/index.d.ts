@@ -113,25 +113,52 @@ type RouteParamsArray<N extends RouteName> = N extends KnownRouteName ? KnownRou
  */
 type RouteParams<N extends RouteName> = ParameterValue | RouteParamsObject<N> | RouteParamsArray<N>;
 
-interface Config {}
+interface Route {
+    uri: string,
+    methods: ('GET' | 'HEAD' | 'POST' | 'PATCH' | 'PUT' | 'OPTIONS' | 'DELETE')[],
+    domain?: string,
+    bindings?: Record<string, string>,
+    parameterNames?: string[],
+    wheres?: Record<string, any>,
+    middleware?: string[],
+}
 
-type Router = {
-    current(): RouteName | undefined;
-    current<T extends RouteName>(name: T, params?: RouteParams<T>): boolean;
-    get params(): Record<string, any>;
-    has<T extends RouteName>(name: T): boolean;
-};
+interface Config {
+    url: string,
+    port: number | null,
+    defaults: Record<string, RawParameterValue>,
+    routes: Record<string, Route>,
+    location?: {
+        host?: string,
+        pathname?: string,
+        search?: string,
+    },
+}
+
+interface Router {
+    current(): RouteName | undefined,
+    current<T extends RouteName>(name: T, params?: RouteParams<T>): boolean,
+    get params(): Record<string, any>,
+    has<T extends RouteName>(name: T): boolean,
+     /** @deprecated since v1.0, use `has()` instead */
+    check<T extends RouteName>(name: T): boolean,
+}
+
+// For the best autocomplete experience, the order of the function overloads below *does* matter
 
 /**
  * Ziggy's route helper.
  */
+// Called with no arguments - returns a Router instance
 export default function route(): Router;
+// Called with a route name and optional additional arguments - returns a URL string
 export default function route<T extends RouteName>(
     name: T,
     params?: RouteParams<T> | undefined,
     absolute?: boolean,
     config?: Config,
 ): string;
+// Called with configuration arguments only - returns a configured Router instance
 export default function route(
     name: undefined,
     params: undefined,
