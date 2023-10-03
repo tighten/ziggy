@@ -77,7 +77,9 @@ type RouteParamsObject<N extends RouteName> = N extends KnownRouteName ? KnownRo
 /**
  * An array of parameters for an unspecified route.
  */
-type GenericRouteParamsArray = Routable<ParameterInfo>[];
+// TODO: this may be able to be more specific, like `Routable<ParameterInfo>[]`,
+// depending how we want to handle nested objects inside parameter arrays
+type GenericRouteParamsArray = unknown[];
 /**
  * An array of parameters for a specific named route.
  */

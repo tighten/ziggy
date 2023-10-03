@@ -65,6 +65,13 @@ route('posts.comments.show', [{ id: 2 }, { id: 3 }]);
 route('posts.comments.show', [{ id: 2 }, { uuid: 3 }, { x: 'y' }]);
 route('posts.comments.show', [1, 'foo', 3]);
 
+// Unknown route example
+route('foo');
+// Allows any object params
+route('foo', { bar: { f: 'x' } });
+// Allows any array params
+route('foo', [{ x: 'x' }, 2, 'foo']);
+
 // Test router method autocompletion
 route().has('');
 
