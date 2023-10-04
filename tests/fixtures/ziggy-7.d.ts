@@ -1,6 +1,6 @@
 /* This file is generated automatically! */
 declare module 'ziggy-js' {
-  interface RouteLookup {
+  interface RouteList {
     "posts.index": [],
     "postComments.show": [
         {
