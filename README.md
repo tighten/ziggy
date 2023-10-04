@@ -287,8 +287,6 @@ route('authors.photos.show', [{ id: 1, name: 'Jacob' }, photo]);
 
 #### TypeScript
 
-> **This functionality is currently experimental.**
-
 Ziggy includes TypeScript type definitions, and a helper command that can generate additional type definitions to enable route name and parameter autocompletion.
 
 To generate the route types, run Ziggy's Artisan command with the `--types` or `--types-only` option:

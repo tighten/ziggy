@@ -142,8 +142,6 @@ interface Router {
     has<T extends RouteName>(name: T): boolean,
 }
 
-// For the best autocomplete experience, the order of these function overloads *does* matter
-
 /**
  * Ziggy's route helper.
  */
@@ -163,9 +161,3 @@ export default function route(
     absolute?: boolean,
     config?: Config,
 ): Router;
-
-// NOTES
-// - The `route()` function above and the `RouteList` interface at the top of this file are the only
-//   exports - this is intentional. The implementation of the types inside this file is internal
-//   and experimental, and should be free to change as long as the externally visible behaviour
-//   stays the same.
