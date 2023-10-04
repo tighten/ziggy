@@ -42,11 +42,13 @@
     "scripts": {
         "build": "microbundle --name route --format modern,es,umd --external none --no-sourcemap",
         "build:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --external none --no-sourcemap",
+        "build:react": "microbundle --entry src/js/react.js --output dist/react.js --name ZiggyReact --format modern,es,umd --external none --no-sourcemap",
         "watch": "npm run build watch",
         "build:npm": "microbundle --name route --format modern,es,umd --no-sourcemap",
         "build:npm:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --no-sourcemap",
+        "build:npm:react": "microbundle --entry src/js/react.js --output dist/react.js --name ZiggyReact --format modern,es,umd --no-sourcemap",
         "test": "jest --verbose",
-        "prepublishOnly": "npm run build:npm && npm run build:npm:vue"
+        "prepublishOnly": "npm run build:npm && npm run build:npm:vue && npm run build:npm:react"
     },
     "mangle": {
         "regex": "^_(?!query)"
