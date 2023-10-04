@@ -35,6 +35,6 @@ class BladeRouteGenerator
 
     private function getRouteFunction()
     {
-        return config('ziggy.skip-route-function') ? '' : file_get_contents(__DIR__ . '/../dist/index.js');
+        return config('ziggy.skip-route-function') ? '' : file_get_contents(__DIR__ . '/../dist/route.umd.js');
     }
 }
