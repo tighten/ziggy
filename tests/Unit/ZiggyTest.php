@@ -205,6 +205,92 @@ class ZiggyTest extends TestCase
     }
 
     /** @test */
+    public function can_include_routes_from_multiple_groups()
+    {
+        config(['ziggy.groups' => ['home' => ['home'], 'posts' => ['posts.*']]]);
+        $routes = (new Ziggy(['home', 'posts']))->toArray()['routes'];
+
+        $expected = [
+            'home' => [
+                'uri' => 'home',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.index' => [
+                'uri' => 'posts',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+            ],
+        ];
+
+        $this->assertSame($expected, $routes);
+    }
+
+    /** @test */
+    public function can_set_excluded_routes_in_groups_using_negative_patterns()
+    {
+        config(['ziggy.groups' => ['authors' => ['!home', '!posts.*', '!postComments.*']]]);
+        $routes = (new Ziggy('authors'))->toArray()['routes'];
+
+        $expected = [
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+            ],
+        ];
+
+        $this->assertSame($expected, $routes);
+    }
+
+    /** @test */
+    public function can_combine_filters_in_groups_with_positive_and_negative_patterns()
+    {
+        config(['ziggy.groups' => ['authors' => ['posts.*', '!posts.index']]]);
+        $routes = (new Ziggy('authors'))->toArray()['routes'];
+
+        $expected = [
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'posts.store' => [
+                'uri' => 'posts',
+                'methods' => ['POST'],
+            ],
+        ];
+
+        $this->assertSame($expected, $routes);
+    }
+
+    /** @test */
+    public function can_filter_routes_from_multiple_groups_using_negative_patterns()
+    {
+        config(['ziggy.groups' => ['home' => '!posts.*', 'posts' => '!home']]);
+        $routes = (new Ziggy(['home', 'posts']))->toArray()['routes'];
+
+        $expected = [
+            'postComments.index' => [
+                'uri' => 'posts/{post}/comments',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'admin.users.index' => [
+                'uri' => 'admin/users',
+                'methods' => ['GET', 'HEAD'],
+            ],
+        ];
+
+        $this->addPostCommentsRouteWithBindings($expected);
+
+        $this->assertSame($expected, $routes);
+    }
+
+    /** @test */
     public function can_ignore_passed_group_not_set_in_config()
     {
         // The 'authors' group doesn't exist
@@ -525,5 +611,79 @@ class ZiggyTest extends TestCase
         app('router')->getRoutes()->refreshNameLookups();
 
         $this->assertSame($routes, (new Ziggy)->toArray()['routes']);
+    }
+
+    /** @test */
+    public function optional_params_inside_path()
+    {
+        app('router')->get('{country?}/test/{language?}/products/{id}', $this->noop())->name('products.show');
+        app('router')->getRoutes()->refreshNameLookups();
+
+        $this->assertSame('http://ziggy.dev/ca/test/fr/products/1', route('products.show', ['country' => 'ca', 'language' => 'fr', 'id' => 1]));
+        // Optional param in the middle of a path
+        $this->assertSame('http://ziggy.dev/ca/test//products/1', route('products.show', ['country' => 'ca', 'id' => 1]));
+        // Optional param at the beginning of a path
+        $this->assertSame('http://ziggy.dev/test/fr/products/1', route('products.show', ['language' => 'fr', 'id' => 1]));
+        // Both
+        $this->assertSame('http://ziggy.dev/test//products/1', route('products.show', ['id' => 1]));
+    }
+
+    /** @test */
+    public function filter_route_names_from_nested_groups()
+    {
+        app('router')->get('foo', $this->noop())->name('foo');
+        app('router')->name('foo.')->group(function () {
+            app('router')->get('foo/bar', $this->noop())->name('bar');
+            app('router')->name('bar.')->group(function () {
+                app('router')->get('foo/bar/baz', $this->noop())->name('baz');
+            });
+        });
+        app('router')->getRoutes()->refreshNameLookups();
+
+        config(['ziggy.except' => ['foo.bar.*']]);
+
+        $this->assertArrayHasKey('foo', (new Ziggy)->toArray()['routes']);
+        $this->assertArrayHasKey('foo.bar', (new Ziggy)->toArray()['routes']);
+        $this->assertArrayNotHasKey('foo.bar.baz', (new Ziggy)->toArray()['routes']);
+
+        config(['ziggy.except' => ['foo.*']]);
+
+        $this->assertArrayHasKey('foo', (new Ziggy)->toArray()['routes']);
+        $this->assertArrayNotHasKey('foo.bar', (new Ziggy)->toArray()['routes']);
+        $this->assertArrayNotHasKey('foo.bar.baz', (new Ziggy)->toArray()['routes']);
+    }
+
+    /** @test */
+    public function numeric_route_names()
+    {
+        app('router')->get('a', $this->noop())->name('a');
+        app('router')->get('3', $this->noop())->name('3');
+        app('router')->get('b', $this->noop())->name('b');
+        app('router')->fallback($this->noop())->name('404');
+        app('router')->getRoutes()->refreshNameLookups();
+
+        config(['ziggy.except' => ['home', 'posts.*', 'postComments.*', 'admin.*']]);
+
+        $this->assertSame([
+            'a' => [
+                'uri' => 'a',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            3 => [
+                'uri' => '3',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'b' => [
+                'uri' => 'b',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            404 => [
+                'uri' => '{fallbackPlaceholder}',
+                'methods' => ['GET', 'HEAD'],
+                'wheres' => [
+                    'fallbackPlaceholder' => '.*',
+                ],
+            ],
+        ], (new Ziggy)->toArray()['routes']);
     }
 }

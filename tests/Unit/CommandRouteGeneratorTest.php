@@ -131,6 +131,16 @@ class CommandRouteGeneratorTest extends TestCase
 
         $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
     }
+
+    /** @test */
+    public function can_generate_file_using_config_path()
+    {
+        config(['ziggy.output.path' => 'resources/js/custom.js']);
+
+        Artisan::call('ziggy:generate');
+
+        $this->assertFileExists(base_path('resources/js/custom.js'));
+    }
 }
 
 class CustomFileFormatter extends File

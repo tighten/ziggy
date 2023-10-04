@@ -199,6 +199,13 @@ const defaultZiggy = {
                 slug: '.*',
             },
         },
+        slashesOtherRegex: {
+            uri: 'slashes/{encoded}/{slug}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                slug: '.+',
+            },
+        },
     },
 };
 
@@ -370,11 +377,31 @@ describe('route()', () => {
         same(route('home'), 'https://ziggy.dev');
     });
 
+    test('can generate a relative URL to a root path', () => {
+        same(route('home', undefined, false), '/');
+    });
+
     // @todo duplicate
     test('can ignore an optional parameter', () => {
         same(route('optional', { id: 123 }), 'https://ziggy.dev/optional/123');
         same(route('optional', { id: 123, slug: 'news' }), 'https://ziggy.dev/optional/123/news');
         same(route('optional', { id: 123, slug: null }), 'https://ziggy.dev/optional/123');
+    });
+
+    test('can ignore a single optional parameter', () => {
+        same(route('pages.optional'), 'https://ziggy.dev/optionalpage');
+        same(route('pages.optional', {}), 'https://ziggy.dev/optionalpage');
+        same(route('pages.optional', undefined), 'https://ziggy.dev/optionalpage');
+        same(route('pages.optional', null), 'https://ziggy.dev/optionalpage');
+    });
+
+    test('missing optional parameter in first path segment', () => {
+        same(route('products.show', { country: 'ca', language: 'fr', id: 1 }), 'https://ziggy.dev/ca/fr/products/1');
+        // These URLs aren't valid but this matches the behavior of Laravel's PHP `route()` helper
+        same(route('products.show', { country: 'ca', id: 1 }), 'https://ziggy.dev/ca//products/1');
+        same(route('products.show', { id: 1 }), 'https://ziggy.dev//products/1');
+        // First param is handled correctly
+        same(route('products.show', { language: 'fr', id: 1 }), 'https://ziggy.dev/fr/products/1');
     });
 
     test('can error if a route name doesn’t exist', () => {
@@ -449,19 +476,19 @@ describe('route()', () => {
         same(route('events.venues.index', 1), 'https://test.thing/ab/cd/events/1/venues');
     });
 
-    test('can URL-encode named parameters', () => {
+    test('URL-encode query parameters', () => {
         global.Ziggy.url = 'https://test.thing/ab/cd';
 
         same(
             route('events.venues.index', { event: 'Fun&Games' }),
-            'https://test.thing/ab/cd/events/Fun%26Games/venues'
+            'https://test.thing/ab/cd/events/Fun&Games/venues'
         );
         same(
             route('events.venues.index', {
                 event: 'Fun&Games',
                 location: 'Blues&Clues',
             }),
-            'https://test.thing/ab/cd/events/Fun%26Games/venues?location=Blues%26Clues'
+            'https://test.thing/ab/cd/events/Fun&Games/venues?location=Blues%26Clues'
         );
     });
 
@@ -539,6 +566,13 @@ describe('route()', () => {
         deepEqual(route().params, { event: '1', venue: '2' });
     });
 
+    test('can decode parameters in the current URL', () => {
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/1%2B2%263';
+        global.window.location.pathname = '/events/1/venues/1%2B2%263';
+
+        deepEqual(route().params, { event: '1', venue: '1+2&3' });
+    });
+
     test('can extract query parameters from the current URL', () => {
         global.window.location.href = 'https://ziggy.dev/posts/1?guest[name]=Taylor';
         global.window.location.host = 'ziggy.dev';
@@ -547,11 +581,11 @@ describe('route()', () => {
 
         deepEqual(route().params, { post: '1', guest: { name: 'Taylor' } });
 
-        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=0';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=1%2B2%263';
         global.window.location.pathname = '/events/1/venues/2';
-        global.window.location.search = '?id=5&vip=0';
+        global.window.location.search = '?id=5&vip=1%2B2%263';
 
-        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: '0' });
+        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: '1+2&3' });
     });
 
     test("can append 'extra' string/number parameter to query", () => {
@@ -563,8 +597,8 @@ describe('route()', () => {
 
     test("can append 'extra' string/number elements in array of parameters to query", () => {
         // 'posts.show' has exactly one parameter
-         same(route('posts.show', [1, 2]), 'https://ziggy.dev/posts/1?2=');
-         same(route('posts.show', ['my-first-post', 'foo', 'bar']), 'https://ziggy.dev/posts/my-first-post?foo=&bar=');
+        same(route('posts.show', [1, 2]), 'https://ziggy.dev/posts/1?2=');
+        same(route('posts.show', ['my-first-post', 'foo', 'bar']), 'https://ziggy.dev/posts/my-first-post?foo=&bar=');
     });
 
     test("can automatically append object with only 'extra' parameters to query", () => {
@@ -600,10 +634,35 @@ describe('route()', () => {
         throws(() => route('pages.requiredExtensionWhere', { extension: '.pdf' }), /'extension' parameter does not match required format/);
     });
 
+    test('skip encoding slashes inside last parameter when explicitly allowed', () => {
+        same(route('slashes', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one/two/three/four');
+        same(route('slashes', ['one/two', 'Fun&Games/venues']), 'https://ziggy.dev/slashes/one/two/Fun&Games/venues');
+        same(route('slashes', ['one/two/three', 'Fun&Games/venues/outdoors']), 'https://ziggy.dev/slashes/one/two/three/Fun&Games/venues/outdoors');
 
-    test('can skip encoding slashes inside last parameter when explicitly allowed', () => {
-        same(route('slashes', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one%2Ftwo/three/four');
-        same(route('slashes', ['one/two', 'Fun&Games/venues']), 'https://ziggy.dev/slashes/one%2Ftwo/Fun%26Games/venues');
+        same(route('slashesOtherRegex', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one/two/three/four');
+        same(route('slashesOtherRegex', ['one/two', 'Fun&Games/venues']), 'https://ziggy.dev/slashes/one/two/Fun&Games/venues');
+        same(route('slashesOtherRegex', ['one/two/three', 'Fun&Games/venues/outdoors']), 'https://ziggy.dev/slashes/one/two/three/Fun&Games/venues/outdoors');
+    });
+
+    test('skip encoding some characters in route parameters', () => {
+        // Laravel doesn't encode these characters in route parameters: / @ : ; , = + ! * | ? & # %
+        same(route('pages', 'a/b'), 'https://ziggy.dev/a/b');
+        same(route('pages', 'a@b'), 'https://ziggy.dev/a@b');
+        same(route('pages', 'a:b'), 'https://ziggy.dev/a:b');
+        same(route('pages', 'a;b'), 'https://ziggy.dev/a;b');
+        same(route('pages', 'a,b'), 'https://ziggy.dev/a,b');
+        same(route('pages', 'a=b'), 'https://ziggy.dev/a=b');
+        same(route('pages', 'a+b'), 'https://ziggy.dev/a+b');
+        same(route('pages', 'a!b'), 'https://ziggy.dev/a!b');
+        same(route('pages', 'a*b'), 'https://ziggy.dev/a*b');
+        same(route('pages', 'a|b'), 'https://ziggy.dev/a|b');
+        same(route('pages', 'a?b'), 'https://ziggy.dev/a?b');
+        same(route('pages', 'a&b'), 'https://ziggy.dev/a&b');
+        same(route('pages', 'a#b'), 'https://ziggy.dev/a#b');
+        same(route('pages', 'a%b'), 'https://ziggy.dev/a%b');
+
+        // Laravel does encode '$', but encodeURI() doesn't
+        same(route('pages', 'a$b'), 'https://ziggy.dev/a%24b');
     });
 });
 
@@ -772,6 +831,27 @@ describe('current()', () => {
 
         global.window.location.search = '?ab=cd&ef=1&dd';
         deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined, ab: 'cd', ef: '1', 'dd': ''})
+    });
+
+    test('can strip regex start and end of string tokens from wheres', () => {
+        global.Ziggy = undefined;
+        global.window.location.pathname = '/workspace/processes';
+
+        const config = {
+            url: 'https://ziggy.dev',
+            port: null,
+            routes: {
+                'workspaces.processes.index': {
+                    uri: '{workspace}/processes',
+                    methods: ['GET', 'HEAD'],
+                    wheres: {
+                        workspace: '^(?!api|nova-api|horizon).*$',
+                    },
+                },
+            },
+        };
+
+        same(route(undefined, undefined, undefined, config).current(), 'workspaces.processes.index');
     });
 
     test('can check the current route name at a URL with a non-delimited parameter', () => {
@@ -1041,7 +1121,8 @@ describe('current()', () => {
 
     test('can get the current route name without window', () => {
         global.Ziggy = undefined;
-        global.window = undefined;
+        const oldWindow = global.window;
+        delete global.window;
 
         const config = {
             url: 'https://ziggy.dev',
@@ -1064,5 +1145,7 @@ describe('current()', () => {
         };
 
         same(route(undefined, undefined, undefined, config).current(), 'events.venues.show');
+
+        global.window = oldWindow;
     });
 });

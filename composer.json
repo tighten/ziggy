@@ -20,6 +20,7 @@
     ],
     "require": {
         "php": "~8.1.0",
+        "ext-json": "*",
         "laravel/framework": "^9.0"
     },
     "require-dev": {
@@ -45,8 +46,10 @@
     },
     "config": {
         "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

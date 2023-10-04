@@ -8,6 +8,103 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.7.0] - 2023-10-04
+
+**Added**
+
+- Add `useRoute()` React hook by @bakerkretzmar in https://github.com/tighten/ziggy/pull/473
+
+**Fixed**
+
+- URL-encode fewer special characters inside in route parameters by @bakerkretzmar in https://github.com/tighten/ziggy/pull/662
+- Fix empty root URL with `absolute: false` by @bakerkretzmar in https://github.com/tighten/ziggy/pull/667
+
+## [v1.6.2] - 2023-08-18
+
+**Fixed**
+
+- Make slash "not encoding" less restrictive by @aguingand in https://github.com/tighten/ziggy/pull/661
+
+## [v1.6.1] - 2023-08-04
+
+**Fixed**
+
+- Fix numeric route names by @bakerkretzmar https://github.com/tighten/ziggy/pull/658
+
+## [v1.6.0] - 2023-05-12
+
+**Added**
+
+- Add `'ziggy.output.path'` config option by @mhelaiwa https://github.com/tighten/ziggy/pull/633
+
+## [v1.5.2] - 2023-05-05
+
+**Added**
+
+- Add Vite instructions to README.md by @fullstackfool https://github.com/tighten/ziggy/pull/627
+
+**Fixed**
+
+- Trim slashes between origin and optional first param by @bakerkretzmar in https://github.com/tighten/ziggy/pull/637
+- Fix `route().params` not being decoded by @Tofandel in https://github.com/tighten/ziggy/pull/610
+
+## [v1.5.1] - 2023-04-22
+
+**Fixed**
+
+- Check for overridden `getKeyName()` and `$primaryKey` by @Jared0430 in https://github.com/tighten/ziggy/pull/630
+
+## [v1.5.0] - 2022-09-23
+
+**Added**
+
+- Add support for negating route filter patterns with `!` by @bakerkretzmar in https://github.com/tighten/ziggy/pull/559
+
+**Changed**
+
+- Test on PHP 8.2 by @bakerkretzmar in https://github.com/tighten/ziggy/pull/584
+
+**Fixed**
+
+- Allow `null` as entire params argument by @bakerkretzmar in https://github.com/tighten/ziggy/pull/582
+
+## [v1.4.6] - 2022-04-08
+
+**Fixed**
+
+- Use global regex instead of `replaceAll` for better browser support by @bakerkretzmar in https://github.com/tighten/ziggy/pulls/548
+
+## [v1.4.5] - 2022-03-25
+
+**Fixed**
+
+- Remove dead code by @Tofandel in https://github.com/tighten/ziggy/pull/525
+- Fix `route().current()` with 'wheres' that include regex start/end anchors by @bakerkretzmar in https://github.com/tighten/ziggy/pull/535
+- Fix inherited custom route key name detection by @bakerkretzmar in https://github.com/tighten/ziggy/pull/540
+
+## [v1.4.4] - 2022-03-11
+
+**Added**
+
+- Allow custom output via formatters by @jaulz in https://github.com/tighten/ziggy/pull/483
+- Add Vue 3 `provide`/`inject` support to the Vue plugin by @c-fitzmaurice in https://github.com/tighten/ziggy/pull/518
+
+**Fixed**
+
+- Encode non-slash characters in wildcard last parameter by @rodrigopedra in https://github.com/tighten/ziggy/pull/507
+- Update JS route matching to take 'wheres' into account by @Tofandel in https://github.com/tighten/ziggy/pull/514
+
+## [v1.4.3] - 2022-01-28
+
+**Added**
+
+- Test on PHP 8.1 by @bakerkretzmar in https://github.com/tighten/ziggy/pull/484
+- Don't encode slashes in wildcard last parameter by @bakerkretzmar in https://github.com/tighten/ziggy/pull/500
+
+**Fixed**
+
+- Ignore route action parameters without URI segments by @jaulz in https://github.com/tighten/ziggy/pull/482
+
 ## [v1.4.2] - 2021-10-01
 
 **Fixed**
@@ -202,7 +299,18 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.4.2...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.7.0...HEAD
+[v1.7.0]: https://github.com/tighten/ziggy/compare/v1.6.2...v1.7.0
+[v1.6.2]: https://github.com/tighten/ziggy/compare/v1.6.1...v1.6.2
+[v1.6.1]: https://github.com/tighten/ziggy/compare/v1.6.0...v1.6.1
+[v1.6.0]: https://github.com/tighten/ziggy/compare/v1.5.2...v1.6.0
+[v1.5.2]: https://github.com/tighten/ziggy/compare/v1.5.1...v1.5.2
+[v1.5.1]: https://github.com/tighten/ziggy/compare/v1.5.0...v1.5.1
+[v1.5.0]: https://github.com/tighten/ziggy/compare/v1.4.6...v1.5.0
+[v1.4.6]: https://github.com/tighten/ziggy/compare/v1.4.5...v1.4.6
+[v1.4.5]: https://github.com/tighten/ziggy/compare/v1.4.4...v1.4.5
+[v1.4.4]: https://github.com/tighten/ziggy/compare/v1.4.3...v1.4.4
+[v1.4.3]: https://github.com/tighten/ziggy/compare/v1.4.2...v1.4.3
 [v1.4.2]: https://github.com/tighten/ziggy/compare/v1.4.1...v1.4.2
 [v1.4.1]: https://github.com/tighten/ziggy/compare/v1.4.0...v1.4.1
 [v1.4.0]: https://github.com/tighten/ziggy/compare/v1.3.6...v1.4.0

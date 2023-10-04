@@ -26,13 +26,25 @@ export default class Route {
      * @return {String} Route template.
      */
     get template() {
+        const template = `${this.origin}/${this.definition.uri}`.replace(/\/+$/, '');
+
+        return template === '' ? '/' : template;
+    }
+
+    /**
+     * Get a template of the origin for this route.
+     *
+     * @example
+     * https://{team}.ziggy.dev/
+     *
+     * @return {String} Route origin template.
+     */
+    get origin() {
         // If  we're building just a path there's no origin, otherwise: if this route has a
         // domain configured we construct the origin with that, if not we use the app URL
-        const origin = !this.config.absolute ? '' : this.definition.domain
+        return !this.config.absolute ? '' : this.definition.domain
             ? `${this.config.url.match(/^\w+:\/\//)[0]}${this.definition.domain}${this.config.port ? `:${this.config.port}` : ''}`
             : this.config.url;
-
-        return `${origin}/${this.definition.uri}`.replace(/\/+$/, '');
     }
 
     /**
@@ -63,7 +75,7 @@ export default class Route {
         // by replacing its parameter segments with matchers for parameter values
         const pattern = this.template
             .replace(/(\/?){([^}?]*)(\??)}/g, (_, slash, segment, optional) => {
-                const regex = `(?<${segment}>${this.wheres[segment] || '[^/?]+'})`;
+                const regex = `(?<${segment}>${this.wheres[segment]?.replace(/(^\^)|(\$$)/g, '') || '[^/?]+'})`;
                 return optional ? `(${slash}${regex})?` : `${slash}${regex}`;
             })
             .replace(/^\w+:\/\//, '');
@@ -72,7 +84,14 @@ export default class Route {
 
         const matches = new RegExp(`^${pattern}/?$`).exec(location);
 
-        return matches ? { params: matches.groups, query: parse(query) } : false;
+        if (matches) {
+            for (const k in matches.groups) {
+                matches.groups[k] = typeof matches.groups[k] === 'string' ? decodeURIComponent(matches.groups[k]) : matches.groups[k];
+            }
+            return { params: matches.groups, query: parse(query) };
+        }
+
+        return false;
     }
 
     /**
@@ -92,15 +111,13 @@ export default class Route {
                 throw new Error(`Ziggy error: '${segment}' parameter is required for route '${this.name}'.`)
             }
 
-            if (segments[segments.length - 1].name === segment && this.wheres[segment] === '.*') {
-                return encodeURIComponent(params[segment] ?? '').replaceAll('%2F', '/');
+            if (this.wheres[segment]) {
+                if (!new RegExp(`^${optional ? `(${this.wheres[segment]})?` : this.wheres[segment]}$`).test(params[segment] ?? '')) {
+                    throw new Error(`Ziggy error: '${segment}' parameter does not match required format '${this.wheres[segment]}' for route '${this.name}'.`)
+                }
             }
 
-            if (this.wheres[segment] && !new RegExp(`^${optional ? `(${this.wheres[segment]})?` : this.wheres[segment]}$`).test(params[segment] ?? '')) {
-                throw new Error(`Ziggy error: '${segment}' parameter does not match required format '${this.wheres[segment]}' for route '${this.name}'.`)
-            }
-
-            return encodeURIComponent(params[segment] ?? '');
-        }).replace(/\/+$/, '');
+            return encodeURI(params[segment] ?? '').replace(/%7C/g, '|').replace(/%25/g, '%').replace(/\$/g, '%24');
+        }).replace(`${this.origin}//`, `${this.origin}/`).replace(/\/+$/, '');
     }
 }
