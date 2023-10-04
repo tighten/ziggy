@@ -8,6 +8,17 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.7.0] - 2023-10-04
+
+**Added**
+
+- Add `useRoute()` React hook by @bakerkretzmar in https://github.com/tighten/ziggy/pull/473
+
+**Fixed**
+
+- URL-encode fewer special characters inside in route parameters by @bakerkretzmar in https://github.com/tighten/ziggy/pull/662
+- Fix empty root URL with `absolute: false` by @bakerkretzmar in https://github.com/tighten/ziggy/pull/667
+
 ## [v1.6.2] - 2023-08-18
 
 **Fixed**
@@ -288,7 +299,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.6.2...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.7.0...HEAD
+[v1.7.0]: https://github.com/tighten/ziggy/compare/v1.6.2...v1.7.0
 [v1.6.2]: https://github.com/tighten/ziggy/compare/v1.6.1...v1.6.2
 [v1.6.1]: https://github.com/tighten/ziggy/compare/v1.6.0...v1.6.1
 [v1.6.0]: https://github.com/tighten/ziggy/compare/v1.5.2...v1.6.0
