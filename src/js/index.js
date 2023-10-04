@@ -25,5 +25,3 @@ export function useRoute(defaultConfig) {
 
     return (name, params, absolute, config = defaultConfig) => route(name, params, absolute, config);
 };
-
-export default route;
