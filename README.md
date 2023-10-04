@@ -17,10 +17,9 @@ Ziggy supports all versions of Laravel from `5.4` onward, and all modern browser
     - [The `route()` helper](#the-route-helper)
     - [The `Router` class](#the-router-class)
     - [Route-model binding](#route-model-binding)
-    - [TypeScript support](#typescript-support)
+    - [TypeScript](#typescript)
 - [**Advanced Setup**](#advanced-setup)
     - [JavaScript frameworks](#javascript-frameworks)
-    - [TypeScript](#typescript)
     - [Vue](#vue)
     - [React](#react)
     - [SPAs or separate repos](#spas-or-separate-repos)
@@ -286,9 +285,17 @@ route('authors.photos.show', [{ id: 1, name: 'Jacob' }, photo]);
 // 'https://ziggy.test/authors/1/photos/714b19e8-ac5e-4dab-99ba-34dc6fdd24a5'
 ```
 
-#### TypeScript support
+#### TypeScript
 
-Unofficial TypeScript type definitions for Ziggy are maintained by [benallfree](https://github.com/benallfree) as part of [Definitely Typed](https://github.com/DefinitelyTyped/DefinitelyTyped), and can be installed with `npm install @types/ziggy-js`.
+> **This functionality is currently experimental.**
+
+Ziggy includes TypeScript type definitions, and a helper command that can generate additional type definitions to enable route name and parameter autocompletion.
+
+To generate the route types, run Ziggy's Artisan command with the `--types` or `--types-only` option:
+
+```bash
+php artisan ziggy:generate --types
+```
 
 ## Advanced Setup
 
@@ -358,18 +365,6 @@ import { Ziggy } from './ziggy';
 // ...
 
 route('home', undefined, undefined, Ziggy);
-```
-
-#### TypeScript
-
-> **This functionality is currently experimental.**
-
-Ziggy includes TypeScript type definitions, and a helper command that can generate additional type definitions to enable route name and parameter autocompletion.
-
-To generate the route types, run Ziggy's Artisan command with the `--types` or `--types-only` option:
-
-```bash
-php artisan ziggy:generate --types
 ```
 
 #### Vue
