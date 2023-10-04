@@ -191,13 +191,19 @@ export default class Router extends String {
         const segments = route.parameterSegments.filter(({ name }) => !this._config.defaults[name]);
 
         if (Array.isArray(params)) {
-            // If the parameters are an array they have to be in order, so we can transform them into
-            // an object by keying them with the template segment names in the order they appear
-            params = params.reduce((result, current, i) => segments[i]
-                ? ({ ...result, [segments[i].name]: current })
-                : typeof current === 'object'
-                    ? ({ ...result, ...current })
-                    : ({ ...result, [current]: '' }), {});
+            // If the parameters are an array they have to be in order, so we can transform
+            // them into an object by keying them with the parameter names in order
+            params = params.reduce((all, value, i) => {
+                const parameter = segments[i];
+
+                if (parameter) {
+                    return { ...all, [parameter.name]: value };
+                }
+
+                return typeof value === 'object'
+                    ? { ...all, ...value }
+                    : { ...all, [value]: '' };
+            }, {});
         } else if (
             segments.length === 1
             && !params[segments[0].name]

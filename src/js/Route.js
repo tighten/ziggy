@@ -56,10 +56,11 @@ export default class Route {
      * @return {Array} Parameter segments.
      */
     get parameterSegments() {
-        return this.template.match(/{[^}?]+\??}/g)?.map((segment) => ({
-            name: segment.replace(/{|\??}/g, ''),
-            required: !/\?}$/.test(segment),
-        })) ?? [];
+        return this.definition.parameters;
+        // return this.template.match(/{[^}?]+\??}/g)?.map((segment) => ({
+        //     name: segment.replace(/{|\??}/g, ''),
+        //     required: !/\?}$/.test(segment),
+        // })) ?? [];
     }
 
     /**

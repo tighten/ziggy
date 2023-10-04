@@ -4,6 +4,7 @@ namespace Tightenco\Ziggy;
 
 use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Reflector;
 use Illuminate\Support\Str;
@@ -137,10 +138,16 @@ class Ziggy implements JsonSerializable
             $routes->put($name, $route);
         });
 
-        return $routes->map(function ($route) use ($bindings) {
+        return $routes->map(function (Route $route) use ($bindings) {
+            preg_match_all('/\{(.*?)\}/', $route->domain() . $route->uri(), $matches);
+
+            $parameters = isset($matches[1]) ? array_map(function (string $param) {
+                return ['name' => trim($param, '?'), 'required' => substr_compare($param, '?', -1) !== 0];
+            }, $matches[1]) : [];
+
             return collect($route)->only(['uri', 'methods', 'wheres'])
                 ->put('domain', $route->domain())
-                ->put('parameters', $route->parameterNames())
+                ->put('parameters', $parameters)
                 ->put('bindings', $bindings[$route->getName()] ?? [])
                 ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
                     if (is_array($middleware)) {

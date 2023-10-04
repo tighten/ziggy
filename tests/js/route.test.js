@@ -19,14 +19,19 @@ const defaultZiggy = {
         home: {
             uri: '/',
             methods: ['GET', 'HEAD'],
+            parameters: [],
         },
         'posts.index': {
             uri: 'posts',
             methods: ['GET', 'HEAD'],
+            parameters: [],
         },
         'posts.show': {
             uri: 'posts/{post}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'post', required: true },
+            ],
             bindings: {
                 post: 'id',
             },
@@ -34,6 +39,9 @@ const defaultZiggy = {
         'posts.update': {
             uri: 'posts/{post}',
             methods: ['PUT'],
+            parameters: [
+                { name: 'post', required: true },
+            ],
             bindings: {
                 post: 'id',
             },
@@ -41,6 +49,10 @@ const defaultZiggy = {
         'postComments.show': {
             uri: 'posts/{post}/comments/{comment}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'post', required: true },
+                { name: 'comment', required: true },
+            ],
             bindings: {
                 post: 'id',
                 comment: 'uuid',
@@ -49,18 +61,32 @@ const defaultZiggy = {
         'translatePosts.index': {
             uri: '{locale}/posts',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'locale', required: true },
+            ],
         },
         'translatePosts.show': {
             uri: '{locale}/posts/{id}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'locale', required: true },
+                { name: 'id', required: true },
+            ],
         },
         'translatePosts.update': {
             uri: '{locale}/posts/{post}',
             methods: ['PUT', 'PATCH'],
+            parameters: [
+                { name: 'locale', required: true },
+                { name: 'post', required: true },
+            ],
         },
         'events.venues-index': {
             uri: 'events/{event}/venues-index',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'event', required: true },
+            ],
             bindings: {
                 event: 'id',
             },
@@ -68,6 +94,9 @@ const defaultZiggy = {
         'events.venues.index': {
             uri: 'events/{event}/venues',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'event', required: true },
+            ],
             bindings: {
                 event: 'id',
             },
@@ -75,6 +104,10 @@ const defaultZiggy = {
         'events.venues.show': {
             uri: 'events/{event}/venues/{venue}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'event', required: true },
+                { name: 'venue', required: true },
+            ],
             bindings: {
                 event: 'id',
                 venue: 'id',
@@ -83,10 +116,19 @@ const defaultZiggy = {
         'events.venues.update': {
             uri: 'events/{event}/venues/{venue}',
             methods: ['PUT', 'PATCH'],
+            parameters: [
+                { name: 'event', required: true },
+                { name: 'venue', required: true },
+            ],
         },
         'translateEvents.venues.show': {
             uri: '{locale}/events/{event}/venues/{venue}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'locale', required: true },
+                { name: 'event', required: true },
+                { name: 'venue', required: true },
+            ],
             bindings: {
                 event: 'id',
                 venue: 'id',
@@ -95,48 +137,88 @@ const defaultZiggy = {
         'conversations.show': {
             uri: 'subscribers/{subscriber}/conversations/{type}/{conversation_id?}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'subscriber', required: true },
+                { name: 'type', required: true },
+                { name: 'conversation_id', required: false },
+            ],
         },
         optional: {
             uri: 'optional/{id}/{slug?}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'id', required: true },
+                { name: 'slug', required: false },
+            ],
         },
         optionalId: {
             uri: 'optionalId/{type}/{id?}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'type', required: true },
+                { name: 'id', required: false },
+            ],
         },
         'team.user.show': {
             uri: 'users/{id}',
             methods: ['GET', 'HEAD'],
             domain: '{team}.ziggy.dev',
+            parameters: [
+                { name: 'team', required: true },
+                { name: 'id', required: true },
+            ],
         },
         'translateTeam.user.show': {
             uri: '{locale}/users/{id}',
             methods: ['GET', 'HEAD'],
             domain: '{team}.ziggy.dev',
+            parameters: [
+                { name: 'team', required: true },
+                { name: 'locale', required: true },
+                { name: 'id', required: true },
+            ],
         },
         'products.show': {
             uri: '{country?}/{language?}/products/{id}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'country', required: false },
+                { name: 'language', required: false },
+                { name: 'id', required: true },
+            ],
         },
         'hosting-contacts.index': {
             uri: 'hosting-contacts',
             methods: ['GET', 'HEAD'],
+            parameters: [],
         },
         'pages.optional': {
             uri: 'optionalpage/{page?}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'page', required: false },
+            ],
         },
         'pages.optionalExtension': {
             uri: 'download/file{extension?}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'extension', required: false },
+            ],
         },
         'pages.requiredExtension': {
             uri: 'strict-download/file{extension}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'extension', required: true },
+            ],
         },
         'pages.optionalWhere': {
             uri: 'where/optionalpage/{page?}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'page', required: false },
+            ],
             wheres: {
                 page: '[0-9]+',
             },
@@ -144,6 +226,9 @@ const defaultZiggy = {
         'pages.optionalExtensionWhere': {
             uri: 'where/download/file{extension?}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'extension', required: false },
+            ],
             wheres: {
                 extension: '\\.(php|html)',
             },
@@ -151,6 +236,9 @@ const defaultZiggy = {
         'pages.requiredExtensionWhere': {
             uri: 'where/strict-download/file{extension}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'extension', required: true },
+            ],
             wheres: {
                 extension: '\\.(php|html)',
             },
@@ -158,6 +246,13 @@ const defaultZiggy = {
         'pages.complexWhere': {
             uri: 'where/{word}-{digit}/{required}/{optional?}/file{extension?}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'word', required: true },
+                { name: 'digit', required: true },
+                { name: 'required', required: true },
+                { name: 'optional', required: false },
+                { name: 'extension', required: false },
+            ],
             wheres: {
                 word: '[a-z_-]+',
                 digit: '[0-9]+',
@@ -169,6 +264,13 @@ const defaultZiggy = {
         'pages.complexWhereConflict1': {
             uri: 'where/{digit}-{word}/{required}/{optional?}/file{extension?}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'digit', required: true },
+                { name: 'word', required: true },
+                { name: 'required', required: true },
+                { name: 'optional', required: false },
+                { name: 'extension', required: false },
+            ],
             wheres: {
                 word: '[a-z_-]+',
                 digit: '[0-9]+',
@@ -180,6 +282,12 @@ const defaultZiggy = {
         'pages.complexWhereConflict2': {
             uri: 'where/complex-{digit}/{required}/{optional?}/file{extension?}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'digit', required: true },
+                { name: 'required', required: true },
+                { name: 'optional', required: false },
+                { name: 'extension', required: false },
+            ],
             wheres: {
                 digit: '[0-9]+',
                 required: 'different_but_required',
@@ -190,10 +298,17 @@ const defaultZiggy = {
         pages: {
             uri: '{page}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'page', required: true },
+            ],
         },
         slashes: {
             uri: 'slashes/{encoded}/{slug}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'encoded', required: true },
+                { name: 'slug', required: true },
+            ],
             wheres: {
                 slug: '.*',
             },
@@ -201,6 +316,10 @@ const defaultZiggy = {
         slashesOtherRegex: {
             uri: 'slashes/{encoded}/{slug}',
             methods: ['GET', 'HEAD'],
+            parameters: [
+                { name: 'encoded', required: true },
+                { name: 'slug', required: true },
+            ],
             wheres: {
                 slug: '.+',
             },
@@ -514,6 +633,9 @@ describe('route()', () => {
                 'tightenDev.packages.index': {
                     uri: 'tightenDev/{dev}/packages',
                     methods: ['GET', 'HEAD'],
+                    parameters: [
+                        { name: 'dev', required: true },
+                    ],
                 },
             },
         };
@@ -753,6 +875,7 @@ describe('current()', () => {
                 'events.index': {
                     uri: 'events',
                     methods: ['GET', 'HEAD'],
+                    parameters: [],
                 },
             },
         };
@@ -850,6 +973,9 @@ describe('current()', () => {
                 'workspaces.processes.index': {
                     uri: '{workspace}/processes',
                     methods: ['GET', 'HEAD'],
+                    parameters: [
+                        { name: 'workspace', required: true },
+                    ],
                     wheres: {
                         workspace: '^(?!api|nova-api|horizon).*$',
                     },
@@ -1137,6 +1263,10 @@ describe('current()', () => {
                 'events.venues.show': {
                     uri: 'events/{event}/venues/{venue}',
                     methods: ['GET', 'HEAD'],
+                    parameters: [
+                        { name: 'event', required: true },
+                        { name: 'venue', required: true },
+                    ],
                     bindings: {
                         event: 'id',
                         venue: 'id',

@@ -14,6 +14,7 @@ class ZiggyTest extends TestCase
         $router = app('router');
 
         $router->get('home', $this->noop())->name('home');
+        $router->get('home/{promotion?}', $this->noop())->name('home.promo');
         $router->get('posts', $this->noop())->name('posts.index');
         $router->get('posts/{post}', $this->noop())->name('posts.show');
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
@@ -36,7 +37,10 @@ class ZiggyTest extends TestCase
             $routes['postComments.show'] = [
                 'uri' => 'posts/{post}/comments/{comment}',
                 'methods' => ['GET', 'HEAD'],
-                'parameters' => ['post', 'comment'],
+                'parameters' => [
+                    ['name' => 'post', 'required' => 'true'],
+                    ['name' => 'comment', 'required' => 'true'],
+                ],
                 'bindings' => [
                     'comment' => 'uuid',
                 ],
@@ -352,6 +356,13 @@ class ZiggyTest extends TestCase
                 'uri' => 'home',
                 'methods' => ['GET', 'HEAD'],
             ],
+            'home.promo' => [
+                'uri' => 'home/{promotion?}',
+                'methods' => ['GET', 'HEAD'],
+                'parameters' => [
+                    ['name' => 'promotion', 'required' => false],
+                ],
+            ],
             'posts.index' => [
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
@@ -359,12 +370,16 @@ class ZiggyTest extends TestCase
             'posts.show' => [
                 'uri' => 'posts/{post}',
                 'methods' => ['GET', 'HEAD'],
-                'parameters' => ['post'],
+                'parameters' => [
+                    ['name' => 'post', 'required' => 'true'],
+                ],
             ],
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
-                'parameters' => ['post'],
+                'parameters' => [
+                    ['name' => 'post', 'required' => 'true'],
+                ],
             ],
             'posts.store' => [
                 'uri' => 'posts',
