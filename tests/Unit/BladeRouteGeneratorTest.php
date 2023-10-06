@@ -69,6 +69,7 @@ class BladeRouteGeneratorTest extends TestCase
             'postComments.index' => [
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
+                'parameters' => ['post'],
             ],
         ];
 
@@ -89,6 +90,7 @@ class BladeRouteGeneratorTest extends TestCase
                 'uri' => 'posts/{post}/comments',
                 'methods' => ['GET', 'HEAD'],
                 'domain' => '{account}.myapp.com',
+                'parameters' => ['account', 'post'],
             ],
         ];
 

@@ -17,7 +17,7 @@ Ziggy supports all versions of Laravel from `5.4` onward, and all modern browser
     - [The `route()` helper](#the-route-helper)
     - [The `Router` class](#the-router-class)
     - [Route-model binding](#route-model-binding)
-    - [TypeScript support](#typescript-support)
+    - [TypeScript](#typescript)
 - [**Advanced Setup**](#advanced-setup)
     - [JavaScript frameworks](#javascript-frameworks)
     - [Vue](#vue)
@@ -31,7 +31,11 @@ Ziggy supports all versions of Laravel from `5.4` onward, and all modern browser
 
 ## Installation
 
-Install Ziggy into your Laravel app with `composer require tightenco/ziggy`.
+Install Ziggy in your Laravel app:
+
+```bash
+composer require tightenco/ziggy
+```
 
 Add the `@routes` Blade directive to your main layout (_before_ your application's JavaScript), and the `route()` helper function will now be available globally!
 
@@ -281,9 +285,37 @@ route('authors.photos.show', [{ id: 1, name: 'Jacob' }, photo]);
 // 'https://ziggy.test/authors/1/photos/714b19e8-ac5e-4dab-99ba-34dc6fdd24a5'
 ```
 
-#### TypeScript support
+#### TypeScript
 
-Unofficial TypeScript type definitions for Ziggy are maintained by [benallfree](https://github.com/benallfree) as part of [Definitely Typed](https://github.com/DefinitelyTyped/DefinitelyTyped), and can be installed with `npm install @types/ziggy-js`.
+Ziggy includes TypeScript type definitions, and a helper command that can generate additional type definitions to enable route name and parameter autocompletion.
+
+To generate the route types, run Ziggy's Artisan command with the `--types` or `--types-only` option:
+
+```bash
+php artisan ziggy:generate --types
+```
+
+To make your IDE aware that Ziggy's `route()` helper is available globally, and to type it correctly, add a declaration like this in a `.d.ts` file somewhere in your project:
+
+```ts
+import routeFn from 'ziggy-js';
+
+declare global {
+    var route: typeof routeFn;
+}
+```
+
+If you don't have Ziggy's NPM package installed, add the following to your `jsconfig.json` or `tsconfig.json` to load Ziggy's types from the Composer vendor directory:
+
+```json
+{
+    "compilerOptions": {
+        "paths": {
+            "ziggy-js": ["./vendor/tightenco/ziggy"]
+        }
+    }
+}
+```
 
 ## Advanced Setup
 
