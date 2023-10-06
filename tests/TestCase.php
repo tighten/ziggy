@@ -4,19 +4,11 @@ namespace Tests;
 
 use Closure;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use PHPUnit\Framework\Constraint\StringContains;
 use Tightenco\Ziggy\Ziggy;
 use Tightenco\Ziggy\ZiggyServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {
-    public static function assertStringContainsString(string $needle, string $haystack, string $message = ''): void
-    {
-        $constraint = new StringContains($needle, false);
-
-        static::assertThat($haystack, $constraint, $message);
-    }
-
     protected function tearDown(): void
     {
         Ziggy::clearRoutes();

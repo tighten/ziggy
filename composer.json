@@ -24,13 +24,13 @@
         }
     ],
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "ext-json": "*",
-        "laravel/framework": ">=6.0@dev"
+        "laravel/framework": ">=8.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^4.0 || ^5.0 || ^6.0 || ^7.0 || ^8.0",
-        "phpunit/phpunit": "^7.0 || ^8.0 || ^9.0"
+        "orchestra/testbench": "^6.0 || ^7.0 || ^8.0 || ^9.0",
+        "phpunit/phpunit": "^9.5 || ^10.3"
     },
     "autoload": {
         "psr-4": {

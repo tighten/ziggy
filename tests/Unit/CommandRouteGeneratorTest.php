@@ -197,7 +197,7 @@ class CommandRouteGeneratorTest extends TestCase
         Artisan::call('ziggy:generate', ['--types-only' => true]);
 
         $this->assertFileExists(base_path('resources/js/ziggy.d.ts'));
-        $this->assertFileNotExists(base_path('resources/js/ziggy.js'));
+        $this->assertFileDoesNotExist(base_path('resources/js/ziggy.js'));
     }
 
     /** @test */
@@ -211,7 +211,7 @@ class CommandRouteGeneratorTest extends TestCase
         Artisan::call('ziggy:generate', ['--types-only' => true]);
 
         $this->assertFileExists(base_path('resources/js/custom.d.ts'));
-        $this->assertFileNotExists(base_path('resources/js/ziggy.d.ts'));
+        $this->assertFileDoesNotExist(base_path('resources/js/ziggy.d.ts'));
     }
 }
 

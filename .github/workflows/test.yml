@@ -5,28 +5,27 @@ on:
   push:
     branches: [main, next, ci]
     paths-ignore: ['dist/**', '*.md']
+concurrency:
+  group: ${{ github.ref_name }}
+  cancel-in-progress: true
 jobs:
   test:
-    name: ${{ matrix.os[0] }}, PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}, prefer-${{ matrix.dependencies }}
+    name: ${{ matrix.os[0] }}, PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}
     runs-on: ${{ matrix.os[1] }}
-    continue-on-error: ${{ matrix.php == '8.3' }}
+    continue-on-error: ${{ matrix.php == 8.3 }}
     strategy:
       matrix:
         os: [[Ubuntu, ubuntu-latest], [Windows, windows-latest]]
-        php: ['8.0', '8.1', '8.2', '8.3']
-        laravel: [6.*, 7.*, 8.*, 9.*, 10.*]
-        dependencies: [lowest, highest]
+        php: [8.1, 8.2, 8.3]
+        laravel: [8, 9, 10, 11]
         exclude:
-          - php: '8.0'
-            laravel: 10.*
-          - php: '8.1'
-            laravel: 6.*
-          - php: '8.1'
-            laravel: 7.*
-          - php: '8.2'
-            laravel: 6.*
-          - php: '8.2'
-            laravel: 7.*
+          - php: 8.1
+            laravel: 11
+          - php: 8.3
+            laravel: 8
+        include:
+          - php: 8.3
+            composer: --ignore-platform-req=php+
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -37,13 +36,10 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
+      - run: composer require laravel/framework:"^${{ matrix.laravel }}.0" --no-update --no-interaction
       - uses: ramsey/composer-install@v2
         with:
-          dependency-versions: ${{ matrix.dependencies }}
-          composer-options: ${{ matrix.php == '8.3' && '--ignore-platform-req=php+' || '' }}
-      - run: |
-          composer require laravel/framework:"${{ matrix.laravel }}" --no-update --no-interaction
-          composer update ${{ matrix.dependencies == 'lowest' && '--prefer-lowest --prefer-stable' || '' }} --no-interaction
+          composer-options: ${{ matrix.composer }}
       - run: vendor/bin/phpunit --testdox --colors=always
       - run: npm ci && npm run build
       - run: npm run test
