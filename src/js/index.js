@@ -8,7 +8,8 @@ export function route(name, params, absolute, config) {
 
 export const ZiggyVue = {
     install(app, options) {
-        const r = (name, params, absolute, config = options) => route(name, params, absolute, config);
+        const r = (name, params, absolute, config = options) =>
+            route(name, params, absolute, config);
 
         app.config.globalProperties.route = r;
 
@@ -20,8 +21,11 @@ export const ZiggyVue = {
 
 export function useRoute(defaultConfig) {
     if (!defaultConfig && !globalThis.Ziggy && typeof Ziggy === 'undefined') {
-        throw new Error('Ziggy error: missing configuration. Ensure that a `Ziggy` variable is defined globally or pass a config object into the useRoute hook.');
+        throw new Error(
+            'Ziggy error: missing configuration. Ensure that a `Ziggy` variable is defined globally or pass a config object into the useRoute hook.',
+        );
     }
 
-    return (name, params, absolute, config = defaultConfig) => route(name, params, absolute, config);
-};
+    return (name, params, absolute, config = defaultConfig) =>
+        route(name, params, absolute, config);
+}

@@ -270,7 +270,7 @@ php artisan ziggy:generate --types
 To make your IDE aware that Ziggy's `route()` helper is available globally, and to type it correctly, add a declaration like this in a `.d.ts` file somewhere in your project:
 
 ```ts
-import routeFn from 'ziggy-js';
+import { route as routeFn } from 'ziggy-js';
 
 declare global {
     var route: typeof routeFn;
@@ -336,7 +336,7 @@ export { Ziggy };
 You can import Ziggy like any other JavaScript library. Without the `@routes` Blade directive Ziggy's config is not available globally, so it must be passed to the `route()` function manually:
 
 ```js
-import route from '../../vendor/tightenco/ziggy/dist';
+import { route } from '../../vendor/tightenco/ziggy/dist';
 import { Ziggy } from './ziggy.js';
 
 route('home', undefined, undefined, Ziggy);
@@ -351,7 +351,6 @@ export default defineConfig({
     resolve: {
         alias: {
             'ziggy-js': 'vendor/tightenco/ziggy/dist',
-            // 'vendor/tightenco/ziggy/dist/vue.es' if using the Vue plugin
         },
     },
 });
@@ -360,7 +359,7 @@ export default defineConfig({
 Now your imports can be shortened to:
 
 ```js
-import route from 'ziggy-js';
+import { route } from 'ziggy-js';
 ```
 
 ### Vue
