@@ -3,3 +3,4 @@ dist/
 tests/fixtures/
 vendor/
 *.md
+.git-blame-ignore-revs
