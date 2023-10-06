@@ -25,8 +25,8 @@ Ziggy supports all versions of Laravel from `5.4` onward, and all modern browser
     - [React](#react)
     - [SPAs or separate repos](#spas-or-separate-repos)
 - [**Filtering Routes**](#filtering-routes)
-    - [Including/excluding routes](#including-exluding-routes)
-    - [Filtering with Groups](#filtering-with-groups)
+    - [Including/excluding routes](#includingexcluding-routes)
+    - [Filtering with groups](#filtering-with-groups)
 - [**Other**](#other)
 - [**Contributing**](#contributing)
 
