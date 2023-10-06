@@ -36,7 +36,7 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-      - run: composer require laravel/framework:"^${{ matrix.laravel }}.0" --no-update --no-interaction
+      - run: composer require laravel/framework:"${{ matrix.laravel }}.*" --no-update --no-interaction
       - uses: ramsey/composer-install@v2
         with:
           composer-options: ${{ matrix.composer }}
