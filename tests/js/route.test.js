@@ -1236,15 +1236,16 @@ describe('current()', () => {
     test('can check the current route with Cyrillic characters', () => {
         global.window.location.pathname = '/статистика';
 
-        same(route().current(), 'statistics');
-        assert(route().current('statistics'));
+        expect(route().current()).toBe('statistics');
+        expect(route().current('statistics')).toBe(true);
     });
 
     test('can check the current route with encoded Cyrillic characters', () => {
-        global.window.location.pathname = '/%D1%81%D1%82%D0%B0%D1%82%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D0%B0';
+        global.window.location.pathname =
+            '/%D1%81%D1%82%D0%B0%D1%82%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D0%B0';
 
-        same(route().current(), 'statistics');
-        assert(route().current('statistics'));
+        expect(route().current()).toBe('statistics');
+        expect(route().current('statistics')).toBe(true);
     });
 
     test('can ignore routes that don’t allow GET requests', () => {
