@@ -74,4 +74,5 @@ jobs:
           composer update --prefer-dist --no-interaction
       - run: vendor/bin/phpunit --testdox --colors=always
       - run: npm ci && npm run build
-      - run: npm test
+      - run: npm run test
+      - run: npm run typecheck
