@@ -1,7 +1,12 @@
 {
     "name": "tightenco/ziggy",
     "description": "Use your Laravel named routes in JavaScript.",
-    "keywords": ["laravel", "routes", "javascript", "ziggy"],
+    "keywords": [
+        "laravel",
+        "routes",
+        "javascript",
+        "ziggy"
+    ],
     "homepage": "https://github.com/tighten/ziggy",
     "license": "MIT",
     "authors": [

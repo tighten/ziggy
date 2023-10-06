@@ -32,4 +32,5 @@ jobs:
           composer-options: ${{ matrix.php == 8.3 && '--ignore-platform-req=php+' || '' }}
       - run: vendor/bin/phpunit --testdox --colors=always
       - run: npm ci && npm run build
-      - run: npm test
+      - run: npm run test
+      - run: npm run typecheck
