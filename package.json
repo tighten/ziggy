@@ -48,8 +48,8 @@
         "build:npm": "microbundle --name route --format modern,es,umd --no-sourcemap --no-generateTypes",
         "build:npm:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --no-sourcemap --no-generateTypes",
         "build:npm:react": "microbundle --entry src/js/react.js --output dist/react.js --name ZiggyReact --format modern,es,umd --no-sourcemap --no-generateTypes",
-        "test": "vitest",
-        "typecheck": "vitest typecheck",
+        "test": "vitest --dir tests/js",
+        "typecheck": "vitest typecheck --dir tests/js",
         "format": "prettier . --write",
         "prepublishOnly": "npm run build:npm && npm run build:npm:vue && npm run build:npm:react"
     },
