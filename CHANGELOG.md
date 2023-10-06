@@ -8,6 +8,12 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.8.0] - 2023-10-06
+
+**Added**
+
+- Add type declarations and `ziggy.d.ts` generation by @lmeysel and @bakerkretzmar in https://github.com/tighten/ziggy/pull/664
+
 ## [v1.7.0] - 2023-10-04
 
 **Added**
@@ -299,7 +305,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.8.0...HEAD
+[v1.8.0]: https://github.com/tighten/ziggy/compare/v1.7.0...v1.8.0
 [v1.7.0]: https://github.com/tighten/ziggy/compare/v1.6.2...v1.7.0
 [v1.6.2]: https://github.com/tighten/ziggy/compare/v1.6.1...v1.6.2
 [v1.6.1]: https://github.com/tighten/ziggy/compare/v1.6.0...v1.6.1
