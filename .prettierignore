@@ -1,0 +1,5 @@
+.github/
+dist/
+tests/fixtures/
+vendor/
+*.md

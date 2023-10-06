@@ -50,6 +50,7 @@
         "build:npm:react": "microbundle --entry src/js/react.js --output dist/react.js --name ZiggyReact --format modern,es,umd --no-sourcemap --no-generateTypes",
         "test": "vitest",
         "typecheck": "vitest typecheck",
+        "format": "prettier . --write",
         "prepublishOnly": "npm run build:npm && npm run build:npm:vue && npm run build:npm:react"
     },
     "mangle": {
@@ -60,7 +61,13 @@
     },
     "devDependencies": {
         "microbundle": "^0.15.1",
+        "prettier": "^3.0.3",
         "typescript": "^5.2.2",
         "vitest": "^1.0.0-beta.1"
+    },
+    "prettier": {
+        "printWidth": 100,
+        "singleQuote": true,
+        "tabWidth": 4
     }
 }

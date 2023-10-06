@@ -235,7 +235,7 @@ describe('route()', () => {
                 type: 'email',
                 subscriber: 123,
                 conversation_id: 1234,
-            })
+            }),
         ).toBe('https://ziggy.dev/subscribers/123/conversations/email/1234');
     });
 
@@ -248,8 +248,8 @@ describe('route()', () => {
                     subscriber: 123,
                     conversation_id: 1234,
                 },
-                false
-            )
+                false,
+            ),
         ).toBe('/subscribers/123/conversations/email/1234');
     });
 
@@ -282,28 +282,40 @@ describe('route()', () => {
         // route with required parameters
         expect(route('posts.show', 'my-first-post')).toBe('https://ziggy.dev/posts/my-first-post');
         // route with default parameters
-        expect(route('translatePosts.show', 'my-first-post')).toBe('https://ziggy.dev/en/posts/my-first-post');
+        expect(route('translatePosts.show', 'my-first-post')).toBe(
+            'https://ziggy.dev/en/posts/my-first-post',
+        );
     });
 
     test('can generate a URL using an object', () => {
         // routes with required parameters
         expect(route('posts.show', { id: 1 })).toBe('https://ziggy.dev/posts/1');
-        expect(route('events.venues.show', { event: 1, venue: 2 })).toBe('https://ziggy.dev/events/1/venues/2');
+        expect(route('events.venues.show', { event: 1, venue: 2 })).toBe(
+            'https://ziggy.dev/events/1/venues/2',
+        );
         // route with optional parameters
-        expect(route('optionalId', { type: 'model', id: 1 })).toBe('https://ziggy.dev/optionalId/model/1');
+        expect(route('optionalId', { type: 'model', id: 1 })).toBe(
+            'https://ziggy.dev/optionalId/model/1',
+        );
         // route with both required and default parameters
-        expect(route('translateEvents.venues.show', { event: 1, venue: 2 })).toBe('https://ziggy.dev/en/events/1/venues/2');
+        expect(route('translateEvents.venues.show', { event: 1, venue: 2 })).toBe(
+            'https://ziggy.dev/en/events/1/venues/2',
+        );
     });
 
     test('can generate a URL using an array', () => {
         // routes with required parameters
         expect(route('posts.show', [1])).toBe('https://ziggy.dev/posts/1');
         expect(route('events.venues.show', [1, 2])).toBe('https://ziggy.dev/events/1/venues/2');
-        expect(route('events.venues.show', [1, 'coliseum'])).toBe('https://ziggy.dev/events/1/venues/coliseum');
+        expect(route('events.venues.show', [1, 'coliseum'])).toBe(
+            'https://ziggy.dev/events/1/venues/coliseum',
+        );
         // route with default parameters
         expect(route('translatePosts.show', [1])).toBe('https://ziggy.dev/en/posts/1');
         // route with both required and default parameters
-        expect(route('translateEvents.venues.show', [1, 2])).toBe('https://ziggy.dev/en/events/1/venues/2');
+        expect(route('translateEvents.venues.show', [1, 2])).toBe(
+            'https://ziggy.dev/en/events/1/venues/2',
+        );
     });
 
     test('can generate a URL using an array of objects', () => {
@@ -311,9 +323,13 @@ describe('route()', () => {
         const venue = { id: 2, name: 'Rogers Centre' };
 
         // route with required parameters
-        expect(route('events.venues.show', [event, venue])).toBe('https://ziggy.dev/events/1/venues/2');
+        expect(route('events.venues.show', [event, venue])).toBe(
+            'https://ziggy.dev/events/1/venues/2',
+        );
         // route with required and default parameters
-        expect(route('translateEvents.venues.show', [event, venue])).toBe('https://ziggy.dev/en/events/1/venues/2');
+        expect(route('translateEvents.venues.show', [event, venue])).toBe(
+            'https://ziggy.dev/en/events/1/venues/2',
+        );
     });
 
     test('can generate a URL using an array of integers and objects', () => {
@@ -322,14 +338,20 @@ describe('route()', () => {
         // route with required parameters
         expect(route('events.venues.show', [1, venue])).toBe('https://ziggy.dev/events/1/venues/2');
         // route with required and default parameters
-        expect(route('translateEvents.venues.show', [1, venue])).toBe('https://ziggy.dev/en/events/1/venues/2');
+        expect(route('translateEvents.venues.show', [1, venue])).toBe(
+            'https://ziggy.dev/en/events/1/venues/2',
+        );
     });
 
     test('can generate a URL for a route with domain parameters', () => {
         // route with required domain parameters
-        expect(route('team.user.show', { team: 'tighten', id: 1 })).toBe('https://tighten.ziggy.dev/users/1');
+        expect(route('team.user.show', { team: 'tighten', id: 1 })).toBe(
+            'https://tighten.ziggy.dev/users/1',
+        );
         // route with required domain parameters and default parameters
-        expect(route('translateTeam.user.show', { team: 'tighten', id: 1 })).toBe('https://tighten.ziggy.dev/en/users/1');
+        expect(route('translateTeam.user.show', { team: 'tighten', id: 1 })).toBe(
+            'https://tighten.ziggy.dev/en/users/1',
+        );
     });
 
     test('can generate a URL for a route with a custom route model binding scope', () => {
@@ -337,25 +359,33 @@ describe('route()', () => {
             route('postComments.show', [
                 { id: 1, title: 'Post' },
                 { uuid: 12345, title: 'Comment' },
-            ])
+            ]),
         ).toBe('https://ziggy.dev/posts/1/comments/12345');
-        expect(route('postComments.show', [1, { uuid: 'correct-horse-etc-etc' }])).toBe('https://ziggy.dev/posts/1/comments/correct-horse-etc-etc');
+        expect(route('postComments.show', [1, { uuid: 'correct-horse-etc-etc' }])).toBe(
+            'https://ziggy.dev/posts/1/comments/correct-horse-etc-etc',
+        );
     });
 
     test("can fall back to an 'id' key if an object is passed for a parameter with no registered bindings", () => {
         expect(route('translatePosts.update', { id: 14 })).toBe('https://ziggy.dev/en/posts/14');
         expect(route('translatePosts.update', [{ id: 14 }])).toBe('https://ziggy.dev/en/posts/14');
-        expect(route('events.venues.update', [{ id: 10 }, { id: 1 }])).toBe('https://ziggy.dev/events/10/venues/1');
+        expect(route('events.venues.update', [{ id: 10 }, { id: 1 }])).toBe(
+            'https://ziggy.dev/events/10/venues/1',
+        );
     });
 
     test('can generate a URL for an app installed in a subfolder', () => {
         global.Ziggy.url = 'https://ziggy.dev/subfolder';
 
-        expect(route('postComments.show', [1, { uuid: 'correct-horse-etc-etc' }])).toBe('https://ziggy.dev/subfolder/posts/1/comments/correct-horse-etc-etc');
+        expect(route('postComments.show', [1, { uuid: 'correct-horse-etc-etc' }])).toBe(
+            'https://ziggy.dev/subfolder/posts/1/comments/correct-horse-etc-etc',
+        );
     });
 
     test('can error if a route model binding key is missing', () => {
-        expect(() => route('postComments.show', [1, { count: 20 }])).toThrow(/Ziggy error: object passed as 'comment' parameter is missing route model binding key 'uuid'\./);
+        expect(() => route('postComments.show', [1, { count: 20 }])).toThrow(
+            /Ziggy error: object passed as 'comment' parameter is missing route model binding key 'uuid'\./,
+        );
     });
 
     test('can return base URL if path is "/"', () => {
@@ -369,7 +399,9 @@ describe('route()', () => {
     // @todo duplicate
     test('can ignore an optional parameter', () => {
         expect(route('optional', { id: 123 })).toBe('https://ziggy.dev/optional/123');
-        expect(route('optional', { id: 123, slug: 'news' })).toBe('https://ziggy.dev/optional/123/news');
+        expect(route('optional', { id: 123, slug: 'news' })).toBe(
+            'https://ziggy.dev/optional/123/news',
+        );
         expect(route('optional', { id: 123, slug: null })).toBe('https://ziggy.dev/optional/123');
     });
 
@@ -381,16 +413,24 @@ describe('route()', () => {
     });
 
     test('missing optional parameter in first path segment', () => {
-        expect(route('products.show', { country: 'ca', language: 'fr', id: 1 })).toBe('https://ziggy.dev/ca/fr/products/1');
+        expect(route('products.show', { country: 'ca', language: 'fr', id: 1 })).toBe(
+            'https://ziggy.dev/ca/fr/products/1',
+        );
         // These URLs aren't valid but this matches the behavior of Laravel's PHP `route()` helper
-        expect(route('products.show', { country: 'ca', id: 1 })).toBe('https://ziggy.dev/ca//products/1');
+        expect(route('products.show', { country: 'ca', id: 1 })).toBe(
+            'https://ziggy.dev/ca//products/1',
+        );
         expect(route('products.show', { id: 1 })).toBe('https://ziggy.dev//products/1');
         // First param is handled correctly
-        expect(route('products.show', { language: 'fr', id: 1 })).toBe('https://ziggy.dev/fr/products/1');
+        expect(route('products.show', { language: 'fr', id: 1 })).toBe(
+            'https://ziggy.dev/fr/products/1',
+        );
     });
 
     test('can error if a route name doesn’t exist', () => {
-        expect(() => route('unknown-route')).toThrow(/Ziggy error: route 'unknown-route' is not in the route list\./);
+        expect(() => route('unknown-route')).toThrow(
+            /Ziggy error: route 'unknown-route' is not in the route list\./,
+        );
     });
 
     test('can automatically append extra parameter values as a query string', () => {
@@ -400,7 +440,7 @@ describe('route()', () => {
                 venue: 2,
                 search: 'rogers',
                 page: 2,
-            })
+            }),
         ).toBe('https://ziggy.dev/events/1/venues/2?search=rogers&page=2');
         expect(
             route('events.venues.show', {
@@ -408,14 +448,18 @@ describe('route()', () => {
                 event: 1,
                 venue: 2,
                 search: 'rogers',
-            })
+            }),
         ).toBe('https://ziggy.dev/events/1/venues/2?id=2&search=rogers');
         // ignore values explicitly set to `null`
-        expect(route('posts.index', { filled: 'filling', empty: null })).toBe('https://ziggy.dev/posts?filled=filling');
+        expect(route('posts.index', { filled: 'filling', empty: null })).toBe(
+            'https://ziggy.dev/posts?filled=filling',
+        );
     });
 
     test('can cast boolean query parameters to integers', () => {
-        expect(route('posts.show', { post: 1, preview: true })).toBe('https://ziggy.dev/posts/1?preview=1');
+        expect(route('posts.show', { post: 1, preview: true })).toBe(
+            'https://ziggy.dev/posts/1?preview=1',
+        );
     });
 
     test('can explicitly append query parameters using _query parameter', () => {
@@ -427,7 +471,7 @@ describe('route()', () => {
                     event: 4,
                     venue: 2,
                 },
-            })
+            }),
         ).toBe('https://ziggy.dev/events/1/venues/2?event=4&venue=2');
         expect(
             route('events.venues.show', {
@@ -437,7 +481,7 @@ describe('route()', () => {
                     id: 12,
                 },
                 venue: 2,
-            })
+            }),
         ).toBe('https://ziggy.dev/events/4/venues/2?event=9&id=12');
     });
 
@@ -448,7 +492,9 @@ describe('route()', () => {
         // route with no parameters
         expect(route('posts.index')).toBe('https://ziggy.dev:81/posts');
         // route with required domain parameters
-        expect(route('team.user.show', { team: 'tighten', id: 1 })).toBe('https://tighten.ziggy.dev:81/users/1');
+        expect(route('team.user.show', { team: 'tighten', id: 1 })).toBe(
+            'https://tighten.ziggy.dev:81/users/1',
+        );
     });
 
     test('can handle trailing path segments in the base URL', () => {
@@ -460,12 +506,14 @@ describe('route()', () => {
     test('URL-encode query parameters', () => {
         global.Ziggy.url = 'https://test.thing/ab/cd';
 
-        expect(route('events.venues.index', { event: 'Fun&Games' })).toBe('https://test.thing/ab/cd/events/Fun&Games/venues');
+        expect(route('events.venues.index', { event: 'Fun&Games' })).toBe(
+            'https://test.thing/ab/cd/events/Fun&Games/venues',
+        );
         expect(
             route('events.venues.index', {
                 event: 'Fun&Games',
                 location: 'Blues&Clues',
-            })
+            }),
         ).toBe('https://test.thing/ab/cd/events/Fun&Games/venues?location=Blues%26Clues');
     });
 
@@ -474,7 +522,7 @@ describe('route()', () => {
             route('events.venues.index', {
                 event: 'test',
                 guests: ['a', 'b', 'c'],
-            })
+            }),
         ).toBe('https://ziggy.dev/events/test/venues?guests[0]=a&guests[1]=b&guests[2]=c');
     });
 
@@ -495,7 +543,9 @@ describe('route()', () => {
             },
         };
 
-        expect(route('tightenDev.packages.index', { dev: 1 }, true, config)).toBe('http://notYourAverage.dev/tightenDev/1/packages');
+        expect(route('tightenDev.packages.index', { dev: 1 }, true, config)).toBe(
+            'http://notYourAverage.dev/tightenDev/1/packages',
+        );
     });
 
     test('can extract parameters for an app installed in a subfolder', () => {
@@ -576,52 +626,92 @@ describe('route()', () => {
     test("can append 'extra' elements in array of parameters to query", () => {
         // 'posts.show' has exactly one parameter
         expect(route('posts.show', [1, 2])).toBe('https://ziggy.dev/posts/1?2=');
-        expect(route('posts.show', ['my-first-post', 'foo', 'bar'])).toBe('https://ziggy.dev/posts/my-first-post?foo=&bar=');
+        expect(route('posts.show', ['my-first-post', 'foo', 'bar'])).toBe(
+            'https://ziggy.dev/posts/my-first-post?foo=&bar=',
+        );
 
-        expect(route('posts.show', ['my-first-post', 'foo', { bar: 'baz' }])).toBe('https://ziggy.dev/posts/my-first-post?foo=&bar=baz');
+        expect(route('posts.show', ['my-first-post', 'foo', { bar: 'baz' }])).toBe(
+            'https://ziggy.dev/posts/my-first-post?foo=&bar=baz',
+        );
     });
 
     test("can automatically append object with only 'extra' parameters to query", () => {
         // Route has no parameters, the entire parameters object is 'extra' and should be used as the query string
-        expect(route('hosting-contacts.index', { filter: { name: 'Dwyer' } })).toBe('https://ziggy.dev/hosting-contacts?filter[name]=Dwyer');
+        expect(route('hosting-contacts.index', { filter: { name: 'Dwyer' } })).toBe(
+            'https://ziggy.dev/hosting-contacts?filter[name]=Dwyer',
+        );
     });
 
     test("can append 'extra' object parameter to query", () => {
-        expect(route('posts.show', { post: 2, filter: { name: 'Dwyer' } })).toBe('https://ziggy.dev/posts/2?filter[name]=Dwyer');
+        expect(route('posts.show', { post: 2, filter: { name: 'Dwyer' } })).toBe(
+            'https://ziggy.dev/posts/2?filter[name]=Dwyer',
+        );
     });
 
     test('can generate a URL for a route with parameters inside individual segments', () => {
-        expect(route('pages.requiredExtension', 'x')).toBe('https://ziggy.dev/strict-download/filex');
-        expect(route('pages.requiredExtension', '.html')).toBe('https://ziggy.dev/strict-download/file.html');
-        expect(route('pages.requiredExtension', { extension: '.pdf' })).toBe('https://ziggy.dev/strict-download/file.pdf');
+        expect(route('pages.requiredExtension', 'x')).toBe(
+            'https://ziggy.dev/strict-download/filex',
+        );
+        expect(route('pages.requiredExtension', '.html')).toBe(
+            'https://ziggy.dev/strict-download/file.html',
+        );
+        expect(route('pages.requiredExtension', { extension: '.pdf' })).toBe(
+            'https://ziggy.dev/strict-download/file.pdf',
+        );
     });
 
     test('can generate a URL for a route with optional parameters inside individual segments', () => {
         expect(route('pages.optionalExtension')).toBe('https://ziggy.dev/download/file');
-        expect(route('pages.optionalExtension', '.html')).toBe('https://ziggy.dev/download/file.html');
-        expect(route('pages.optionalExtension', { extension: '.pdf' })).toBe('https://ziggy.dev/download/file.pdf');
+        expect(route('pages.optionalExtension', '.html')).toBe(
+            'https://ziggy.dev/download/file.html',
+        );
+        expect(route('pages.optionalExtension', { extension: '.pdf' })).toBe(
+            'https://ziggy.dev/download/file.pdf',
+        );
     });
 
     test('can generate a URL for a route with optional parameters inside individual segments respecting where requirements', () => {
         expect(route('pages.optionalExtensionWhere')).toBe('https://ziggy.dev/where/download/file');
-        expect(route('pages.optionalExtensionWhere', '.html')).toBe('https://ziggy.dev/where/download/file.html');
-        expect(() => route('pages.optionalExtensionWhere', { extension: '.pdf' })).toThrow(/'extension' parameter does not match required format/);
+        expect(route('pages.optionalExtensionWhere', '.html')).toBe(
+            'https://ziggy.dev/where/download/file.html',
+        );
+        expect(() => route('pages.optionalExtensionWhere', { extension: '.pdf' })).toThrow(
+            /'extension' parameter does not match required format/,
+        );
     });
 
     test('can generate a URL for a route with parameters inside individual segments', () => {
-        expect(route('pages.requiredExtensionWhere', '.html')).toBe('https://ziggy.dev/where/strict-download/file.html');
-        expect(() => route('pages.requiredExtensionWhere', 'x')).toThrow(/'extension' parameter does not match required format/);
-        expect(() => route('pages.requiredExtensionWhere', { extension: '.pdf' })).toThrow(/'extension' parameter does not match required format/);
+        expect(route('pages.requiredExtensionWhere', '.html')).toBe(
+            'https://ziggy.dev/where/strict-download/file.html',
+        );
+        expect(() => route('pages.requiredExtensionWhere', 'x')).toThrow(
+            /'extension' parameter does not match required format/,
+        );
+        expect(() => route('pages.requiredExtensionWhere', { extension: '.pdf' })).toThrow(
+            /'extension' parameter does not match required format/,
+        );
     });
 
     test('skip encoding slashes inside last parameter when explicitly allowed', () => {
-        expect(route('slashes', ['one/two', 'three/four'])).toBe('https://ziggy.dev/slashes/one/two/three/four');
-        expect(route('slashes', ['one/two', 'Fun&Games/venues'])).toBe('https://ziggy.dev/slashes/one/two/Fun&Games/venues');
-        expect(route('slashes', ['one/two/three', 'Fun&Games/venues/outdoors'])).toBe('https://ziggy.dev/slashes/one/two/three/Fun&Games/venues/outdoors');
+        expect(route('slashes', ['one/two', 'three/four'])).toBe(
+            'https://ziggy.dev/slashes/one/two/three/four',
+        );
+        expect(route('slashes', ['one/two', 'Fun&Games/venues'])).toBe(
+            'https://ziggy.dev/slashes/one/two/Fun&Games/venues',
+        );
+        expect(route('slashes', ['one/two/three', 'Fun&Games/venues/outdoors'])).toBe(
+            'https://ziggy.dev/slashes/one/two/three/Fun&Games/venues/outdoors',
+        );
 
-        expect(route('slashesOtherRegex', ['one/two', 'three/four'])).toBe('https://ziggy.dev/slashes/one/two/three/four');
-        expect(route('slashesOtherRegex', ['one/two', 'Fun&Games/venues'])).toBe('https://ziggy.dev/slashes/one/two/Fun&Games/venues');
-        expect(route('slashesOtherRegex', ['one/two/three', 'Fun&Games/venues/outdoors'])).toBe('https://ziggy.dev/slashes/one/two/three/Fun&Games/venues/outdoors');
+        expect(route('slashesOtherRegex', ['one/two', 'three/four'])).toBe(
+            'https://ziggy.dev/slashes/one/two/three/four',
+        );
+        expect(route('slashesOtherRegex', ['one/two', 'Fun&Games/venues'])).toBe(
+            'https://ziggy.dev/slashes/one/two/Fun&Games/venues',
+        );
+        expect(route('slashesOtherRegex', ['one/two/three', 'Fun&Games/venues/outdoors'])).toBe(
+            'https://ziggy.dev/slashes/one/two/three/Fun&Games/venues/outdoors',
+        );
     });
 
     test('skip encoding some characters in route parameters', () => {
@@ -794,7 +884,7 @@ describe('current()', () => {
                 word: 'complex',
                 digit: '12',
                 required: 'required',
-            })
+            }),
         ).toBe(true);
         expect(route().current('pages.complexWhereConflict1')).toBe(false);
 
@@ -873,7 +963,9 @@ describe('current()', () => {
             },
         };
 
-        expect(route(undefined, undefined, undefined, config).current()).toBe('workspaces.processes.index');
+        expect(route(undefined, undefined, undefined, config).current()).toBe(
+            'workspaces.processes.index',
+        );
     });
 
     test('can check the current route name at a URL with a non-delimited parameter', () => {
@@ -933,14 +1025,14 @@ describe('current()', () => {
         expect(
             route().current('pages.optionalExtensionWhere', {
                 extension: '.html',
-            })
+            }),
         ).toBe(true);
 
         global.window.location.pathname = '/where/download/file.pdf';
         expect(
             route().current('pages.optionalExtensionWhere', {
                 extension: '.pdf',
-            })
+            }),
         ).toBe(false);
     });
 
@@ -1070,7 +1162,9 @@ describe('current()', () => {
 
         expect(route().current('events.venues.show', { event: 1, venue: 2 })).toBe(true);
         expect(route().current('events.venues.show', [1, 2])).toBe(true);
-        expect(route().current('events.venues.show', [1, { id: 2, name: 'Grand Canyon' }])).toBe(true);
+        expect(route().current('events.venues.show', [1, { id: 2, name: 'Grand Canyon' }])).toBe(
+            true,
+        );
         expect(route().current('events.venues.show', { event: 1 })).toBe(true);
         expect(route().current('events.venues.show', { venue: 2 })).toBe(true);
         expect(route().current('events.venues.show', [1])).toBe(true);
@@ -1080,7 +1174,9 @@ describe('current()', () => {
         expect(route().current('events.venues.show', { event: 4, venue: 2 })).toBe(false);
         expect(route().current('events.venues.show', { event: null })).toBe(false);
         expect(route().current('events.venues.show', [1, 6])).toBe(false);
-        expect(route().current('events.venues.show', [{ id: 1 }, { id: 4, name: 'Great Pyramids' }])).toBe(false);
+        expect(
+            route().current('events.venues.show', [{ id: 1 }, { id: 4, name: 'Great Pyramids' }]),
+        ).toBe(false);
         expect(route().current('events.venues.show', { event: 4 })).toBe(false);
         expect(route().current('events.venues.show', { venue: 4 })).toBe(false);
         expect(route().current('events.venues.show', [5])).toBe(false);
@@ -1101,34 +1197,34 @@ describe('current()', () => {
                 event: 1,
                 venue: 2,
                 user: 'Jacob',
-            })
+            }),
         ).toBe(true);
         expect(
             route().current('events.venues.show', {
                 event: { id: 1, name: 'Party' },
                 venue: 2,
                 id: 9,
-            })
+            }),
         ).toBe(true);
         expect(
             route().current('events.venues.show', {
                 user: 'Jacob',
                 venue: { id: 2 },
-            })
+            }),
         ).toBe(true);
 
         expect(
             route().current('events.venues.show', {
                 user: 'Matt',
                 venue: { id: 9 },
-            })
+            }),
         ).toBe(false);
         expect(
             route().current('events.venues.show', {
                 event: 5,
                 id: 9,
                 user: 'Jacob',
-            })
+            }),
         ).toBe(false);
         expect(route().current('events.venues.show', { id: 12, user: 'Matt' })).toBe(false);
     });
@@ -1174,7 +1270,9 @@ describe('current()', () => {
         });
         expect(resolved.route.uri).toBe('events/{event}/venues');
 
-        expect(route().unresolve('ziggy.dev/events/1/venues-index').name).toBe('events.venues-index');
+        expect(route().unresolve('ziggy.dev/events/1/venues-index').name).toBe(
+            'events.venues-index',
+        );
         expect(route().unresolve('/events/1/venues-index').name).toBe('events.venues-index');
     });
 
