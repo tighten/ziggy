@@ -38,7 +38,7 @@
     "types": "src/js/index.d.ts",
     "repository": {
         "type": "git",
-        "url": "https://github.com/tighten/ziggy.git"
+        "url": "git+https://github.com/tighten/ziggy.git"
     },
     "scripts": {
         "build": "microbundle --name route --format modern,es,umd --external none --no-sourcemap --no-generateTypes",
