@@ -3,6 +3,7 @@ import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { route } from '../../src/js/index.js';
 // import { route } from '../../dist/index.esm.js';
 // import { route } from '../../dist/index.modern.js';
+// import route from '../../dist/route.umd.js';
 
 const defaultWindow = {
     location: {

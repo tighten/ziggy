@@ -391,8 +391,6 @@ import App from './App.vue';
 createApp(App).use(ZiggyVue, Ziggy);
 ```
 
-If you use the Vue plugin with the `ziggy-js` import alias shown above, make sure to update the alias to `vendor/tightenco/ziggy/dist/vue.es`.
-
 ### React
 
 Ziggy includes a `useRoute()` hook to make it easy to use the `route()` helper in your React app:
