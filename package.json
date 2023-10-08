@@ -37,7 +37,7 @@
     "module": "./dist/ziggy.esm.js",
     "types": "./src/js/index.d.ts",
     "exports": {
-        "default": "./dist/ziggy.modern.js"
+        "default": "./dist/ziggy.js"
     },
     "scripts": {
         "build": "npm run build:esm && npm run build:umd",
