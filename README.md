@@ -598,4 +598,4 @@ Please review our [security policy](../../security/policy) on how to report secu
 
 ## License
 
-Ziggy is an open-source software released under the MIT license. See [LICENSE](LICENSE) for more information.
+Ziggy is open-source software released under the MIT license. See [LICENSE](LICENSE) for more information.
