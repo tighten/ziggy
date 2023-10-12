@@ -1,10 +1,10 @@
 <?php
 
-namespace Tightenco\Ziggy\Output;
+namespace Tighten\Ziggy\Output;
 
 use Illuminate\Support\Arr;
 use Stringable;
-use Tightenco\Ziggy\Ziggy;
+use Tighten\Ziggy\Ziggy;
 
 class Types implements Stringable
 {

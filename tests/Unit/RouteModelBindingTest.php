@@ -38,15 +38,12 @@ class RouteModelBindingTest extends TestCase
         $router->get('replies/{reply}', function (Reply $reply) {
             return '';
         })->name('replies');
-
-        if ($this->laravelVersion(7)) {
-            $router->get('blog/{category}/{post:slug}', function (PostCategory $category, Post $post) {
-                return '';
-            })->name('posts');
-            $router->get('blog/{category}/{post:slug}/{tag:slug}', function (PostCategory $category, Post $post, Tag $tag) {
-                return '';
-            })->name('posts.tags');
-        }
+        $router->get('blog/{category}/{post:slug}', function (PostCategory $category, Post $post) {
+            return '';
+        })->name('posts');
+        $router->get('blog/{category}/{post:slug}/{tag:slug}', function (PostCategory $category, Post $post, Tag $tag) {
+            return '';
+        })->name('posts.tags');
 
         $router->getRoutes()->refreshNameLookups();
     }
@@ -128,10 +125,6 @@ class RouteModelBindingTest extends TestCase
     /** @test */
     public function can_handle_multiple_scoped_bindings()
     {
-        if (! $this->laravelVersion(7)) {
-            $this->markTestSkipped('Requires Laravel >=7');
-        }
-
         $this->assertSame([
             'posts' => [
                 'uri' => 'blog/{category}/{post}',
@@ -158,10 +151,6 @@ class RouteModelBindingTest extends TestCase
     /** @test */
     public function can_merge_implicit_and_scoped_bindings()
     {
-        if (! $this->laravelVersion(7)) {
-            $this->markTestSkipped('Requires Laravel >=7');
-        }
-
         $this->assertSame([
             'users' => [
                 'uri' => 'users/{user}',
@@ -245,10 +234,6 @@ class RouteModelBindingTest extends TestCase
     /** @test */
     public function can_include_bindings_in_json()
     {
-        if (! $this->laravelVersion(7)) {
-            $this->markTestSkipped('Requires Laravel >=7');
-        }
-
         $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"parameters":["user"],"bindings":{"user":"uuid"}},"admins":{"uri":"admins\/{admin}","methods":["GET","HEAD"],"parameters":["admin"],"bindings":{"admin":"uuid"}},"tags":{"uri":"tags\/{tag}","methods":["GET","HEAD"],"parameters":["tag"],"bindings":{"tag":"id"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"],"parameters":["token"]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"parameters":["user","number"],"bindings":{"user":"uuid"}},"users.store":{"uri":"users","methods":["POST"]},"comments":{"uri":"comments\/{comment}","methods":["GET","HEAD"],"parameters":["comment"],"bindings":{"comment":"uuid"}},"replies":{"uri":"replies\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"uuid"}},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"parameters":["category","post"],"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"parameters":["category","post","tag"],"bindings":{"category":"id","post":"slug","tag":"slug"}}}}';
 
         $this->assertSame($json, (new Ziggy)->toJson());
