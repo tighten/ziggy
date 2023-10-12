@@ -1,0 +1,35 @@
+name: Publish
+on:
+  release:
+    types: [published]
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Set up .npmrc file to publish to npm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      # Get the 'version' field out of the package.json file
+      - run: echo "version=$(cat package.json | jq '.version' --raw-output)" >> $GITHUB_OUTPUT
+        id: package-json-version
+      # Abort if the version in the package.json file (prefixed with 'v') doesn't match the tag name of the release
+      - name: Check package.json version against tag name
+        if: ${{ format('v{0}', steps.package-json-version.outputs.version) }} != ${{ github.event.release.tag_name }}
+        uses: actions/github-script@v3
+        with:
+            script: core.setFailed('Release tag does not match package.json version!')
+      # Abort if this is a pre-release and the version in the package.json file doesn't contain a '-' to indicate that (e.g. v2.0.0-beta.1), or vice-versa
+      - name: Check package.json version against pre-release
+        if: ${{ contains(steps.package-json-version.outputs.version, '-') }} != ${{ github.event.release.prerelease }}
+        uses: actions/github-script@v3
+        with:
+            script: core.setFailed('Stability of release tag does not match package.json version!')
+      # If this is a pre-release, publish it to NPM under the 'next' tag (default is 'latest')
+      - run: npm publish ${{ github.event.release.prerelease && '--tag=next' || '' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
