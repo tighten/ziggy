@@ -4,8 +4,8 @@ namespace Tests;
 
 use Closure;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Tightenco\Ziggy\Ziggy;
-use Tightenco\Ziggy\ZiggyServiceProvider;
+use Tighten\Ziggy\Ziggy;
+use Tighten\Ziggy\ZiggyServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {
