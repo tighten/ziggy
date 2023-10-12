@@ -34,11 +34,9 @@
     ],
     "type": "module",
     "source": "./src/js/index.js",
+    "exports": "./dist/ziggy.js",
     "module": "./dist/ziggy.esm.js",
     "types": "./src/js/index.d.ts",
-    "exports": {
-        "default": "./dist/ziggy.js"
-    },
     "scripts": {
         "build": "npm run build:esm && npm run build:umd",
         "build:esm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap --external none --no-generateTypes",
