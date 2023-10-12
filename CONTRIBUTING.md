@@ -43,6 +43,21 @@ To test the type definitions, open `tests/js/types.ts` in an editor or IDE with 
 
 See also [`tighten/ziggy-type-testing`](https://github.com/tighten/ziggy-type-testing).
 
+## Releases
+
+> [!NOTE]
+> Ziggy publishes two different versions of its built assets to Packagist and NPM (the NPM build does not bundle in our external NPM dependencies). The ones that live in the repo are for Composer/Packagist, and the ones for NPM are built automatically when running `npm publish` and can be reverted/deleted after publishing.
+
+To create and release a new version of Ziggy:
+
+- Update the `version` field in `package.json` to the new version number **not prefixed with `v`** (e.g. `2.1.0`).
+- Update the Changelog.
+- Rebuild Ziggy's assets with `npm run build && npm run build:vue && npm run build:react`.
+- Commit these changes and push them to the `main` branch.
+- Create and publish a new release on GitHub, creating a new tag targeting the `main` branch, named with the version number **prefixed with `v`** (e.g. `v2.1.0`).
+    - This will trigger a run of the release workflow in `.github/workflows/release.yml`, which will rebuild Ziggy's assets and publish the new version to NPM.
+    - For alpha/beta versions, use an appropriate suffix (e.g. `-beta.1`, for a version of `3.0.0-beta.1`/`v3.0.0-beta.1`) and mark the GitHub release as a pre-release. Pre-releases are published to NPM under the `next` tag, so they are not installed by default and must be explicitly requested with `npm install ziggy-js@next`.
+
 ## Requirements
 
 - **[PSR-2 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)** - The easiest way to apply the conventions is to install [PHP Code Sniffer](https://github.com/squizlabs/PHP_CodeSniffer).

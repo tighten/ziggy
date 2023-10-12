@@ -420,7 +420,7 @@ export default function PostsLink() {
 }
 ```
 
-You can slo make the `Ziggy` config object available globally, so you can call `useRoute()` without passing Ziggy's configuration to it every time:
+You can also make the `Ziggy` config object available globally, so you can call `useRoute()` without passing Ziggy's configuration to it every time:
 
 ```js
 // app.js
@@ -595,4 +595,4 @@ Please review our [security policy](../../security/policy) on how to report secu
 
 ## License
 
-Ziggy is open source software released under the MIT license. See [LICENSE](LICENSE) for more information.
+Ziggy is open-source software released under the MIT license. See [LICENSE](LICENSE) for more information.
