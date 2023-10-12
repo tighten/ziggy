@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use Illuminate\Database\Eloquent\Model;
 use Tests\TestCase;
-use Tightenco\Ziggy\Ziggy;
+use Tighten\Ziggy\Ziggy;
 
 class RouteModelBindingTest extends TestCase
 {

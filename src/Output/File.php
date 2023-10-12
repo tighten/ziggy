@@ -1,9 +1,9 @@
 <?php
 
-namespace Tightenco\Ziggy\Output;
+namespace Tighten\Ziggy\Output;
 
 use Stringable;
-use Tightenco\Ziggy\Ziggy;
+use Tighten\Ziggy\Ziggy;
 
 class File implements Stringable
 {
@@ -18,11 +18,9 @@ class File implements Stringable
     {
         return <<<JAVASCRIPT
 const Ziggy = {$this->ziggy->toJson()};
-
 if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
     Object.assign(Ziggy.routes, window.Ziggy.routes);
 }
-
 export { Ziggy };
 
 JAVASCRIPT;

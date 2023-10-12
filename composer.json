@@ -1,6 +1,6 @@
 {
     "name": "tightenco/ziggy",
-    "description": "Generates a Blade directive exporting all of your named Laravel routes. Also provides a nice route() helper function in JavaScript.",
+    "description": "Use your Laravel named routes in JavaScript.",
     "keywords": [
         "laravel",
         "routes",
@@ -34,7 +34,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Tightenco\\Ziggy\\": "src/"
+            "Tighten\\Ziggy\\": "src/"
         }
     },
     "autoload-dev": {
@@ -45,11 +45,13 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Tightenco\\Ziggy\\ZiggyServiceProvider"
+                "Tighten\\Ziggy\\ZiggyServiceProvider"
             ]
         }
     },
     "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
         "allow-plugins": {
             "kylekatarnls/update-helper": true
         }

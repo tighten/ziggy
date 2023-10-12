@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
-import route from '../../src/js';
+import { route } from '../../src/js/index.js';
+// import { route } from '../../dist/index.esm.js';
+// import { route } from '../../dist/index.modern.js';
 
 const defaultWindow = {
     location: {
@@ -183,6 +185,10 @@ const defaultZiggy = {
                 optional: 'optional',
                 extension: '\\.(php|html)',
             },
+        },
+        statistics: {
+            uri: 'статистика',
+            methods: ['GET', 'HEAD'],
         },
         pages: {
             uri: '{page}',
@@ -741,11 +747,6 @@ describe('has()', () => {
         expect(route().has('posts.show')).toBe(true);
         expect(route().has('non.existing.route')).toBe(false);
     });
-
-    test('can check if given named route exists with .check()', () => {
-        expect(route().check('posts.show')).toBe(true);
-        expect(route().check('non.existing.route')).toBe(false);
-    });
 });
 
 describe('current()', () => {
@@ -1227,6 +1228,21 @@ describe('current()', () => {
             }),
         ).toBe(false);
         expect(route().current('events.venues.show', { id: 12, user: 'Matt' })).toBe(false);
+    });
+
+    test('can check the current route with Cyrillic characters', () => {
+        global.window.location.pathname = '/статистика';
+
+        expect(route().current()).toBe('statistics');
+        expect(route().current('statistics')).toBe(true);
+    });
+
+    test('can check the current route with encoded Cyrillic characters', () => {
+        global.window.location.pathname =
+            '/%D1%81%D1%82%D0%B0%D1%82%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D0%B0';
+
+        expect(route().current()).toBe('statistics');
+        expect(route().current('statistics')).toBe(true);
     });
 
     test('can ignore routes that don’t allow GET requests', () => {

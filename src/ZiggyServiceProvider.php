@@ -1,6 +1,6 @@
 <?php
 
-namespace Tightenco\Ziggy;
+namespace Tighten\Ziggy;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -14,24 +14,18 @@ class ZiggyServiceProvider extends ServiceProvider
         if ($this->app->resolved('blade.compiler')) {
             $this->registerDirective($this->app['blade.compiler']);
         } else {
-            $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
-                $this->registerDirective($bladeCompiler);
-            });
+            $this->app->afterResolving('blade.compiler', fn (BladeCompiler $blade) => $this->registerDirective($blade));
         }
 
-        Event::listen(RequestReceived::class, function () {
-            BladeRouteGenerator::$generated = false;
-        });
+        Event::listen(RequestReceived::class, fn () => BladeRouteGenerator::$generated = false);
 
         if ($this->app->runningInConsole()) {
             $this->commands(CommandRouteGenerator::class);
         }
     }
 
-    protected function registerDirective(BladeCompiler $bladeCompiler)
+    protected function registerDirective(BladeCompiler $blade)
     {
-        $bladeCompiler->directive('routes', function ($group) {
-            return "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>";
-        });
+        $blade->directive('routes', fn ($group) => "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>");
     }
 }

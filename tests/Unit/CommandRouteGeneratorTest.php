@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
-use Tightenco\Ziggy\Output\File;
+use Tighten\Ziggy\Output\File;
 
 class CommandRouteGeneratorTest extends TestCase
 {

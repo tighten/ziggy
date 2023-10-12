@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   test:
-    name: ${{ matrix.os[0] }}, PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}
+    name: ${{ matrix.os[0] }}, PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}, prefer-${{ matrix.dependencies }}
     runs-on: ${{ matrix.os[1] }}
     continue-on-error: ${{ matrix.php == 8.3 }}
     strategy:
