@@ -47,8 +47,7 @@
         "test": "vitest",
         "typecheck": "vitest typecheck",
         "format": "prettier . --write",
-        "prepublishOnly": "rm -r ./dist/* && npm run build:npm",
-        "postpublish": "echo \"rm -r ./dist/* && npm run build\""
+        "prepublishOnly": "rm -r ./dist/* && npm run build:npm"
     },
     "mangle": {
         "regex": "^_(?!query)"
