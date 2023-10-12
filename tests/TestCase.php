@@ -21,13 +21,6 @@ class TestCase extends OrchestraTestCase
         return [ZiggyServiceProvider::class];
     }
 
-    protected function laravelVersion(int $v = null)
-    {
-        $version = (int) head(explode('.', app()->version()));
-
-        return isset($v) ? $version >= $v : $version;
-    }
-
     protected function noop(): Closure
     {
         return function () {

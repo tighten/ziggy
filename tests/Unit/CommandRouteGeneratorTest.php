@@ -165,10 +165,6 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_dts_file_with_scoped_bindings()
     {
-        if (! $this->laravelVersion(7)) {
-            $this->markTestSkipped('Requires Laravel >=7');
-        }
-
         app('router')->get('posts', $this->noop())->name('posts.index');
         app('router')->get('posts/{post}/comments/{comment:uuid}', PostCommentController::class)->name('postComments.show');
         app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
