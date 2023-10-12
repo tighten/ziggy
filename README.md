@@ -10,8 +10,6 @@
 
 Ziggy provides a JavaScript `route()` function that works like Laravel's, making it a breeze to use your named Laravel routes in JavaScript.
 
-Ziggy supports all versions of Laravel from `5.4` onward, and all modern browsers.
-
 - [**Installation**](#installation)
 - [**Usage**](#usage)
     - [`route()` function](#route-function)
