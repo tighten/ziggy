@@ -2,10 +2,12 @@
 
 ## Upgrading from `1.x` to `2.x`
 
-- The package namespace has changed from `Tightenco\Ziggy` to `Tighten\Ziggy`. Note that the Composer package name, `tightenco/ziggy`, has not changed.
-- The `makeDirectory` method of the `CommandRouteGenerator` class has been changed from `protected` to `private`. Overriding it is no longer supported.
-- The JavaScript module now provides named exports only, and no default export. In practice, this means you should replace `import route from 'ziggy'` with `import { route } from 'ziggy'`. The Vue plugin is now also part of the default module, so instead of importing it separately from `'ziggy/vue'`, you can import it alongside the `route()` function: `import { route, ZiggyVue } from 'ziggy'`.
-- The previously deprecated JavaScript `check()` method (e.g. `route().check('home')`) has been removed. Use `has()` instead.
+- The package namespace has changed from `Tightenco\Ziggy` to `Tighten\Ziggy` (the Composer package name, `tightenco/ziggy`, has not changed).
+- The `makeDirectory` method of the `CommandRouteGenerator` class is now private, overriding it is no longer supported.
+- The deprecated JavaScript `check()` method (e.g. `route().check('home')`) has been removed. Use `has()` instead.
+- Ziggy's JavaScript now provides named exports only, with no default export. Replace `import route from 'ziggy-js'` with `import { route } from 'ziggy-js'`.
+- Ziggy's Vue plugin and React hook have moved to the root of the module. Replace imports from `ziggy-js/vue` or `ziggy-js/react` with imports directly from `ziggy-js` (e.g. `import { route, ZiggyVue } from 'ziggy-js'`).
+- Ziggy now only includes ES Module builds. The default build, which [supports all modern browsers](https://github.com/developit/microbundle/?tab=readme-ov-file#-modern-mode-), is `./dist/index.js` (this is the default when you import from `ziggy-js` or `vendor/tightenco/ziggy/dist`). A legacy ES Module build using fewer new language features is included too, at `./dist/index.esm.js`. The third build, `./dist/route.umd.js`, is for internal use in Ziggy's `@routes` Blade directive.
 
 ## Upgrading from `0.9.x` to `1.x`
 
@@ -305,7 +307,7 @@ Ziggy `1.0` includes significant improvements and changes, most of which won't r
    - `trimParam()`: use `.replace(/{|\??}/g, '')`.
 
    <p></p>
-   
+
    See [#330](https://github.com/tighten/ziggy/pull/330)
    </details>
 

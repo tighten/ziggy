@@ -34,14 +34,14 @@
     ],
     "type": "module",
     "source": "./src/js/index.js",
+    "exports": "./dist/ziggy.js",
     "module": "./dist/ziggy.esm.js",
-    "exports": "./dist/ziggy.modern.js",
-    "types": "src/js/index.d.ts",
+    "types": "./src/js/index.d.ts",
     "scripts": {
         "build": "npm run build:esm && npm run build:umd",
+        "build:esm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap --external none --no-generateTypes",
         "build:npm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap --no-generateTypes",
         "build:umd": "microbundle -i ./src/js/browser.js -o ./dist/route.js --format umd --no-sourcemap --external none --no-generateTypes",
-        "build:esm": "npm run build:npm -- --external none",
         "test": "vitest",
         "typecheck": "vitest typecheck",
         "format": "prettier . --write",
@@ -54,6 +54,7 @@
         "qs": "~6.9.7"
     },
     "devDependencies": {
+        "jsdom": "^22.1.0",
         "microbundle": "^0.15.1",
         "prettier": "^3.0.3",
         "typescript": "^5.2.2",
