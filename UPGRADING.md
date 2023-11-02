@@ -2,12 +2,13 @@
 
 ## Upgrading from `1.x` to `2.x`
 
-- The package namespace has changed from `Tightenco\Ziggy` to `Tighten\Ziggy` (the Composer package name, `tightenco/ziggy`, has not changed).
+- The PHP package namespace has changed from `Tightenco\Ziggy` to `Tighten\Ziggy` (note: the Composer package name, `tightenco/ziggy`, has not changed).
 - The `makeDirectory` method of the `CommandRouteGenerator` class is now private, overriding it is no longer supported.
 - The deprecated JavaScript `check()` method (e.g. `route().check('home')`) has been removed. Use `has()` instead.
 - Ziggy's JavaScript now provides named exports only, with no default export. Replace `import route from 'ziggy-js'` with `import { route } from 'ziggy-js'`.
 - Ziggy's Vue plugin and React hook have moved to the root of the module. Replace imports from `ziggy-js/vue` or `ziggy-js/react` with imports directly from `ziggy-js` (e.g. `import { route, ZiggyVue } from 'ziggy-js'`).
-- Ziggy now only includes ES Module builds. The default build, which [supports all modern browsers](https://github.com/developit/microbundle/?tab=readme-ov-file#-modern-mode-), is `./dist/index.js` (this is the default when you import from `ziggy-js` or `vendor/tightenco/ziggy/dist`). A legacy ES Module build using fewer new language features is included too, at `./dist/index.esm.js`. The third build, `./dist/route.umd.js`, is for internal use in Ziggy's `@routes` Blade directive.
+- Ziggy now only includes ES Module builds. The default build, which [supports all modern browsers](https://github.com/developit/microbundle/?tab=readme-ov-file#-modern-mode-), is `./dist/index.js` (this is the default when you import from `ziggy-js` or `vendor/tightenco/ziggy`). A legacy ES Module build using fewer new language features is included too, at `./dist/index.esm.js`. The third build, `./dist/route.umd.js`, is for internal use in Ziggy's `@routes` Blade directive.
+- Ziggy now requires at least Laravel 9 and PHP 8.1.
 
 ## Upgrading from `0.9.x` to `1.x`
 
