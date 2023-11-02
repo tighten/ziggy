@@ -213,6 +213,51 @@ class CommandRouteGeneratorTest extends TestCase
         $this->assertFileExists(base_path('resources/js/custom.d.ts'));
         $this->assertFileNotExists(base_path('resources/js/ziggy.d.ts'));
     }
+
+    /** @test */
+    public function can_generate_correct_file_extensions_from_js_path_argument()
+    {
+        Artisan::call('ziggy:generate resources/scripts/x.js --types');
+
+        $this->assertFileExists(base_path('resources/scripts/x.js'));
+        $this->assertFileExists(base_path('resources/scripts/x.d.ts'));
+    }
+
+    /** @test */
+    public function can_generate_correct_file_extensions_from_ts_path_argument()
+    {
+        Artisan::call('ziggy:generate resources/scripts/y.ts --types');
+
+        $this->assertFileExists(base_path('resources/scripts/y.js'));
+        $this->assertFileExists(base_path('resources/scripts/y.d.ts'));
+    }
+
+    /** @test */
+    public function can_generate_correct_file_extensions_from_dts_path_argument()
+    {
+        Artisan::call('ziggy:generate resources/scripts/z.d.ts --types');
+
+        $this->assertFileExists(base_path('resources/scripts/z.js'));
+        $this->assertFileExists(base_path('resources/scripts/z.d.ts'));
+    }
+
+    /** @test */
+    public function can_generate_correct_file_extensions_from_ambiguous_path_argument()
+    {
+        Artisan::call('ziggy:generate resources/scripts/foo --types');
+
+        $this->assertFileExists(base_path('resources/scripts/foo.js'));
+        $this->assertFileExists(base_path('resources/scripts/foo.d.ts'));
+    }
+
+    /** @test */
+    public function can_generate_correct_file_extensions_from_directory_path_argument()
+    {
+        Artisan::call('ziggy:generate resources/js --types');
+
+        $this->assertFileExists(base_path('resources/js/ziggy.js'));
+        $this->assertFileExists(base_path('resources/js/ziggy.d.ts'));
+    }
 }
 
 class CustomFileFormatter extends File
