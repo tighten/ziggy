@@ -217,7 +217,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_correct_file_extensions_from_js_path_argument()
     {
-        Artisan::call('ziggy:generate resources/scripts/x.js --types');
+        Artisan::call('ziggy:generate', ['path' => 'resources/scripts/x.js', '--types' => true]);
 
         $this->assertFileExists(base_path('resources/scripts/x.js'));
         $this->assertFileExists(base_path('resources/scripts/x.d.ts'));
@@ -226,7 +226,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_correct_file_extensions_from_ts_path_argument()
     {
-        Artisan::call('ziggy:generate resources/scripts/y.ts --types');
+        Artisan::call('ziggy:generate', ['path' => 'resources/scripts/y.ts', '--types' => true]);
 
         $this->assertFileExists(base_path('resources/scripts/y.js'));
         $this->assertFileExists(base_path('resources/scripts/y.d.ts'));
@@ -235,7 +235,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_correct_file_extensions_from_dts_path_argument()
     {
-        Artisan::call('ziggy:generate resources/scripts/z.d.ts --types');
+        Artisan::call('ziggy:generate', ['path' => 'resources/scripts/z.d.ts', '--types' => true]);
 
         $this->assertFileExists(base_path('resources/scripts/z.js'));
         $this->assertFileExists(base_path('resources/scripts/z.d.ts'));
@@ -244,7 +244,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_correct_file_extensions_from_ambiguous_path_argument()
     {
-        Artisan::call('ziggy:generate resources/scripts/foo --types');
+        Artisan::call('ziggy:generate', ['path' => 'resources/scripts/foo', '--types' => true]);
 
         $this->assertFileExists(base_path('resources/scripts/foo.js'));
         $this->assertFileExists(base_path('resources/scripts/foo.d.ts'));
@@ -253,7 +253,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_correct_file_extensions_from_directory_path_argument()
     {
-        Artisan::call('ziggy:generate resources/js --types');
+        Artisan::call('ziggy:generate', ['path' => 'resources/js', '--types' => true]);
 
         $this->assertFileExists(base_path('resources/js/ziggy.js'));
         $this->assertFileExists(base_path('resources/js/ziggy.d.ts'));
