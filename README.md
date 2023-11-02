@@ -334,7 +334,7 @@ export { Ziggy };
 You can import Ziggy like any other JavaScript library. Without the `@routes` Blade directive Ziggy's config is not available globally, so it must be passed to the `route()` function manually:
 
 ```js
-import { route } from '../../vendor/tightenco/ziggy/dist';
+import { route } from '../../vendor/tightenco/ziggy';
 import { Ziggy } from './ziggy.js';
 
 route('home', undefined, undefined, Ziggy);
@@ -348,7 +348,7 @@ To simplify importing the `route()` function, you can create an alias to the ven
 export default defineConfig({
     resolve: {
         alias: {
-            'ziggy-js': 'vendor/tightenco/ziggy/dist',
+            'ziggy-js': path.resolve('vendor/tightenco/ziggy'),
         },
     },
 });
