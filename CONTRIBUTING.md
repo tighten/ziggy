@@ -50,9 +50,9 @@ See also [`tighten/ziggy-type-testing`](https://github.com/tighten/ziggy-type-te
 
 To create and release a new version of Ziggy:
 
-- Update the `version` field in `package.json` to the new version number **not prefixed with `v`** (e.g. `2.1.0`).
+- Update the `version` field in `package.json` and `package-lock.json` to the new version number **not prefixed with `v`** by running `npm version <version>` (e.g. `npm version 2.1.0`).
 - Update the Changelog.
-- Rebuild Ziggy's assets with `npm run build && npm run build:vue && npm run build:react`.
+- Rebuild Ziggy's assets with `npm run build`.
 - Commit these changes and push them to the `main` branch.
 - Create and publish a new release on GitHub, creating a new tag targeting the `main` branch, named with the version number **prefixed with `v`** (e.g. `v2.1.0`).
     - This will trigger a run of the release workflow in `.github/workflows/release.yml`, which will rebuild Ziggy's assets and publish the new version to NPM.
