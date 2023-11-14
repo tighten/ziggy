@@ -12,6 +12,8 @@ Ziggy provides a JavaScript `route()` function that works like Laravel's, making
 
 Ziggy supports all versions of Laravel from `5.4` onward, and all modern browsers.
 
+If you want to use Ziggy with Inertija.js, Vite and Vue, you may want to read the [dedicated quick installation manual](VITE_VUE_INERTIJA.md).
+
 - [**Installation**](#installation)
 - [**Usage**](#usage)
     - [`route()` function](#route-function)
