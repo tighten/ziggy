@@ -267,16 +267,6 @@ To generate route types, run the `ziggy:generate` command with the `--types` or 
 php artisan ziggy:generate --types
 ```
 
-To make your IDE aware that Ziggy's `route()` helper is available globally, and to type it correctly, add a declaration like this in a `.d.ts` file somewhere in your project:
-
-```ts
-import routeFn from 'ziggy-js';
-
-declare global {
-    var route: typeof routeFn;
-}
-```
-
 If you don't have Ziggy's NPM package installed, add the following to your `jsconfig.json` or `tsconfig.json` to load Ziggy's types from your vendor directory:
 
 ```json
