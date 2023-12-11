@@ -435,7 +435,7 @@ globalThis.Ziggy = Ziggy;
 
 Ziggy's `route()` function is available as an NPM package, for use in JavaScript projects managed separately from their Laravel backend (i.e. without Composer or a `vendor` directory). You can install the NPM package with `npm install ziggy-js`.
 
-To make your routes available on the frontend for this function to use, you can either run `php artisan ziggy:generate` and add the generated config file to your frontend project, or you can return Ziggy's config as JSON from an endpoint in your Laravel API (see [Retrieving Ziggy's config from an API endpoint](#retrieving-ziggys-routes-from-an-api-endpoint) below for an example of how to set this up).
+To make your routes available on the frontend for this function to use, you can either run `php artisan ziggy:generate` and add the generated config file to your frontend project, or you can return Ziggy's config as JSON from an endpoint in your Laravel API (see [Retrieving Ziggy's config from an API endpoint](#retrieving-ziggys-config-from-an-api-endpoint) below for an example of how to set this up).
 
 ## Filtering Routes
 
