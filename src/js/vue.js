@@ -3,9 +3,8 @@ import { usePage } from '@inertiajs/vue3';
 
 export const ZiggyVue = {
     install(app, options) {
-        options = options ?? usePage().props?.ziggy;
-
         const r = (name, params, absolute, config = options) =>
+            config = config ?? usePage().props?.ziggy;
             route(name, params, absolute, config);
 
         app.mixin({
