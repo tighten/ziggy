@@ -41,4 +41,3 @@ jobs:
       - run: vendor/bin/phpunit --testdox --colors=always
       - run: npm ci && npm run build
       - run: npm run test
-      - run: npm run typecheck

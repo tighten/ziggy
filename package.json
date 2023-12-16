@@ -42,8 +42,7 @@
         "build:esm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap --external none --no-generateTypes",
         "build:npm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap --no-generateTypes",
         "build:umd": "microbundle -i ./src/js/browser.js -o ./dist/route.js --format umd --name route --no-sourcemap --external none --no-generateTypes",
-        "test": "vitest",
-        "typecheck": "vitest typecheck",
+        "test": "vitest --typecheck",
         "format": "prettier . --write",
         "prepublishOnly": "rm -r ./dist/* && npm run build:npm"
     },
