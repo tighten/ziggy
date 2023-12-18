@@ -4,7 +4,12 @@ declare module 'ziggy-js' {
     "posts.index": [],
     "postComments.store": [
         {
-            "name": "post"
+            "name": "post",
+            "optional": false
+        },
+        {
+            "name": "postId",
+            "optional": true
         }
     ]
 }

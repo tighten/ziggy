@@ -61,12 +61,27 @@ type HasQueryParam = { _query?: Record<string, unknown> };
  */
 type GenericRouteParamsObject = Record<keyof any, unknown> & HasQueryParam;
 // `keyof any` essentially makes it function as a plain `Record`
+
+/**
+ * Get only params for `optional: true` or `optional: false`.
+ */
+type GetParamsForOptionalSwitch<I extends readonly ParameterInfo[], TOptional extends boolean> = Extract<
+    I[number],
+    { optional: TOptional }
+>;
+
+/**
+ * Map our parameter info to a routable object. We call twice to handle optional and non-optional params.
+ */
+type MapParamsToRoutable<I extends readonly ParameterInfo[]> =
+    { [T in GetParamsForOptionalSwitch<I, true> as T['name']]?: Routable<T> } &
+    { [T in GetParamsForOptionalSwitch<I, false> as T['name']]: Routable<T> }
+
 /**
  * An object of parameters for a specific named route.
  */
-// TODO: The keys here could be non-optional (or more detailed) if we can determine which params are required/not.
-type KnownRouteParamsObject<I extends readonly ParameterInfo[]> = {
-    [T in I[number] as T['name']]?: Routable<T>;
+type KnownRouteParamsObject<I extends readonly ParameterInfo[], MappedParams = MapParamsToRoutable<I>> = {
+    [K in keyof MappedParams]: MappedParams[K]
 } & GenericRouteParamsObject;
 // `readonly` allows TypeScript to determine the actual values of all the
 // parameter names inside the array, instead of just seeing `string`.
