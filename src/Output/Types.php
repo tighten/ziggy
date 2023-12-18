@@ -3,7 +3,6 @@
 namespace Tightenco\Ziggy\Output;
 
 use Illuminate\Support\Arr;
-use Str;
 use Stringable;
 use Tightenco\Ziggy\Ziggy;
 
@@ -18,7 +17,7 @@ class Types implements Stringable
 
     private function isParamOptional(string $uri, string $param): bool
     {
-        return Str::contains($uri, "{$param}?");
+        return str_contains($uri, "{$param}?");
     }
 
     public function __toString(): string
