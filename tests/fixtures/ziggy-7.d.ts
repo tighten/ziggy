@@ -9,6 +9,7 @@ declare module 'ziggy-js' {
         },
         {
             "name": "comment",
+            "optional": false,
             "binding": "uuid"
         }
     ],

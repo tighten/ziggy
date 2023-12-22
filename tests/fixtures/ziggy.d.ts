@@ -6,9 +6,15 @@ declare module 'ziggy-js' {
         {
             "name": "post",
             "optional": false
+        }
+    ],
+    "postComments.storeComment": [
+        {
+            "name": "post",
+            "optional": false
         },
         {
-            "name": "postId",
+            "name": "comment",
             "optional": true
         }
     ]

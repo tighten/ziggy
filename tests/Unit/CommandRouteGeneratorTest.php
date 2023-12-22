@@ -147,7 +147,7 @@ class CommandRouteGeneratorTest extends TestCase
     {
         app('router')->get('posts', $this->noop())->name('posts.index');
         app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
-        app('router')->post('posts/{post}/comments{postId?}', PostCommentController::class)->name('postComments.store');
+        app('router')->post('posts/{post}/comments/{comment?}', PostCommentController::class)->name('postComments.storeComment');
         app('router')->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate',  ['--types' => true]);
@@ -166,7 +166,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_dts_file_with_scoped_bindings()
     {
-        if (!$this->laravelVersion(7)) {
+        if (! $this->laravelVersion(7)) {
             $this->markTestSkipped('Requires Laravel >=7');
         }
 
