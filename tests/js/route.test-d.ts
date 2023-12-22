@@ -11,23 +11,20 @@ declare module '../../src/js' {
             { name: 'post'; optional: false },
             { name: 'comment'; optional: true; binding: 'uuid' },
         ];
-        optional: [{ name: 'maybe' }];
+        optional: [{ name: 'maybe'; optional: true }];
     }
 }
 
 type T = RouteParams<'posts.comments.show'>;
 
-// Test route name autocompletion
-assertType(route('posts.comments.show'));
+// Test route name autocompletion by adding quotes inside `route()` - should suggest route names above
+assertType(route());
 
-// Test route parameter name autocompletion
-assertType(route('posts.comments.store', { post: '1' }));
+// Test route parameter name autocompletion by adding more keys to the parameter object - should show info about params, e.g. for the 'comment' param if you type `c`
+assertType(route('posts.comments.show', { post: 1 }));
 
-// @ts-expect-error missing 'post' key in post parameter object
+// @ts-expect-error missing required 'post' parameter
 assertType(route('posts.comments.show', { comment: 2 }));
-
-// TODO once we can detect whether params are required/optional: @ts-expect-error missing required 'comment' parameter
-assertType(route('posts.comments.show', { post: 2 }));
 
 // Simple object example
 assertType(route('posts.comments.show', { post: 2, comment: 9 }));
