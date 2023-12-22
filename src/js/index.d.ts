@@ -21,7 +21,7 @@ type RouteName = KnownRouteName | (string & {});
 /**
  * Information about a single route parameter.
  */
-type ParameterInfo = { name: string; binding?: string };
+type ParameterInfo = { name: string; optional: boolean; binding?: string };
 
 /**
  * A primitive route parameter value, as it would appear in a URL.
@@ -63,29 +63,23 @@ type GenericRouteParamsObject = Record<keyof any, unknown> & HasQueryParam;
 // `keyof any` essentially makes it function as a plain `Record`
 
 /**
- * Get only params for `optional: true` or `optional: false`.
- */
-type GetParamsForOptionalSwitch<I extends readonly ParameterInfo[], TOptional extends boolean> = Extract<
-    I[number],
-    { optional: TOptional }
->;
-
-/**
- * Map our parameter info to a routable object. We call twice to handle optional and non-optional params.
- */
-type MapParamsToRoutable<I extends readonly ParameterInfo[]> =
-    { [T in GetParamsForOptionalSwitch<I, true> as T['name']]?: Routable<T> } &
-    { [T in GetParamsForOptionalSwitch<I, false> as T['name']]: Routable<T> }
-
-/**
  * An object of parameters for a specific named route.
  */
-type KnownRouteParamsObject<I extends readonly ParameterInfo[], MappedParams = MapParamsToRoutable<I>> = {
-    [K in keyof MappedParams]: MappedParams[K]
+type KnownRouteParamsObject<I extends readonly ParameterInfo[]> = {
+    [T in Extract<I[number], { optional: false }> as T['name']]: Routable<T>;
+} & {
+    [T in Extract<I[number], { optional: true }> as T['name']]?: Routable<T>;
 } & GenericRouteParamsObject;
 // `readonly` allows TypeScript to determine the actual values of all the
 // parameter names inside the array, instead of just seeing `string`.
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1329978447.
+
+// Uncomment to test:
+// type A = KnownRouteParamsObject<
+//     [{ name: 'foo'; optional: false }, { name: 'bar'; optional: true }]
+// >;
+// = { foo: ..., bar?: ... }
+
 /**
  * An object of route parameters.
  */
