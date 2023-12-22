@@ -15,18 +15,13 @@ class Types implements Stringable
         $this->ziggy = $ziggy;
     }
 
-    private function isParamOptional(string $uri, string $param): bool
-    {
-        return str_contains($uri, "{$param}?");
-    }
-
     public function __toString(): string
     {
         $routes = collect($this->ziggy->toArray()['routes'])->map(function ($route) {
             return collect($route['parameters'] ?? [])->map(function ($param) use ($route) {
                 return Arr::has($route, "bindings.{$param}")
                     ? ['name' => $param, 'binding' => $route['bindings'][$param]]
-                    : ['name' => $param, 'optional' => $this->isParamOptional($route['uri'], $param)];
+                    : ['name' => $param, 'optional' => strpos($route['uri'], "{$param}?") !== false];
             });
         });
 
