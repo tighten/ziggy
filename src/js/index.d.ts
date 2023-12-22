@@ -61,7 +61,6 @@ type HasQueryParam = { _query?: Record<string, unknown> };
  */
 type GenericRouteParamsObject = Record<keyof any, unknown> & HasQueryParam;
 // `keyof any` essentially makes it function as a plain `Record`
-
 /**
  * An object of parameters for a specific named route.
  */
@@ -73,13 +72,11 @@ type KnownRouteParamsObject<I extends readonly ParameterInfo[]> = {
 // `readonly` allows TypeScript to determine the actual values of all the
 // parameter names inside the array, instead of just seeing `string`.
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1329978447.
-
 // Uncomment to test:
 // type A = KnownRouteParamsObject<
 //     [{ name: 'foo'; optional: false }, { name: 'bar'; optional: true }]
 // >;
 // = { foo: ..., bar?: ... }
-
 /**
  * An object of route parameters.
  */
