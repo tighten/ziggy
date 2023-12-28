@@ -52,28 +52,15 @@ type Routable<I extends ParameterInfo> = I extends { binding: string }
 // type B = Routable<{ name: 'foo' }>;
 // = RawParameterValue | DefaultRoutable
 
-type Input = [{ name: 'foo'; optional: false }, { name: 'bar'; optional: true }];
-
+// Utility types for `KnownRouteParamsObject`:
 type PartiallyOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-
 type ArrToObj<I extends readonly ParameterInfo[]> = {
     [T in I[number] as T['name']]: T;
 };
-
 type OptionalParams<I extends readonly ParameterInfo[]> = Extract<
     I[number],
     { optional: true }
 >['name'];
-
-type T<
-    TInfo extends readonly ParameterInfo[],
-    TOptionalKeys extends TInfo[number]['name'] = OptionalParams<TInfo>,
-    TInfoObj extends Record<string, ParameterInfo> = ArrToObj<TInfo>,
-> = {
-    [K in keyof PartiallyOptional<TInfoObj, TOptionalKeys>]: Routable<TInfoObj[K]>;
-};
-
-type F = T<Input>;
 
 /**
  * An object containing a special '_query' key to target the query string of a URL.
@@ -98,9 +85,9 @@ type KnownRouteParamsObject<
 // parameter names inside the array, instead of just seeing `string`.
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1329978447.
 // Uncomment to test:
-type A = KnownRouteParamsObject<
-    [{ name: 'foo'; optional: false }, { name: 'bar'; optional: true }]
->;
+// type A = KnownRouteParamsObject<
+//     [{ name: 'foo'; optional: false }, { name: 'bar'; optional: true }]
+// >;
 // = { foo: ..., bar?: ... }
 /**
  * An object of route parameters.
