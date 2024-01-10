@@ -43,7 +43,7 @@ type ParameterValue = RawParameterValue | DefaultRoutable;
  * A parseable route parameter, either plain or nested inside an object under its binding key.
  */
 type Routable<I extends ParameterInfo> = I extends { binding: string }
-    ? { [K in I['binding']]: RawParameterValue } | RawParameterValue
+    ? ({ [K in I['binding']]: RawParameterValue } & Record<string, unknown>) | RawParameterValue
     : ParameterValue;
 
 // Uncomment to test:
@@ -51,6 +51,16 @@ type Routable<I extends ParameterInfo> = I extends { binding: string }
 // = RawParameterValue | { bar: RawParameterValue }
 // type B = Routable<{ name: 'foo' }>;
 // = RawParameterValue | DefaultRoutable
+
+// Utility types for `KnownRouteParamsObject`:
+type PartiallyOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+type ArrToObj<I extends readonly ParameterInfo[]> = {
+    [T in I[number] as T['name']]: T;
+};
+type OptionalParams<I extends readonly ParameterInfo[]> = Extract<
+    I[number],
+    { optional: true }
+>['name'];
 
 /**
  * An object containing a special '_query' key to target the query string of a URL.
@@ -64,10 +74,12 @@ type GenericRouteParamsObject = Record<keyof any, unknown> & HasQueryParam;
 /**
  * An object of parameters for a specific named route.
  */
-type KnownRouteParamsObject<I extends readonly ParameterInfo[]> = {
-    [T in Extract<I[number], { optional: false }> as T['name']]: Routable<T>;
-} & {
-    [T in Extract<I[number], { optional: true }> as T['name']]?: Routable<T>;
+type KnownRouteParamsObject<
+    TInfo extends readonly ParameterInfo[],
+    TOptionalKeys extends TInfo[number]['name'] = OptionalParams<TInfo>,
+    TInfoObj extends Record<string, ParameterInfo> = ArrToObj<TInfo>,
+> = {
+    [K in keyof PartiallyOptional<TInfoObj, TOptionalKeys>]: Routable<TInfoObj[K]>;
 } & GenericRouteParamsObject;
 // `readonly` allows TypeScript to determine the actual values of all the
 // parameter names inside the array, instead of just seeing `string`.
@@ -117,7 +129,7 @@ type RouteParamsArray<N extends RouteName> = N extends KnownRouteName
 /**
  * All possible parameter argument shapes for a route.
  */
-type RouteParams<N extends RouteName> = ParameterValue | RouteParamsObject<N> | RouteParamsArray<N>;
+type RouteParams<N extends RouteName> = RouteParamsObject<N> | RouteParamsArray<N>;
 
 /**
  * A route.
@@ -166,6 +178,12 @@ export default function route(): Router;
 export default function route<T extends RouteName>(
     name: T,
     params?: RouteParams<T> | undefined,
+    absolute?: boolean,
+    config?: Config,
+): string;
+export default function route<T extends RouteName>(
+    name: T,
+    params?: ParameterValue | undefined,
     absolute?: boolean,
     config?: Config,
 ): string;
