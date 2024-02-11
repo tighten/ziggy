@@ -10,7 +10,7 @@ use Tightenco\Ziggy\ZiggyServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {
-    public static function assertStringContainsString(string $needle, string $haystack, string $message = ''): void
+    public static function assertContainsString(string $needle, string $haystack, string $message = ''): void
     {
         $constraint = new StringContains($needle, false);
 
