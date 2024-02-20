@@ -34,8 +34,8 @@
     ],
     "type": "module",
     "source": "./src/js/index.js",
-    "exports": "./dist/ziggy.js",
-    "module": "./dist/ziggy.esm.js",
+    "exports": "./dist/index.js",
+    "module": "./dist/index.esm.js",
     "types": "./src/js/index.d.ts",
     "scripts": {
         "build": "npm run build:esm && npm run build:umd",

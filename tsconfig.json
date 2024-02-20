@@ -3,5 +3,5 @@
         "module": "ESNext",
         "moduleResolution": "Bundler"
     },
-    "exclude": ["vendor"]
+    "exclude": ["vendor", "tests/fixtures"]
 }
