@@ -1,6 +1,6 @@
 {
     "name": "ziggy-js",
-    "version": "2.0.0-beta.2",
+    "version": "2.0.0",
     "description": "Use your Laravel named routes in JavaScript.",
     "keywords": [
         "laravel",
@@ -39,9 +39,9 @@
     "types": "./src/js/index.d.ts",
     "scripts": {
         "build": "npm run build:esm && npm run build:umd",
-        "build:esm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap --external none --no-generateTypes",
+        "build:esm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap --no-generateTypes --external none",
         "build:npm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap --no-generateTypes",
-        "build:umd": "microbundle -i ./src/js/browser.js -o ./dist/route.js --format umd --name route --no-sourcemap --external none --no-generateTypes",
+        "build:umd": "microbundle -i ./src/js/browser.js -o ./dist/route.js --format umd --name route --no-sourcemap --no-generateTypes --external none",
         "test": "vitest --typecheck",
         "format": "prettier . --write",
         "prepublishOnly": "rm -r ./dist/* && npm run build:npm"
@@ -53,11 +53,11 @@
         "qs": "~6.9.7"
     },
     "devDependencies": {
-        "jsdom": "^23.0.1",
+        "jsdom": "^24.0.0",
         "microbundle": "^0.15.1",
-        "prettier": "^3.1.1",
+        "prettier": "^3.2.5",
         "typescript": "^5.3.3",
-        "vitest": "^1.0.4"
+        "vitest": "^1.3.1"
     },
     "prettier": {
         "printWidth": 100,
