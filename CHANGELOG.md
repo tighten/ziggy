@@ -8,6 +8,12 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v2.0.2] - 2024-02-20
+
+**Fixed**
+
+- Fix package.json module and exports by @bakerkretzmar in https://github.com/tighten/ziggy/pull/714
+
 ## [v2.0.1] - 2024-02-20
 
 **Fixed**
@@ -356,7 +362,8 @@ See [UPGRADING](UPGRADING.md#upgrading-from-1x-to-2x) for detailed upgrade instr
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v2.0.2...HEAD
+[v2.0.2]: https://github.com/tighten/ziggy/compare/v2.0.1...v2.0.2
 [v2.0.1]: https://github.com/tighten/ziggy/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/tighten/ziggy/compare/v1.8.2...v2.0.0
 [v1.8.2]: https://github.com/tighten/ziggy/compare/v1.8.1...v1.8.2
