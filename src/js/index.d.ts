@@ -155,16 +155,16 @@ interface Router {
  * Ziggy's route helper.
  */
 // Called with no arguments - returns a Router instance
-export default function route(): Router;
+export function route(): Router;
 // Called with a route name and optional additional arguments - returns a URL string
-export default function route<T extends RouteName>(
+export function route<T extends RouteName>(
     name: T,
     params?: RouteParams<T> | undefined,
     absolute?: boolean,
     config?: Config,
 ): string;
 // Called with configuration arguments only - returns a configured Router instance
-export default function route(
+export function route(
     name: undefined,
     params: undefined,
     absolute?: boolean,
