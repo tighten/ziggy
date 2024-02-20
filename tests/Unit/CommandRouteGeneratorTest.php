@@ -271,7 +271,8 @@ JAVASCRIPT;
 
 class PostCommentController
 {
-    public function __invoke($post, $comment) {
+    public function __invoke($post, $comment)
+    {
         //
     }
 }

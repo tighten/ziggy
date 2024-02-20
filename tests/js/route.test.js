@@ -1231,6 +1231,75 @@ describe('current()', () => {
         expect(route().current('events.venues.show', { id: 12, user: 'Matt' })).toBe(false);
     });
 
+    test('can check the current route with array and object query parameters', () => {
+        global.window.location.pathname = '/events/1/venues/2';
+        global.window.location.search =
+            '?filter[year]=2024&filter[month]=Jan&filter[month]=Feb&tags[0]=music&tags[1]=dance&genres[]=jazz&genres[]=folk';
+
+        expect(
+            route().current('events.venues.show', {
+                filter: {
+                    year: '2024',
+                },
+            }),
+        ).toBe(true);
+        // Weird, but technically correct since this isn't checking for an exact match, just 'overlap'
+        expect(
+            route().current('events.venues.show', {
+                filter: {},
+            }),
+        ).toBe(true);
+        // Even weirder, but probably better than getting really picky about empty arrays vs. empty objects
+        expect(
+            route().current('events.venues.show', {
+                genres: {},
+            }),
+        ).toBe(true);
+        expect(
+            route().current('events.venues.show', {
+                filter: {
+                    year: '2024',
+                    month: ['Jan'],
+                },
+                tags: ['dance', 'music'],
+                genres: ['folk'],
+            }),
+        ).toBe(true);
+
+        expect(
+            route().current('events.venues.show', {
+                filter: {
+                    year: '2025',
+                },
+            }),
+        ).toBe(false);
+        expect(
+            route().current('events.venues.show', {
+                filter: {
+                    year: null,
+                },
+            }),
+        ).toBe(false);
+        expect(
+            route().current('events.venues.show', {
+                filter: {
+                    year: '2024',
+                    month: ['Mar'],
+                },
+            }),
+        ).toBe(false);
+        expect(
+            route().current('events.venues.show', {
+                tags: [''],
+            }),
+        ).toBe(false);
+        expect(
+            route().current('events.venues.show', {
+                genres: [null],
+            }),
+        ).toBe(false);
+    });
+
     test('can check the current route with Cyrillic characters', () => {
         global.window.location.pathname = '/статистика';
 

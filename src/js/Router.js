@@ -137,9 +137,28 @@ export default class Router extends String {
         )
             return true;
 
+        const isSubset = (subset, full) => {
+            return Object.entries(subset).every(([key, value]) => {
+                if (Array.isArray(value) && Array.isArray(full[key])) {
+                    return value.every((v) => full[key].includes(v));
+                }
+
+                if (
+                    typeof value === 'object' &&
+                    typeof full[key] === 'object' &&
+                    value !== null &&
+                    full[key] !== null
+                ) {
+                    return isSubset(value, full[key]);
+                }
+
+                return full[key] == value;
+            });
+        };
+
         // Check that all passed parameters match their values in the current window URL
         // Use weak equality because all values in the current window URL will be strings
-        return Object.entries(params).every(([key, value]) => routeParams[key] == value);
+        return isSubset(params, routeParams);
     }
 
     /**
