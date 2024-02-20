@@ -14,7 +14,7 @@ class BladeRouteGeneratorTest extends TestCase
     {
         $generator = app(BladeRouteGenerator::class);
 
-        $this->assertStringContainsString('"routes":[]', $generator->generate());
+        $this->assertContainsString('"routes":[]', $generator->generate());
     }
 
     /** @test */
@@ -73,7 +73,7 @@ class BladeRouteGeneratorTest extends TestCase
             ],
         ];
 
-        $this->assertStringContainsString(json_encode($expected), (new BladeRouteGenerator)->generate());
+        $this->assertContainsString(json_encode($expected), (new BladeRouteGenerator)->generate());
     }
 
     /** @test */
@@ -94,7 +94,7 @@ class BladeRouteGeneratorTest extends TestCase
             ],
         ];
 
-        $this->assertStringContainsString(json_encode($expected), (new BladeRouteGenerator)->generate());
+        $this->assertContainsString(json_encode($expected), (new BladeRouteGenerator)->generate());
     }
 
     /** @test */
@@ -132,7 +132,7 @@ class BladeRouteGeneratorTest extends TestCase
     /** @test */
     public function can_set_csp_nonce()
     {
-        $this->assertStringContainsString(
+        $this->assertContainsString(
             '<script type="text/javascript" nonce="supercalifragilisticexpialidocious">',
             (new BladeRouteGenerator)->generate(false, 'supercalifragilisticexpialidocious')
         );

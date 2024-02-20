@@ -13,17 +13,21 @@ jobs:
     strategy:
       matrix:
         os: [[Ubuntu, ubuntu-latest], [Windows, windows-latest]]
-        php: ['7.3', '7.4', '8.0', '8.1', '8.2']
-        laravel: [5.5.*, 5.6.*, 5.7.*, 5.8.*, 6.*, 7.*, 8.*, 9.*, 10.*]
+        php: ['7.3', '7.4', '8.0', '8.1', '8.2', '8.3']
+        laravel: [5.5.*, 5.6.*, 5.7.*, 5.8.*, 6.*, 7.*, 8.*, 9.*, 10.*, 11.*]
         exclude:
           - php: '7.3'
             laravel: 9.*
           - php: '7.3'
             laravel: 10.*
+          - php: '7.3'
+            laravel: 11.*
           - php: '7.4'
             laravel: 9.*
           - php: '7.4'
             laravel: 10.*
+          - php: '7.4'
+            laravel: 11.*
           - php: '8.0'
             laravel: 5.5.*
           - php: '8.0'
@@ -34,6 +38,8 @@ jobs:
             laravel: 5.8.*
           - php: '8.0'
             laravel: 10.*
+          - php: '8.0'
+            laravel: 11.*
           - php: '8.1'
             laravel: 5.5.*
           - php: '8.1'
@@ -46,6 +52,8 @@ jobs:
             laravel: 6.*
           - php: '8.1'
             laravel: 7.*
+          - php: '8.1'
+            laravel: 11.*
           - php: '8.2'
             laravel: 5.5.*
           - php: '8.2'
@@ -58,6 +66,22 @@ jobs:
             laravel: 6.*
           - php: '8.2'
             laravel: 7.*
+          - php: '8.3'
+            laravel: 5.5.*
+          - php: '8.3'
+            laravel: 5.6.*
+          - php: '8.3'
+            laravel: 5.7.*
+          - php: '8.3'
+            laravel: 5.8.*
+          - php: '8.3'
+            laravel: 6.*
+          - php: '8.3'
+            laravel: 7.*
+          - php: '8.3'
+            laravel: 8.*
+          - php: '8.3'
+            laravel: 9.*
     steps:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
