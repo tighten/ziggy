@@ -8,6 +8,23 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v1.8.2] - 2024-02-20
+
+**Added**
+
+- Test on Laravel 11 by @shuvroroy in https://github.com/tighten/ziggy/pull/709
+
+**Fixed**
+
+- Fix `route().current()` with encoded characters by @bakerkretzmar in https://github.com/tighten/ziggy/pull/668
+- Fix retrieving ziggys config from an api endpoint link in readme by @RomainMazB in https://github.com/tighten/ziggy/pull/694
+- Fix `route().current()` with nested/object query params by @bakerkretzmar in https://github.com/tighten/ziggy/pull/712
+
+**Changed**
+
+- Enable provenance for npm package by @saibotk in https://github.com/tighten/ziggy/pull/684
+- Handle generated file extensions more robustly by @bakerkretzmar in https://github.com/tighten/ziggy/pull/687
+
 ## [v1.8.1] - 2023-10-12
 
 **Fixed**
@@ -316,7 +333,8 @@ Breaking changes are marked with ⚠️.
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v1.8.1...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v1.8.2...HEAD
+[v1.8.2]: https://github.com/tighten/ziggy/compare/v1.8.1...v1.8.2
 [v1.8.1]: https://github.com/tighten/ziggy/compare/v1.8.0...v1.8.1
 [v1.8.0]: https://github.com/tighten/ziggy/compare/v1.7.0...v1.8.0
 [v1.7.0]: https://github.com/tighten/ziggy/compare/v1.6.2...v1.7.0
