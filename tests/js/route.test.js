@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
-import { route } from '../../src/js/index.js';
+import { route } from '../../src/js';
 // import { route } from '../../dist/index.esm.js';
 // import { route } from '../../dist/index.js';
 // import route from '../../dist/route.umd.js';
