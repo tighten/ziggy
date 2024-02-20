@@ -45,10 +45,10 @@ export default class Route {
         return !this.config.absolute
             ? ''
             : this.definition.domain
-            ? `${this.config.url.match(/^\w+:\/\//)[0]}${this.definition.domain}${
-                  this.config.port ? `:${this.config.port}` : ''
-              }`
-            : this.config.url;
+              ? `${this.config.url.match(/^\w+:\/\//)[0]}${this.definition.domain}${
+                    this.config.port ? `:${this.config.port}` : ''
+                }`
+              : this.config.url;
     }
 
     /**

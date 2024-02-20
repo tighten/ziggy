@@ -237,8 +237,8 @@ export default class Router extends String {
                     segments[i]
                         ? { ...result, [segments[i].name]: current }
                         : typeof current === 'object'
-                        ? { ...result, ...current }
-                        : { ...result, [current]: '' },
+                          ? { ...result, ...current }
+                          : { ...result, [current]: '' },
                 {},
             );
         } else if (
