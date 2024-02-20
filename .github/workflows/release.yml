@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # Set up .npmrc file to publish to npm
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org
@@ -24,13 +24,13 @@ jobs:
       # Abort if the version in the package.json file (prefixed with 'v') doesn't match the tag name of the release
       - name: Check package.json version against tag name
         if: format('v{0}', steps.package-json-version.outputs.version) != github.event.release.tag_name
-        uses: actions/github-script@v3
+        uses: actions/github-script@v7
         with:
           script: core.setFailed('Release tag does not match package.json version!')
       # Abort if this is a pre-release and the version in the package.json file doesn't contain a '-' to indicate that (e.g. v2.0.0-beta.1), or vice-versa
       - name: Check package.json version against pre-release
         if: contains(steps.package-json-version.outputs.version, '-') != github.event.release.prerelease
-        uses: actions/github-script@v3
+        uses: actions/github-script@v7
         with:
           script: core.setFailed('Stability of release tag does not match package.json version!')
       # If this is a pre-release, publish it to NPM under the 'next' tag (default is 'latest')
