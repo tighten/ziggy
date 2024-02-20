@@ -165,7 +165,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_dts_file_with_scoped_bindings()
     {
-        if (!$this->laravelVersion(7)) {
+        if (! $this->laravelVersion(7)) {
             $this->markTestSkipped('Requires Laravel >=7');
         }
 
@@ -197,8 +197,6 @@ class CommandRouteGeneratorTest extends TestCase
         Artisan::call('ziggy:generate', ['--types-only' => true]);
 
         $this->assertFileExists(base_path('resources/js/ziggy.d.ts'));
-
-
         if (method_exists($this, 'assertFileDoesNotExist')) {
             $this->assertFileDoesNotExist(base_path('resources/js/ziggy.js'));
         } else {
@@ -217,7 +215,6 @@ class CommandRouteGeneratorTest extends TestCase
         Artisan::call('ziggy:generate', ['--types-only' => true]);
 
         $this->assertFileExists(base_path('resources/js/custom.d.ts'));
-
         if (method_exists($this, 'assertFileDoesNotExist')) {
             $this->assertFileDoesNotExist(base_path('resources/js/ziggy.d.ts'));
         } else {
