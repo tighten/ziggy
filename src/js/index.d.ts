@@ -170,3 +170,15 @@ export function route(
     absolute?: boolean,
     config?: Config,
 ): Router;
+
+/**
+ * Ziggy's Vue plugin.
+ */
+export const ZiggyVue: {
+    install(app: any, options?: Config): void;
+};
+
+/**
+ * Ziggy's React hook.
+ */
+export function useRoute(defaultConfig?: Config): typeof route;
