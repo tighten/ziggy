@@ -17,7 +17,9 @@ class ZiggyServiceProvider extends ServiceProvider
             $this->app->afterResolving('blade.compiler', fn (BladeCompiler $blade) => $this->registerDirective($blade));
         }
 
-        Event::listen(RequestReceived::class, fn () => BladeRouteGenerator::$generated = false);
+        Event::listen(RequestReceived::class, function () {
+            BladeRouteGenerator::$generated = false;
+        });
 
         if ($this->app->runningInConsole()) {
             $this->commands(CommandRouteGenerator::class);
