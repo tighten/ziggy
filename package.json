@@ -35,8 +35,8 @@
     "type": "module",
     "source": "./src/js/index.js",
     "exports": {
-        "default": "./dist/index.js",
-        "types": "./src/js/index.d.ts"
+        "types": "./src/js/index.d.ts",
+        "default": "./dist/index.js"
     },
     "module": "./dist/index.esm.js",
     "types": "./src/js/index.d.ts",
