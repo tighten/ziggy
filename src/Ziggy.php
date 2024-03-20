@@ -142,9 +142,12 @@ class Ziggy implements JsonSerializable
             $routes->put($name, $route);
         });
 
-        return $this->folioRoutes()->merge(
-            $routes->map(function ($route) use ($bindings) {
-                return collect($route)->only(['uri', 'methods', 'wheres'])
+        $allRoutes = $this->folioRoutes();
+
+        $routes->map(function ($route, $name) use ($bindings, $allRoutes) {
+            $allRoutes->put(
+                $name,
+                    collect($route)->only(['uri', 'methods', 'wheres'])
                     ->put('domain', $route->domain())
                     ->put('parameters', $route->parameterNames())
                     ->put('bindings', $bindings[$route->getName()] ?? [])
@@ -154,9 +157,12 @@ class Ziggy implements JsonSerializable
                         }
 
                         return $collection->put('middleware', $route->middleware());
-                    })->filter();
-            })
-        );
+                    })
+                    ->filter()
+            );
+        });
+
+        return $allRoutes;
     }
 
     /**
