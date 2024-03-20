@@ -5,9 +5,11 @@ namespace Tighten\Ziggy;
 use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Reflector;
 use Illuminate\Support\Str;
 use JsonSerializable;
+use Laravel\Folio\FolioRoutes;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -137,19 +139,21 @@ class Ziggy implements JsonSerializable
             $routes->put($name, $route);
         });
 
-        return $routes->map(function ($route) use ($bindings) {
-            return collect($route)->only(['uri', 'methods', 'wheres'])
-                ->put('domain', $route->domain())
-                ->put('parameters', $route->parameterNames())
-                ->put('bindings', $bindings[$route->getName()] ?? [])
-                ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
-                    if (is_array($middleware)) {
-                        return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values()->all());
-                    }
+        return $this->folioRoutes()->merge(
+            $routes->map(function ($route) use ($bindings) {
+                return collect($route)->only(['uri', 'methods', 'wheres'])
+                    ->put('domain', $route->domain())
+                    ->put('parameters', $route->parameterNames())
+                    ->put('bindings', $bindings[$route->getName()] ?? [])
+                    ->when($middleware = config('ziggy.middleware'), function ($collection) use ($middleware, $route) {
+                        if (is_array($middleware)) {
+                            return $collection->put('middleware', collect($route->middleware())->intersect($middleware)->values()->all());
+                        }
 
-                    return $collection->put('middleware', $route->middleware());
-                })->filter();
-        });
+                        return $collection->put('middleware', $route->middleware());
+                    })->filter();
+            })
+        );
     }
 
     /**
@@ -217,5 +221,27 @@ class Ziggy implements JsonSerializable
         }
 
         return $routes;
+    }
+
+    private function folioRoutes(): Collection
+    {
+        if (app()->has(FolioRoutes::class)) {
+            $routes = app(FolioRoutes::class);
+
+            return collect($routes->routes())->map(function (array $route, string $name) {
+                // wheres, parameters, bindings, middleware
+                return collect([
+                    // 'uri' => '',
+                    'methods' => ['GET'],
+                    // 'wheres' => [],
+                    // 'domain' => $route['domain'],
+                    // 'parameters' => [],
+                    // 'bindings' => [],
+                    // 'middleware' => [],
+                ])->filter();
+            });
+        }
+
+        return collect();
     }
 }
