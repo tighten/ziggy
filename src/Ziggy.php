@@ -240,7 +240,7 @@ class Ziggy implements JsonSerializable
         if (app()->has(FolioRoutes::class)) {
             $mountPaths = app(FolioManager::class)->mountPaths();
 
-            // Use already-registered named Folio routes (not all relevant view files) to respect route caching
+            // Use already-registered named Folio routes (instead of searching for all relevant view files) to respect route caching
             return collect(app(FolioRoutes::class)->routes())->map(function (array $route) use ($mountPaths) {
                 $uri = rtrim($route['baseUri'], '/') . str_replace($route['mountPath'], '', $route['path']);
                 $uri = str_replace('.blade.php', '', $uri);
@@ -278,7 +278,6 @@ class Ziggy implements JsonSerializable
                 return array_filter([
                     'uri' => $uri === '' ? '/' : trim($uri, '/'),
                     'methods' => ['GET'],
-                    // 'wheres' => [],
                     'domain' => $route['domain'],
                     'parameters' => $parameters,
                     'bindings' => $bindings,

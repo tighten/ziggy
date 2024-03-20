@@ -71,10 +71,12 @@ class FolioTest extends TestCase
         Folio::path(resource_path('views/pages'));
 
         $this->assertSame([
-            'uri' => 'about',
-            // Folio routes only respond to 'GET', so this is the web route
-            'methods' => ['GET', 'HEAD'],
-        ], (new Ziggy())->toArray()['routes']['about']);
+            'about' => [
+                'uri' => 'about',
+                // Folio routes only respond to 'GET', so this is the web route
+                'methods' => ['GET', 'HEAD'],
+            ],
+        ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
     }
 
     /** @test */
@@ -87,18 +89,19 @@ class FolioTest extends TestCase
         Folio::path(resource_path('views/pages'));
 
         $this->assertSame([
-            'uri' => 'users/{id}',
-            'methods' => ['GET'],
-            'parameters' => ['id'],
-            'middleware' => ['web'],
-        ], (new Ziggy())->toArray()['routes']['users.show']);
-
-        $this->assertSame([
-            'uri' => 'users/{ids}',
-            'methods' => ['GET'],
-            'parameters' => ['ids'],
-            'middleware' => ['web'],
-        ], (new Ziggy())->toArray()['routes']['users.some']);
+            'users.show' => [
+                'uri' => 'users/{id}',
+                'methods' => ['GET'],
+                'parameters' => ['id'],
+                'middleware' => ['web'],
+            ],
+            'users.some' => [
+                'uri' => 'users/{ids}',
+                'methods' => ['GET'],
+                'parameters' => ['ids'],
+                'middleware' => ['web'],
+            ],
+        ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
     }
 
     /** @test */
