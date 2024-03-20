@@ -12,6 +12,15 @@ use Tighten\Ziggy\ZiggyServiceProvider;
 
 class FolioTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if ((int) head(explode('.', app()->version())) < 10) {
+            $this->markTestSkipped('Folio requires Laravel >=10');
+        }
+    }
+
     protected function tearDown(): void
     {
         File::deleteDirectories(resource_path('views'));
