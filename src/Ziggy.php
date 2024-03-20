@@ -10,6 +10,7 @@ use Illuminate\Support\Reflector;
 use Illuminate\Support\Str;
 use JsonSerializable;
 use Laravel\Folio\FolioRoutes;
+use Laravel\Folio\Pipeline\PotentiallyBindablePathSegment;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -223,23 +224,51 @@ class Ziggy implements JsonSerializable
         return $routes;
     }
 
+    /**
+     * @see https://github.com/laravel/folio/blob/master/src/Console/ListCommand.php
+     */
     private function folioRoutes(): Collection
     {
         if (app()->has(FolioRoutes::class)) {
-            $routes = app(FolioRoutes::class);
+            // Use already-registered named Folio routes (not all relevant view files) to respect route caching
+            return collect(app(FolioRoutes::class)->routes())->map(function (array $route, string $name) {
+                $uri = rtrim($route['baseUri'], '/') . str_replace($route['mountPath'], '', $route['path']);
+                $uri = str_replace('.blade.php', '', $uri);
 
-            return collect($routes->routes())->map(function (array $route, string $name) {
-                // wheres, parameters, bindings, middleware
-                return collect([
-                    // 'uri' => '',
+                $parameters = [];
+                $bindings = [];
+
+                $segments = explode('/', $uri);
+
+                foreach ($segments as $i => $segment) {
+                    // Folio doesn't support sub-segment parameters
+                    if (Str::startsWith($segment, '[')) {
+                        $param = new PotentiallyBindablePathSegment($segment);
+
+                        $parameters[] = $name = $param->trimmed();
+                        $segments[$i] = str_replace(['[', ']'], ['{', '}'], $segment);
+
+                        if ($field = $param->field()) {
+                            $bindings[$name] = $field;
+                        }
+                    }
+                }
+
+                $uri = implode('/', $segments);
+
+                $uri = str_replace(['/index', '/index/'], ['', '/'], $uri);
+
+                return array_filter([
+                    'uri' => $uri === '' ? '/' : trim($uri, '/'),
                     'methods' => ['GET'],
                     // 'wheres' => [],
-                    // 'domain' => $route['domain'],
-                    // 'parameters' => [],
-                    // 'bindings' => [],
+                    'domain' => $route['domain'],
+                    'parameters' => $parameters,
+                    'bindings' => $bindings,
                     // 'middleware' => [],
-                ])->filter();
+                ]);
             });
+
         }
 
         return collect();
