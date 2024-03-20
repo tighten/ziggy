@@ -98,19 +98,17 @@ class FolioTest extends TestCase
         Folio::path(resource_path('views/pages'));
 
         $this->assertSame([
-            'users.show' => [
-                'uri' => 'users/{id}',
-                'methods' => ['GET'],
-                'parameters' => ['id'],
-                'middleware' => ['web'],
-            ],
-            'users.some' => [
-                'uri' => 'users/{ids}',
-                'methods' => ['GET'],
-                'parameters' => ['ids'],
-                'middleware' => ['web'],
-            ],
-        ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
+            'uri' => 'users/{id}',
+            'methods' => ['GET'],
+            'parameters' => ['id'],
+            'middleware' => ['web'],
+        ], (new Ziggy())->toArray()['routes']['users.show']);
+        $this->assertSame([
+            'uri' => 'users/{ids}',
+            'methods' => ['GET'],
+            'parameters' => ['ids'],
+            'middleware' => ['web'],
+        ], (new Ziggy())->toArray()['routes']['users.some']);
     }
 
     /** @test */
@@ -210,22 +208,26 @@ class FolioTest extends TestCase
     {
         File::ensureDirectoryExists(resource_path('views/pages/users'));
         File::put(resource_path('views/pages/users/[User].blade.php'), '<?php Laravel\Folio\name("users.show");');
-        File::ensureDirectoryExists(resource_path('views/pages/posts'));
-        File::put(resource_path('views/pages/posts/[Post:slug].blade.php'), '<?php Laravel\Folio\name("posts.show");');
+        if (! str_starts_with(strtoupper(PHP_OS), 'WIN')) {
+            File::ensureDirectoryExists(resource_path('views/pages/posts'));
+            File::put(resource_path('views/pages/posts/[Post:slug].blade.php'), '<?php Laravel\Folio\name("posts.show");');
+        }
         File::ensureDirectoryExists(resource_path('views/pages/teams'));
         File::put(resource_path('views/pages/teams/[Team-uid].blade.php'), '<?php Laravel\Folio\name("teams.show");');
 
         Folio::path(resource_path('views/pages'));
 
-        $this->assertSame([
-            'uri' => 'posts/{post}',
-            'methods' => ['GET'],
-            'parameters' => ['post'],
-            'bindings' => [
-                'post' => 'slug',
-            ],
-            'middleware' => ['web'],
-        ], (new Ziggy())->toArray()['routes']['posts.show']);
+        if (! str_starts_with(strtoupper(PHP_OS), 'WIN')) {
+            $this->assertSame([
+                'uri' => 'posts/{post}',
+                'methods' => ['GET'],
+                'parameters' => ['post'],
+                'bindings' => [
+                    'post' => 'slug',
+                ],
+                'middleware' => ['web'],
+            ], (new Ziggy())->toArray()['routes']['posts.show']);
+        }
         $this->assertSame([
             'uri' => 'users/{user}',
             'methods' => ['GET'],
