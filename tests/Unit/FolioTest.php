@@ -32,7 +32,7 @@ class FolioTest extends TestCase
     {
         return [
             ZiggyServiceProvider::class,
-            FolioServiceProvider::class,
+            ...((int) head(explode('.', app()->version())) >= 10 ? [FolioServiceProvider::class] : []),
         ];
     }
 
@@ -194,17 +194,15 @@ class FolioTest extends TestCase
             ->middleware(['*' => ['auth']]);
 
         $this->assertSame([
-            'admin.index' => [
-                'uri' => 'admin',
-                'methods' => ['GET'],
-                'middleware' => ['web', 'auth'],
-            ],
-            'admin.special' => [
-                'uri' => 'admin/special',
-                'methods' => ['GET'],
-                'middleware' => ['web', 'auth', 'special'],
-            ],
-        ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
+            'uri' => 'admin',
+            'methods' => ['GET'],
+            'middleware' => ['web', 'auth'],
+        ], (new Ziggy())->toArray()['routes']['admin.index']);
+        $this->assertSame([
+            'uri' => 'admin/special',
+            'methods' => ['GET'],
+            'middleware' => ['web', 'auth', 'special'],
+        ], (new Ziggy())->toArray()['routes']['admin.special']);
     }
 
     /** @test */
@@ -220,30 +218,28 @@ class FolioTest extends TestCase
         Folio::path(resource_path('views/pages'));
 
         $this->assertSame([
-            'posts.show' => [
-                'uri' => 'posts/{post}',
-                'methods' => ['GET'],
-                'parameters' => ['post'],
-                'bindings' => [
-                    'post' => 'slug',
-                ],
-                'middleware' => ['web'],
+            'uri' => 'posts/{post}',
+            'methods' => ['GET'],
+            'parameters' => ['post'],
+            'bindings' => [
+                'post' => 'slug',
             ],
-            'users.show' => [
-                'uri' => 'users/{user}',
-                'methods' => ['GET'],
-                'parameters' => ['user'],
-                'middleware' => ['web'],
+            'middleware' => ['web'],
+        ], (new Ziggy())->toArray()['routes']['posts.show']);
+        $this->assertSame([
+            'uri' => 'users/{user}',
+            'methods' => ['GET'],
+            'parameters' => ['user'],
+            'middleware' => ['web'],
+        ], (new Ziggy())->toArray()['routes']['users.show']);
+        $this->assertSame([
+            'uri' => 'teams/{team}',
+            'methods' => ['GET'],
+            'parameters' => ['team'],
+            'bindings' => [
+                'team' => 'uid',
             ],
-            'teams.show' => [
-                'uri' => 'teams/{team}',
-                'methods' => ['GET'],
-                'parameters' => ['team'],
-                'bindings' => [
-                    'team' => 'uid',
-                ],
-                'middleware' => ['web'],
-            ],
-        ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
+            'middleware' => ['web'],
+        ], (new Ziggy())->toArray()['routes']['teams.show']);
     }
 }
