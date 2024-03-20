@@ -9,7 +9,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Reflector;
 use Illuminate\Support\Str;
 use JsonSerializable;
+use Laravel\Folio\FolioManager;
 use Laravel\Folio\FolioRoutes;
+use Laravel\Folio\Pipeline\MatchedView;
 use Laravel\Folio\Pipeline\PotentiallyBindablePathSegment;
 use ReflectionClass;
 use ReflectionMethod;
@@ -230,8 +232,10 @@ class Ziggy implements JsonSerializable
     private function folioRoutes(): Collection
     {
         if (app()->has(FolioRoutes::class)) {
+            $mountPaths = app(FolioManager::class)->mountPaths();
+
             // Use already-registered named Folio routes (not all relevant view files) to respect route caching
-            return collect(app(FolioRoutes::class)->routes())->map(function (array $route, string $name) {
+            return collect(app(FolioRoutes::class)->routes())->map(function (array $route) use ($mountPaths) {
                 $uri = rtrim($route['baseUri'], '/') . str_replace($route['mountPath'], '', $route['path']);
                 $uri = str_replace('.blade.php', '', $uri);
 
@@ -245,8 +249,8 @@ class Ziggy implements JsonSerializable
                     if (Str::startsWith($segment, '[')) {
                         $param = new PotentiallyBindablePathSegment($segment);
 
-                        $parameters[] = $name = $param->trimmed();
-                        $segments[$i] = str_replace(['[', ']'], ['{', '}'], $segment);
+                        $parameters[] = $name = (string) Str::of($param->trimmed())->afterLast('.')->before(':')->before('-')->camel();
+                        $segments[$i] = "{{$name}}";
 
                         if ($field = $param->field()) {
                             $bindings[$name] = $field;
@@ -258,6 +262,13 @@ class Ziggy implements JsonSerializable
 
                 $uri = str_replace(['/index', '/index/'], ['', '/'], $uri);
 
+                if ($route['domain'] && str_contains($route['domain'], '{')) {
+                    $parameters = [Str::between($route['domain'], '{', '}'), ...$parameters];
+                }
+
+                $matchedView = new MatchedView(realpath($route['path']), [], $route['mountPath']);
+                $mountPath = Arr::first($mountPaths, fn ($mountPath) => $mountPath->path === realpath($route['mountPath']));
+
                 return array_filter([
                     'uri' => $uri === '' ? '/' : trim($uri, '/'),
                     'methods' => ['GET'],
@@ -265,7 +276,11 @@ class Ziggy implements JsonSerializable
                     'domain' => $route['domain'],
                     'parameters' => $parameters,
                     'bindings' => $bindings,
-                    // 'middleware' => [],
+                    'middleware' => $mountPath->middleware
+                        ->match($matchedView)
+                        ->prepend('web')
+                        ->merge($matchedView->inlineMiddleware())
+                        ->unique()->values()->all(),
                 ]);
             });
 

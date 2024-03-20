@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Laravel\Folio\Folio;
-use Laravel\Folio\FolioRoutes;
 use Laravel\Folio\FolioServiceProvider;
 use Tests\TestCase;
 use Tighten\Ziggy\Ziggy;
@@ -30,8 +30,6 @@ class FolioTest extends TestCase
     /** @test */
     public function include_folio_routes()
     {
-        // middleware!
-        // route model binding
         File::ensureDirectoryExists(resource_path('views/pages'));
         File::put(resource_path('views/pages/about.blade.php'), '<?php Laravel\Folio\name("about");');
         File::put(resource_path('views/pages/anonymous.blade.php'), '<?php');
@@ -44,11 +42,13 @@ class FolioTest extends TestCase
             'about' => [
                 'uri' => 'about',
                 'methods' => ['GET'],
+                'middleware' => ['web'],
             ],
             'users.show' => [
                 'uri' => 'users/{id}',
                 'methods' => ['GET'],
                 'parameters' => ['id'],
+                'middleware' => ['web'],
             ],
             'laravel-folio' => [
                 'uri' => '{fallbackPlaceholder}',
@@ -72,13 +72,13 @@ class FolioTest extends TestCase
 
         $this->assertSame([
             'uri' => 'about',
-            // Folio routes don't respond to 'HEAD', so we know this is the web route
+            // Folio routes only respond to 'GET', so this is the web route
             'methods' => ['GET', 'HEAD'],
         ], (new Ziggy())->toArray()['routes']['about']);
     }
 
     /** @test */
-    public function handle_parameters()
+    public function parameters()
     {
         File::ensureDirectoryExists(resource_path('views/pages/users'));
         File::put(resource_path('views/pages/users/[id].blade.php'), '<?php Laravel\Folio\name("users.show");');
@@ -90,42 +90,148 @@ class FolioTest extends TestCase
             'uri' => 'users/{id}',
             'methods' => ['GET'],
             'parameters' => ['id'],
+            'middleware' => ['web'],
         ], (new Ziggy())->toArray()['routes']['users.show']);
 
         $this->assertSame([
-            'uri' => 'users/{...ids}',
+            'uri' => 'users/{ids}',
             'methods' => ['GET'],
             'parameters' => ['ids'],
+            'middleware' => ['web'],
         ], (new Ziggy())->toArray()['routes']['users.some']);
     }
 
     /** @test */
-    public function handle_binding_fields()
+    public function domains()
     {
-        //
+        File::ensureDirectoryExists(resource_path('views/pages/admin'));
+        File::put(resource_path('views/pages/admin/[...ids].blade.php'), '<?php Laravel\Folio\name("admins.some");');
+
+        Folio::domain('{account}.ziggy.dev')->path(resource_path('views/pages/admin'))->uri('admin');
+
+        $this->assertSame([
+            'admins.some' => [
+                'uri' => 'admin/{ids}',
+                'methods' => ['GET'],
+                'domain' => '{account}.ziggy.dev',
+                'parameters' => ['account', 'ids'],
+                'middleware' => ['web'],
+            ],
+        ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
     }
 
     /** @test */
-    public function handle_domains()
+    public function paths_and_uris()
     {
-        //
+        File::ensureDirectoryExists(resource_path('views/pages/guest'));
+        File::ensureDirectoryExists(resource_path('views/pages/admin'));
+        File::put(resource_path('views/pages/guest/[id].blade.php'), '<?php Laravel\Folio\name("guests.show");');
+        File::put(resource_path('views/pages/admin/[...ids].blade.php'), '<?php Laravel\Folio\name("admins.some");');
+
+        Folio::path(resource_path('views/pages/guest'))->uri('/');
+        Folio::path(resource_path('views/pages/admin'))->uri('/admin');
+
+        $this->assertSame([
+            'guests.show' => [
+                'uri' => '{id}',
+                'methods' => ['GET'],
+                'parameters' => ['id'],
+                'middleware' => ['web'],
+            ],
+            'admins.some' => [
+                'uri' => 'admin/{ids}',
+                'methods' => ['GET'],
+                'parameters' => ['ids'],
+                'middleware' => ['web'],
+            ],
+        ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
     }
 
     /** @test */
-    public function handle_middleware()
+    public function index_pages()
     {
-        //
+        File::ensureDirectoryExists(resource_path('views/pages/blog/releases'));
+        File::put(resource_path('views/pages/blog/index.blade.php'), '<?php Laravel\Folio\name("blog.index");');
+        File::put(resource_path('views/pages/blog/releases/index.blade.php'), '<?php Laravel\Folio\name("blog.categories.releases.index");');
+
+        Folio::path(resource_path('views/pages'));
+
+        $this->assertSame([
+            'blog.index' => [
+                'uri' => 'blog',
+                'methods' => ['GET'],
+                'middleware' => ['web'],
+            ],
+            'blog.categories.releases.index' => [
+                'uri' => 'blog/releases',
+                'methods' => ['GET'],
+                'middleware' => ['web'],
+            ],
+        ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
     }
 
     /** @test */
-    public function handle_multiple_root_paths()
+    public function middleware()
     {
-        //
+        File::ensureDirectoryExists(resource_path('views/pages/admin'));
+        File::put(resource_path('views/pages/admin/index.blade.php'), '<?php Laravel\Folio\name("admin.index");');
+        File::put(resource_path('views/pages/admin/special.blade.php'), '<?php Laravel\Folio\name("admin.special"); Laravel\Folio\middleware("special");');
+
+        Folio::path(resource_path('views/pages/admin'))
+            ->uri('admin')
+            ->middleware(['*' => ['auth']]);
+
+        $this->assertSame([
+            'admin.index' => [
+                'uri' => 'admin',
+                'methods' => ['GET'],
+                'middleware' => ['web', 'auth'],
+            ],
+            'admin.special' => [
+                'uri' => 'admin/special',
+                'methods' => ['GET'],
+                'middleware' => ['web', 'auth', 'special'],
+            ],
+        ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
     }
 
     /** @test */
-    public function handle_index_pages()
+    public function binding_fields()
     {
-        //
+        File::ensureDirectoryExists(resource_path('views/pages/users'));
+        File::put(resource_path('views/pages/users/[User].blade.php'), '<?php Laravel\Folio\name("users.show");');
+        File::ensureDirectoryExists(resource_path('views/pages/posts'));
+        File::put(resource_path('views/pages/posts/[Post:slug].blade.php'), '<?php Laravel\Folio\name("posts.show");');
+        File::ensureDirectoryExists(resource_path('views/pages/teams'));
+        File::put(resource_path('views/pages/teams/[Team-uid].blade.php'), '<?php Laravel\Folio\name("teams.show");');
+
+        Folio::path(resource_path('views/pages'));
+
+        $this->assertSame([
+            'posts.show' => [
+                'uri' => 'posts/{post}',
+                'methods' => ['GET'],
+                'parameters' => ['post'],
+                'bindings' => [
+                    'post' => 'slug',
+                ],
+                'middleware' => ['web'],
+            ],
+            'users.show' => [
+                'uri' => 'users/{user}',
+                'methods' => ['GET'],
+                'parameters' => ['user'],
+                'middleware' => ['web'],
+            ],
+            'teams.show' => [
+                'uri' => 'teams/{team}',
+                'methods' => ['GET'],
+                'parameters' => ['team'],
+                'bindings' => [
+                    'team' => 'uid',
+                ],
+                'middleware' => ['web'],
+            ],
+        ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
     }
 }
