@@ -254,7 +254,7 @@ class Ziggy implements JsonSerializable
                 if (Str::startsWith($segment, '[')) {
                     $param = new PotentiallyBindablePathSegment($segment);
 
-                    $parameters[] = $name = (string) Str::of($param->trimmed())->afterLast('.')->before(':')->before('-')->camel();
+                    $parameters[] = $name = $param->variable();
                     $segments[$i] = "{{$name}}";
 
                     if ($field = $param->field()) {
@@ -272,10 +272,11 @@ class Ziggy implements JsonSerializable
             }
 
             $uri = implode('/', $segments);
-            $uri = str_replace('/index', '', $uri);
+            $uri = Str::replaceEnd('/index', '', $uri);
 
             if ($route['domain'] && str_contains($route['domain'], '{')) {
-                array_unshift($parameters, Str::between($route['domain'], '{', '}'));
+                preg_match_all('/{(.*?)}/', $route['domain'], $matches);
+                array_unshift($parameters, ...$matches[1]);
             }
 
             $middleware = [];

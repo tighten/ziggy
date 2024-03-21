@@ -114,14 +114,14 @@ class FolioTest extends TestCase
         File::ensureDirectoryExists(resource_path('views/pages/admin'));
         File::put(resource_path('views/pages/admin/[...ids].blade.php'), '<?php Laravel\Folio\name("admins.some");');
 
-        Folio::domain('{account}.ziggy.dev')->path(resource_path('views/pages/admin'))->uri('admin');
+        Folio::domain('{account}.{org}.ziggy.dev')->path(resource_path('views/pages/admin'))->uri('admin');
 
         $this->assertSame([
             'admins.some' => [
                 'uri' => 'admin/{ids}',
                 'methods' => ['GET'],
-                'domain' => '{account}.ziggy.dev',
-                'parameters' => ['account', 'ids'],
+                'domain' => '{account}.{org}.ziggy.dev',
+                'parameters' => ['account', 'org', 'ids'],
             ],
         ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
     }
@@ -154,22 +154,65 @@ class FolioTest extends TestCase
     /** @test */
     public function index_pages()
     {
-        File::ensureDirectoryExists(resource_path('views/pages/blog/releases'));
-        File::put(resource_path('views/pages/blog/index.blade.php'), '<?php Laravel\Folio\name("blog.index");');
-        File::put(resource_path('views/pages/blog/releases/index.blade.php'), '<?php Laravel\Folio\name("blog.categories.releases.index");');
+        File::ensureDirectoryExists(resource_path('views/pages/index/index'));
+        File::put(resource_path('views/pages/index.blade.php'), '<?php Laravel\Folio\name("root");');
+        File::put(resource_path('views/pages/index/index/index.blade.php'), '<?php Laravel\Folio\name("index.index");');
 
         Folio::path(resource_path('views/pages'));
 
         $this->assertSame([
-            'blog.index' => [
-                'uri' => 'blog',
+            'root' => [
+                'uri' => '/',
                 'methods' => ['GET'],
             ],
-            'blog.categories.releases.index' => [
-                'uri' => 'blog/releases',
+            'index.index' => [
+                'uri' => 'index/index',
                 'methods' => ['GET'],
             ],
         ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
+    }
+
+    /** @test */
+    public function nested_pages()
+    {
+        File::ensureDirectoryExists(resource_path('views/pages/[slug]'));
+        File::put(resource_path('views/pages/[slug]/[id].blade.php'), '<?php Laravel\Folio\name("nested");');
+
+        Folio::path(resource_path('views/pages'));
+
+        $this->assertSame([
+            'nested' => [
+                'uri' => '{slug}/{id}',
+                'methods' => ['GET'],
+                'parameters' => ['slug', 'id'],
+            ],
+        ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
+    }
+
+    /** @test */
+    public function custom_view_data_variable_names()
+    {
+        File::ensureDirectoryExists(resource_path('views/pages/users/[.App.User-$leader]/users'));
+        File::put(resource_path('views/pages/users/[.App.User-$leader]/users/[.App.User-$follower].blade.php'), '<?php Laravel\Folio\name("follower");');
+        if (! windows_os()) {
+            File::ensureDirectoryExists(resource_path('views/pages/linux-users/[.App.User|leader]/users'));
+            File::put(resource_path('views/pages/linux-users/[.App.User|leader]/users/[.App.User|follower].blade.php'), '<?php Laravel\Folio\name("linux.follower");');
+        }
+
+        Folio::path(resource_path('views/pages'));
+
+        $this->assertSame([
+            'uri' => 'users/{leader}/users/{follower}',
+            'methods' => ['GET'],
+            'parameters' => ['leader', 'follower'],
+        ], (new Ziggy())->toArray()['routes']['follower']);
+        if (! windows_os()) {
+            $this->assertSame([
+                'uri' => 'linux-users/{leader}/users/{follower}',
+                'methods' => ['GET'],
+                'parameters' => ['leader', 'follower'],
+            ], (new Ziggy())->toArray()['routes']['linux.follower']);
+        }
     }
 
     /** @test */
@@ -202,7 +245,7 @@ class FolioTest extends TestCase
     {
         File::ensureDirectoryExists(resource_path('views/pages/users'));
         File::put(resource_path('views/pages/users/[User].blade.php'), '<?php Laravel\Folio\name("users.show");');
-        if (! str_starts_with(strtoupper(PHP_OS), 'WIN')) {
+        if (! windows_os()) {
             File::ensureDirectoryExists(resource_path('views/pages/posts'));
             File::put(resource_path('views/pages/posts/[Post:slug].blade.php'), '<?php Laravel\Folio\name("posts.show");');
         }
@@ -211,7 +254,7 @@ class FolioTest extends TestCase
 
         Folio::path(resource_path('views/pages'));
 
-        if (! str_starts_with(strtoupper(PHP_OS), 'WIN')) {
+        if (! windows_os()) {
             $this->assertSame([
                 'uri' => 'posts/{post}',
                 'methods' => ['GET'],
@@ -241,7 +284,7 @@ class FolioTest extends TestCase
     {
         File::ensureDirectoryExists(resource_path('views/pages/users'));
         File::put(resource_path('views/pages/users/[.App.User].blade.php'), '<?php Laravel\Folio\name("users.show");');
-        if (! str_starts_with(strtoupper(PHP_OS), 'WIN')) {
+        if (! windows_os()) {
             File::ensureDirectoryExists(resource_path('views/pages/posts'));
             File::put(resource_path('views/pages/posts/[.App.Post:slug].blade.php'), '<?php Laravel\Folio\name("posts.show");');
         }
@@ -250,7 +293,7 @@ class FolioTest extends TestCase
 
         Folio::path(resource_path('views/pages'));
 
-        if (! str_starts_with(strtoupper(PHP_OS), 'WIN')) {
+        if (! windows_os()) {
             $this->assertSame([
                 'uri' => 'posts/{post}',
                 'methods' => ['GET'],
@@ -304,6 +347,70 @@ class FolioTest extends TestCase
 
         $this->assertTrue(FolioUser::$wasBooted);
         $this->assertFalse(FolioTag::$wasBooted);
+    }
+
+    /** @test */
+    public function implicit_route_model_bindings_with_custom_variable()
+    {
+        File::ensureDirectoryExists(resource_path('views/pages/users'));
+        File::put(resource_path('views/pages/users/[.Tests.Unit.FolioUser-$user].blade.php'), '<?php Laravel\Folio\name("users.show");');
+        if (! windows_os()) {
+            File::ensureDirectoryExists(resource_path('views/pages/tags'));
+            File::put(resource_path('views/pages/tags/[.Tests.Unit.FolioTag|tag].blade.php'), '<?php Laravel\Folio\name("tags.show");');
+        }
+
+        Folio::path(resource_path('views/pages'));
+
+        $this->assertSame([
+            'uri' => 'users/{user}',
+            'methods' => ['GET'],
+            'parameters' => ['user'],
+            'bindings' => [
+                'user' => 'uuid',
+            ],
+        ], (new Ziggy)->toArray()['routes']['users.show']);
+        if (! windows_os()) {
+            $this->assertSame([
+                'uri' => 'tags/{tag}',
+                'methods' => ['GET'],
+                'parameters' => ['tag'],
+                'bindings' => [
+                    'tag' => 'id',
+                ],
+            ], (new Ziggy)->toArray()['routes']['tags.show']);
+        }
+    }
+
+    /** @test */
+    public function model_bindings_with_both_custom_field_and_custom_variable()
+    {
+        File::ensureDirectoryExists(resource_path('views/pages/users'));
+        File::put(resource_path('views/pages/users/[.Tests.Unit.FolioUser:email|user].blade.php'), '<?php Laravel\Folio\name("users.show");');
+        if (! windows_os()) {
+            File::ensureDirectoryExists(resource_path('views/pages/tags'));
+            File::put(resource_path('views/pages/tags/[.Tests.Unit.FolioTag-slug-$tag].blade.php'), '<?php Laravel\Folio\name("tags.show");');
+        }
+
+        Folio::path(resource_path('views/pages'));
+
+        $this->assertSame([
+            'uri' => 'users/{user}',
+            'methods' => ['GET'],
+            'parameters' => ['user'],
+            'bindings' => [
+                'user' => 'email',
+            ],
+        ], (new Ziggy)->toArray()['routes']['users.show']);
+        if (! windows_os()) {
+            $this->assertSame([
+                'uri' => 'tags/{tag}',
+                'methods' => ['GET'],
+                'parameters' => ['tag'],
+                'bindings' => [
+                    'tag' => 'slug',
+                ],
+            ], (new Ziggy)->toArray()['routes']['tags.show']);
+        }
     }
 }
 
