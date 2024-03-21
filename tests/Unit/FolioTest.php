@@ -292,37 +292,37 @@ class FolioTest extends TestCase
     public function implicit_route_model_bindings()
     {
         File::ensureDirectoryExists(resource_path('views/pages/users'));
-        File::put(resource_path('views/pages/users/[.Tests.Unit.User].blade.php'), '<?php Laravel\Folio\name("users.show");');
+        File::put(resource_path('views/pages/users/[.Tests.Unit.FolioUser].blade.php'), '<?php Laravel\Folio\name("users.show");');
         File::ensureDirectoryExists(resource_path('views/pages/tags'));
-        File::put(resource_path('views/pages/tags/[.Tests.Unit.Tag].blade.php'), '<?php Laravel\Folio\name("tags.show");');
+        File::put(resource_path('views/pages/tags/[.Tests.Unit.FolioTag].blade.php'), '<?php Laravel\Folio\name("tags.show");');
 
         Folio::path(resource_path('views/pages'));
 
         $this->assertSame([
-            'uri' => 'users/{user}',
+            'uri' => 'users/{folioUser}',
             'methods' => ['GET'],
-            'parameters' => ['user'],
+            'parameters' => ['folioUser'],
             'bindings' => [
-                'user' => 'uuid',
+                'folioUser' => 'uuid',
             ],
             'middleware' => ['web'],
         ], (new Ziggy)->toArray()['routes']['users.show']);
         $this->assertSame([
-            'uri' => 'tags/{tag}',
+            'uri' => 'tags/{folioTag}',
             'methods' => ['GET'],
-            'parameters' => ['tag'],
+            'parameters' => ['folioTag'],
             'bindings' => [
-                'tag' => 'id',
+                'folioTag' => 'id',
             ],
             'middleware' => ['web'],
         ], (new Ziggy)->toArray()['routes']['tags.show']);
 
-        $this->assertTrue(User::$wasBooted);
-        $this->assertFalse(Tag::$wasBooted);
+        $this->assertTrue(FolioUser::$wasBooted);
+        $this->assertFalse(FolioTag::$wasBooted);
     }
 }
 
-class User extends Model
+class FolioUser extends Model
 {
     public static $wasBooted = false;
 
@@ -338,7 +338,7 @@ class User extends Model
     }
 }
 
-class Tag extends Model
+class FolioTag extends Model
 {
     public static $wasBooted = false;
 
