@@ -382,33 +382,33 @@ class FolioTest extends TestCase
     /** @test */
     public function model_bindings_with_both_custom_field_and_custom_variable()
     {
-        File::ensureDirectoryExists(resource_path('views/pages/users'));
-        File::put(resource_path('views/pages/users/[.Tests.Unit.FolioUser:email|user].blade.php'), '<?php Laravel\Folio\name("users.show");');
         if (! windows_os()) {
-            File::ensureDirectoryExists(resource_path('views/pages/tags'));
-            File::put(resource_path('views/pages/tags/[.Tests.Unit.FolioTag-slug-$tag].blade.php'), '<?php Laravel\Folio\name("tags.show");');
+            File::ensureDirectoryExists(resource_path('views/pages/users'));
+            File::put(resource_path('views/pages/users/[.Tests.Unit.FolioUser:email|user].blade.php'), '<?php Laravel\Folio\name("users.show");');
         }
+        File::ensureDirectoryExists(resource_path('views/pages/tags'));
+        File::put(resource_path('views/pages/tags/[.Tests.Unit.FolioTag-slug-$tag].blade.php'), '<?php Laravel\Folio\name("tags.show");');
 
         Folio::path(resource_path('views/pages'));
 
-        $this->assertSame([
-            'uri' => 'users/{user}',
-            'methods' => ['GET'],
-            'parameters' => ['user'],
-            'bindings' => [
-                'user' => 'email',
-            ],
-        ], (new Ziggy)->toArray()['routes']['users.show']);
         if (! windows_os()) {
             $this->assertSame([
-                'uri' => 'tags/{tag}',
+                'uri' => 'users/{user}',
                 'methods' => ['GET'],
-                'parameters' => ['tag'],
+                'parameters' => ['user'],
                 'bindings' => [
-                    'tag' => 'slug',
+                    'user' => 'email',
                 ],
-            ], (new Ziggy)->toArray()['routes']['tags.show']);
+            ], (new Ziggy)->toArray()['routes']['users.show']);
         }
+        $this->assertSame([
+            'uri' => 'tags/{tag}',
+            'methods' => ['GET'],
+            'parameters' => ['tag'],
+            'bindings' => [
+                'tag' => 'slug',
+            ],
+        ], (new Ziggy)->toArray()['routes']['tags.show']);
     }
 }
 
