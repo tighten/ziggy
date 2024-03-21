@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Laravel\Folio\Folio;
@@ -243,5 +244,107 @@ class FolioTest extends TestCase
             ],
             'middleware' => ['web'],
         ], (new Ziggy())->toArray()['routes']['teams.show']);
+    }
+
+    /** @test */
+    public function custom_model_paths()
+    {
+        File::ensureDirectoryExists(resource_path('views/pages/users'));
+        File::put(resource_path('views/pages/users/[.App.User].blade.php'), '<?php Laravel\Folio\name("users.show");');
+        if (! str_starts_with(strtoupper(PHP_OS), 'WIN')) {
+            File::ensureDirectoryExists(resource_path('views/pages/posts'));
+            File::put(resource_path('views/pages/posts/[.App.Post:slug].blade.php'), '<?php Laravel\Folio\name("posts.show");');
+        }
+        File::ensureDirectoryExists(resource_path('views/pages/teams'));
+        File::put(resource_path('views/pages/teams/[.App.Team-uid].blade.php'), '<?php Laravel\Folio\name("teams.show");');
+
+        Folio::path(resource_path('views/pages'));
+
+        if (! str_starts_with(strtoupper(PHP_OS), 'WIN')) {
+            $this->assertSame([
+                'uri' => 'posts/{post}',
+                'methods' => ['GET'],
+                'parameters' => ['post'],
+                'bindings' => [
+                    'post' => 'slug',
+                ],
+                'middleware' => ['web'],
+            ], (new Ziggy())->toArray()['routes']['posts.show']);
+        }
+        $this->assertSame([
+            'uri' => 'users/{user}',
+            'methods' => ['GET'],
+            'parameters' => ['user'],
+            'middleware' => ['web'],
+        ], (new Ziggy())->toArray()['routes']['users.show']);
+        $this->assertSame([
+            'uri' => 'teams/{team}',
+            'methods' => ['GET'],
+            'parameters' => ['team'],
+            'bindings' => [
+                'team' => 'uid',
+            ],
+            'middleware' => ['web'],
+        ], (new Ziggy())->toArray()['routes']['teams.show']);
+    }
+
+    /** @test */
+    public function implicit_route_model_bindings()
+    {
+        File::ensureDirectoryExists(resource_path('views/pages/users'));
+        File::put(resource_path('views/pages/users/[.Tests.Unit.User].blade.php'), '<?php Laravel\Folio\name("users.show");');
+        File::ensureDirectoryExists(resource_path('views/pages/tags'));
+        File::put(resource_path('views/pages/tags/[.Tests.Unit.Tag].blade.php'), '<?php Laravel\Folio\name("tags.show");');
+
+        Folio::path(resource_path('views/pages'));
+
+        $this->assertSame([
+            'uri' => 'users/{user}',
+            'methods' => ['GET'],
+            'parameters' => ['user'],
+            'bindings' => [
+                'user' => 'uuid',
+            ],
+            'middleware' => ['web'],
+        ], (new Ziggy)->toArray()['routes']['users.show']);
+        $this->assertSame([
+            'uri' => 'tags/{tag}',
+            'methods' => ['GET'],
+            'parameters' => ['tag'],
+            'bindings' => [
+                'tag' => 'id',
+            ],
+            'middleware' => ['web'],
+        ], (new Ziggy)->toArray()['routes']['tags.show']);
+
+        $this->assertTrue(User::$wasBooted);
+        $this->assertFalse(Tag::$wasBooted);
+    }
+}
+
+class User extends Model
+{
+    public static $wasBooted = false;
+
+    public static function boot()
+    {
+        parent::boot();
+        static::$wasBooted = true;
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
+}
+
+class Tag extends Model
+{
+    public static $wasBooted = false;
+
+    public static function boot()
+    {
+        parent::boot();
+        static::$wasBooted = true;
     }
 }

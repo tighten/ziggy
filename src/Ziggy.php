@@ -260,6 +260,14 @@ class Ziggy implements JsonSerializable
 
                         if ($field = $param->field()) {
                             $bindings[$name] = $field;
+                        } elseif ($param->bindable()) {
+                            $override = (new ReflectionClass($param->class()))->isInstantiable() && (
+                                (new ReflectionMethod($param->class(), 'getRouteKeyName'))->class !== Model::class
+                                || (new ReflectionMethod($param->class(), 'getKeyName'))->class !== Model::class
+                                || (new ReflectionProperty($param->class(), 'primaryKey'))->class !== Model::class
+                            );
+
+                            $bindings[$name] = $override ? app($param->class())->getRouteKeyName() : 'id';
                         }
                     }
                 }
