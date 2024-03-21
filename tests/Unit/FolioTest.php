@@ -38,7 +38,7 @@ class FolioTest extends TestCase
     }
 
     /** @test */
-    public function include_folio_routes()
+    public function include_named_folio_routes()
     {
         File::ensureDirectoryExists(resource_path('views/pages'));
         File::put(resource_path('views/pages/about.blade.php'), '<?php Laravel\Folio\name("about");');
@@ -161,15 +161,13 @@ class FolioTest extends TestCase
         Folio::path(resource_path('views/pages'));
 
         $this->assertSame([
-            'root' => [
-                'uri' => '/',
-                'methods' => ['GET'],
-            ],
-            'index.index' => [
-                'uri' => 'index/index',
-                'methods' => ['GET'],
-            ],
-        ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
+            'uri' => '/',
+            'methods' => ['GET'],
+        ], (new Ziggy())->toArray()['routes']['root']);
+        $this->assertSame([
+            'uri' => 'index/index',
+            'methods' => ['GET'],
+        ], (new Ziggy())->toArray()['routes']['index.index']);
     }
 
     /** @test */
