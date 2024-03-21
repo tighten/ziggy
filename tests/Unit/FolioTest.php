@@ -52,13 +52,11 @@ class FolioTest extends TestCase
             'about' => [
                 'uri' => 'about',
                 'methods' => ['GET'],
-                'middleware' => ['web'],
             ],
             'users.show' => [
                 'uri' => 'users/{id}',
                 'methods' => ['GET'],
                 'parameters' => ['id'],
-                'middleware' => ['web'],
             ],
             'laravel-folio' => [
                 'uri' => '{fallbackPlaceholder}',
@@ -102,13 +100,11 @@ class FolioTest extends TestCase
             'uri' => 'users/{id}',
             'methods' => ['GET'],
             'parameters' => ['id'],
-            'middleware' => ['web'],
         ], (new Ziggy())->toArray()['routes']['users.show']);
         $this->assertSame([
             'uri' => 'users/{ids}',
             'methods' => ['GET'],
             'parameters' => ['ids'],
-            'middleware' => ['web'],
         ], (new Ziggy())->toArray()['routes']['users.some']);
     }
 
@@ -126,7 +122,6 @@ class FolioTest extends TestCase
                 'methods' => ['GET'],
                 'domain' => '{account}.ziggy.dev',
                 'parameters' => ['account', 'ids'],
-                'middleware' => ['web'],
             ],
         ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
     }
@@ -147,13 +142,11 @@ class FolioTest extends TestCase
                 'uri' => '{id}',
                 'methods' => ['GET'],
                 'parameters' => ['id'],
-                'middleware' => ['web'],
             ],
             'admins.some' => [
                 'uri' => 'admin/{ids}',
                 'methods' => ['GET'],
                 'parameters' => ['ids'],
-                'middleware' => ['web'],
             ],
         ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
     }
@@ -171,12 +164,10 @@ class FolioTest extends TestCase
             'blog.index' => [
                 'uri' => 'blog',
                 'methods' => ['GET'],
-                'middleware' => ['web'],
             ],
             'blog.categories.releases.index' => [
                 'uri' => 'blog/releases',
                 'methods' => ['GET'],
-                'middleware' => ['web'],
             ],
         ], Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'));
     }
@@ -191,6 +182,8 @@ class FolioTest extends TestCase
         Folio::path(resource_path('views/pages/admin'))
             ->uri('admin')
             ->middleware(['*' => ['auth']]);
+
+        config(['ziggy.middleware' => true]);
 
         $this->assertSame([
             'uri' => 'admin',
@@ -226,14 +219,12 @@ class FolioTest extends TestCase
                 'bindings' => [
                     'post' => 'slug',
                 ],
-                'middleware' => ['web'],
             ], (new Ziggy())->toArray()['routes']['posts.show']);
         }
         $this->assertSame([
             'uri' => 'users/{user}',
             'methods' => ['GET'],
             'parameters' => ['user'],
-            'middleware' => ['web'],
         ], (new Ziggy())->toArray()['routes']['users.show']);
         $this->assertSame([
             'uri' => 'teams/{team}',
@@ -242,7 +233,6 @@ class FolioTest extends TestCase
             'bindings' => [
                 'team' => 'uid',
             ],
-            'middleware' => ['web'],
         ], (new Ziggy())->toArray()['routes']['teams.show']);
     }
 
@@ -268,14 +258,12 @@ class FolioTest extends TestCase
                 'bindings' => [
                     'post' => 'slug',
                 ],
-                'middleware' => ['web'],
             ], (new Ziggy())->toArray()['routes']['posts.show']);
         }
         $this->assertSame([
             'uri' => 'users/{user}',
             'methods' => ['GET'],
             'parameters' => ['user'],
-            'middleware' => ['web'],
         ], (new Ziggy())->toArray()['routes']['users.show']);
         $this->assertSame([
             'uri' => 'teams/{team}',
@@ -284,7 +272,6 @@ class FolioTest extends TestCase
             'bindings' => [
                 'team' => 'uid',
             ],
-            'middleware' => ['web'],
         ], (new Ziggy())->toArray()['routes']['teams.show']);
     }
 
@@ -305,7 +292,6 @@ class FolioTest extends TestCase
             'bindings' => [
                 'folioUser' => 'uuid',
             ],
-            'middleware' => ['web'],
         ], (new Ziggy)->toArray()['routes']['users.show']);
         $this->assertSame([
             'uri' => 'tags/{folioTag}',
@@ -314,7 +300,6 @@ class FolioTest extends TestCase
             'bindings' => [
                 'folioTag' => 'id',
             ],
-            'middleware' => ['web'],
         ], (new Ziggy)->toArray()['routes']['tags.show']);
 
         $this->assertTrue(FolioUser::$wasBooted);

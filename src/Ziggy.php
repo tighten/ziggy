@@ -147,7 +147,7 @@ class Ziggy implements JsonSerializable
         $routes->map(function ($route, $name) use ($bindings, $allRoutes) {
             $allRoutes->put(
                 $name,
-                    collect($route)->only(['uri', 'methods', 'wheres'])
+                collect($route)->only(['uri', 'methods', 'wheres'])
                     ->put('domain', $route->domain())
                     ->put('parameters', $route->parameterNames())
                     ->put('bindings', $bindings[$route->getName()] ?? [])
@@ -237,68 +237,73 @@ class Ziggy implements JsonSerializable
      */
     private function folioRoutes(): Collection
     {
-        if (app()->has(FolioRoutes::class)) {
-            $mountPaths = app(FolioManager::class)->mountPaths();
-
-            // Use already-registered named Folio routes (instead of searching for all relevant view files) to respect route caching
-            return collect(app(FolioRoutes::class)->routes())->map(function (array $route) use ($mountPaths) {
-                $uri = rtrim($route['baseUri'], '/') . str_replace($route['mountPath'], '', $route['path']);
-                $uri = str_replace('.blade.php', '', $uri);
-
-                $parameters = [];
-                $bindings = [];
-
-                $segments = explode('/', $uri);
-
-                foreach ($segments as $i => $segment) {
-                    // Folio doesn't support sub-segment parameters
-                    if (Str::startsWith($segment, '[')) {
-                        $param = new PotentiallyBindablePathSegment($segment);
-
-                        $parameters[] = $name = (string) Str::of($param->trimmed())->afterLast('.')->before(':')->before('-')->camel();
-                        $segments[$i] = "{{$name}}";
-
-                        if ($field = $param->field()) {
-                            $bindings[$name] = $field;
-                        } elseif ($param->bindable()) {
-                            $override = (new ReflectionClass($param->class()))->isInstantiable() && (
-                                (new ReflectionMethod($param->class(), 'getRouteKeyName'))->class !== Model::class
-                                || (new ReflectionMethod($param->class(), 'getKeyName'))->class !== Model::class
-                                || (new ReflectionProperty($param->class(), 'primaryKey'))->class !== Model::class
-                            );
-
-                            $bindings[$name] = $override ? app($param->class())->getRouteKeyName() : 'id';
-                        }
-                    }
-                }
-
-                $uri = implode('/', $segments);
-
-                $uri = str_replace(['/index', '/index/'], ['', '/'], $uri);
-
-                if ($route['domain'] && str_contains($route['domain'], '{')) {
-                    $parameters = [Str::between($route['domain'], '{', '}'), ...$parameters];
-                }
-
-                $matchedView = new MatchedView(realpath($route['path']), [], $route['mountPath']);
-                $mountPath = Arr::first($mountPaths, fn ($mountPath) => $mountPath->path === realpath($route['mountPath']));
-
-                return array_filter([
-                    'uri' => $uri === '' ? '/' : trim($uri, '/'),
-                    'methods' => ['GET'],
-                    'domain' => $route['domain'],
-                    'parameters' => $parameters,
-                    'bindings' => $bindings,
-                    'middleware' => $mountPath->middleware
-                        ->match($matchedView)
-                        ->prepend('web')
-                        ->merge($matchedView->inlineMiddleware())
-                        ->unique()->values()->all(),
-                ]);
-            });
-
+        if (! app()->has(FolioRoutes::class)) {
+            return collect();
         }
 
-        return collect();
+        // Use existing named Folio routes (instead of searching view files) to respect route caching
+        return collect(app(FolioRoutes::class)->routes())->map(function (array $route) {
+            $uri = rtrim($route['baseUri'], '/') . str_replace([$route['mountPath'], '.blade.php'], '', $route['path']);
+
+            $segments = explode('/', $uri);
+            $parameters = [];
+            $bindings = [];
+
+            foreach ($segments as $i => $segment) {
+                // Folio doesn't support sub-segment parameters
+                if (Str::startsWith($segment, '[')) {
+                    $param = new PotentiallyBindablePathSegment($segment);
+
+                    $parameters[] = $name = (string) Str::of($param->trimmed())->afterLast('.')->before(':')->before('-')->camel();
+                    $segments[$i] = "{{$name}}";
+
+                    if ($field = $param->field()) {
+                        $bindings[$name] = $field;
+                    } elseif ($param->bindable()) {
+                        $override = (new ReflectionClass($param->class()))->isInstantiable() && (
+                            (new ReflectionMethod($param->class(), 'getRouteKeyName'))->class !== Model::class
+                            || (new ReflectionMethod($param->class(), 'getKeyName'))->class !== Model::class
+                            || (new ReflectionProperty($param->class(), 'primaryKey'))->class !== Model::class
+                        );
+
+                        $bindings[$name] = $override ? app($param->class())->getRouteKeyName() : 'id';
+                    }
+                }
+            }
+
+            $uri = implode('/', $segments);
+            $uri = str_replace('/index', '', $uri);
+
+            if ($route['domain'] && str_contains($route['domain'], '{')) {
+                array_unshift($parameters, Str::between($route['domain'], '{', '}'));
+            }
+
+            $middleware = [];
+
+            if ($ziggyMiddleware = config('ziggy.middleware')) {
+                $mountPath = Arr::first(
+                    app(FolioManager::class)->mountPaths(),
+                    fn ($mountPath) => $mountPath->path === realpath($route['mountPath'])
+                );
+                $matchedView = new MatchedView(realpath($route['path']), [], $route['mountPath']);
+
+                $middleware = $mountPath->middleware
+                    ->match($matchedView)
+                    ->prepend('web')
+                    ->merge($matchedView->inlineMiddleware())
+                    ->unique()
+                    ->when(is_array($ziggyMiddleware), fn ($middleware) => $middleware->intersect($ziggyMiddleware))
+                    ->values()->all();
+            }
+
+            return array_filter([
+                'uri' => $uri === '' ? '/' : trim($uri, '/'),
+                'methods' => ['GET'],
+                'domain' => $route['domain'],
+                'parameters' => $parameters,
+                'bindings' => $bindings,
+                'middleware' => $middleware,
+            ]);
+        });
     }
 }
