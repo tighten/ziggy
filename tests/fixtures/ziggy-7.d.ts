@@ -4,16 +4,19 @@ declare module 'ziggy-js' {
     "posts.index": [],
     "postComments.show": [
         {
-            "name": "post"
+            "name": "post",
+            "required": true
         },
         {
             "name": "comment",
+            "required": true,
             "binding": "uuid"
         }
     ],
     "postComments.store": [
         {
-            "name": "post"
+            "name": "post",
+            "required": true
         }
     ]
 }

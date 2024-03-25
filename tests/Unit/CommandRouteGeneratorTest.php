@@ -147,6 +147,7 @@ class CommandRouteGeneratorTest extends TestCase
     {
         app('router')->get('posts', $this->noop())->name('posts.index');
         app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
+        app('router')->post('posts/{post}/comments/{comment?}', PostCommentController::class)->name('postComments.storeComment');
         app('router')->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate',  ['--types' => true]);
