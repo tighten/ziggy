@@ -3,6 +3,7 @@
 namespace Tighten\Ziggy\Output;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Stringable;
 use Tighten\Ziggy\Ziggy;
 
@@ -20,8 +21,8 @@ class Types implements Stringable
         $routes = collect($this->ziggy->toArray()['routes'])->map(function ($route) {
             return collect($route['parameters'] ?? [])->map(function ($param) use ($route) {
                 return Arr::has($route, "bindings.{$param}")
-                    ? ['name' => $param, 'optional' => strpos($route['uri'], "{$param}?") !== false, 'binding' => $route['bindings'][$param]]
-                    : ['name' => $param, 'optional' => strpos($route['uri'], "{$param}?") !== false];
+                    ? ['name' => $param, 'optional' => Str::contains($route['uri'], "{$param}?"), 'binding' => $route['bindings'][$param]]
+                    : ['name' => $param, 'optional' => Str::contains($route['uri'], "{$param}?")];
             });
         });
 
