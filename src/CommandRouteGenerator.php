@@ -1,13 +1,13 @@
 <?php
 
-namespace Tightenco\Ziggy;
+namespace Tighten\Ziggy;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
-use Tightenco\Ziggy\Output\File;
-use Tightenco\Ziggy\Output\Types;
-use Tightenco\Ziggy\Ziggy;
+use Tighten\Ziggy\Output\File;
+use Tighten\Ziggy\Output\Types;
+use Tighten\Ziggy\Ziggy;
 
 class CommandRouteGenerator extends Command
 {
@@ -58,7 +58,7 @@ class CommandRouteGenerator extends Command
         $this->info('Files generated!');
     }
 
-    protected function makeDirectory($path)
+    private function makeDirectory($path)
     {
         if (! $this->files->isDirectory(dirname(base_path($path)))) {
             $this->files->makeDirectory(dirname(base_path($path)), 0755, true, true);

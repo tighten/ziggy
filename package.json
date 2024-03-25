@@ -1,6 +1,6 @@
 {
     "name": "ziggy-js",
-    "version": "1.8.1",
+    "version": "2.0.5",
     "description": "Use your Laravel named routes in JavaScript.",
     "keywords": [
         "laravel",
@@ -10,6 +10,10 @@
     "homepage": "https://github.com/tighten/ziggy",
     "bugs": "https://github.com/tighten/ziggy/issues",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tighten/ziggy.git"
+    },
     "authors": [
         {
             "name": "Daniel Coulbourne",
@@ -28,30 +32,22 @@
         "src/js/index.d.ts",
         "dist"
     ],
-    "source": "src/js/index.js",
-    "main": "dist/index.js",
-    "umd:main": "dist/index.js",
-    "unpkg": "dist/index.js",
-    "browser": "dist/index.js",
-    "module": "dist/index.m.js",
-    "esmodule": "dist/index.es.js",
-    "types": "src/js/index.d.ts",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/tighten/ziggy.git"
+    "type": "module",
+    "source": "./src/js/index.js",
+    "exports": {
+        "types": "./src/js/index.d.ts",
+        "default": "./dist/index.js"
     },
+    "module": "./dist/index.esm.js",
+    "types": "./src/js/index.d.ts",
     "scripts": {
-        "build": "microbundle --name route --format modern,es,umd --external none --no-sourcemap --no-generateTypes",
-        "build:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --external none --no-sourcemap --no-generateTypes",
-        "build:react": "microbundle --entry src/js/react.js --output dist/react.js --name ZiggyReact --format modern,es,umd --external none --no-sourcemap --no-generateTypes",
-        "watch": "npm run build watch",
-        "build:npm": "microbundle --name route --format modern,es,umd --no-sourcemap --no-generateTypes",
-        "build:npm:vue": "microbundle --entry src/js/vue.js --output dist/vue.js --name ZiggyVue --format modern,es,umd --no-sourcemap --no-generateTypes",
-        "build:npm:react": "microbundle --entry src/js/react.js --output dist/react.js --name ZiggyReact --format modern,es,umd --no-sourcemap --no-generateTypes",
-        "test": "vitest",
-        "typecheck": "vitest typecheck",
+        "build": "npm run build:esm && npm run build:umd",
+        "build:esm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap --no-generateTypes --external none",
+        "build:npm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap --no-generateTypes",
+        "build:umd": "microbundle -i ./src/js/browser.js -o ./dist/route.js --format umd --name route --no-sourcemap --no-generateTypes --external none",
+        "test": "vitest --typecheck",
         "format": "prettier . --write",
-        "prepublishOnly": "npm run build:npm && npm run build:npm:vue && npm run build:npm:react"
+        "prepublishOnly": "rm -r ./dist/* && npm run build:npm"
     },
     "mangle": {
         "regex": "^_(?!query)"
@@ -60,10 +56,11 @@
         "qs": "~6.9.7"
     },
     "devDependencies": {
+        "jsdom": "^24.0.0",
         "microbundle": "^0.15.1",
-        "prettier": "^3.0.3",
-        "typescript": "^5.2.2",
-        "vitest": "^1.0.0-beta.1"
+        "prettier": "^3.2.5",
+        "typescript": "^5.3.3",
+        "vitest": "^1.3.1"
     },
     "prettier": {
         "printWidth": 100,

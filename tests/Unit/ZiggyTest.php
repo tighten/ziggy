@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use Tightenco\Ziggy\Ziggy;
+use Tighten\Ziggy\Ziggy;
 
 class ZiggyTest extends TestCase
 {
@@ -19,29 +19,9 @@ class ZiggyTest extends TestCase
         $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
         $router->post('posts', $this->noop())->middleware(['auth', 'role:admin'])->name('posts.store');
         $router->get('admin/users', $this->noop())->middleware(['role:admin'])->name('admin.users.index');
-
-        if ($this->laravelVersion(7)) {
-            $router->get('/posts/{post}/comments/{comment:uuid}', $this->noop())->name('postComments.show');
-        }
+        $router->get('/posts/{post}/comments/{comment:uuid}', $this->noop())->name('postComments.show');
 
         $router->getRoutes()->refreshNameLookups();
-    }
-
-    /**
-     * If running Laravel 7 or higher, add the 'postComments.show' route.
-     */
-    protected function addPostCommentsRouteWithBindings(array &$routes): void
-    {
-        if ($this->laravelVersion(7)) {
-            $routes['postComments.show'] = [
-                'uri' => 'posts/{post}/comments/{comment}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['post', 'comment'],
-                'bindings' => [
-                    'comment' => 'uuid',
-                ],
-            ];
-        }
     }
 
     /** @test */
@@ -85,9 +65,15 @@ class ZiggyTest extends TestCase
                 'methods' => ['GET', 'HEAD'],
                 'parameters' => ['post'],
             ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'parameters' => ['post', 'comment'],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ],
         ];
-
-        $this->addPostCommentsRouteWithBindings($expected);
 
         $this->assertSame($expected, $routes->toArray()['routes']);
     }
@@ -133,9 +119,15 @@ class ZiggyTest extends TestCase
                 'methods' => ['GET', 'HEAD'],
                 'parameters' => ['post'],
             ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'parameters' => ['post', 'comment'],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ],
         ];
-
-        $this->addPostCommentsRouteWithBindings($expected);
 
         $this->assertSame($expected, $routes);
     }
@@ -176,9 +168,15 @@ class ZiggyTest extends TestCase
                 'uri' => 'admin/users',
                 'methods' => ['GET', 'HEAD'],
             ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'parameters' => ['post', 'comment'],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ],
         ];
-
-        $this->addPostCommentsRouteWithBindings($expected);
 
         $this->assertSame($expected, $routes);
     }
@@ -294,9 +292,15 @@ class ZiggyTest extends TestCase
                 'uri' => 'admin/users',
                 'methods' => ['GET', 'HEAD'],
             ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'parameters' => ['post', 'comment'],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ],
         ];
-
-        $this->addPostCommentsRouteWithBindings($expected);
 
         $this->assertSame($expected, $routes);
     }
@@ -334,9 +338,15 @@ class ZiggyTest extends TestCase
                 'uri' => 'admin/users',
                 'methods' => ['GET', 'HEAD'],
             ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'parameters' => ['post', 'comment'],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ],
         ];
-
-        $this->addPostCommentsRouteWithBindings($expected);
 
         $this->assertSame($expected, $routes);
     }
@@ -376,9 +386,15 @@ class ZiggyTest extends TestCase
                 'methods' => ['GET', 'HEAD'],
                 'middleware' => ['role:admin'],
             ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'parameters' => ['post', 'comment'],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ],
         ];
-
-        $this->addPostCommentsRouteWithBindings($expected);
 
         $this->assertEquals($expected, $routes);
     }
@@ -467,9 +483,15 @@ class ZiggyTest extends TestCase
                 'uri' => 'admin/users',
                 'methods' => ['GET', 'HEAD'],
             ],
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'parameters' => ['post', 'comment'],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
+            ],
         ];
-
-        $this->addPostCommentsRouteWithBindings($expected);
 
         $this->assertEquals($expected, $routes);
     }
@@ -510,22 +532,26 @@ class ZiggyTest extends TestCase
                 'uri' => 'admin/users',
                 'methods' => ['GET', 'HEAD'],
             ],
-        ];
-
-        $this->addPostCommentsRouteWithBindings($expected);
-
-        $expected['users.index'] = [
-            'uri' => 'users',
-            'methods' => ['GET', 'HEAD'],
-        ];
-
-        $expected['fallback'] = [
-            'uri' => '{fallbackPlaceholder}',
-            'methods' => ['GET', 'HEAD'],
-            'wheres' => [
-                'fallbackPlaceholder' => '.*',
+            'postComments.show' => [
+                'uri' => 'posts/{post}/comments/{comment}',
+                'methods' => ['GET', 'HEAD'],
+                'parameters' => ['post', 'comment'],
+                'bindings' => [
+                    'comment' => 'uuid',
+                ],
             ],
-            'parameters' => ['fallbackPlaceholder'],
+            'users.index' => [
+                'uri' => 'users',
+                'methods' => ['GET', 'HEAD'],
+            ],
+            'fallback' => [
+                'uri' => '{fallbackPlaceholder}',
+                'methods' => ['GET', 'HEAD'],
+                'wheres' => [
+                    'fallbackPlaceholder' => '.*',
+                ],
+                'parameters' => ['fallbackPlaceholder'],
+            ],
         ];
 
         $this->assertSame($expected, $routes);
@@ -567,10 +593,16 @@ class ZiggyTest extends TestCase
                     'uri' => 'admin/users',
                     'methods' => ['GET', 'HEAD'],
                 ],
+                'postComments.show' => [
+                    'uri' => 'posts/{post}/comments/{comment}',
+                    'methods' => ['GET', 'HEAD'],
+                    'parameters' => ['post', 'comment'],
+                    'bindings' => [
+                        'comment' => 'uuid',
+                    ],
+                ],
             ],
         ];
-
-        $this->addPostCommentsRouteWithBindings($expected['routes']);
 
         $this->assertSame($expected, $ziggy->toArray());
     }
@@ -590,20 +622,18 @@ class ZiggyTest extends TestCase
                     'methods' => ['GET', 'HEAD'],
                     'parameters' => ['post'],
                 ],
+                'postComments.show' => [
+                    'uri' => 'posts/{post}/comments/{comment}',
+                    'methods' => ['GET', 'HEAD'],
+                    'parameters' => ['post', 'comment'],
+                    'bindings' => [
+                        'comment' => 'uuid',
+                    ],
+                ],
             ],
         ];
 
-        $this->addPostCommentsRouteWithBindings($expected['routes']);
-
-        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"parameters":["post"]}}}';
-
-        if ($this->laravelVersion(7)) {
-            $json = str_replace(
-                '}}}',
-                '},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"parameters":["post","comment"],"bindings":{"comment":"uuid"}}}}',
-                $json,
-            );
-        }
+        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"parameters":["post"]},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"parameters":["post","comment"],"bindings":{"comment":"uuid"}}}}';
 
         $this->assertSame($expected, json_decode(json_encode(new Ziggy), true));
         $this->assertSame($json, json_encode(new Ziggy));

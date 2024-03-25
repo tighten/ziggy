@@ -10,8 +10,6 @@
 
 Ziggy provides a JavaScript `route()` function that works like Laravel's, making it a breeze to use your named Laravel routes in JavaScript.
 
-Ziggy supports all versions of Laravel from `5.4` onward, and all modern browsers.
-
 - [**Installation**](#installation)
 - [**Usage**](#usage)
     - [`route()` function](#route-function)
@@ -270,7 +268,7 @@ php artisan ziggy:generate --types
 To make your IDE aware that Ziggy's `route()` helper is available globally, and to type it correctly, add a declaration like this in a `.d.ts` file somewhere in your project:
 
 ```ts
-import routeFn from 'ziggy-js';
+import { route as routeFn } from 'ziggy-js';
 
 declare global {
     var route: typeof routeFn;
@@ -336,7 +334,7 @@ export { Ziggy };
 You can import Ziggy like any other JavaScript library. Without the `@routes` Blade directive Ziggy's config is not available globally, so it must be passed to the `route()` function manually:
 
 ```js
-import route from '../../vendor/tightenco/ziggy';
+import { route } from '../../vendor/tightenco/ziggy';
 import { Ziggy } from './ziggy.js';
 
 route('home', undefined, undefined, Ziggy);
@@ -351,7 +349,6 @@ export default defineConfig({
     resolve: {
         alias: {
             'ziggy-js': path.resolve('vendor/tightenco/ziggy'),
-            // 'vendor/tightenco/ziggy/dist/vue.es.js' if using the Vue plugin
         },
     },
 });
@@ -360,7 +357,7 @@ export default defineConfig({
 Now your imports can be shortened to:
 
 ```js
-import route from 'ziggy-js';
+import { route } from 'ziggy-js';
 ```
 
 ### Vue
@@ -391,8 +388,6 @@ import App from './App.vue';
 
 createApp(App).use(ZiggyVue, Ziggy);
 ```
-
-If you use the Vue plugin with the `ziggy-js` import alias shown above, make sure to update the alias to `'vendor/tightenco/ziggy/dist/vue.es.js'`.
 
 ### React
 
@@ -528,7 +523,7 @@ If you need to retrieve Ziggy's config from your Laravel backend over the networ
 ```php
 // routes/api.php
 
-use Tightenco\Ziggy\Ziggy;
+use Tighten\Ziggy\Ziggy;
 
 Route::get('api/ziggy', fn () => response()->json(new Ziggy));
 ```

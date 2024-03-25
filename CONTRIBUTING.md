@@ -50,13 +50,13 @@ See also [`tighten/ziggy-type-testing`](https://github.com/tighten/ziggy-type-te
 
 To create and release a new version of Ziggy:
 
-- Update the `version` field in `package.json` to the new version number **not prefixed with `v`** (e.g. `2.1.0`).
+- Update the `version` field in `package.json` and `package-lock.json` to the new version number **not prefixed with `v`** by running `npm version <version>` (e.g. `npm version 2.1.0`).
 - Update the Changelog.
-- Rebuild Ziggy's assets with `npm run build && npm run build:vue && npm run build:react`.
-- Commit these changes and push them to the `main` branch.
-- Create and publish a new release on GitHub, creating a new tag targeting the `main` branch, named with the version number **prefixed with `v`** (e.g. `v2.1.0`).
-    - This will trigger a run of the release workflow in `.github/workflows/release.yml`, which will rebuild Ziggy's assets and publish the new version to NPM.
-    - For alpha/beta versions, use an appropriate suffix (e.g. `-beta.1`, for a version of `3.0.0-beta.1`/`v3.0.0-beta.1`) and mark the GitHub release as a pre-release. Pre-releases are published to NPM under the `next` tag, so they are not installed by default and must be explicitly requested with `npm install ziggy-js@next`.
+- Rebuild Ziggy's assets with `npm run build`.
+- Commit the changes and push them to the corresponding branch (e.g. `2.x` or `main`).
+- Create and publish a new release on GitHub, creating a new tag targeting the right branch, named with the version number **prefixed with `v`** (e.g. `v2.1.0`).
+    - This will trigger a run of the release workflow in [`.github/workflows/release.yml`](.github/workflows/release.yml), which will rebuild Ziggy's assets and publish the new version to NPM.
+    - For beta/pre-release versions, use an appropriate suffix (e.g. `-beta.1`, for a version of `[v]3.0.0-beta.1`) and mark the GitHub release as a pre-release. Pre-releases are published to NPM under the `next` tag, so they are not installed by default and must be explicitly requested with `npm install ziggy-js@next`.
 
 ## Requirements
 

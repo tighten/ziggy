@@ -4,8 +4,8 @@ namespace Tests\Unit;
 
 use Illuminate\Support\Str;
 use Tests\TestCase;
-use Tightenco\Ziggy\BladeRouteGenerator;
-use Tightenco\Ziggy\Ziggy;
+use Tighten\Ziggy\BladeRouteGenerator;
+use Tighten\Ziggy\Ziggy;
 
 class BladeRouteGeneratorTest extends TestCase
 {
@@ -30,7 +30,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate();
-        $ziggy = json_decode(Str::after(Str::before($output, ';' . PHP_EOL), ' = '), true);
+        $ziggy = json_decode(Str::before(Str::after($output, 'Ziggy='), ';!'), true);
 
         $this->assertCount(4, $ziggy['routes']);
         $this->assertArrayHasKey('posts.index', $ziggy['routes']);
@@ -55,7 +55,7 @@ class BladeRouteGeneratorTest extends TestCase
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
             ],
-        ], json_decode(Str::after(Str::before($script, ';' . PHP_EOL), 'routes = '), true));
+        ], json_decode(Str::before(Str::after($script, 'Ziggy.routes,'), ');'), true));
     }
 
     /** @test */
@@ -113,7 +113,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate('guest');
-        $ziggy = json_decode(Str::after(Str::before($output, ';' . PHP_EOL), ' = '), true);
+        $ziggy = json_decode(Str::before(Str::after($output, 'Ziggy='), ';!'), true);
 
         $this->assertCount(2, $ziggy['routes']);
         $this->assertArrayHasKey('posts.index', $ziggy['routes']);
@@ -121,7 +121,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate(['guest', 'admin']);
-        $ziggy = json_decode(Str::after(Str::before($output, ';' . PHP_EOL), ' = '), true);
+        $ziggy = json_decode(Str::before(Str::after($output, 'Ziggy='), ';!'), true);
 
         $this->assertCount(3, $ziggy['routes']);
         $this->assertArrayHasKey('posts.index', $ziggy['routes']);
@@ -146,15 +146,11 @@ class BladeRouteGeneratorTest extends TestCase
         BladeRouteGenerator::$generated = false;
 
         $json = (new Ziggy)->toJson();
-        $routeFunction = file_get_contents(__DIR__ . '/../../dist/index.js');
+        $routeFunction = file_get_contents(__DIR__ . '/../../dist/route.umd.js');
 
         $this->assertSame(
             <<<HTML
-<script type="text/javascript">
-    const Ziggy = {$json};
-
-    {$routeFunction}
-</script>
+<script type="text/javascript">const Ziggy={$json};{$routeFunction}</script>
 HTML,
             (new BladeRouteGenerator)->generate()
         );
@@ -171,13 +167,7 @@ HTML,
 
         $this->assertSame(
             <<<HTML
-<script type="text/javascript">
-    (function () {
-        const routes = {$json};
-
-        Object.assign(Ziggy.routes, routes);
-    })();
-</script>
+<script type="text/javascript">Object.assign(Ziggy.routes,{$json});</script>
 HTML,
             (new BladeRouteGenerator)->generate()
         );
@@ -187,25 +177,25 @@ HTML,
     public function can_compile_blade_directive()
     {
         $this->assertSame(
-            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(); ?>",
+            "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(); ?>",
             app('blade.compiler')->compileString('@routes')
         );
 
         $this->assertSame(
-            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate('admin'); ?>",
+            "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate('admin'); ?>",
             app('blade.compiler')->compileString("@routes('admin')")
         );
         $this->assertSame(
-            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(['admin', 'guest']); ?>",
+            "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(['admin', 'guest']); ?>",
             app('blade.compiler')->compileString("@routes(['admin', 'guest'])")
         );
 
         $this->assertSame(
-            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(null, 'nonce'); ?>",
+            "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(null, 'nonce'); ?>",
             app('blade.compiler')->compileString("@routes(null, 'nonce')")
         );
         $this->assertSame(
-            "<?php echo app('Tightenco\Ziggy\BladeRouteGenerator')->generate(nonce: 'nonce'); ?>",
+            "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(nonce: 'nonce'); ?>",
             app('blade.compiler')->compileString("@routes(nonce: 'nonce')")
         );
     }
