@@ -49,10 +49,20 @@ assertType(route('posts.comments.show', { comment: { foo: 'bar' } }));
 // parameter has an explicit 'uuid' binding, so that's required :)
 assertType(route('posts.comments.show', { comment: { id: 2 } }));
 
+// Plain values
+assertType(route('posts.comments.show', 2));
+assertType(route('posts.comments.show', 'foo'));
+
+// TODO @ts-expect-error parameter argument itself is required
+assertType(route('posts.comments.show'));
+
 // Simple array examples
+assertType(route('posts.comments.show', [2]));
 assertType(route('posts.comments.show', [2, 3]));
+assertType(route('posts.comments.show', ['foo']));
 assertType(route('posts.comments.show', ['foo', 'bar']));
 // Allows mix of plain values and parameter objects
+assertType(route('posts.comments.show', [{ id: 2 }]));
 assertType(route('posts.comments.show', [{ id: 2 }, 3]));
 assertType(route('posts.comments.show', ['2', { uuid: 3 }]));
 assertType(route('posts.comments.show', [{ id: 2 }, { uuid: '3' }]));
@@ -78,3 +88,12 @@ assertType(route().has(''));
 
 // Test router getter autocompletion
 assertType(route().params);
+
+assertType(route().current('missing', { foo: 1 }));
+
+// @ts-expect-error missing required 'post' parameter
+assertType(route().current('posts.comments.show', { comment: 2 }));
+assertType(route().current('posts.comments.show', { post: 2 }));
+assertType(route().current('posts.comments.show', 2));
+assertType(route().current('posts.comments.show', [2]));
+assertType(route().current('posts.comments.show', 'foo'));
