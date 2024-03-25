@@ -5,18 +5,18 @@ declare module 'ziggy-js' {
     "postComments.show": [
         {
             "name": "post",
-            "optional": false
+            "required": true
         },
         {
             "name": "comment",
-            "optional": false,
+            "required": true,
             "binding": "uuid"
         }
     ],
     "postComments.store": [
         {
             "name": "post",
-            "optional": false
+            "required": true
         }
     ]
 }

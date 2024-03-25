@@ -21,7 +21,7 @@ type RouteName = KnownRouteName | (string & {});
 /**
  * Information about a single route parameter.
  */
-type ParameterInfo = { name: string; optional: boolean; binding?: string };
+type ParameterInfo = { name: string; required: boolean; binding?: string };
 
 /**
  * A primitive route parameter value, as it would appear in a URL.
@@ -59,7 +59,7 @@ type ArrToObj<I extends readonly ParameterInfo[]> = {
 };
 type OptionalParams<I extends readonly ParameterInfo[]> = Extract<
     I[number],
-    { optional: true }
+    { required: false }
 >['name'];
 
 /**
@@ -86,7 +86,7 @@ type KnownRouteParamsObject<
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1329978447.
 // Uncomment to test:
 // type A = KnownRouteParamsObject<
-//     [{ name: 'foo'; optional: false }, { name: 'bar'; optional: true }]
+//     [{ name: 'foo'; required: true }, { name: 'bar'; required: false }]
 // >;
 // = { foo: ..., bar?: ... }
 /**

@@ -21,8 +21,8 @@ class Types implements Stringable
         $routes = collect($this->ziggy->toArray()['routes'])->map(function ($route) {
             return collect($route['parameters'] ?? [])->map(function ($param) use ($route) {
                 return Arr::has($route, "bindings.{$param}")
-                    ? ['name' => $param, 'optional' => Str::contains($route['uri'], "{$param}?"), 'binding' => $route['bindings'][$param]]
-                    : ['name' => $param, 'optional' => Str::contains($route['uri'], "{$param}?")];
+                    ? ['name' => $param, 'required' => ! Str::contains($route['uri'], "{$param}?"), 'binding' => $route['bindings'][$param]]
+                    : ['name' => $param, 'required' => ! Str::contains($route['uri'], "{$param}?")];
             });
         });
 

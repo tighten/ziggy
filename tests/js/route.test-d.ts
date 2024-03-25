@@ -6,12 +6,12 @@ import { route } from '../../src/js';
 declare module '../../src/js' {
     interface RouteList {
         'posts.index': [];
-        'posts.comments.store': [{ name: 'post'; optional: false }];
+        'posts.comments.store': [{ name: 'post'; required: true }];
         'posts.comments.show': [
-            { name: 'post'; optional: false },
-            { name: 'comment'; optional: true; binding: 'uuid' },
+            { name: 'post'; required: true },
+            { name: 'comment'; required: false; binding: 'uuid' },
         ];
-        optional: [{ name: 'maybe'; optional: true }];
+        optional: [{ name: 'maybe'; required: false }];
     }
 }
 
