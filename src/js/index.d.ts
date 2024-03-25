@@ -52,15 +52,9 @@ type Routable<I extends ParameterInfo> = I extends { binding: string }
 // type B = Routable<{ name: 'foo' }>;
 // = RawParameterValue | DefaultRoutable
 
-// Utility types for `KnownRouteParamsObject`:
-type PartiallyOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-type ArrToObj<I extends readonly ParameterInfo[]> = {
-    [T in I[number] as T['name']]: T;
-};
-type OptionalParams<I extends readonly ParameterInfo[]> = Extract<
-    I[number],
-    { required: false }
->['name'];
+// Utility types for KnownRouteParamsObject
+type RequiredParams<I extends readonly ParameterInfo[]> = Extract<I[number], { required: true }>;
+type OptionalParams<I extends readonly ParameterInfo[]> = Extract<I[number], { required: false }>;
 
 /**
  * An object containing a special '_query' key to target the query string of a URL.
@@ -74,21 +68,19 @@ type GenericRouteParamsObject = Record<keyof any, unknown> & HasQueryParam;
 /**
  * An object of parameters for a specific named route.
  */
-type KnownRouteParamsObject<
-    TInfo extends readonly ParameterInfo[],
-    TOptionalKeys extends TInfo[number]['name'] = OptionalParams<TInfo>,
-    TInfoObj extends Record<string, ParameterInfo> = ArrToObj<TInfo>,
-> = {
-    [K in keyof PartiallyOptional<TInfoObj, TOptionalKeys>]: Routable<TInfoObj[K]>;
+type KnownRouteParamsObject<I extends readonly ParameterInfo[]> = {
+    [T in RequiredParams<I> as T['name']]: Routable<T>;
+} & {
+    [T in OptionalParams<I> as T['name']]?: Routable<T>;
 } & GenericRouteParamsObject;
 // `readonly` allows TypeScript to determine the actual values of all the
 // parameter names inside the array, instead of just seeing `string`.
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1329978447.
+
 // Uncomment to test:
-// type A = KnownRouteParamsObject<
-//     [{ name: 'foo'; required: true }, { name: 'bar'; required: false }]
-// >;
-// = { foo: ..., bar?: ... }
+// type A = KnownRouteParamsObject<[{ name: 'foo'; required: true }, { name: 'bar'; required: false }]>;
+// = { foo: ... } & { bar?: ... }
+
 /**
  * An object of route parameters.
  */
@@ -181,7 +173,7 @@ export function route<T extends RouteName>(
     absolute?: boolean,
     config?: Config,
 ): string;
-export default function route<T extends RouteName>(
+export function route<T extends RouteName>(
     name: T,
     params?: ParameterValue | undefined,
     absolute?: boolean,
