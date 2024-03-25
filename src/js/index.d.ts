@@ -43,13 +43,13 @@ type ParameterValue = RawParameterValue | DefaultRoutable;
  * A parseable route parameter, either plain or nested inside an object under its binding key.
  */
 type Routable<I extends ParameterInfo> = I extends { binding: string }
-    ? ({ [K in I['binding']]: RawParameterValue } & Record<string, unknown>) | RawParameterValue
+    ? ({ [K in I['binding']]: RawParameterValue } & Record<keyof any, unknown>) | RawParameterValue
     : ParameterValue;
 
 // Uncomment to test:
-// type A = Routable<{ name: 'foo', binding: 'bar' }>;
+// type A = Routable<{ name: 'foo', required: true, binding: 'bar' }>;
 // = RawParameterValue | { bar: RawParameterValue }
-// type B = Routable<{ name: 'foo' }>;
+// type B = Routable<{ name: 'foo', required: true, }>;
 // = RawParameterValue | DefaultRoutable
 
 // Utility types for KnownRouteParamsObject
@@ -108,7 +108,7 @@ type KnownRouteParamsArray<I extends readonly ParameterInfo[]> = [
 // See https://github.com/tighten/ziggy/pull/664#discussion_r1330002370.
 
 // Uncomment to test:
-// type B = KnownRouteParamsArray<[{ name: 'post', binding: 'uuid' }]>;
+// type B = KnownRouteParamsArray<[{ name: 'post'; required: true; binding: 'uuid' }]>;
 // = [RawParameterValue | { uuid: RawParameterValue }, ...unknown[]]
 
 /**
