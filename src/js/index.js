@@ -11,10 +11,15 @@ export const ZiggyVue = {
         const r = (name, params, absolute, config = options) =>
             route(name, params, absolute, config);
 
-        app.config.globalProperties.route = r;
-
         if (parseInt(app.version) > 2) {
+            app.config.globalProperties.route = r;
             app.provide('route', r);
+        } else {
+            app.mixin({
+                methods: {
+                    route: r,
+                },
+            });
         }
     },
 };
