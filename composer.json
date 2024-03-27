@@ -29,6 +29,7 @@
         "laravel/framework": ">=9.0"
     },
     "require-dev": {
+        "laravel/folio": "^1.1",
         "orchestra/testbench": "^7.0 || ^8.0 || ^9.0",
         "phpunit/phpunit": "^9.5 || ^10.3"
     },
