@@ -157,7 +157,7 @@ interface Config {
 interface Router {
     current(): RouteName | undefined;
     current<T extends RouteName>(name: T, params?: ParameterValue | RouteParams<T>): boolean;
-    get params(): Record<string, unknown>;
+    get params(): Record<string, string>;
     has<T extends RouteName>(name: T): boolean;
 }
 
