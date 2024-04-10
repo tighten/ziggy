@@ -195,6 +195,34 @@ export default class Router extends String {
 
         return { ...params, ...query };
     }
+    /**
+     * Get all query parameter values from the current window URL.
+     *
+     * @example
+     * // at URL https://tighten.ziggy.dev/posts/4?lang=en with 'posts.show' route 'posts/{post}' and domain '{team}.ziggy.dev'
+     * route().queryParams; // { lang: 'en' }
+     *
+     * @return {Object}
+     */
+    get queryParams() {
+        const { query } = this._unresolve();
+
+        return query;
+    }
+       /**
+     * Get all parameter values without query params from the current window URL.
+     *
+     * @example
+     * // at URL https://tighten.ziggy.dev/posts/4?lang=en with 'posts.show' route 'posts/{post}' and domain '{team}.ziggy.dev'
+     * route().routeParams; // { team: 'tighten', post: 4}
+     *
+     * @return {Object}
+     */
+    get routeParams() {
+        const { params } = this._unresolve();
+
+        return params;
+    }
 
     /**
      * Check whether the given route exists.
