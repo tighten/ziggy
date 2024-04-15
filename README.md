@@ -366,7 +366,7 @@ Ziggy includes a Vue plugin to make it easy to use the `route()` helper througho
 
 ```js
 import { createApp } from 'vue';
-import { ZiggyVue } from 'ziggy-js';
+import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import App from './App.vue';
 
 createApp(App).use(ZiggyVue);
