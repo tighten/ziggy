@@ -132,7 +132,7 @@ export default class Route {
                         ).test(params[segment] ?? '')
                     ) {
                         throw new Error(
-                            `Ziggy error: '${segment}' parameter does not match required format '${this.wheres[segment]}' for route '${this.name}'.`,
+                            `Ziggy error: '${segment}' parameter '${params[segment]}' does not match required format '${this.wheres[segment]}' for route '${this.name}'.`,
                         );
                     }
                 }

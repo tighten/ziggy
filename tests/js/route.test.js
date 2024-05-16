@@ -735,7 +735,7 @@ describe('route()', () => {
             'https://ziggy.dev/where/download/file.html',
         );
         expect(() => route('pages.optionalExtensionWhere', { extension: '.pdf' })).toThrow(
-            /'extension' parameter does not match required format/,
+            /'extension' parameter '\.pdf' does not match required format/,
         );
     });
 
@@ -744,10 +744,10 @@ describe('route()', () => {
             'https://ziggy.dev/where/strict-download/file.html',
         );
         expect(() => route('pages.requiredExtensionWhere', 'x')).toThrow(
-            /'extension' parameter does not match required format/,
+            /'extension' parameter 'x' does not match required format/,
         );
         expect(() => route('pages.requiredExtensionWhere', { extension: '.pdf' })).toThrow(
-            /'extension' parameter does not match required format/,
+            /'extension' parameter '\.pdf' does not match required format/,
         );
     });
 
