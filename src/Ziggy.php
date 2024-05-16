@@ -142,10 +142,8 @@ class Ziggy implements JsonSerializable
             $routes->put($name, $route);
         });
 
-        $allRoutes = $this->folioRoutes();
-
-        $routes->map(function ($route, $name) use ($bindings, $allRoutes) {
-            $allRoutes->put(
+        return tap($this->folioRoutes(), fn ($all) => $routes->each(
+            fn ($route, $name) => $all->put(
                 $name,
                 collect($route)->only(['uri', 'methods', 'wheres'])
                     ->put('domain', $route->domain())
@@ -159,10 +157,8 @@ class Ziggy implements JsonSerializable
                         return $collection->put('middleware', $route->middleware());
                     })
                     ->filter()
-            );
-        });
-
-        return $allRoutes;
+            )
+        ));
     }
 
     /**
