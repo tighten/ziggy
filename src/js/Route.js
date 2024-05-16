@@ -142,7 +142,7 @@ export default class Route {
                     .replace(/%25/g, '%')
                     .replace(/\$/g, '%24');
             })
-            .replace(`${this.origin}//`, `${this.origin}/`)
+            .replace(this.config.absolute ? /(\.[^/]+?)(\/\/)/ : /(^)(\/\/)/, '$1/')
             .replace(/\/+$/, '');
     }
 }
