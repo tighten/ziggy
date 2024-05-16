@@ -243,6 +243,24 @@ const defaultZiggy = {
             },
             parameters: ['catalog_uri'],
         },
+        'catalog-domain-param': {
+            uri: '{catalog_uri}',
+            methods: ['GET', 'HEAD'],
+            domain: '{storefront}.ziggy.dev',
+            wheres: {
+                catalog_uri: '^/p/.+$',
+            },
+            parameters: ['storefront', 'catalog_uri'],
+        },
+        'catalog-domain-param-path': {
+            uri: 'catalog/{catalog_uri}',
+            methods: ['GET', 'HEAD'],
+            domain: '{storefront}.ziggy.dev',
+            wheres: {
+                catalog_uri: '^/p/.+$',
+            },
+            parameters: ['storefront', 'catalog_uri'],
+        },
     },
 };
 
@@ -755,16 +773,22 @@ describe('route()', () => {
         );
     });
 
-    test('strip wrapping slashes in route parameters', () => {
+    // https://github.com/tighten/ziggy/issues/751
+    test('strip leading slash in first route param at root domain with domain parameter', () => {
         expect(route('catalog', '/p/test')).toBe('https://ziggy.dev/p/test');
-
         expect(route('catalog-path', '/p/test')).toBe('https://ziggy.dev/catalog//p/test');
-
         expect(route('catalog-domain', '/p/test')).toBe('https://catalog.ziggy.dev/p/test');
-
         expect(route('catalog-domain-path', '/p/test')).toBe(
             'https://catalog.ziggy.dev/catalog//p/test',
         );
+        expect(route('catalog-domain-param', ['me', '/p/test'])).toBe(
+            'https://me.ziggy.dev/p/test',
+        );
+        expect(route('catalog-domain-param', ['/p/test'], false)).toBe('/p/test');
+        expect(route('catalog-domain-param-path', ['me', '/p/test'])).toBe(
+            'https://me.ziggy.dev/catalog//p/test',
+        );
+        expect(route('catalog-domain-param-path', ['/p/test'], false)).toBe('/catalog//p/test');
     });
 
     test('skip encoding some characters in route parameters', () => {
