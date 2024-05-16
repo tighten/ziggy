@@ -8,6 +8,12 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v2.2.1] - 2024-05-16
+
+**Fixed**
+
+- Fix double slashes with domain params by @bakerkretzmar in https://github.com/tighten/ziggy/pull/754
+
 ## [v2.2.0] - 2024-05-16
 
 **Added**
@@ -400,7 +406,8 @@ See [UPGRADING](UPGRADING.md#upgrading-from-1x-to-2x) for detailed upgrade instr
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v2.2.1...HEAD
+[v2.2.1]: https://github.com/tighten/ziggy/compare/v2.2.0...v2.2.1
 [v2.2.0]: https://github.com/tighten/ziggy/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/tighten/ziggy/compare/v2.0.5...v2.1.0
 [v2.0.5]: https://github.com/tighten/ziggy/compare/v2.0.4...v2.0.5
