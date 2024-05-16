@@ -12,17 +12,17 @@ jobs:
   test:
     name: ${{ matrix.os[0] }}, PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}
     runs-on: ${{ matrix.os[1] }}
-    continue-on-error: ${{ matrix.php == 8.3 }}
+    continue-on-error: ${{ matrix.php == 8.4 }}
     strategy:
       matrix:
         os: [[Ubuntu, ubuntu-latest], [Windows, windows-latest]]
-        php: [8.1, 8.2, 8.3]
+        php: [8.1, 8.2, 8.3, 8.4]
         laravel: [9, 10, 11]
         exclude:
           - php: 8.1
             laravel: 11
         include:
-          - php: 8.3
+          - php: 8.4
             composer: --ignore-platform-req=php+
     steps:
       - uses: actions/checkout@v4
@@ -34,12 +34,14 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-      - run: composer remove laravel/folio --dev --no-update --no-interaction
-        if: matrix.laravel == 9
+      - if: matrix.laravel == 9
+        run: |
+          composer remove laravel/folio --dev --no-update --no-interaction
+          composer require pestphp/pest:"1.*" phpunit/phpunit:"9.*" --dev --no-update --no-interaction
       - run: composer require laravel/framework:"${{ matrix.laravel }}.*" --no-update --no-interaction
-      - uses: ramsey/composer-install@v2
+      - uses: ramsey/composer-install@v3
         with:
           composer-options: ${{ matrix.composer }}
-      - run: vendor/bin/phpunit --testdox --colors=always
+      - run: vendor/bin/pest
       - run: npm ci && npm run build
       - run: npm run test
