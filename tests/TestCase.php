@@ -7,7 +7,7 @@ use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Tighten\Ziggy\Ziggy;
 use Tighten\Ziggy\ZiggyServiceProvider;
 
-class TestCase extends OrchestraTestCase
+abstract class TestCase extends OrchestraTestCase
 {
     protected function tearDown(): void
     {
