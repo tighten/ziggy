@@ -209,6 +209,40 @@ const defaultZiggy = {
                 slug: '.+',
             },
         },
+        catalog: {
+            uri: '{catalog_uri}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                catalog_uri: '^/p/.+$',
+            },
+            parameters: ['catalog_uri'],
+        },
+        'catalog-path': {
+            uri: 'catalog/{catalog_uri}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                catalog_uri: '^/p/.+$',
+            },
+            parameters: ['catalog_uri'],
+        },
+        'catalog-domain': {
+            uri: '{catalog_uri}',
+            methods: ['GET', 'HEAD'],
+            domain: 'catalog.ziggy.dev',
+            wheres: {
+                catalog_uri: '^/p/.+$',
+            },
+            parameters: ['catalog_uri'],
+        },
+        'catalog-domain-path': {
+            uri: 'catalog/{catalog_uri}',
+            methods: ['GET', 'HEAD'],
+            domain: 'catalog.ziggy.dev',
+            wheres: {
+                catalog_uri: '^/p/.+$',
+            },
+            parameters: ['catalog_uri'],
+        },
     },
 };
 
@@ -718,6 +752,18 @@ describe('route()', () => {
         );
         expect(route('slashesOtherRegex', ['one/two/three', 'Fun&Games/venues/outdoors'])).toBe(
             'https://ziggy.dev/slashes/one/two/three/Fun&Games/venues/outdoors',
+        );
+    });
+
+    test('strip wrapping slashes in route parameters', () => {
+        expect(route('catalog', '/p/test')).toBe('https://ziggy.dev/p/test');
+
+        expect(route('catalog-path', '/p/test')).toBe('https://ziggy.dev/catalog//p/test');
+
+        expect(route('catalog-domain', '/p/test')).toBe('https://catalog.ziggy.dev/p/test');
+
+        expect(route('catalog-domain-path', '/p/test')).toBe(
+            'https://catalog.ziggy.dev/catalog//p/test',
         );
     });
 
