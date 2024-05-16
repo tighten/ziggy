@@ -116,6 +116,8 @@ export default class Route {
 
         if (!segments.length) return this.template;
 
+        // This should probably be refactored to build the host and path separately (not the entire URL at once)
+        // because that's how Laravel does it internally and it's more precise and less error-prone
         return this.template
             .replace(/{([^}?]+)(\??)}/g, (_, segment, optional) => {
                 // If the parameter is missing but is not optional, throw an error
