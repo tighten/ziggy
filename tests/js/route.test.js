@@ -791,6 +791,26 @@ describe('route()', () => {
         expect(route('catalog-domain-param-path', ['/p/test'], false)).toBe('/catalog//p/test');
     });
 
+    // Highest potential for "breaking" changes when fixing these is the second format in each example, where
+    // params are passed as an array, because it's less clear in that case which param is which since we're
+    // relying on the order they're passed. It may break some people's code but it's probably more
+    // important to match Laravel's behaviour correctly, this is a pretty big inconsistency.
+    test('handle domain parameters when generating relative URL', () => {
+        // Just for demonstration purposes, this is tested properly elsewhere
+        expect(route('team.user.show', { team: 1, id: 2 })).toBe('https://1.ziggy.dev/users/2');
+        expect(route('team.user.show', [1, 2])).toBe('https://1.ziggy.dev/users/2');
+
+        // Laravel route() errors here, domain {team} param is required
+        // We should *probably* match that behaviour and error too
+        expect(route('team.user.show', { id: 2 }, false)).toBe('/users/2');
+        expect(route('team.user.show', [2], false)).toBe('/users/2');
+
+        // Laravel route() handles these find, {team} param is recognized even though final output won't contain it
+        // We should *definitely* match that behaviour and handle these properly
+        expect(route('team.user.show', { team: 1, id: 2 }, false)).toBe('/users/2');
+        expect(route('team.user.show', [1, 2], false)).toBe('/users/2');
+    });
+
     test('skip encoding some characters in route parameters', () => {
         // Laravel doesn't encode these characters in route parameters: / @ : ; , = + ! * | ? & # %
         expect(route('pages', 'a/b')).toBe('https://ziggy.dev/a/b');
