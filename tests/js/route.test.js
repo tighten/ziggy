@@ -209,6 +209,58 @@ const defaultZiggy = {
                 slug: '.+',
             },
         },
+        catalog: {
+            uri: '{catalog_uri}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                catalog_uri: '^/p/.+$',
+            },
+            parameters: ['catalog_uri'],
+        },
+        'catalog-path': {
+            uri: 'catalog/{catalog_uri}',
+            methods: ['GET', 'HEAD'],
+            wheres: {
+                catalog_uri: '^/p/.+$',
+            },
+            parameters: ['catalog_uri'],
+        },
+        'catalog-domain': {
+            uri: '{catalog_uri}',
+            methods: ['GET', 'HEAD'],
+            domain: 'catalog.ziggy.dev',
+            wheres: {
+                catalog_uri: '^/p/.+$',
+            },
+            parameters: ['catalog_uri'],
+        },
+        'catalog-domain-path': {
+            uri: 'catalog/{catalog_uri}',
+            methods: ['GET', 'HEAD'],
+            domain: 'catalog.ziggy.dev',
+            wheres: {
+                catalog_uri: '^/p/.+$',
+            },
+            parameters: ['catalog_uri'],
+        },
+        'catalog-domain-param': {
+            uri: '{catalog_uri}',
+            methods: ['GET', 'HEAD'],
+            domain: '{storefront}.ziggy.dev',
+            wheres: {
+                catalog_uri: '^/p/.+$',
+            },
+            parameters: ['storefront', 'catalog_uri'],
+        },
+        'catalog-domain-param-path': {
+            uri: 'catalog/{catalog_uri}',
+            methods: ['GET', 'HEAD'],
+            domain: '{storefront}.ziggy.dev',
+            wheres: {
+                catalog_uri: '^/p/.+$',
+            },
+            parameters: ['storefront', 'catalog_uri'],
+        },
     },
 };
 
@@ -683,7 +735,7 @@ describe('route()', () => {
             'https://ziggy.dev/where/download/file.html',
         );
         expect(() => route('pages.optionalExtensionWhere', { extension: '.pdf' })).toThrow(
-            /'extension' parameter does not match required format/,
+            /'extension' parameter '\.pdf' does not match required format/,
         );
     });
 
@@ -692,10 +744,10 @@ describe('route()', () => {
             'https://ziggy.dev/where/strict-download/file.html',
         );
         expect(() => route('pages.requiredExtensionWhere', 'x')).toThrow(
-            /'extension' parameter does not match required format/,
+            /'extension' parameter 'x' does not match required format/,
         );
         expect(() => route('pages.requiredExtensionWhere', { extension: '.pdf' })).toThrow(
-            /'extension' parameter does not match required format/,
+            /'extension' parameter '\.pdf' does not match required format/,
         );
     });
 
@@ -719,6 +771,24 @@ describe('route()', () => {
         expect(route('slashesOtherRegex', ['one/two/three', 'Fun&Games/venues/outdoors'])).toBe(
             'https://ziggy.dev/slashes/one/two/three/Fun&Games/venues/outdoors',
         );
+    });
+
+    // https://github.com/tighten/ziggy/issues/751
+    test('strip leading slash in first route param at root domain with domain parameter', () => {
+        expect(route('catalog', '/p/test')).toBe('https://ziggy.dev/p/test');
+        expect(route('catalog-path', '/p/test')).toBe('https://ziggy.dev/catalog//p/test');
+        expect(route('catalog-domain', '/p/test')).toBe('https://catalog.ziggy.dev/p/test');
+        expect(route('catalog-domain-path', '/p/test')).toBe(
+            'https://catalog.ziggy.dev/catalog//p/test',
+        );
+        expect(route('catalog-domain-param', ['me', '/p/test'])).toBe(
+            'https://me.ziggy.dev/p/test',
+        );
+        expect(route('catalog-domain-param', ['/p/test'], false)).toBe('/p/test');
+        expect(route('catalog-domain-param-path', ['me', '/p/test'])).toBe(
+            'https://me.ziggy.dev/catalog//p/test',
+        );
+        expect(route('catalog-domain-param-path', ['/p/test'], false)).toBe('/catalog//p/test');
     });
 
     test('skip encoding some characters in route parameters', () => {
