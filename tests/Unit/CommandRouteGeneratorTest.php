@@ -43,8 +43,8 @@ class CommandRouteGeneratorTest extends TestCase
     public function can_generate_file_with_named_routes()
     {
         $router = app('router');
-        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
-        $router->get('slashes/{slug}', $this->noop())->where('slug', '.*')->name('slashes');
+        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+        $router->get('slashes/{slug}', fn () => '')->where('slug', '.*')->name('slashes');
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate');
@@ -56,7 +56,7 @@ class CommandRouteGeneratorTest extends TestCase
     public function can_generate_file_with_custom_url()
     {
         $router = app('router');
-        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
         $router->getRoutes()->refreshNameLookups();
         URL::defaults(['locale' => 'en']);
 
@@ -69,7 +69,7 @@ class CommandRouteGeneratorTest extends TestCase
     public function can_generate_file_with_custom_pathname()
     {
         $router = app('router');
-        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
         $router->getRoutes()->refreshNameLookups();
         URL::defaults(['locale' => 'en']);
 
@@ -83,9 +83,9 @@ class CommandRouteGeneratorTest extends TestCase
     {
         config(['ziggy.except' => ['admin.*']]);
         $router = app('router');
-        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
-        $router->get('slashes/{slug}', $this->noop())->where('slug', '.*')->name('slashes');
-        $router->get('admin', $this->noop())->name('admin.dashboard'); // Excluded, should NOT be present in file
+        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+        $router->get('slashes/{slug}', fn () => '')->where('slug', '.*')->name('slashes');
+        $router->get('admin', fn () => '')->name('admin.dashboard'); // Excluded, should NOT be present in file
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate');
@@ -106,8 +106,8 @@ class CommandRouteGeneratorTest extends TestCase
         ]);
 
         $router = app('router');
-        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
-        $router->get('admin', $this->noop())->name('admin.dashboard'); // Excluded, should NOT be present in file
+        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+        $router->get('admin', fn () => '')->name('admin.dashboard'); // Excluded, should NOT be present in file
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate');
@@ -123,8 +123,8 @@ class CommandRouteGeneratorTest extends TestCase
             'ziggy.groups' => ['admin' => ['admin.*']],
         ]);
         $router = app('router');
-        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
-        $router->get('admin', $this->noop())->name('admin.dashboard');
+        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+        $router->get('admin', fn () => '')->name('admin.dashboard');
         $router->getRoutes()->refreshNameLookups();
 
         Artisan::call('ziggy:generate', ['path' => 'resources/js/admin.js', '--group' => 'admin']);
@@ -145,7 +145,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_dts_file()
     {
-        app('router')->get('posts', $this->noop())->name('posts.index');
+        app('router')->get('posts', fn () => '')->name('posts.index');
         app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
         app('router')->post('posts/{post}/comments/{comment?}', PostCommentController::class)->name('postComments.storeComment');
         app('router')->getRoutes()->refreshNameLookups();
@@ -166,7 +166,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_dts_file_with_scoped_bindings()
     {
-        app('router')->get('posts', $this->noop())->name('posts.index');
+        app('router')->get('posts', fn () => '')->name('posts.index');
         app('router')->get('posts/{post}/comments/{comment:uuid}', PostCommentController::class)->name('postComments.show');
         app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
         app('router')->getRoutes()->refreshNameLookups();
@@ -187,7 +187,7 @@ class CommandRouteGeneratorTest extends TestCase
     /** @test */
     public function can_generate_dts_file_without_routes()
     {
-        app('router')->get('posts', $this->noop())->name('posts.index');
+        app('router')->get('posts', fn () => '')->name('posts.index');
         app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
         app('router')->getRoutes()->refreshNameLookups();
 
@@ -201,7 +201,7 @@ class CommandRouteGeneratorTest extends TestCase
     public function can_derive_dts_file_path_from_given_path()
     {
         config(['ziggy.output.path' => 'resources/js/custom.js']);
-        app('router')->get('posts', $this->noop())->name('posts.index');
+        app('router')->get('posts', fn () => '')->name('posts.index');
         app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
         app('router')->getRoutes()->refreshNameLookups();
 

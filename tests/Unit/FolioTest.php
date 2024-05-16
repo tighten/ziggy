@@ -70,7 +70,7 @@ class FolioTest extends TestCase
     /** @test */
     public function normal_routes_override_folio_routes()
     {
-        app('router')->get('about', $this->noop())->name('about');
+        app('router')->get('about', fn () => '')->name('about');
         app('router')->getRoutes()->refreshNameLookups();
 
         File::ensureDirectoryExists(resource_path('views/pages'));

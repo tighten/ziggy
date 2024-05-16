@@ -21,11 +21,11 @@ class BladeRouteGeneratorTest extends TestCase
     public function can_generate_named_routes()
     {
         $router = app('router');
-        $router->get('/', $this->noop()); // Not named, should NOT be included in JSON output
-        $router->get('posts', $this->noop())->name('posts.index');
-        $router->get('posts/{post}', $this->noop())->name('posts.show');
-        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
-        $router->post('posts', $this->noop())->name('posts.store');
+        $router->get('/', fn () => ''); // Not named, should NOT be included in JSON output
+        $router->get('posts', fn () => '')->name('posts.index');
+        $router->get('posts/{post}', fn () => '')->name('posts.show');
+        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+        $router->post('posts', fn () => '')->name('posts.store');
         $router->getRoutes()->refreshNameLookups();
 
         BladeRouteGenerator::$generated = false;
@@ -43,7 +43,7 @@ class BladeRouteGeneratorTest extends TestCase
     public function can_generate_mergeable_json_payload_on_repeated_compiles()
     {
         $router = app('router');
-        $router->get('posts', $this->noop())->name('posts.index');
+        $router->get('posts', fn () => '')->name('posts.index');
         $router->getRoutes()->refreshNameLookups();
 
         BladeRouteGenerator::$generated = false;
@@ -62,7 +62,7 @@ class BladeRouteGeneratorTest extends TestCase
     public function can_generate_routes_for_default_domain()
     {
         $router = app('router');
-        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
         $router->getRoutes()->refreshNameLookups();
 
         $expected = [
@@ -81,7 +81,7 @@ class BladeRouteGeneratorTest extends TestCase
     {
         $router = app('router');
         $router->domain('{account}.myapp.com')->group(function () use ($router) {
-            $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
+            $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
         });
         $router->getRoutes()->refreshNameLookups();
 
@@ -101,9 +101,9 @@ class BladeRouteGeneratorTest extends TestCase
     public function can_generate_routes_for_given_group_or_groups()
     {
         $router = app('router');
-        $router->get('posts', $this->noop())->name('posts.index');
-        $router->get('posts/{post}', $this->noop())->name('posts.show');
-        $router->get('users/{user}', $this->noop())->name('users.show');
+        $router->get('posts', fn () => '')->name('posts.index');
+        $router->get('posts/{post}', fn () => '')->name('posts.show');
+        $router->get('users/{user}', fn () => '')->name('users.show');
         $router->getRoutes()->refreshNameLookups();
 
         config(['ziggy.groups' => [
@@ -142,7 +142,7 @@ class BladeRouteGeneratorTest extends TestCase
     public function can_output_script_tag()
     {
         $router = app('router');
-        $router->get('posts', $this->noop())->name('posts.index');
+        $router->get('posts', fn () => '')->name('posts.index');
         BladeRouteGenerator::$generated = false;
 
         $json = (new Ziggy)->toJson();
@@ -160,7 +160,7 @@ HTML,
     public function can_output_merge_script_tag()
     {
         $router = app('router');
-        $router->get('posts', $this->noop())->name('posts.index');
+        $router->get('posts', fn () => '')->name('posts.index');
         (new BladeRouteGenerator)->generate();
 
         $json = json_encode((new Ziggy)->toArray()['routes']);

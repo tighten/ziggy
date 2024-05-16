@@ -13,13 +13,13 @@ class ZiggyTest extends TestCase
 
         $router = app('router');
 
-        $router->get('home', $this->noop())->name('home');
-        $router->get('posts', $this->noop())->name('posts.index');
-        $router->get('posts/{post}', $this->noop())->name('posts.show');
-        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
-        $router->post('posts', $this->noop())->middleware(['auth', 'role:admin'])->name('posts.store');
-        $router->get('admin/users', $this->noop())->middleware(['role:admin'])->name('admin.users.index');
-        $router->get('/posts/{post}/comments/{comment:uuid}', $this->noop())->name('postComments.show');
+        $router->get('home', fn () => '')->name('home');
+        $router->get('posts', fn () => '')->name('posts.index');
+        $router->get('posts/{post}', fn () => '')->name('posts.show');
+        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+        $router->post('posts', fn () => '')->middleware(['auth', 'role:admin'])->name('posts.store');
+        $router->get('admin/users', fn () => '')->middleware(['role:admin'])->name('admin.users.index');
+        $router->get('/posts/{post}/comments/{comment:uuid}', fn () => '')->name('postComments.show');
 
         $router->getRoutes()->refreshNameLookups();
     }
@@ -499,8 +499,8 @@ class ZiggyTest extends TestCase
     /** @test */
     public function can_order_fallback_routes_last()
     {
-        app('router')->fallback($this->noop())->name('fallback');
-        app('router')->get('/users', $this->noop())->name('users.index');
+        app('router')->fallback(fn () => '')->name('fallback');
+        app('router')->get('/users', fn () => '')->name('users.index');
 
         app('router')->getRoutes()->refreshNameLookups();
         $routes = (new Ziggy)->toArray()['routes'];
@@ -660,7 +660,7 @@ class ZiggyTest extends TestCase
     {
         $routes = (new Ziggy)->toArray()['routes'];
 
-        app('router')->get('/users', $this->noop())->name('users.index');
+        app('router')->get('/users', fn () => '')->name('users.index');
         app('router')->getRoutes()->refreshNameLookups();
 
         $this->assertSame($routes, (new Ziggy)->toArray()['routes']);
@@ -669,7 +669,7 @@ class ZiggyTest extends TestCase
     /** @test */
     public function optional_params_inside_path()
     {
-        app('router')->get('{country?}/test/{language?}/products/{id}', $this->noop())->name('products.show');
+        app('router')->get('{country?}/test/{language?}/products/{id}', fn () => '')->name('products.show');
         app('router')->getRoutes()->refreshNameLookups();
 
         $this->assertSame('http://ziggy.dev/ca/test/fr/products/1', route('products.show', ['country' => 'ca', 'language' => 'fr', 'id' => 1]));
@@ -684,11 +684,11 @@ class ZiggyTest extends TestCase
     /** @test */
     public function filter_route_names_from_nested_groups()
     {
-        app('router')->get('foo', $this->noop())->name('foo');
+        app('router')->get('foo', fn () => '')->name('foo');
         app('router')->name('foo.')->group(function () {
-            app('router')->get('foo/bar', $this->noop())->name('bar');
+            app('router')->get('foo/bar', fn () => '')->name('bar');
             app('router')->name('bar.')->group(function () {
-                app('router')->get('foo/bar/baz', $this->noop())->name('baz');
+                app('router')->get('foo/bar/baz', fn () => '')->name('baz');
             });
         });
         app('router')->getRoutes()->refreshNameLookups();
@@ -709,10 +709,10 @@ class ZiggyTest extends TestCase
     /** @test */
     public function numeric_route_names()
     {
-        app('router')->get('a', $this->noop())->name('a');
-        app('router')->get('3', $this->noop())->name('3');
-        app('router')->get('b', $this->noop())->name('b');
-        app('router')->fallback($this->noop())->name('404');
+        app('router')->get('a', fn () => '')->name('a');
+        app('router')->get('3', fn () => '')->name('3');
+        app('router')->get('b', fn () => '')->name('b');
+        app('router')->fallback(fn () => '')->name('404');
         app('router')->getRoutes()->refreshNameLookups();
 
         config(['ziggy.except' => ['home', 'posts.*', 'postComments.*', 'admin.*']]);

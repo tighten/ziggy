@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Closure;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Tighten\Ziggy\Ziggy;
 use Tighten\Ziggy\ZiggyServiceProvider;
@@ -19,12 +18,5 @@ abstract class TestCase extends OrchestraTestCase
     protected function getPackageProviders($app)
     {
         return [ZiggyServiceProvider::class];
-    }
-
-    protected function noop(): Closure
-    {
-        return function () {
-            return '';
-        };
     }
 }
