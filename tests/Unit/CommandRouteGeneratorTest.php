@@ -8,7 +8,7 @@ use function Pest\Laravel\artisan;
 
 beforeEach(function () {
     if (is_dir(base_path('resources/js'))) {
-        array_map(fn ($file) => unlink($file), glob(base_path('resources/js/*')));
+        array_map(unlink(...), glob(base_path('resources/js/*')));
     }
 });
 
@@ -145,13 +145,13 @@ test('infer dts file name from routes file name', function () {
 
 test('generate correct routes and dts files based on provided arguments', function (string $args, array $files) {
     if (is_dir(base_path('resources/scripts'))) {
-        array_map(fn ($file) => unlink($file), glob(base_path('resources/scripts/*')));
+        array_map(unlink(...), glob(base_path('resources/scripts/*')));
         rmdir(base_path('resources/scripts'));
     }
 
     artisan("ziggy:generate {$args}");
 
-    expect(array_map(fn ($f) => base_path($f), $files))->each->toBeFile();
+    expect(array_map(base_path(...), $files))->each->toBeFile();
 })->with([
     ['resources/js/x.js --types', ['resources/js/x.js', 'resources/js/x.d.ts']],
     ['resources/js/y.ts --types', ['resources/js/y.js', 'resources/js/y.d.ts']],
