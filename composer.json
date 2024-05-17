@@ -31,7 +31,8 @@
     "require-dev": {
         "laravel/folio": "^1.1",
         "orchestra/testbench": "^7.0 || ^8.0 || ^9.0",
-        "phpunit/phpunit": "^9.5 || ^10.3"
+        "pestphp/pest": "^2.26",
+        "pestphp/pest-plugin-laravel": "^2.4"
     },
     "autoload": {
         "psr-4": {
@@ -54,7 +55,8 @@
         "optimize-autoloader": true,
         "sort-packages": true,
         "allow-plugins": {
-            "kylekatarnls/update-helper": true
+            "kylekatarnls/update-helper": true,
+            "pestphp/pest-plugin": true
         }
     },
     "minimum-stability": "dev",
