@@ -1,20 +1,18 @@
 <?php
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Laravel\Folio\Folio;
 use Laravel\Folio\FolioServiceProvider;
 use Tighten\Ziggy\Ziggy;
-use Tighten\Ziggy\ZiggyServiceProvider;
-
 
 beforeEach(function () {
     if ((int) head(explode('.', app()->version())) < 10) {
-        $this->markTestSkipped('Folio requires Laravel >=10');
-    } else {
-        app()->register(FolioServiceProvider::class);
+        return $this->markTestSkipped('Folio requires Laravel >=10');
     }
+
+    app()->register(FolioServiceProvider::class);
 });
 
 afterEach(function () {
@@ -61,7 +59,7 @@ test('normal routes override folio routes', function () {
     expect(Arr::except((new Ziggy())->toArray()['routes'], 'laravel-folio'))->toBe([
         'about' => [
             'uri' => 'about',
-            // Folio routes only respond to 'GET', so this is the web route
+            // Folio routes only respond to 'GET', so this has to be the web route
             'methods' => ['GET', 'HEAD'],
         ],
     ]);
@@ -157,7 +155,7 @@ test('nested pages', function () {
     ]);
 });
 
-test('custom view data variable names', function () {
+test('custom view data variable name', function () {
     File::ensureDirectoryExists(resource_path('views/pages/users/[.App.User-$leader]/users'));
     File::put(resource_path('views/pages/users/[.App.User-$leader]/users/[.App.User-$follower].blade.php'), '<?php Laravel\Folio\name("follower");');
     if (! windows_os()) {
@@ -204,7 +202,7 @@ test('middleware', function () {
     ]);
 });
 
-test('binding fields', function () {
+test('custom route model binding field', function () {
     File::ensureDirectoryExists(resource_path('views/pages/things'));
     File::put(resource_path('views/pages/things/[Thing].blade.php'), '<?php Laravel\Folio\name("things.show");');
     if (! windows_os()) {
@@ -278,7 +276,7 @@ test('custom model paths', function () {
     ]);
 });
 
-test('implicit route model bindings', function () {
+test('implicit route model binding', function () {
     File::ensureDirectoryExists(resource_path('views/pages/users'));
     File::put(resource_path('views/pages/users/[FolioUser].blade.php'), '<?php Laravel\Folio\name("users.show");');
     File::ensureDirectoryExists(resource_path('views/pages/tags'));
@@ -307,7 +305,7 @@ test('implicit route model bindings', function () {
     expect(FolioTag::$wasBooted)->toBeFalse();
 });
 
-test('implicit route model bindings with custom variable', function () {
+test('implicit route model binding and custom view data variable name', function () {
     File::ensureDirectoryExists(resource_path('views/pages/users'));
     File::put(resource_path('views/pages/users/[FolioUser-$user].blade.php'), '<?php Laravel\Folio\name("users.show");');
     if (! windows_os()) {
@@ -337,7 +335,7 @@ test('implicit route model bindings with custom variable', function () {
     }
 });
 
-test('model bindings with both custom field and custom variable', function () {
+test('custom route model binding field and custom view data variable name', function () {
     if (! windows_os()) {
         File::ensureDirectoryExists(resource_path('views/pages/users'));
         File::put(resource_path('views/pages/users/[FolioUser:email|user].blade.php'), '<?php Laravel\Folio\name("users.show");');

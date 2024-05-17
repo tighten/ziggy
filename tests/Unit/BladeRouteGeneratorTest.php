@@ -4,44 +4,38 @@ use Illuminate\Support\Str;
 use Tighten\Ziggy\BladeRouteGenerator;
 use Tighten\Ziggy\Ziggy;
 
-
-test('can resolve generator from container', function () {
-    $generator = app(BladeRouteGenerator::class);
-
-    $this->assertStringContainsString('"routes":[]', $generator->generate());
+beforeEach(function () {
+    BladeRouteGenerator::$generated = false;
 });
 
-test('can generate named routes', function () {
-    $router = app('router');
-    $router->get('/', fn () => '');
-    // Not named, should NOT be included in JSON output
-    $router->get('posts', fn () => '')->name('posts.index');
-    $router->get('posts/{post}', fn () => '')->name('posts.show');
-    $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    $router->post('posts', fn () => '')->name('posts.store');
-    $router->getRoutes()->refreshNameLookups();
+test('generate named routes', function () {
+    app('router')->get('/', fn () => ''); // Not named, should not be included in JSON output
+    app('router')->get('posts', fn () => '')->name('posts.index');
+    app('router')->post('posts', fn () => '')->name('posts.store');
+    app('router')->get('posts/{post}', fn () => '')->name('posts.show');
+    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    app('router')->getRoutes()->refreshNameLookups();
 
-    BladeRouteGenerator::$generated = false;
     $output = (new BladeRouteGenerator)->generate();
-    $ziggy = json_decode(Str::before(Str::after($output, 'Ziggy='), ';!'), true);
+    $config = json_decode(Str::between($output, 'const Ziggy=', ';!'), true);
 
-    expect($ziggy['routes'])->toHaveCount(4);
-    expect($ziggy['routes'])->toHaveKey('posts.index');
-    expect($ziggy['routes'])->toHaveKey('posts.show');
-    expect($ziggy['routes'])->toHaveKey('posts.store');
-    expect($ziggy['routes'])->toHaveKey('postComments.index');
+    expect($config['routes'])
+        ->toHaveCount(4)
+        ->toHaveKey('posts.index')
+        ->toHaveKey('posts.store')
+        ->toHaveKey('posts.show')
+        ->toHaveKey('postComments.index');
 });
 
-test('can generate mergeable json payload on repeated compiles', function () {
-    $router = app('router');
-    $router->get('posts', fn () => '')->name('posts.index');
-    $router->getRoutes()->refreshNameLookups();
+test('generate mergeable route list on repeated compiles', function () {
+    app('router')->get('posts', fn () => '')->name('posts.index');
+    app('router')->getRoutes()->refreshNameLookups();
 
-    BladeRouteGenerator::$generated = false;
     (new BladeRouteGenerator)->generate();
-    $script = (new BladeRouteGenerator)->generate();
+    $output = (new BladeRouteGenerator)->generate();
+    $config = json_decode(Str::between($output, 'Object.assign(Ziggy.routes,', ');</script>'), true);
 
-    expect(json_decode(Str::before(Str::after($script, 'Ziggy.routes,'), ');'), true))->toBe([
+    expect($config)->toBe([
         'posts.index' => [
             'uri' => 'posts',
             'methods' => ['GET', 'HEAD'],
@@ -49,109 +43,94 @@ test('can generate mergeable json payload on repeated compiles', function () {
     ]);
 });
 
-test('can generate routes for default domain', function () {
-    $router = app('router');
-    $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    $router->getRoutes()->refreshNameLookups();
+test('generate basic route config', function () {
+    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    app('router')->getRoutes()->refreshNameLookups();
 
-    $expected = [
+    expect((new BladeRouteGenerator)->generate())->toContain(json_encode([
         'postComments.index' => [
             'uri' => 'posts/{post}/comments',
             'methods' => ['GET', 'HEAD'],
             'parameters' => ['post'],
         ],
-    ];
-
-    $this->assertStringContainsString(json_encode($expected), (new BladeRouteGenerator)->generate());
+    ]));
 });
 
-test('can generate routes for custom domain', function () {
-    $router = app('router');
-    $router->domain('{account}.myapp.com')->group(function () use ($router) {
-        $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    });
-    $router->getRoutes()->refreshNameLookups();
+test('generate route config for custom domain', function () {
+    app('router')->domain('{account}.myapp.com')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    app('router')->getRoutes()->refreshNameLookups();
 
-    $expected = [
+    expect((new BladeRouteGenerator)->generate())->toContain(json_encode([
         'postComments.index' => [
             'uri' => 'posts/{post}/comments',
             'methods' => ['GET', 'HEAD'],
             'domain' => '{account}.myapp.com',
             'parameters' => ['account', 'post'],
         ],
-    ];
-
-    $this->assertStringContainsString(json_encode($expected), (new BladeRouteGenerator)->generate());
+    ]));
 });
 
-test('can generate routes for given group or groups', function () {
-    $router = app('router');
-    $router->get('posts', fn () => '')->name('posts.index');
-    $router->get('posts/{post}', fn () => '')->name('posts.show');
-    $router->get('users/{user}', fn () => '')->name('users.show');
-    $router->getRoutes()->refreshNameLookups();
+test('generate route config for groups', function (array $groups, array $names) {
+    app('router')->get('posts', fn () => '')->name('posts.index');
+    app('router')->get('posts/{post}', fn () => '')->name('posts.show');
+    app('router')->get('users/{user}', fn () => '')->name('users.show');
+    app('router')->getRoutes()->refreshNameLookups();
 
     config(['ziggy.groups' => [
         'guest' => ['posts.*'],
         'admin' => ['users.*'],
     ]]);
 
-    BladeRouteGenerator::$generated = false;
-    $output = (new BladeRouteGenerator)->generate('guest');
-    $ziggy = json_decode(Str::before(Str::after($output, 'Ziggy='), ';!'), true);
+    $output = (new BladeRouteGenerator)->generate($groups);
+    $config = json_decode(Str::between($output, 'const Ziggy=', ';!'), true);
 
-    expect($ziggy['routes'])->toHaveCount(2);
-    expect($ziggy['routes'])->toHaveKey('posts.index');
-    expect($ziggy['routes'])->toHaveKey('posts.show');
+    expect($config['routes'])
+        ->toHaveCount(count($names))
+        ->toHaveKeys($names);
+})->with([
+    [['guest'], ['posts.index', 'posts.show']],
+    [['guest', 'admin'], ['posts.index', 'posts.show', 'users.show']],
+]);
 
-    BladeRouteGenerator::$generated = false;
-    $output = (new BladeRouteGenerator)->generate(['guest', 'admin']);
-    $ziggy = json_decode(Str::before(Str::after($output, 'Ziggy='), ';!'), true);
-
-    expect($ziggy['routes'])->toHaveCount(3);
-    expect($ziggy['routes'])->toHaveKey('posts.index');
-    expect($ziggy['routes'])->toHaveKey('posts.show');
-    expect($ziggy['routes'])->toHaveKey('users.show');
+test('render csp nonce', function () {
+    expect((new BladeRouteGenerator)->generate(false, 'test-nonce'))
+        ->toContain('<script type="text/javascript" nonce="test-nonce">');
 });
 
-test('can set csp nonce', function () {
-    $this->assertStringContainsString(
-        '<script type="text/javascript" nonce="supercalifragilisticexpialidocious">',
-        (new BladeRouteGenerator)->generate(false, 'supercalifragilisticexpialidocious')
+test('render script tag', function () {
+    app('router')->get('posts', fn () => '')->name('posts.index');
+
+    $config = (new Ziggy)->toJson();
+    $routeFunction = file_get_contents(__DIR__ . '/../../dist/route.umd.js');
+
+    expect((new BladeRouteGenerator)->generate())->toBe(
+        <<<HTML
+        <script type="text/javascript">const Ziggy={$config};{$routeFunction}</script>
+        HTML
     );
 });
 
-test('can output script tag', function () {
-    $router = app('router');
-    $router->get('posts', fn () => '')->name('posts.index');
-    BladeRouteGenerator::$generated = false;
+test('render merge script tag', function () {
+    app('router')->get('posts', fn () => '')->name('posts.index');
 
-    $json = (new Ziggy)->toJson();
-    $routeFunction = file_get_contents(__DIR__ . '/../../dist/route.umd.js');
+    $config = json_encode((new Ziggy)->toArray()['routes']);
 
-    expect((new BladeRouteGenerator)->generate())->toBe(<<<HTML
-<script type="text/javascript">const Ziggy={$json};{$routeFunction}</script>
-HTML);
-});
-
-test('can output merge script tag', function () {
-    $router = app('router');
-    $router->get('posts', fn () => '')->name('posts.index');
     (new BladeRouteGenerator)->generate();
 
-    $json = json_encode((new Ziggy)->toArray()['routes']);
-
-    expect((new BladeRouteGenerator)->generate())->toBe(<<<HTML
-<script type="text/javascript">Object.assign(Ziggy.routes,{$json});</script>
-HTML);
+    expect((new BladeRouteGenerator)->generate())->toBe(
+        <<<HTML
+        <script type="text/javascript">Object.assign(Ziggy.routes,{$config});</script>
+        HTML
+    );
 });
 
-test('can compile blade directive', function () {
-    expect(app('blade.compiler')->compileString('@routes'))->toBe("<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(); ?>");
-
-    expect(app('blade.compiler')->compileString("@routes('admin')"))->toBe("<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate('admin'); ?>");
-    expect(app('blade.compiler')->compileString("@routes(['admin', 'guest'])"))->toBe("<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(['admin', 'guest']); ?>");
-
-    expect(app('blade.compiler')->compileString("@routes(null, 'nonce')"))->toBe("<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(null, 'nonce'); ?>");
-    expect(app('blade.compiler')->compileString("@routes(nonce: 'nonce')"))->toBe("<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(nonce: 'nonce'); ?>");
-});
+test('compile blade directive', function (string $blade, string $output) {
+    expect(app('blade.compiler')->compileString($blade))->toBe($output);
+})->with([
+    ['@routes', "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(); ?>"],
+    ["@routes('admin')", "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate('admin'); ?>"],
+    ["@routes(['admin', 'guest'])", "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(['admin', 'guest']); ?>"],
+    ["@routes(null, 'nonce')", "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(null, 'nonce'); ?>"],
+    ["@routes(nonce: 'nonce')", "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(nonce: 'nonce'); ?>"],
+    ["@routes(['admin', 'guest'], 'nonce')", "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(['admin', 'guest'], 'nonce'); ?>"],
+]);

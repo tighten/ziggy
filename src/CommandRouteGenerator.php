@@ -4,7 +4,6 @@ namespace Tighten\Ziggy;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Str;
 use Tighten\Ziggy\Output\File;
 use Tighten\Ziggy\Output\Types;
 use Tighten\Ziggy\Ziggy;

@@ -32,7 +32,7 @@
         "laravel/folio": "^1.1",
         "orchestra/testbench": "^7.0 || ^8.0 || ^9.0",
         "pestphp/pest": "^2.26",
-        "pestphp/pest-plugin-drift": "^2.6"
+        "pestphp/pest-plugin-laravel": "^2.4"
     },
     "autoload": {
         "psr-4": {

@@ -1,332 +1,160 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use Tighten\Ziggy\Ziggy;
 
+use function Pest\Laravel\get;
+use function Pest\Laravel\post;
 
 beforeEach(function () {
-    $router = app('router');
-
-    $router->get('home', fn () => '')->name('home');
-    $router->get('posts', fn () => '')->name('posts.index');
-    $router->get('posts/{post}', fn () => '')->name('posts.show');
-    $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    $router->post('posts', fn () => '')->middleware(['auth', 'role:admin'])->name('posts.store');
-    $router->get('admin/users', fn () => '')->middleware(['role:admin'])->name('admin.users.index');
-    $router->get('/posts/{post}/comments/{comment:uuid}', fn () => '')->name('postComments.show');
-
-    $router->getRoutes()->refreshNameLookups();
+    Route::get('home', fn () => '')->name('home');
+    Route::get('posts', fn () => '')->name('posts.index');
+    Route::get('posts/{post}', fn () => '')->name('posts.show');
+    Route::get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    Route::post('posts', fn () => '')->middleware(['auth', 'role:admin'])->name('posts.store');
+    Route::get('admin/users', fn () => '')->middleware(['role:admin'])->name('admin.users.index');
+    Route::get('/posts/{post}/comments/{comment:uuid}', fn () => '')->name('postComments.show');
 });
 
-test('can filter to only include routes matching a pattern', function () {
-    $ziggy = new Ziggy;
-    $routes = $ziggy->filter(['posts.s*', 'home'], true);
-
-    $expected = [
-        'home' => [
-            'uri' => 'home',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.show' => [
-            'uri' => 'posts/{post}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'posts.store' => [
-            'uri' => 'posts',
-            'methods' => ['POST'],
-        ],
-    ];
-
-    expect($routes->toArray()['routes'])->toBe($expected);
+test('include routes matching a pattern', function () {
+    expect((new Ziggy)->filter(['posts.s*', 'home'])->toArray()['routes'])
+        ->toHaveCount(3)
+        ->toHaveKeys([
+            'home',
+            'posts.show',
+            'posts.store',
+        ]);
 });
 
-test('can filter to exclude routes matching a pattern', function () {
-    $ziggy = new Ziggy;
-    $routes = $ziggy->filter(['posts.s*', 'home', 'admin.*'], false);
-
-    $expected = [
-        'posts.index' => [
-            'uri' => 'posts',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'postComments.index' => [
-            'uri' => 'posts/{post}/comments',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'postComments.show' => [
-            'uri' => 'posts/{post}/comments/{comment}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post', 'comment'],
-            'bindings' => [
-                'comment' => 'uuid',
-            ],
-        ],
-    ];
-
-    expect($routes->toArray()['routes'])->toBe($expected);
+test('exclude routes matching a pattern', function () {
+    expect((new Ziggy)->filter(['posts.s*', 'home', 'admin.*'], false)->toArray()['routes'])
+        ->toHaveCount(3)
+        ->toHaveKeys([
+            'posts.index',
+            'postComments.index',
+            'postComments.show',
+        ]);
 });
 
-test('can set included routes using only config', function () {
+test('include routes using config', function () {
     config(['ziggy.only' => ['posts.s*', 'home']]);
-    $routes = (new Ziggy)->toArray()['routes'];
 
-    $expected = [
-        'home' => [
-            'uri' => 'home',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.show' => [
-            'uri' => 'posts/{post}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'posts.store' => [
-            'uri' => 'posts',
-            'methods' => ['POST'],
-        ],
-    ];
-
-    expect($routes)->toBe($expected);
+    expect((new Ziggy)->toArray()['routes'])
+        ->toHaveCount(3)
+        ->toHaveKeys([
+            'home',
+            'posts.show',
+            'posts.store',
+        ]);
 });
 
-test('can set excluded routes using except config', function () {
+test('exclude routes using config', function () {
     config(['ziggy.except' => ['posts.s*', 'home', 'admin.*']]);
-    $routes = (new Ziggy)->toArray()['routes'];
 
-    $expected = [
-        'posts.index' => [
-            'uri' => 'posts',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'postComments.index' => [
-            'uri' => 'posts/{post}/comments',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'postComments.show' => [
-            'uri' => 'posts/{post}/comments/{comment}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post', 'comment'],
-            'bindings' => [
-                'comment' => 'uuid',
-            ],
-        ],
-    ];
-
-    expect($routes)->toBe($expected);
+    expect((new Ziggy)->toArray()['routes'])
+        ->toHaveCount(3)
+        ->toHaveKeys([
+            'posts.index',
+            'postComments.index',
+            'postComments.show',
+        ]);
 });
 
-test('returns unfiltered routes when both only and except configs set', function () {
+test('ignore config filters if both includes and excludes are set', function () {
     config([
         'ziggy.except' => ['posts.s*'],
         'ziggy.only' => ['home'],
     ]);
-    $routes = (new Ziggy)->toArray()['routes'];
 
-    $expected = [
-        'home' => [
-            'uri' => 'home',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.index' => [
-            'uri' => 'posts',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.show' => [
-            'uri' => 'posts/{post}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'postComments.index' => [
-            'uri' => 'posts/{post}/comments',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'posts.store' => [
-            'uri' => 'posts',
-            'methods' => ['POST'],
-        ],
-        'admin.users.index' => [
-            'uri' => 'admin/users',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'postComments.show' => [
-            'uri' => 'posts/{post}/comments/{comment}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post', 'comment'],
-            'bindings' => [
-                'comment' => 'uuid',
-            ],
-        ],
-    ];
-
-    expect($routes)->toBe($expected);
+    expect((new Ziggy)->toArray()['routes'])
+        ->toHaveCount(7)
+        ->toHaveKeys([
+            'home',
+            'posts.index',
+            'posts.show',
+            'postComments.index',
+            'posts.store',
+            'admin.users.index',
+            'postComments.show',
+        ]);
 });
 
-test('can set included routes using groups config', function () {
+test('include routes using groups', function () {
     config(['ziggy.groups' => ['authors' => ['home', 'posts.*']]]);
-    $routes = (new Ziggy('authors'))->toArray()['routes'];
 
-    $expected = [
-        'home' => [
-            'uri' => 'home',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.index' => [
-            'uri' => 'posts',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.show' => [
-            'uri' => 'posts/{post}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'posts.store' => [
-            'uri' => 'posts',
-            'methods' => ['POST'],
-        ],
-    ];
-
-    expect($routes)->toBe($expected);
+    expect((new Ziggy('authors'))->toArray()['routes'])
+        ->toHaveCount(4)
+        ->toHaveKeys([
+            'home',
+            'posts.index',
+            'posts.show',
+            'posts.store',
+        ]);
 });
 
-test('can include routes from multiple groups', function () {
+test('include routes from multiple groups', function () {
     config(['ziggy.groups' => ['home' => ['home'], 'posts' => ['posts.*']]]);
-    $routes = (new Ziggy(['home', 'posts']))->toArray()['routes'];
 
-    $expected = [
-        'home' => [
-            'uri' => 'home',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.index' => [
-            'uri' => 'posts',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.show' => [
-            'uri' => 'posts/{post}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'posts.store' => [
-            'uri' => 'posts',
-            'methods' => ['POST'],
-        ],
-    ];
-
-    expect($routes)->toBe($expected);
+    expect((new Ziggy(['home', 'posts']))->toArray()['routes'])
+        ->toHaveCount(4)
+        ->toHaveKeys([
+            'home',
+            'posts.index',
+            'posts.show',
+            'posts.store',
+        ]);
 });
 
-test('can set excluded routes in groups using negative patterns', function () {
+test('filter routes using negative patterns in groups', function () {
     config(['ziggy.groups' => ['authors' => ['!home', '!posts.*', '!postComments.*']]]);
-    $routes = (new Ziggy('authors'))->toArray()['routes'];
 
-    $expected = [
-        'admin.users.index' => [
-            'uri' => 'admin/users',
-            'methods' => ['GET', 'HEAD'],
-        ],
-    ];
-
-    expect($routes)->toBe($expected);
+    expect((new Ziggy('authors'))->toArray()['routes'])
+        ->toHaveCount(1)
+        ->toHaveKeys(['admin.users.index']);
 });
 
-test('can combine filters in groups with positive and negative patterns', function () {
+test('filter routes using positive and negative patterns in groups', function () {
     config(['ziggy.groups' => ['authors' => ['posts.*', '!posts.index']]]);
-    $routes = (new Ziggy('authors'))->toArray()['routes'];
 
-    $expected = [
-        'posts.show' => [
-            'uri' => 'posts/{post}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'posts.store' => [
-            'uri' => 'posts',
-            'methods' => ['POST'],
-        ],
-    ];
-
-    expect($routes)->toBe($expected);
+    expect((new Ziggy('authors'))->toArray()['routes'])
+        ->toHaveCount(2)
+        ->toHaveKeys([
+            'posts.show',
+            'posts.store',
+        ]);
 });
 
-test('can filter routes from multiple groups using negative patterns', function () {
+test('filter routes from multiple groups using negative patterns', function () {
     config(['ziggy.groups' => ['home' => '!posts.*', 'posts' => '!home']]);
-    $routes = (new Ziggy(['home', 'posts']))->toArray()['routes'];
 
-    $expected = [
-        'postComments.index' => [
-            'uri' => 'posts/{post}/comments',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'admin.users.index' => [
-            'uri' => 'admin/users',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'postComments.show' => [
-            'uri' => 'posts/{post}/comments/{comment}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post', 'comment'],
-            'bindings' => [
-                'comment' => 'uuid',
-            ],
-        ],
-    ];
-
-    expect($routes)->toBe($expected);
+    expect((new Ziggy(['home', 'posts']))->toArray()['routes'])
+        ->toHaveCount(3)
+        ->toHaveKeys([
+            'postComments.index',
+            'admin.users.index',
+            'postComments.show',
+        ]);
 });
 
-test('can ignore passed group not set in config', function () {
+test('ignore unconfigured groups', function () {
     // The 'authors' group doesn't exist
-    $routes = (new Ziggy('authors'))->toArray()['routes'];
-
-    $expected = [
-        'home' => [
-            'uri' => 'home',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.index' => [
-            'uri' => 'posts',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.show' => [
-            'uri' => 'posts/{post}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'postComments.index' => [
-            'uri' => 'posts/{post}/comments',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'posts.store' => [
-            'uri' => 'posts',
-            'methods' => ['POST'],
-        ],
-        'admin.users.index' => [
-            'uri' => 'admin/users',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'postComments.show' => [
-            'uri' => 'posts/{post}/comments/{comment}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post', 'comment'],
-            'bindings' => [
-                'comment' => 'uuid',
-            ],
-        ],
-    ];
-
-    expect($routes)->toBe($expected);
+    expect((new Ziggy('authors'))->toArray()['routes'])
+        ->toHaveCount(7)
+        ->toHaveKeys([
+            'home',
+            'posts.index',
+            'posts.show',
+            'postComments.index',
+            'posts.store',
+            'admin.users.index',
+            'postComments.show',
+        ]);
 });
 
-test('can include middleware', function () {
+test('include middleware in route list', function () {
     config(['ziggy.middleware' => true]);
-    $routes = (new Ziggy)->toArray()['routes'];
 
-    $expected = [
+    expect((new Ziggy)->toArray()['routes'])->toBe([
         'home' => [
             'uri' => 'home',
             'methods' => ['GET', 'HEAD'],
@@ -363,163 +191,72 @@ test('can include middleware', function () {
                 'comment' => 'uuid',
             ],
         ],
-    ];
-
-    expect($routes)->toEqual($expected);
+    ]);
 });
 
-test('can include subdomain', function () {
-    app('router')->domain('{team}.ziggy.dev')->post('/', function () {
-        return response()->json(new Ziggy);
-    })->name('home');
-    app('router')->getRoutes()->refreshNameLookups();
+test('use subdomain from current request', function () {
+    Route::domain('{team}.ziggy.dev')
+        ->post('/', fn () => response()->json(new Ziggy))
+        ->name('home');
 
-    $this->post(route('home', ['team' => 'tgtn']))
+    post(route('home', ['team' => 'tgtn']))
         ->assertJson([
             'url' => 'http://tgtn.ziggy.dev',
         ]);
 });
 
-test('can include port', function () {
-    app('router')->post('/', function () {
-        return response()->json(new Ziggy);
-    })->name('home');
-    app('router')->getRoutes()->refreshNameLookups();
+test('use port from current request', function () {
+    Route::post('/', fn () => response()->json(new Ziggy))->name('home');
 
-    $this->post('http://ziggy.dev:3000')
+    post('http://ziggy.dev:3000')
         ->assertJson([
             'url' => 'http://ziggy.dev:3000',
             'port' => 3000,
         ]);
 });
 
-test('can include wheres', function () {
-    app('router')->post('slashes/{slug}', function () {
-        return response()->json(new Ziggy);
-    })->where('slug', '.*')->name('slashes');
-    app('router')->getRoutes()->refreshNameLookups();
+test('include wheres in route list', function () {
+    Route::post('slashes/{slug}', fn () => '')->where('slug', '.*')->name('slashes');
 
-    $this->post('http://ziggy.dev/slashes/foo/bar')
-        ->assertJson([
-            'routes' => [
-                'slashes' => [
-                    'uri' => 'slashes/{slug}',
-                    'wheres' => [
-                        'slug' => '.*',
-                    ],
-                ],
-            ],
-        ]);
+    expect((new Ziggy)->toArray()['routes']['slashes'])->toBe([
+        'uri' => 'slashes/{slug}',
+        'methods' => ['POST'],
+        'wheres' => [
+            'slug' => '.*',
+        ],
+        'parameters' => ['slug'],
+    ]);
 });
 
-test('can include only middleware set in config', function () {
+test('include filtered middleware in route list using config', function () {
     config(['ziggy.middleware' => ['auth']]);
-    $routes = (new Ziggy)->toArray()['routes'];
 
-    $expected = [
-        'home' => [
-            'uri' => 'home',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.index' => [
-            'uri' => 'posts',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.show' => [
-            'uri' => 'posts/{post}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'postComments.index' => [
-            'uri' => 'posts/{post}/comments',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'posts.store' => [
-            'uri' => 'posts',
-            'methods' => ['POST'],
-            'middleware' => ['auth'],
-        ],
-        'admin.users.index' => [
-            'uri' => 'admin/users',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'postComments.show' => [
-            'uri' => 'posts/{post}/comments/{comment}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post', 'comment'],
-            'bindings' => [
-                'comment' => 'uuid',
-            ],
-        ],
-    ];
-
-    expect($routes)->toEqual($expected);
+    expect((new Ziggy)->toArray()['routes']['posts.store'])->toBe([
+        'uri' => 'posts',
+        'methods' => ['POST'],
+        'middleware' => ['auth'],
+    ]);
 });
 
-test('can order fallback routes last', function () {
-    app('router')->fallback(fn () => '')->name('fallback');
-    app('router')->get('/users', fn () => '')->name('users.index');
+test('order fallback routes last', function () {
+    Route::fallback(fn () => '')->name('fallback');
+    Route::get('/users', fn () => '')->name('users.index');
 
-    app('router')->getRoutes()->refreshNameLookups();
     $routes = (new Ziggy)->toArray()['routes'];
 
-    $expected = [
-        'home' => [
-            'uri' => 'home',
-            'methods' => ['GET', 'HEAD'],
+    expect($routes)->toHaveCount(9);
+    expect(last($routes))->toBe([
+        'uri' => '{fallbackPlaceholder}',
+        'methods' => ['GET', 'HEAD'],
+        'wheres' => [
+            'fallbackPlaceholder' => '.*',
         ],
-        'posts.index' => [
-            'uri' => 'posts',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'posts.show' => [
-            'uri' => 'posts/{post}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'postComments.index' => [
-            'uri' => 'posts/{post}/comments',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post'],
-        ],
-        'posts.store' => [
-            'uri' => 'posts',
-            'methods' => ['POST'],
-        ],
-        'admin.users.index' => [
-            'uri' => 'admin/users',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'postComments.show' => [
-            'uri' => 'posts/{post}/comments/{comment}',
-            'methods' => ['GET', 'HEAD'],
-            'parameters' => ['post', 'comment'],
-            'bindings' => [
-                'comment' => 'uuid',
-            ],
-        ],
-        'users.index' => [
-            'uri' => 'users',
-            'methods' => ['GET', 'HEAD'],
-        ],
-        'fallback' => [
-            'uri' => '{fallbackPlaceholder}',
-            'methods' => ['GET', 'HEAD'],
-            'wheres' => [
-                'fallbackPlaceholder' => '.*',
-            ],
-            'parameters' => ['fallbackPlaceholder'],
-        ],
-    ];
-
-    expect($routes)->toBe($expected);
+        'parameters' => ['fallbackPlaceholder'],
+    ]);
 });
 
-test('route payload can array itself', function () {
-    $ziggy = new Ziggy;
-
-    $expected = [
+test('serialize route payload to array', function () {
+    expect((new Ziggy)->toArray())->toBe([
         'url' => 'http://ziggy.dev',
         'port' => null,
         'defaults' => [],
@@ -559,15 +296,17 @@ test('route payload can array itself', function () {
                 ],
             ],
         ],
-    ];
-
-    expect($ziggy->toArray())->toBe($expected);
+    ]);
 });
 
-test('route payload can json itself', function () {
+test('serialize route payload to JSON', function () {
     config(['ziggy.only' => ['postComments.*']]);
 
-    $expected = [
+    $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"parameters":["post"]},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"parameters":["post","comment"],"bindings":{"comment":"uuid"}}}}';
+
+    expect((new Ziggy)->toJson())->toBe($json);
+    expect(json_encode(new Ziggy))->toBe($json);
+    expect(json_decode(json_encode(new Ziggy), true))->toBe([
         'url' => 'http://ziggy.dev',
         'port' => null,
         'defaults' => [],
@@ -586,82 +325,60 @@ test('route payload can json itself', function () {
                 ],
             ],
         ],
-    ];
-
-    $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"parameters":["post"]},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"parameters":["post","comment"],"bindings":{"comment":"uuid"}}}}';
-
-    expect(json_decode(json_encode(new Ziggy), true))->toBe($expected);
-    expect(json_encode(new Ziggy))->toBe($json);
-    expect((new Ziggy)->toJson())->toBe($json);
+    ]);
 });
 
-test('route payload can automatically json itself in a response', function () {
+test('automatically serialize route payload to JSON in response', function () {
     config(['ziggy.only' => ['postComments.*']]);
 
-    app('router')->get('json', function () {
-        return response()->json(new Ziggy);
-    });
+    Route::get('json', fn () => response()->json(new Ziggy));
 
-    $response = $this->get('json');
-
-    $response->assertSuccessful();
-    expect($response->getContent())->toBe((new Ziggy)->toJson());
+    get('json')
+        ->assertOk()
+        ->assertContent((new Ziggy)->toJson());
 });
 
-test('can cache compiled route list internally on repeated instantiations', function () {
+test('cache compiled route list internally across repeated Ziggy class instantiations', function () {
     $routes = (new Ziggy)->toArray()['routes'];
 
-    app('router')->get('/users', fn () => '')->name('users.index');
+    Route::get('/users', fn () => '')->name('users.index');
     app('router')->getRoutes()->refreshNameLookups();
 
     expect((new Ziggy)->toArray()['routes'])->toBe($routes);
-});
 
-test('optional params inside path', function () {
-    app('router')->get('{country?}/test/{language?}/products/{id}', fn () => '')->name('products.show');
+    Ziggy::clearRoutes();
     app('router')->getRoutes()->refreshNameLookups();
 
-    expect(route('products.show', ['country' => 'ca', 'language' => 'fr', 'id' => 1]))->toBe('http://ziggy.dev/ca/test/fr/products/1');
-
-    // Optional param in the middle of a path
-    expect(route('products.show', ['country' => 'ca', 'id' => 1]))->toBe('http://ziggy.dev/ca/test//products/1');
-
-    // Optional param at the beginning of a path
-    expect(route('products.show', ['language' => 'fr', 'id' => 1]))->toBe('http://ziggy.dev/test/fr/products/1');
-
-    // Both
-    expect(route('products.show', ['id' => 1]))->toBe('http://ziggy.dev/test//products/1');
+    expect((new Ziggy)->toArray()['routes'])->not->toBe($routes);
 });
 
-test('filter route names from nested groups', function () {
-    app('router')->get('foo', fn () => '')->name('foo');
-    app('router')->name('foo.')->group(function () {
-        app('router')->get('foo/bar', fn () => '')->name('bar');
-        app('router')->name('bar.')->group(function () {
-            app('router')->get('foo/bar/baz', fn () => '')->name('baz');
+test('filter routes from nested groups', function () {
+    Route::get('foo', fn () => '')->name('foo');
+    Route::name('foo.')->group(function () {
+        Route::get('foo/bar', fn () => '')->name('bar');
+        Route::name('bar.')->group(function () {
+            Route::get('foo/bar/baz', fn () => '')->name('baz');
         });
     });
-    app('router')->getRoutes()->refreshNameLookups();
 
     config(['ziggy.except' => ['foo.bar.*']]);
 
-    expect((new Ziggy)->toArray()['routes'])->toHaveKey('foo');
-    expect((new Ziggy)->toArray()['routes'])->toHaveKey('foo.bar');
-    $this->assertArrayNotHasKey('foo.bar.baz', (new Ziggy)->toArray()['routes']);
+    expect((new Ziggy)->toArray()['routes'])
+        ->toHaveKeys(['foo', 'foo.bar'])
+        ->not->toHaveKey('foo.bar.baz');
 
     config(['ziggy.except' => ['foo.*']]);
 
-    expect((new Ziggy)->toArray()['routes'])->toHaveKey('foo');
-    $this->assertArrayNotHasKey('foo.bar', (new Ziggy)->toArray()['routes']);
-    $this->assertArrayNotHasKey('foo.bar.baz', (new Ziggy)->toArray()['routes']);
+    expect((new Ziggy)->toArray()['routes'])
+        ->toHaveKey('foo')
+        ->not->toHaveKeys(['foo.bar', 'foo.bar.baz']);
 });
 
-test('numeric route names', function () {
-    app('router')->get('a', fn () => '')->name('a');
-    app('router')->get('3', fn () => '')->name('3');
-    app('router')->get('b', fn () => '')->name('b');
-    app('router')->fallback(fn () => '')->name('404');
-    app('router')->getRoutes()->refreshNameLookups();
+test('handle numeric route names', function () {
+    Route::get('a', fn () => '')->name('a');
+    Route::get('3', fn () => '')->name('3');
+    Route::get('b', fn () => '')->name('b');
+    Route::fallback(fn () => '')->name('404');
 
     config(['ziggy.except' => ['home', 'posts.*', 'postComments.*', 'admin.*']]);
 

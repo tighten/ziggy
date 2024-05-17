@@ -1,237 +1,180 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
-use \Tighten\Ziggy\Output\File;
 use Illuminate\Support\Facades\URL;
+use Tighten\Ziggy\Output\File;
 
-afterEach(function () {
-    if (file_exists(base_path('resources/js')) && is_dir(base_path('resources/js'))) {
-        array_map(function ($file) {
-            unlink($file);
-        }, glob(base_path('resources/js/*')));
+use function Pest\Laravel\artisan;
+
+beforeEach(function () {
+    if (is_dir(base_path('resources/js'))) {
+        array_map(fn ($file) => unlink($file), glob(base_path('resources/js/*')));
     }
-
 });
 
-test('can create file', function () {
-    Artisan::call('ziggy:generate');
+test('create file', function () {
+    artisan('ziggy:generate');
 
     expect(base_path('resources/js/ziggy.js'))->toBeFile();
 });
 
-test('can create file in correct location when called outside project root', function () {
+test('create file in correct location when called outside project root', function () {
     chdir('..');
-    $this->assertNotEquals(base_path(), getcwd());
 
-    Artisan::call('ziggy:generate');
+    expect(getcwd())->not->toBe(base_path());
+
+    artisan('ziggy:generate');
 
     expect(base_path('resources/js/ziggy.js'))->toBeFile();
 });
 
-test('can generate file with named routes', function () {
-    $router = app('router');
-    $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    $router->get('slashes/{slug}', fn () => '')->where('slug', '.*')->name('slashes');
-    $router->getRoutes()->refreshNameLookups();
+test('generate routes file', function () {
+    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    app('router')->get('slashes/{slug}', fn () => '')->where('slug', '.*')->name('slashes');
+    app('router')->getRoutes()->refreshNameLookups();
 
-    Artisan::call('ziggy:generate');
+    artisan('ziggy:generate');
 
-    $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
+    expect(base_path('resources/js/ziggy.js'))->toBeFile('./tests/fixtures/ziggy.js');
 });
 
-test('can generate file with custom url', function () {
-    $router = app('router');
-    $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    $router->getRoutes()->refreshNameLookups();
+test('generate file with custom url', function () {
+    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    app('router')->getRoutes()->refreshNameLookups();
     URL::defaults(['locale' => 'en']);
 
-    Artisan::call('ziggy:generate', ['--url' => 'http://example.org']);
+    artisan('ziggy:generate --url http://example.org');
 
-    $this->assertFileEquals('./tests/fixtures/custom-url.js', base_path('resources/js/ziggy.js'));
+    expect(base_path('resources/js/ziggy.js'))->toBeFile('./tests/fixtures/custom-url.js');
 });
 
-test('can generate file with custom pathname', function () {
-    $router = app('router');
-    $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    $router->getRoutes()->refreshNameLookups();
-    URL::defaults(['locale' => 'en']);
+test('generate file with custom pathname', function () {
+    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    app('router')->getRoutes()->refreshNameLookups();
 
-    Artisan::call('ziggy:generate', ['--url' => '/foo/bar']);
+    artisan('ziggy:generate --url /foo/bar');
 
-    $this->assertFileEquals('./tests/fixtures/custom-pathname.js', base_path('resources/js/ziggy.js'));
+    expect(base_path('resources/js/ziggy.js'))->toBeFile('./tests/fixtures/custom-pathname.js');
 });
 
-test('can generate file with config applied', function () {
+test('generate file respecting config', function () {
+    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    app('router')->get('slashes/{slug}', fn () => '')->where('slug', '.*')->name('slashes');
+    app('router')->get('admin', fn () => '')->name('admin.dashboard'); // Excluded by config
+    app('router')->getRoutes()->refreshNameLookups();
+
     config(['ziggy.except' => ['admin.*']]);
-    $router = app('router');
-    $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    $router->get('slashes/{slug}', fn () => '')->where('slug', '.*')->name('slashes');
-    $router->get('admin', fn () => '')->name('admin.dashboard');
-    // Excluded, should NOT be present in file
-    $router->getRoutes()->refreshNameLookups();
 
-    Artisan::call('ziggy:generate');
+    artisan('ziggy:generate');
 
-    $this->assertFileEquals('./tests/fixtures/ziggy.js', base_path('resources/js/ziggy.js'));
+    expect(base_path('resources/js/ziggy.js'))->toBeFile('./tests/fixtures/ziggy.js');
 });
 
-test('can generate file with custom output formatter', function () {
+test('generate file with custom output formatter', function () {
+    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    app('router')->get('admin', fn () => '')->name('admin.dashboard'); // Excluded by config
+    app('router')->getRoutes()->refreshNameLookups();
+
     config([
         'ziggy' => [
             'except' => ['admin.*'],
             'output' => [
-                'file' => CustomFileFormatter::class,
+                'file' => CustomFile::class,
             ],
         ],
     ]);
 
-    $router = app('router');
-    $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    $router->get('admin', fn () => '')->name('admin.dashboard');
-    // Excluded, should NOT be present in file
-    $router->getRoutes()->refreshNameLookups();
+    artisan('ziggy:generate');
 
-    Artisan::call('ziggy:generate');
-
-    $this->assertFileEquals('./tests/fixtures/ziggy-custom.js', base_path('resources/js/ziggy.js'));
+    expect(base_path('resources/js/ziggy.js'))->toBeFile('./tests/fixtures/ziggy-custom.js');
 });
 
-test('can generate file for specific configured route group', function () {
+test('generate file for groups', function () {
+    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    app('router')->get('admin', fn () => '')->name('admin.dashboard');
+    app('router')->getRoutes()->refreshNameLookups();
+
     config([
         'ziggy.except' => ['admin.*'],
-        'ziggy.groups' => ['admin' => ['admin.*']],
+        'ziggy.groups' => [
+            'admin' => ['admin.*'],
+        ],
     ]);
-    $router = app('router');
-    $router->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    $router->get('admin', fn () => '')->name('admin.dashboard');
-    $router->getRoutes()->refreshNameLookups();
 
-    Artisan::call('ziggy:generate', ['path' => 'resources/js/admin.js', '--group' => 'admin']);
+    artisan('ziggy:generate resources/js/admin.js --group admin');
 
-    $this->assertFileEquals('./tests/fixtures/admin.js', base_path('resources/js/admin.js'));
+    expect(base_path('resources/js/admin.js'))->toBeFile('./tests/fixtures/admin.js');
 });
 
-test('can generate file using config path', function () {
+test('generate file at path set in config', function () {
     config(['ziggy.output.path' => 'resources/js/custom.js']);
 
-    Artisan::call('ziggy:generate');
+    artisan('ziggy:generate');
 
     expect(base_path('resources/js/custom.js'))->toBeFile();
 });
 
-test('can generate dts file', function () {
+test('generate dts file', function () {
     app('router')->get('posts', fn () => '')->name('posts.index');
-    app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
-    app('router')->post('posts/{post}/comments/{comment?}', PostCommentController::class)->name('postComments.storeComment');
+    app('router')->post('posts/{post}/comments', fn ($post, $comment) => '')->name('comments.store');
+    app('router')->get('posts/{post}/comments/{comment:uuid}', fn ($post, $comment) => '')->name('comments.show');
+    app('router')->post('posts/{post}/reactions/{reaction?}', fn ($post, $reaction) => '')->name('reactions.store');
     app('router')->getRoutes()->refreshNameLookups();
 
-    Artisan::call('ziggy:generate',  ['--types' => true]);
+    artisan('ziggy:generate --types');
 
-    // Normalize line endings (`json_encode` always uses Unix line endings)
-    if (PHP_OS_FAMILY === 'Windows') {
+    if (windows_os()) {
+        // `json_encode` always uses Unix line endings
         file_put_contents(
             base_path('resources/js/ziggy.d.ts'),
             preg_replace('/\r?\n/', "\r\n", file_get_contents(base_path('resources/js/ziggy.d.ts'))),
         );
     }
 
-    $this->assertFileEquals('./tests/fixtures/ziggy.d.ts', base_path('resources/js/ziggy.d.ts'));
+    expect(base_path('resources/js/ziggy.d.ts'))->toBeFile('./tests/fixtures/ziggy.d.ts');
 });
 
-test('can generate dts file with scoped bindings', function () {
-    app('router')->get('posts', fn () => '')->name('posts.index');
-    app('router')->get('posts/{post}/comments/{comment:uuid}', PostCommentController::class)->name('postComments.show');
-    app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
-    app('router')->getRoutes()->refreshNameLookups();
-
-    Artisan::call('ziggy:generate',  ['--types' => true]);
-
-    // Normalize line endings (`json_encode` always uses Unix line endings)
-    if (PHP_OS_FAMILY === 'Windows') {
-        file_put_contents(
-            base_path('resources/js/ziggy.d.ts'),
-            preg_replace('/\r?\n/', "\r\n", file_get_contents(base_path('resources/js/ziggy.d.ts'))),
-        );
-    }
-
-    $this->assertFileEquals('./tests/fixtures/ziggy-7.d.ts', base_path('resources/js/ziggy.d.ts'));
-});
-
-test('can generate dts file without routes', function () {
-    app('router')->get('posts', fn () => '')->name('posts.index');
-    app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
-    app('router')->getRoutes()->refreshNameLookups();
-
-    Artisan::call('ziggy:generate', ['--types-only' => true]);
+test('generate dts file without generating routes file', function () {
+    artisan('ziggy:generate --types-only');
 
     expect(base_path('resources/js/ziggy.d.ts'))->toBeFile();
-    $this->assertFileDoesNotExist(base_path('resources/js/ziggy.js'));
+    expect(base_path('resources/js/ziggy.js'))->not->toBeFile();
 });
 
-test('can derive dts file path from given path', function () {
+test('infer dts file name from routes file name', function () {
     config(['ziggy.output.path' => 'resources/js/custom.js']);
-    app('router')->get('posts', fn () => '')->name('posts.index');
-    app('router')->post('posts/{post}/comments', PostCommentController::class)->name('postComments.store');
-    app('router')->getRoutes()->refreshNameLookups();
 
-    Artisan::call('ziggy:generate', ['--types-only' => true]);
+    artisan('ziggy:generate --types-only');
 
     expect(base_path('resources/js/custom.d.ts'))->toBeFile();
-    $this->assertFileDoesNotExist(base_path('resources/js/ziggy.d.ts'));
+    expect(base_path('resources/js/ziggy.d.ts'))->not->toBeFile();
 });
 
-test('can generate correct file extensions from js path argument', function () {
-    Artisan::call('ziggy:generate', ['path' => 'resources/scripts/x.js', '--types' => true]);
+test('generate correct routes and dts files based on provided arguments', function (string $args, array $files) {
+    if (is_dir(base_path('resources/scripts'))) {
+        array_map(fn ($file) => unlink($file), glob(base_path('resources/scripts/*')));
+        rmdir(base_path('resources/scripts'));
+    }
 
-    expect(base_path('resources/scripts/x.js'))->toBeFile();
-    expect(base_path('resources/scripts/x.d.ts'))->toBeFile();
-});
+    artisan("ziggy:generate {$args}");
 
-test('can generate correct file extensions from ts path argument', function () {
-    Artisan::call('ziggy:generate', ['path' => 'resources/scripts/y.ts', '--types' => true]);
+    expect(array_map(fn ($f) => base_path($f), $files))->each->toBeFile();
+})->with([
+    ['resources/js/x.js --types', ['resources/js/x.js', 'resources/js/x.d.ts']],
+    ['resources/js/y.ts --types', ['resources/js/y.js', 'resources/js/y.d.ts']],
+    ['resources/js/z.d.ts --types', ['resources/js/z.js', 'resources/js/z.d.ts']],
+    ['resources/scripts/foo --types', ['resources/scripts/foo.js', 'resources/scripts/foo.d.ts']],
+    ['resources/js --types', ['resources/js/ziggy.js', 'resources/js/ziggy.d.ts']],
+]);
 
-    expect(base_path('resources/scripts/y.js'))->toBeFile();
-    expect(base_path('resources/scripts/y.d.ts'))->toBeFile();
-});
-
-test('can generate correct file extensions from dts path argument', function () {
-    Artisan::call('ziggy:generate', ['path' => 'resources/scripts/z.d.ts', '--types' => true]);
-
-    expect(base_path('resources/scripts/z.js'))->toBeFile();
-    expect(base_path('resources/scripts/z.d.ts'))->toBeFile();
-});
-
-test('can generate correct file extensions from ambiguous path argument', function () {
-    Artisan::call('ziggy:generate', ['path' => 'resources/scripts/foo', '--types' => true]);
-
-    expect(base_path('resources/scripts/foo.js'))->toBeFile();
-    expect(base_path('resources/scripts/foo.d.ts'))->toBeFile();
-});
-
-test('can generate correct file extensions from directory path argument', function () {
-    Artisan::call('ziggy:generate', ['path' => 'resources/js', '--types' => true]);
-
-    expect(base_path('resources/js/ziggy.js'))->toBeFile();
-    expect(base_path('resources/js/ziggy.d.ts'))->toBeFile();
-});
-
-class CustomFileFormatter extends File
+class CustomFile extends File
 {
     function __toString(): string
     {
         return <<<JAVASCRIPT
-// This is a custom template
-const Ziggy = {$this->ziggy->toJson()};
-export { Ziggy };
+        // This is a custom template
+        const Ziggy = {$this->ziggy->toJson()};
+        export { Ziggy };
 
-JAVASCRIPT;
-    }
-}
-
-class PostCommentController
-{
-    function __invoke($post, $comment)
-    {
-        //
+        JAVASCRIPT;
     }
 }
