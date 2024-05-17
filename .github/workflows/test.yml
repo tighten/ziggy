@@ -37,7 +37,7 @@ jobs:
       - if: matrix.laravel == 9
         run: |
           composer remove laravel/folio --dev --no-update --no-interaction
-          composer require pestphp/pest:"1.*" phpunit/phpunit:"9.*" --dev --no-update --no-interaction
+          composer require pestphp/pest:"1.*" pestphp/pest-plugin-laravel:"1.*" phpunit/phpunit:"9.*" --dev --no-update --no-interaction
       - run: composer require laravel/framework:"${{ matrix.laravel }}.*" --no-update --no-interaction
       - uses: ramsey/composer-install@v3
         with:
