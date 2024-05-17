@@ -34,7 +34,7 @@ test('generate routes file', function () {
 
     artisan('ziggy:generate');
 
-    expect(base_path('resources/js/ziggy.js'))->toBeFile('./tests/fixtures/ziggy.js');
+    expect(base_path('resources/js/ziggy.js'))->toEqualFile('./tests/fixtures/ziggy.js');
 });
 
 test('generate file with custom url', function () {
@@ -43,7 +43,7 @@ test('generate file with custom url', function () {
 
     artisan('ziggy:generate --url http://example.org');
 
-    expect(base_path('resources/js/ziggy.js'))->toBeFile('./tests/fixtures/custom-url.js');
+    expect(base_path('resources/js/ziggy.js'))->toEqualFile('./tests/fixtures/custom-url.js');
 });
 
 test('generate file with custom pathname', function () {
@@ -51,7 +51,7 @@ test('generate file with custom pathname', function () {
 
     artisan('ziggy:generate --url /foo/bar');
 
-    expect(base_path('resources/js/ziggy.js'))->toBeFile('./tests/fixtures/custom-pathname.js');
+    expect(base_path('resources/js/ziggy.js'))->toEqualFile('./tests/fixtures/custom-pathname.js');
 });
 
 test('generate file respecting config', function () {
@@ -63,7 +63,7 @@ test('generate file respecting config', function () {
 
     artisan('ziggy:generate');
 
-    expect(base_path('resources/js/ziggy.js'))->toBeFile('./tests/fixtures/ziggy.js');
+    expect(base_path('resources/js/ziggy.js'))->toEqualFile('./tests/fixtures/ziggy.js');
 });
 
 test('generate file with custom output formatter', function () {
@@ -81,7 +81,7 @@ test('generate file with custom output formatter', function () {
 
     artisan('ziggy:generate');
 
-    expect(base_path('resources/js/ziggy.js'))->toBeFile('./tests/fixtures/ziggy-custom.js');
+    expect(base_path('resources/js/ziggy.js'))->toEqualFile('./tests/fixtures/ziggy-custom.js');
 });
 
 test('generate file for groups', function () {
@@ -97,7 +97,7 @@ test('generate file for groups', function () {
 
     artisan('ziggy:generate resources/js/admin.js --group admin');
 
-    expect(base_path('resources/js/admin.js'))->toBeFile('./tests/fixtures/admin.js');
+    expect(base_path('resources/js/admin.js'))->toEqualFile('./tests/fixtures/admin.js');
 });
 
 test('generate file at path set in config', function () {
@@ -124,7 +124,7 @@ test('generate dts file', function () {
         );
     }
 
-    expect(base_path('resources/js/ziggy.d.ts'))->toBeFile('./tests/fixtures/ziggy.d.ts');
+    expect(base_path('resources/js/ziggy.d.ts'))->toEqualFile('./tests/fixtures/ziggy.d.ts');
 });
 
 test('generate dts file without generating routes file', function () {

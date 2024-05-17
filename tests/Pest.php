@@ -1,5 +1,7 @@
 <?php
 
+use PHPUnit\Framework\Assert;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -24,8 +26,10 @@ uses(Tests\TestCase::class)->in('Unit');
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
+expect()->extend('toEqualFile', function (string $expected, string $message = '') {
+    Assert::assertFileEquals($expected, $this->value, $message);
+
+    return $this;
 });
 
 /*

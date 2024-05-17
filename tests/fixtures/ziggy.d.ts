@@ -7,7 +7,7 @@ declare module 'ziggy-js' {
             "name": "post",
             "required": true
         }
-    ]
+    ],
     "comments.show": [
         {
             "name": "post",
@@ -21,10 +21,14 @@ declare module 'ziggy-js' {
     ],
     "reactions.store": [
         {
+            "name": "post",
+            "required": true
+        },
+        {
             "name": "reaction",
             "required": false
         }
-    ],
+    ]
 }
 }
 export {};
