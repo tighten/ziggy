@@ -26,7 +26,7 @@ class ZiggyServiceProvider extends ServiceProvider
         }
     }
 
-    protected function registerDirective(BladeCompiler $blade)
+    protected function registerDirective(BladeCompiler $blade): void
     {
         $blade->directive('routes', fn ($group) => "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>");
     }
