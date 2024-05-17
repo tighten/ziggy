@@ -1,21 +1,20 @@
 <?php
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Route;
 use Tighten\Ziggy\Ziggy;
 
 beforeEach(function () {
-    $router = app('router');
-    $router->get('users/{user}', fn (User $user) => '')->name('users');
-    $router->get('admins/{admin}', fn (Admin $admin) => '')->name('admins');
-    $router->get('tags/{tag}', fn (Tag $tag) => '')->name('tags');
-    $router->get('tokens/{token}', fn ($token) => '')->name('tokens');
-    $router->get('users/{user}/{number}', fn (User $user, int $n) => '')->name('users.numbers');
-    $router->post('users', fn (User $user) => '')->name('users.store');
-    $router->get('comments/{comment}', fn (Comment $comment) => '')->name('comments');
-    $router->get('replies/{reply}', fn (Reply $reply) => '')->name('replies');
-    $router->get('blog/{category}/{post:slug}', fn (PostCategory $category, Post $post) => '')->name('posts');
-    $router->get('blog/{category}/{post:slug}/{tag:slug}', fn (PostCategory $category, Post $post, Tag $tag) => '')->name('posts.tags');
-    $router->getRoutes()->refreshNameLookups();
+    Route::get('users/{user}', fn (User $user) => '')->name('users');
+    Route::get('admins/{admin}', fn (Admin $admin) => '')->name('admins');
+    Route::get('tags/{tag}', fn (Tag $tag) => '')->name('tags');
+    Route::get('tokens/{token}', fn ($token) => '')->name('tokens');
+    Route::get('users/{user}/{number}', fn (User $user, int $n) => '')->name('users.numbers');
+    Route::post('users', fn (User $user) => '')->name('users.store');
+    Route::get('comments/{comment}', fn (Comment $comment) => '')->name('comments');
+    Route::get('replies/{reply}', fn (Reply $reply) => '')->name('replies');
+    Route::get('blog/{category}/{post:slug}', fn (PostCategory $category, Post $post) => '')->name('posts');
+    Route::get('blog/{category}/{post:slug}/{tag:slug}', fn (PostCategory $category, Post $post, Tag $tag) => '')->name('posts.tags');
 });
 
 test('register implicit route model bindings', function () {
@@ -176,8 +175,7 @@ test('skip booting models that dont override their route key', function () {
 });
 
 test('handle abstract classes in route model bindings', function () {
-    app('router')->get('models/{model}', fn (Model $model) => '')->name('models');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('models/{model}', fn (Model $model) => '')->name('models');
 
     expect((new Ziggy)->toArray()['routes']['models'])->toBe([
         'uri' => 'models/{model}',

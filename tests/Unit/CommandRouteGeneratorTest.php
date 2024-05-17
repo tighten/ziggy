@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Tighten\Ziggy\Output\File;
 
@@ -28,9 +29,8 @@ test('create file in correct location when called outside project root', functio
 });
 
 test('generate routes file', function () {
-    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    app('router')->get('slashes/{slug}', fn () => '')->where('slug', '.*')->name('slashes');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    Route::get('slashes/{slug}', fn () => '')->where('slug', '.*')->name('slashes');
 
     artisan('ziggy:generate');
 
@@ -38,8 +38,7 @@ test('generate routes file', function () {
 });
 
 test('generate file with custom url', function () {
-    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('posts/{post}/comments', fn () => '')->name('postComments.index');
     URL::defaults(['locale' => 'en']);
 
     artisan('ziggy:generate --url http://example.org');
@@ -48,8 +47,7 @@ test('generate file with custom url', function () {
 });
 
 test('generate file with custom pathname', function () {
-    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('posts/{post}/comments', fn () => '')->name('postComments.index');
 
     artisan('ziggy:generate --url /foo/bar');
 
@@ -57,10 +55,9 @@ test('generate file with custom pathname', function () {
 });
 
 test('generate file respecting config', function () {
-    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    app('router')->get('slashes/{slug}', fn () => '')->where('slug', '.*')->name('slashes');
-    app('router')->get('admin', fn () => '')->name('admin.dashboard'); // Excluded by config
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    Route::get('slashes/{slug}', fn () => '')->where('slug', '.*')->name('slashes');
+    Route::get('admin', fn () => '')->name('admin.dashboard'); // Excluded by config
 
     config(['ziggy.except' => ['admin.*']]);
 
@@ -70,9 +67,8 @@ test('generate file respecting config', function () {
 });
 
 test('generate file with custom output formatter', function () {
-    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    app('router')->get('admin', fn () => '')->name('admin.dashboard'); // Excluded by config
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    Route::get('admin', fn () => '')->name('admin.dashboard'); // Excluded by config
 
     config([
         'ziggy' => [
@@ -89,9 +85,8 @@ test('generate file with custom output formatter', function () {
 });
 
 test('generate file for groups', function () {
-    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    app('router')->get('admin', fn () => '')->name('admin.dashboard');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('posts/{post}/comments', fn () => '')->name('postComments.index');
+    Route::get('admin', fn () => '')->name('admin.dashboard');
 
     config([
         'ziggy.except' => ['admin.*'],
@@ -114,11 +109,10 @@ test('generate file at path set in config', function () {
 });
 
 test('generate dts file', function () {
-    app('router')->get('posts', fn () => '')->name('posts.index');
-    app('router')->post('posts/{post}/comments', fn ($post, $comment) => '')->name('comments.store');
-    app('router')->get('posts/{post}/comments/{comment:uuid}', fn ($post, $comment) => '')->name('comments.show');
-    app('router')->post('posts/{post}/reactions/{reaction?}', fn ($post, $reaction) => '')->name('reactions.store');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('posts', fn () => '')->name('posts.index');
+    Route::post('posts/{post}/comments', fn ($post, $comment) => '')->name('comments.store');
+    Route::get('posts/{post}/comments/{comment:uuid}', fn ($post, $comment) => '')->name('comments.show');
+    Route::post('posts/{post}/reactions/{reaction?}', fn ($post, $reaction) => '')->name('reactions.store');
 
     artisan('ziggy:generate --types');
 

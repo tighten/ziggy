@@ -3,6 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 use Laravel\Folio\Folio;
 use Laravel\Folio\FolioServiceProvider;
 use Tighten\Ziggy\Ziggy;
@@ -48,8 +49,7 @@ test('include named folio routes', function () {
 });
 
 test('normal routes override folio routes', function () {
-    app('router')->get('about', fn () => '')->name('about');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('about', fn () => '')->name('about');
 
     File::ensureDirectoryExists(resource_path('views/pages'));
     File::put(resource_path('views/pages/about.blade.php'), '<?php Laravel\Folio\name("about");');

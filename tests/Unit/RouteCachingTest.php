@@ -1,11 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use Tighten\Ziggy\Ziggy;
 
 test('exclude routes with generated names', function () {
-    app('router')->get('users', fn () => '')->name('users');
-    app('router')->get('cached', fn () => '')->name('generated::ZRopaJJwzA27wRLa');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('users', fn () => '')->name('users');
+    Route::get('cached', fn () => '')->name('generated::ZRopaJJwzA27wRLa');
 
     expect((new Ziggy)->toArray()['routes'])->toBe([
         'users' => [

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Tighten\Ziggy\BladeRouteGenerator;
 use Tighten\Ziggy\Ziggy;
@@ -9,12 +10,11 @@ beforeEach(function () {
 });
 
 test('generate named routes', function () {
-    app('router')->get('/', fn () => ''); // Not named, should not be included in JSON output
-    app('router')->get('posts', fn () => '')->name('posts.index');
-    app('router')->post('posts', fn () => '')->name('posts.store');
-    app('router')->get('posts/{post}', fn () => '')->name('posts.show');
-    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('/', fn () => ''); // Not named, should not be included in JSON output
+    Route::get('posts', fn () => '')->name('posts.index');
+    Route::post('posts', fn () => '')->name('posts.store');
+    Route::get('posts/{post}', fn () => '')->name('posts.show');
+    Route::get('posts/{post}/comments', fn () => '')->name('postComments.index');
 
     $output = (new BladeRouteGenerator)->generate();
     $config = json_decode(Str::between($output, 'const Ziggy=', ';!'), true);
@@ -28,8 +28,7 @@ test('generate named routes', function () {
 });
 
 test('generate mergeable route list on repeated compiles', function () {
-    app('router')->get('posts', fn () => '')->name('posts.index');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('posts', fn () => '')->name('posts.index');
 
     (new BladeRouteGenerator)->generate();
     $output = (new BladeRouteGenerator)->generate();
@@ -44,8 +43,7 @@ test('generate mergeable route list on repeated compiles', function () {
 });
 
 test('generate basic route config', function () {
-    app('router')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('posts/{post}/comments', fn () => '')->name('postComments.index');
 
     expect((new BladeRouteGenerator)->generate())->toContain(json_encode([
         'postComments.index' => [
@@ -57,8 +55,7 @@ test('generate basic route config', function () {
 });
 
 test('generate route config for custom domain', function () {
-    app('router')->domain('{account}.myapp.com')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::domain('{account}.myapp.com')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
 
     expect((new BladeRouteGenerator)->generate())->toContain(json_encode([
         'postComments.index' => [
@@ -71,10 +68,9 @@ test('generate route config for custom domain', function () {
 });
 
 test('generate route config for groups', function (array $groups, array $names) {
-    app('router')->get('posts', fn () => '')->name('posts.index');
-    app('router')->get('posts/{post}', fn () => '')->name('posts.show');
-    app('router')->get('users/{user}', fn () => '')->name('users.show');
-    app('router')->getRoutes()->refreshNameLookups();
+    Route::get('posts', fn () => '')->name('posts.index');
+    Route::get('posts/{post}', fn () => '')->name('posts.show');
+    Route::get('users/{user}', fn () => '')->name('users.show');
 
     config(['ziggy.groups' => [
         'guest' => ['posts.*'],
@@ -98,7 +94,7 @@ test('render csp nonce', function () {
 });
 
 test('render script tag', function () {
-    app('router')->get('posts', fn () => '')->name('posts.index');
+    Route::get('posts', fn () => '')->name('posts.index');
 
     $config = (new Ziggy)->toJson();
     $routeFunction = file_get_contents(__DIR__ . '/../../dist/route.umd.js');
@@ -111,7 +107,7 @@ test('render script tag', function () {
 });
 
 test('render merge script tag', function () {
-    app('router')->get('posts', fn () => '')->name('posts.index');
+    Route::get('posts', fn () => '')->name('posts.index');
 
     $config = json_encode((new Ziggy)->toArray()['routes']);
 
