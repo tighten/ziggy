@@ -197,52 +197,52 @@ class Ziggy implements JsonSerializable
     /**
      * Resolve route key names for any route parameters using Eloquent route model binding.
      */
-    private function resolveBindings(array $routes): array
-    {
-        $scopedBindings = method_exists(head($routes) ?: '', 'bindingFields');
-        foreach ($routes as $name => $route) {
-            $bindings = [];
+private function resolveBindings(array $routes): array
+{
+    $scopedBindings = method_exists(head($routes) ?: '', 'bindingFields');
+    foreach ($routes as $name => $route) {
+        $bindings = [];
 
-            foreach ($route->signatureParameters(UrlRoutable::class) as $parameter) {
-                if (! in_array($parameter->getName(), $route->parameterNames())) {
-                    break;
-                }
-
-                try {
-                    $model = class_exists(Reflector::class)
-                        ? Reflector::getParameterClassName($parameter)
-                        : $parameter->getType()->getName();
-
-                    if (!class_exists($model)) {
-                        continue; // Skip if model class does not exist
-                    }
-
-                    $reflectionClass = new ReflectionClass($model);
-                    if (!$reflectionClass->isInstantiable()) {
-                        continue; // Skip if model class cannot be instantiated
-                    }
-
-                    $override = $reflectionClass->hasMethod('getRouteKeyName')
-                        && $reflectionClass->getMethod('getRouteKeyName')->class !== Model::class
-                        || $reflectionClass->hasMethod('getKeyName')
-                        && $reflectionClass->getMethod('getKeyName')->class !== Model::class
-                        || $reflectionClass->hasProperty('primaryKey')
-                        && $reflectionClass->getProperty('primaryKey')->class !== Model::class;
-
-
-                    $bindings[$parameter->getName()] = $override ? app($model)->getRouteKeyName() : 'id';
-                } catch (\Exception $e) {
-                    // Log the error and continue with default 'id'
-                    // \Log::error("Error resolving bindings for parameter {$parameter->getName()}: " . $e->getMessage());
-                    $bindings[$parameter->getName()] = 'id';
-                }
+        foreach ($route->signatureParameters(UrlRoutable::class) as $parameter) {
+            if (!in_array($parameter->getName(), $route->parameterNames())) {
+                break;
             }
 
-            $routes[$name] = $scopedBindings ? array_merge($bindings, $route->bindingFields()) : $bindings;
+            try {
+                $model = class_exists(Reflector::class)
+                    ? Reflector::getParameterClassName($parameter)
+                    : $parameter->getType()->getName();
+
+                if (!class_exists($model) || (new \ReflectionClass($model))->isAbstract()) {
+                    continue; // Skip if model class does not exist or is abstract
+                }
+
+                $reflectionClass = new \ReflectionClass($model);
+                if (!$reflectionClass->isInstantiable()) {
+                    continue; // Skip if model class cannot be instantiated
+                }
+
+                $override = $reflectionClass->hasMethod('getRouteKeyName')
+                    && $reflectionClass->getMethod('getRouteKeyName')->class !== Model::class
+                    || $reflectionClass->hasMethod('getKeyName')
+                    && $reflectionClass->getMethod('getKeyName')->class !== Model::class
+                    || $reflectionClass->hasProperty('primaryKey')
+                    && $reflectionClass->getProperty('primaryKey')->class !== Model::class;
+
+                // Avoid booting this model if it doesn't override the default route key name
+                $bindings[$parameter->getName()] = $override ? app($model)->getRouteKeyName() : 'id';
+            } catch (\Exception $e) {
+                // Log the error and continue with default 'id'
+                // \Log::error("Error resolving bindings for parameter {$parameter->getName()}: " . $e->getMessage());
+                $bindings[$parameter->getName()] = 'id';
+            }
         }
 
-        return $routes;
+        $routes[$name] = $scopedBindings ? array_merge($bindings, $route->bindingFields()) : $bindings;
     }
+
+    return $routes;
+}
 
     /**
      * @see https://github.com/laravel/folio/blob/master/src/Console/ListCommand.php
