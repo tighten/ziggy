@@ -200,7 +200,6 @@ class Ziggy implements JsonSerializable
     private function resolveBindings(array $routes): array
     {
         $scopedBindings = method_exists(head($routes) ?: '', 'bindingFields');
-
         foreach ($routes as $name => $route) {
             $bindings = [];
 
@@ -209,17 +208,34 @@ class Ziggy implements JsonSerializable
                     break;
                 }
 
-                $model = class_exists(Reflector::class)
-                    ? Reflector::getParameterClassName($parameter)
-                    : $parameter->getType()->getName();
-                $override = (new ReflectionClass($model))->isInstantiable() && (
-                    (new ReflectionMethod($model, 'getRouteKeyName'))->class !== Model::class
-                    || (new ReflectionMethod($model, 'getKeyName'))->class !== Model::class
-                    || (new ReflectionProperty($model, 'primaryKey'))->class !== Model::class
-                );
+                try {
+                    $model = class_exists(Reflector::class)
+                        ? Reflector::getParameterClassName($parameter)
+                        : $parameter->getType()->getName();
 
-                // Avoid booting this model if it doesn't override the default route key name
-                $bindings[$parameter->getName()] = $override ? app($model)->getRouteKeyName() : 'id';
+                    if (!class_exists($model)) {
+                        continue; // Skip if model class does not exist
+                    }
+
+                    $reflectionClass = new ReflectionClass($model);
+                    if (!$reflectionClass->isInstantiable()) {
+                        continue; // Skip if model class cannot be instantiated
+                    }
+
+                    $override = $reflectionClass->hasMethod('getRouteKeyName')
+                        && $reflectionClass->getMethod('getRouteKeyName')->class !== Model::class
+                        || $reflectionClass->hasMethod('getKeyName')
+                        && $reflectionClass->getMethod('getKeyName')->class !== Model::class
+                        || $reflectionClass->hasProperty('primaryKey')
+                        && $reflectionClass->getProperty('primaryKey')->class !== Model::class;
+
+
+                    $bindings[$parameter->getName()] = $override ? app($model)->getRouteKeyName() : 'id';
+                } catch (\Exception $e) {
+                    // Log the error and continue with default 'id'
+                    // \Log::error("Error resolving bindings for parameter {$parameter->getName()}: " . $e->getMessage());
+                    $bindings[$parameter->getName()] = 'id';
+                }
             }
 
             $routes[$name] = $scopedBindings ? array_merge($bindings, $route->bindingFields()) : $bindings;
