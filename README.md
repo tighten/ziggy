@@ -535,7 +535,7 @@ If you need to retrieve Ziggy's config from your Laravel backend over the networ
 
 use Tighten\Ziggy\Ziggy;
 
-Route::get('api/ziggy', fn () => response()->json(new Ziggy));
+Route::get('ziggy', fn () => response()->json(new Ziggy));
 ```
 
 ### Re-generating the routes file when your app routes change
