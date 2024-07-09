@@ -40,18 +40,18 @@ class CommandRouteGenerator extends Command
             $this->makeDirectory($path);
         }
 
-        $name = preg_replace('/(\.d)?\.ts$|\.js$/', '', $path);
-
         if (! $this->option('types-only')) {
             $output = config('ziggy.output.file', File::class);
+            $normalizedPath = preg_match('/\.(js|ts)$/', $path) ? $path : "$path.js";
 
-            $this->files->put(base_path("{$name}.js"), new $output($ziggy));
+            $this->files->put(base_path($normalizedPath), new $output($ziggy));
         }
 
         if ($this->option('types') || $this->option('types-only')) {
             $types = config('ziggy.output.types', Types::class);
+            $normalizedPath = preg_replace('/(\.d)?\.ts$|\.js$/', '', $path);
 
-            $this->files->put(base_path("{$name}.d.ts"), new $types($ziggy));
+            $this->files->put(base_path("{$normalizedPath}.d.ts"), new $types($ziggy));
         }
 
         $this->info('Files generated!');
