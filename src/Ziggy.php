@@ -31,8 +31,25 @@ class Ziggy implements JsonSerializable
 
         $this->url = rtrim($url ?? url('/'), '/');
 
-        if (! static::$cache) {
-            static::$cache = $this->nameKeyedRoutes();
+        if (!static::$cache) {
+            // el archivo ziggy se guarda en cache, aquí se comprueba si debe reconstruirse
+            $cache_routes = base_path("bootstrap/cache/routes-v7.php");
+            $cache_ziggy = base_path("bootstrap/cache/ziggy2.json");
+            if (
+                !file_exists($cache_ziggy) ||
+                !file_exists($cache_routes) ||
+                filemtime($cache_routes) > filemtime($cache_ziggy)
+            ) {
+                static::$cache = $this->nameKeyedRoutes();
+                file_put_contents($cache_ziggy, static::$cache->toJson());
+            } else {
+                try {
+                    $ziggy_content = file_get_contents($cache_ziggy);
+                    static::$cache = collect(json_decode($ziggy_content, true));
+                } catch (\Exception $e) {
+                    static::$cache = $this->nameKeyedRoutes(); // por si hubiera algun error
+                }
+            }
         }
 
         $this->routes = static::$cache;
