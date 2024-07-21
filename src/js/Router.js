@@ -196,6 +196,14 @@ export default class Router extends String {
         return { ...params, ...query };
     }
 
+    get routeParams() {
+        return this._unresolve().params;
+    }
+
+    get queryParams() {
+        return this._unresolve().query;
+    }
+
     /**
      * Check whether the given route exists.
      *

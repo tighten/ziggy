@@ -158,6 +158,8 @@ interface Router {
     current(): RouteName | undefined;
     current<T extends RouteName>(name: T, params?: ParameterValue | RouteParams<T>): boolean;
     get params(): Record<string, string>;
+    get routeParams(): Record<string, string>;
+    get queryParams(): Record<string, string>;
     has<T extends RouteName>(name: T): boolean;
 }
 
