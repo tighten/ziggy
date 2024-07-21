@@ -2,19 +2,30 @@
 declare module 'ziggy-js' {
   interface RouteList {
     "posts.index": [],
-    "postComments.store": [
+    "comments.store": [
         {
             "name": "post",
             "required": true
         }
     ],
-    "postComments.storeComment": [
+    "comments.show": [
         {
             "name": "post",
             "required": true
         },
         {
             "name": "comment",
+            "required": true,
+            "binding": "uuid"
+        }
+    ],
+    "reactions.store": [
+        {
+            "name": "post",
+            "required": true
+        },
+        {
+            "name": "reaction",
             "required": false
         }
     ]

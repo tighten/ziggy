@@ -8,6 +8,22 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v2.2.1] - 2024-05-16
+
+**Fixed**
+
+- Fix double slashes with domain params by @bakerkretzmar in https://github.com/tighten/ziggy/pull/754
+
+## [v2.2.0] - 2024-05-16
+
+**Added**
+
+- Support Laravel Folio by @bakerkretzmar in https://github.com/tighten/ziggy/pull/733
+
+**Fixed**
+
+- Fix route().params type by @peter-emad99 in https://github.com/tighten/ziggy/pull/743
+
 ## [v2.1.0] - 2024-03-26
 
 **Added**
@@ -16,7 +32,7 @@ Breaking changes are marked with ⚠️.
 
 **Fixed**
 
-* Fix Vue plugin on Vue 2 by @bakerkretzmar in https://github.com/tighten/ziggy/pull/738
+- Fix Vue plugin on Vue 2 by @bakerkretzmar in https://github.com/tighten/ziggy/pull/738
 
 ## [v2.0.5] - 2024-03-19
 
@@ -390,7 +406,9 @@ See [UPGRADING](UPGRADING.md#upgrading-from-1x-to-2x) for detailed upgrade instr
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v2.2.1...HEAD
+[v2.2.1]: https://github.com/tighten/ziggy/compare/v2.2.0...v2.2.1
+[v2.2.0]: https://github.com/tighten/ziggy/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/tighten/ziggy/compare/v2.0.5...v2.1.0
 [v2.0.5]: https://github.com/tighten/ziggy/compare/v2.0.4...v2.0.5
 [v2.0.4]: https://github.com/tighten/ziggy/compare/v2.0.3...v2.0.4

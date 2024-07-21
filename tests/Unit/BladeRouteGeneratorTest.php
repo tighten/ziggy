@@ -1,202 +1,132 @@
 <?php
 
-namespace Tests\Unit;
-
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-use Tests\TestCase;
 use Tighten\Ziggy\BladeRouteGenerator;
 use Tighten\Ziggy\Ziggy;
 
-class BladeRouteGeneratorTest extends TestCase
-{
-    /** @test */
-    public function can_resolve_generator_from_container()
-    {
-        $generator = app(BladeRouteGenerator::class);
+beforeEach(function () {
+    BladeRouteGenerator::$generated = false;
+});
 
-        $this->assertStringContainsString('"routes":[]', $generator->generate());
-    }
+test('generate named routes', function () {
+    Route::get('/', fn () => ''); // Not named, should not be included in JSON output
+    Route::get('posts', fn () => '')->name('posts.index');
+    Route::post('posts', fn () => '')->name('posts.store');
+    Route::get('posts/{post}', fn () => '')->name('posts.show');
+    Route::get('posts/{post}/comments', fn () => '')->name('postComments.index');
 
-    /** @test */
-    public function can_generate_named_routes()
-    {
-        $router = app('router');
-        $router->get('/', $this->noop()); // Not named, should NOT be included in JSON output
-        $router->get('posts', $this->noop())->name('posts.index');
-        $router->get('posts/{post}', $this->noop())->name('posts.show');
-        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
-        $router->post('posts', $this->noop())->name('posts.store');
-        $router->getRoutes()->refreshNameLookups();
+    $output = (new BladeRouteGenerator)->generate();
+    $config = json_decode(Str::between($output, 'const Ziggy=', ';!'), true);
 
-        BladeRouteGenerator::$generated = false;
-        $output = (new BladeRouteGenerator)->generate();
-        $ziggy = json_decode(Str::before(Str::after($output, 'Ziggy='), ';!'), true);
+    expect($config['routes'])
+        ->toHaveCount(4)
+        ->toHaveKey('posts.index')
+        ->toHaveKey('posts.store')
+        ->toHaveKey('posts.show')
+        ->toHaveKey('postComments.index');
+});
 
-        $this->assertCount(4, $ziggy['routes']);
-        $this->assertArrayHasKey('posts.index', $ziggy['routes']);
-        $this->assertArrayHasKey('posts.show', $ziggy['routes']);
-        $this->assertArrayHasKey('posts.store', $ziggy['routes']);
-        $this->assertArrayHasKey('postComments.index', $ziggy['routes']);
-    }
+test('generate mergeable route list on repeated compiles', function () {
+    Route::get('posts', fn () => '')->name('posts.index');
 
-    /** @test */
-    public function can_generate_mergeable_json_payload_on_repeated_compiles()
-    {
-        $router = app('router');
-        $router->get('posts', $this->noop())->name('posts.index');
-        $router->getRoutes()->refreshNameLookups();
+    (new BladeRouteGenerator)->generate();
+    $output = (new BladeRouteGenerator)->generate();
+    $config = json_decode(Str::between($output, 'Object.assign(Ziggy.routes,', ');</script>'), true);
 
-        BladeRouteGenerator::$generated = false;
-        (new BladeRouteGenerator)->generate();
-        $script = (new BladeRouteGenerator)->generate();
+    expect($config)->toBe([
+        'posts.index' => [
+            'uri' => 'posts',
+            'methods' => ['GET', 'HEAD'],
+        ],
+    ]);
+});
 
-        $this->assertSame([
-            'posts.index' => [
-                'uri' => 'posts',
-                'methods' => ['GET', 'HEAD'],
-            ],
-        ], json_decode(Str::before(Str::after($script, 'Ziggy.routes,'), ');'), true));
-    }
+test('generate basic route config', function () {
+    Route::get('posts/{post}/comments', fn () => '')->name('postComments.index');
 
-    /** @test */
-    public function can_generate_routes_for_default_domain()
-    {
-        $router = app('router');
-        $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
-        $router->getRoutes()->refreshNameLookups();
+    expect((new BladeRouteGenerator)->generate())->toContain(json_encode([
+        'postComments.index' => [
+            'uri' => 'posts/{post}/comments',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['post'],
+        ],
+    ]));
+});
 
-        $expected = [
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['post'],
-            ],
-        ];
+test('generate route config for custom domain', function () {
+    Route::domain('{account}.myapp.com')->get('posts/{post}/comments', fn () => '')->name('postComments.index');
 
-        $this->assertStringContainsString(json_encode($expected), (new BladeRouteGenerator)->generate());
-    }
+    expect((new BladeRouteGenerator)->generate())->toContain(json_encode([
+        'postComments.index' => [
+            'uri' => 'posts/{post}/comments',
+            'methods' => ['GET', 'HEAD'],
+            'domain' => '{account}.myapp.com',
+            'parameters' => ['account', 'post'],
+        ],
+    ]));
+});
 
-    /** @test */
-    public function can_generate_routes_for_custom_domain()
-    {
-        $router = app('router');
-        $router->domain('{account}.myapp.com')->group(function () use ($router) {
-            $router->get('posts/{post}/comments', $this->noop())->name('postComments.index');
-        });
-        $router->getRoutes()->refreshNameLookups();
+test('generate route config for groups', function (array $groups, array $names) {
+    Route::get('posts', fn () => '')->name('posts.index');
+    Route::get('posts/{post}', fn () => '')->name('posts.show');
+    Route::get('users/{user}', fn () => '')->name('users.show');
 
-        $expected = [
-            'postComments.index' => [
-                'uri' => 'posts/{post}/comments',
-                'methods' => ['GET', 'HEAD'],
-                'domain' => '{account}.myapp.com',
-                'parameters' => ['account', 'post'],
-            ],
-        ];
+    config(['ziggy.groups' => [
+        'guest' => ['posts.*'],
+        'admin' => ['users.*'],
+    ]]);
 
-        $this->assertStringContainsString(json_encode($expected), (new BladeRouteGenerator)->generate());
-    }
+    $output = (new BladeRouteGenerator)->generate($groups);
+    $config = json_decode(Str::between($output, 'const Ziggy=', ';!'), true);
 
-    /** @test */
-    public function can_generate_routes_for_given_group_or_groups()
-    {
-        $router = app('router');
-        $router->get('posts', $this->noop())->name('posts.index');
-        $router->get('posts/{post}', $this->noop())->name('posts.show');
-        $router->get('users/{user}', $this->noop())->name('users.show');
-        $router->getRoutes()->refreshNameLookups();
+    expect($config['routes'])
+        ->toHaveCount(count($names))
+        ->toHaveKeys($names);
+})->with([
+    [['guest'], ['posts.index', 'posts.show']],
+    [['guest', 'admin'], ['posts.index', 'posts.show', 'users.show']],
+]);
 
-        config(['ziggy.groups' => [
-            'guest' => ['posts.*'],
-            'admin' => ['users.*'],
-        ]]);
+test('render csp nonce', function () {
+    expect((new BladeRouteGenerator)->generate(false, 'test-nonce'))
+        ->toContain('<script type="text/javascript" nonce="test-nonce">');
+});
 
-        BladeRouteGenerator::$generated = false;
-        $output = (new BladeRouteGenerator)->generate('guest');
-        $ziggy = json_decode(Str::before(Str::after($output, 'Ziggy='), ';!'), true);
+test('render script tag', function () {
+    Route::get('posts', fn () => '')->name('posts.index');
 
-        $this->assertCount(2, $ziggy['routes']);
-        $this->assertArrayHasKey('posts.index', $ziggy['routes']);
-        $this->assertArrayHasKey('posts.show', $ziggy['routes']);
+    $config = (new Ziggy)->toJson();
+    $routeFunction = file_get_contents(__DIR__ . '/../../dist/route.umd.js');
 
-        BladeRouteGenerator::$generated = false;
-        $output = (new BladeRouteGenerator)->generate(['guest', 'admin']);
-        $ziggy = json_decode(Str::before(Str::after($output, 'Ziggy='), ';!'), true);
+    expect((new BladeRouteGenerator)->generate())->toBe(
+        <<<HTML
+        <script type="text/javascript">const Ziggy={$config};{$routeFunction}</script>
+        HTML
+    );
+});
 
-        $this->assertCount(3, $ziggy['routes']);
-        $this->assertArrayHasKey('posts.index', $ziggy['routes']);
-        $this->assertArrayHasKey('posts.show', $ziggy['routes']);
-        $this->assertArrayHasKey('users.show', $ziggy['routes']);
-    }
+test('render merge script tag', function () {
+    Route::get('posts', fn () => '')->name('posts.index');
 
-    /** @test */
-    public function can_set_csp_nonce()
-    {
-        $this->assertStringContainsString(
-            '<script type="text/javascript" nonce="supercalifragilisticexpialidocious">',
-            (new BladeRouteGenerator)->generate(false, 'supercalifragilisticexpialidocious')
-        );
-    }
+    $config = json_encode((new Ziggy)->toArray()['routes']);
 
-    /** @test */
-    public function can_output_script_tag()
-    {
-        $router = app('router');
-        $router->get('posts', $this->noop())->name('posts.index');
-        BladeRouteGenerator::$generated = false;
+    (new BladeRouteGenerator)->generate();
 
-        $json = (new Ziggy)->toJson();
-        $routeFunction = file_get_contents(__DIR__ . '/../../dist/route.umd.js');
+    expect((new BladeRouteGenerator)->generate())->toBe(
+        <<<HTML
+        <script type="text/javascript">Object.assign(Ziggy.routes,{$config});</script>
+        HTML
+    );
+});
 
-        $this->assertSame(
-            <<<HTML
-<script type="text/javascript">const Ziggy={$json};{$routeFunction}</script>
-HTML,
-            (new BladeRouteGenerator)->generate()
-        );
-    }
-
-    /** @test */
-    public function can_output_merge_script_tag()
-    {
-        $router = app('router');
-        $router->get('posts', $this->noop())->name('posts.index');
-        (new BladeRouteGenerator)->generate();
-
-        $json = json_encode((new Ziggy)->toArray()['routes']);
-
-        $this->assertSame(
-            <<<HTML
-<script type="text/javascript">Object.assign(Ziggy.routes,{$json});</script>
-HTML,
-            (new BladeRouteGenerator)->generate()
-        );
-    }
-
-    /** @test */
-    public function can_compile_blade_directive()
-    {
-        $this->assertSame(
-            "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(); ?>",
-            app('blade.compiler')->compileString('@routes')
-        );
-
-        $this->assertSame(
-            "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate('admin'); ?>",
-            app('blade.compiler')->compileString("@routes('admin')")
-        );
-        $this->assertSame(
-            "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(['admin', 'guest']); ?>",
-            app('blade.compiler')->compileString("@routes(['admin', 'guest'])")
-        );
-
-        $this->assertSame(
-            "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(null, 'nonce'); ?>",
-            app('blade.compiler')->compileString("@routes(null, 'nonce')")
-        );
-        $this->assertSame(
-            "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(nonce: 'nonce'); ?>",
-            app('blade.compiler')->compileString("@routes(nonce: 'nonce')")
-        );
-    }
-}
+test('compile blade directive', function (string $blade, string $output) {
+    expect(app('blade.compiler')->compileString($blade))->toBe($output);
+})->with([
+    ['@routes', "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(); ?>"],
+    ["@routes('admin')", "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate('admin'); ?>"],
+    ["@routes(['admin', 'guest'])", "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(['admin', 'guest']); ?>"],
+    ["@routes(null, 'nonce')", "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(null, 'nonce'); ?>"],
+    ["@routes(nonce: 'nonce')", "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(nonce: 'nonce'); ?>"],
+    ["@routes(['admin', 'guest'], 'nonce')", "<?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(['admin', 'guest'], 'nonce'); ?>"],
+]);

@@ -1,25 +1,16 @@
 <?php
 
-namespace Tests\Unit;
-
-use Tests\TestCase;
+use Illuminate\Support\Facades\Route;
 use Tighten\Ziggy\Ziggy;
 
-class RouteCachingTest extends TestCase
-{
-    /** @test */
-    public function can_exclude_routes_with_randomly_generated_names()
-    {
-        app('router')->get('users', $this->noop())->name('users');
-        app('router')->get('cached', $this->noop())->name('generated::ZRopaJJwzA27wRLa');
+test('exclude routes with generated names', function () {
+    Route::get('users', fn () => '')->name('users');
+    Route::get('cached', fn () => '')->name('generated::ZRopaJJwzA27wRLa');
 
-        $expected = [
-            'users' => [
-                'uri' => 'users',
-                'methods' => ['GET', 'HEAD'],
-            ],
-        ];
-
-        $this->assertSame($expected, (new Ziggy)->toArray()['routes']);
-    }
-}
+    expect((new Ziggy)->toArray()['routes'])->toBe([
+        'users' => [
+            'uri' => 'users',
+            'methods' => ['GET', 'HEAD'],
+        ],
+    ]);
+});

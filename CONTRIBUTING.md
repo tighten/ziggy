@@ -27,9 +27,9 @@ Before submitting a pull request:
 
 ## Tests
 
-Please write tests for any fixes or new features you contribute. We use [Orchestra Testbench](https://github.com/orchestral/testbench) as our base PHPUnit test for PHP and [Jest](https://jestjs.io/) for testing our JavaScript.
+Please write tests for any fixes or new features you contribute. We use [Orchestra Testbench](https://github.com/orchestral/testbench) and [Pest](https://pestphp.com/) for PHP tests and [Vitest](https://vitest.dev/) for JavaScript.
 
-You can run PHP tests with `vendor/bin/phpunit` and JavaScript tests with `npm run test`.
+You can run PHP tests with `vendor/bin/pest` and JavaScript tests with `npm test`.
 
 If you need any help with this please don't hesitate to ask.
 

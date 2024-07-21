@@ -389,6 +389,16 @@ import App from './App.vue';
 createApp(App).use(ZiggyVue, Ziggy);
 ```
 
+If you're using TypeScript, you may need to add the following declaration to a `.d.ts` file in your project to avoid type errors when using the `route()` function in your Vue component templates:
+
+```ts
+declare module 'vue' {
+    interface ComponentCustomProperties {
+        route: typeof routeFn;
+    }
+}
+```
+
 ### React
 
 Ziggy includes a `useRoute()` hook to make it easy to use the `route()` helper in your React app:
@@ -525,7 +535,7 @@ If you need to retrieve Ziggy's config from your Laravel backend over the networ
 
 use Tighten\Ziggy\Ziggy;
 
-Route::get('api/ziggy', fn () => response()->json(new Ziggy));
+Route::get('ziggy', fn () => response()->json(new Ziggy));
 ```
 
 ### Re-generating the routes file when your app routes change

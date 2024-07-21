@@ -1,305 +1,213 @@
 <?php
 
-namespace Tests\Unit;
-
 use Illuminate\Database\Eloquent\Model;
-use Tests\TestCase;
+use Illuminate\Support\Facades\Route;
 use Tighten\Ziggy\Ziggy;
 
-class RouteModelBindingTest extends TestCase
-{
-    protected function setUp(): void
-    {
-        parent::setUp();
+beforeEach(function () {
+    Route::get('users/{user}', fn (User $user) => '')->name('users');
+    Route::get('admins/{admin}', fn (Admin $admin) => '')->name('admins');
+    Route::get('tags/{tag}', fn (Tag $tag) => '')->name('tags');
+    Route::get('tokens/{token}', fn ($token) => '')->name('tokens');
+    Route::get('users/{user}/{number}', fn (User $user, int $n) => '')->name('users.numbers');
+    Route::post('users', fn (User $user) => '')->name('users.store');
+    Route::get('comments/{comment}', fn (Comment $comment) => '')->name('comments');
+    Route::get('replies/{reply}', fn (Reply $reply) => '')->name('replies');
+    Route::get('blog/{category}/{post:slug}', fn (PostCategory $category, Post $post) => '')->name('posts');
+    Route::get('blog/{category}/{post:slug}/{tag:slug}', fn (PostCategory $category, Post $post, Tag $tag) => '')->name('posts.tags');
+});
 
-        $router = app('router');
+test('register implicit route model bindings', function () {
+    expect((new Ziggy)->toArray()['routes']['users'])->toBe([
+        'uri' => 'users/{user}',
+        'methods' => ['GET', 'HEAD'],
+        'parameters' => ['user'],
+        'bindings' => [
+            'user' => 'uuid',
+        ],
+    ]);
+});
 
-        $router->get('users/{user}', function (User $user) {
-            return '';
-        })->name('users');
-        $router->get('admins/{admin}', function (Admin $admin) {
-            return '';
-        })->name('admins');
-        $router->get('tags/{tag}', function (Tag $tag) {
-            return '';
-        })->name('tags');
-        $router->get('tokens/{token}', function ($token) {
-            return '';
-        })->name('tokens');
-        $router->get('users/{user}/{number}', function (User $user, int $n) {
-            return '';
-        })->name('users.numbers');
-        $router->post('users', function (User $user) {
-            return '';
-        })->name('users.store');
-        $router->get('comments/{comment}', function (Comment $comment) {
-            return '';
-        })->name('comments');
-        $router->get('replies/{reply}', function (Reply $reply) {
-            return '';
-        })->name('replies');
-        $router->get('blog/{category}/{post:slug}', function (PostCategory $category, Post $post) {
-            return '';
-        })->name('posts');
-        $router->get('blog/{category}/{post:slug}/{tag:slug}', function (PostCategory $category, Post $post, Tag $tag) {
-            return '';
-        })->name('posts.tags');
+test('register inherited implicit route model bindings', function () {
+    expect((new Ziggy)->toArray()['routes']['admins'])->toBe([
+        'uri' => 'admins/{admin}',
+        'methods' => ['GET', 'HEAD'],
+        'parameters' => ['admin'],
+        'bindings' => [
+            'admin' => 'uuid',
+        ],
+    ]);
+});
 
-        $router->getRoutes()->refreshNameLookups();
-    }
+test('ignore route action arguments without corresponding route parameters', function () {
+    expect((new Ziggy)->toArray()['routes']['users.store'])->toBe([
+        'uri' => 'users',
+        'methods' => ['POST'],
+    ]);
+});
 
-    /** @test */
-    public function can_register_implicit_route_model_bindings()
-    {
-        $expected = [
-            'users' => [
-                'uri' => 'users/{user}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['user'],
-                'bindings' => [
-                    'user' => 'uuid',
-                ],
-            ],
-        ];
+test('handle bound and unbound parameters in the same route', function () {
+    expect((new Ziggy)->toArray()['routes']['users.numbers'])->toBe([
+        'uri' => 'users/{user}/{number}',
+        'methods' => ['GET', 'HEAD'],
+        'parameters' => ['user', 'number'],
+        'bindings' => [
+            'user' => 'uuid',
+        ],
+    ]);
+});
 
-        $this->assertSame($expected, (new Ziggy)->filter('users')->toArray()['routes']);
-    }
-
-    /** @test */
-    public function register_inherited_custom_route_key_name()
-    {
-        $expected = [
-            'admins' => [
-                'uri' => 'admins/{admin}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['admin'],
-                'bindings' => [
-                    'admin' => 'uuid',
-                ],
-            ],
-        ];
-
-        $this->assertSame($expected, (new Ziggy)->filter('admins')->toArray()['routes']);
-    }
-
-    /** @test */
-    public function can_ignore_route_parameters_not_bound_to_eloquent_models()
-    {
-        $this->assertSame([
-            'tokens' => [
-                'uri' => 'tokens/{token}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['token'],
-            ],
-        ], (new Ziggy)->filter(['tokens'])->toArray()['routes']);
-    }
-
-    /** @test */
-    public function can_ignore_route_action_parameters_without_corresponding_route_segment()
-    {
-        $this->assertSame([
-            'users.store' => [
-                'uri' => 'users',
-                'methods' => ['POST'],
-            ],
-        ], (new Ziggy)->filter(['users.store'])->toArray()['routes']);
-    }
-
-    /** @test */
-    public function can_handle_bound_and_unbound_parameters_in_the_same_route()
-    {
-        $expected = [
-            'users.numbers' => [
-                'uri' => 'users/{user}/{number}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['user', 'number'],
-                'bindings' => [
-                    'user' => 'uuid',
-                ],
-            ],
-        ];
-
-        $this->assertSame($expected, (new Ziggy)->filter('users.numbers')->toArray()['routes']);
-    }
-
-    /** @test */
-    public function can_handle_multiple_scoped_bindings()
-    {
-        $this->assertSame([
-            'posts' => [
-                'uri' => 'blog/{category}/{post}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['category', 'post'],
-                'bindings' => [
-                    'category' => 'id',
-                    'post' => 'slug',
-                ],
-            ],
-            'posts.tags' => [
-                'uri' => 'blog/{category}/{post}/{tag}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['category', 'post', 'tag'],
-                'bindings' => [
-                    'category' => 'id',
-                    'post' => 'slug',
-                    'tag' => 'slug',
-                ],
-            ],
-        ], (new Ziggy)->filter('posts*')->toArray()['routes']);
-    }
-
-    /** @test */
-    public function can_merge_implicit_and_scoped_bindings()
-    {
-        $this->assertSame([
-            'users' => [
-                'uri' => 'users/{user}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['user'],
-                'bindings' => [
-                    'user' => 'uuid',
-                ],
-            ],
-            'admins' => [
-                'uri' => 'admins/{admin}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['admin'],
-                'bindings' => [
-                    'admin' => 'uuid',
-                ],
-            ],
-            'tags' => [
-                'uri' => 'tags/{tag}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['tag'],
-                'bindings' => [
-                    'tag' => 'id',
-                ],
-            ],
-            'tokens' => [
-                'uri' => 'tokens/{token}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['token'],
-            ],
-            'users.numbers' => [
-                'uri' => 'users/{user}/{number}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['user', 'number'],
-                'bindings' => [
-                    'user' => 'uuid',
-                ],
-            ],
-            'users.store' => [
-                'uri' => 'users',
-                'methods' => ['POST'],
-            ],
-            'comments' => [
-                'uri' => 'comments/{comment}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['comment'],
-                'bindings' => [
-                    'comment' => 'uuid',
-                ],
-            ],
-            'replies' => [
-                'uri' => 'replies/{reply}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['reply'],
-                'bindings' => [
-                    'reply' => 'uuid',
-                ],
-            ],
-            'posts' => [
-                'uri' => 'blog/{category}/{post}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['category', 'post'],
-                'bindings' => [
-                    'category' => 'id',
-                    'post' => 'slug',
-                ],
-            ],
-            'posts.tags' => [
-                'uri' => 'blog/{category}/{post}/{tag}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['category', 'post', 'tag'],
-                'bindings' => [
-                    'category' => 'id',
-                    'post' => 'slug',
-                    'tag' => 'slug',
-                ],
-            ],
-        ], (new Ziggy)->toArray()['routes']);
-    }
-
-    /** @test */
-    public function can_include_bindings_in_json()
-    {
-        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"parameters":["user"],"bindings":{"user":"uuid"}},"admins":{"uri":"admins\/{admin}","methods":["GET","HEAD"],"parameters":["admin"],"bindings":{"admin":"uuid"}},"tags":{"uri":"tags\/{tag}","methods":["GET","HEAD"],"parameters":["tag"],"bindings":{"tag":"id"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"],"parameters":["token"]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"parameters":["user","number"],"bindings":{"user":"uuid"}},"users.store":{"uri":"users","methods":["POST"]},"comments":{"uri":"comments\/{comment}","methods":["GET","HEAD"],"parameters":["comment"],"bindings":{"comment":"uuid"}},"replies":{"uri":"replies\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"uuid"}},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"parameters":["category","post"],"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"parameters":["category","post","tag"],"bindings":{"category":"id","post":"slug","tag":"slug"}}}}';
-
-        $this->assertSame($json, (new Ziggy)->toJson());
-    }
-
-    /** @test */
-    public function can_skip_booting_models_that_dont_override_their_route_key()
-    {
-        (new Ziggy)->filter(['tokens', 'users.numbers']);
-
-        $this->assertTrue(User::$wasBooted);
-        $this->assertFalse(Tag::$wasBooted);
-    }
-
-    /** @test */
-    public function can_handle_abstract_classes_in_route_model_bindings()
-    {
-        app('router')->get('models/{model}', function (Model $model) {
-            return '';
-        })->name('models');
-        app('router')->getRoutes()->refreshNameLookups();
-
-        $this->assertSame([
-            'uri' => 'models/{model}',
+test('handle multiple scoped bindings', function () {
+    expect((new Ziggy)->filter('posts*')->toArray()['routes'])->toBe([
+        'posts' => [
+            'uri' => 'blog/{category}/{post}',
             'methods' => ['GET', 'HEAD'],
-            'parameters' => ['model'],
+            'parameters' => ['category', 'post'],
             'bindings' => [
-                'model' => 'id',
+                'category' => 'id',
+                'post' => 'slug',
             ],
-        ], (new Ziggy)->toArray()['routes']['models']);
-    }
-
-    /** @test */
-    public function can_use_custom_primary_key()
-    {
-        $expected = [
-            'comments' => [
-                'uri' => 'comments/{comment}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['comment'],
-                'bindings' => [
-                    'comment' => 'uuid',
-                ],
+        ],
+        'posts.tags' => [
+            'uri' => 'blog/{category}/{post}/{tag}',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['category', 'post', 'tag'],
+            'bindings' => [
+                'category' => 'id',
+                'post' => 'slug',
+                'tag' => 'slug',
             ],
-        ];
+        ],
+    ]);
+});
 
-        $this->assertSame($expected, (new Ziggy)->filter('comments')->toArray()['routes']);
-    }
-
-    /** @test */
-    public function can_use_get_key_name()
-    {
-        $expected = [
-            'replies' => [
-                'uri' => 'replies/{reply}',
-                'methods' => ['GET', 'HEAD'],
-                'parameters' => ['reply'],
-                'bindings' => [
-                    'reply' => 'uuid',
-                ],
+test('merge implicit and scoped bindings', function () {
+    expect((new Ziggy)->toArray()['routes'])->toBe([
+        'users' => [
+            'uri' => 'users/{user}',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['user'],
+            'bindings' => [
+                'user' => 'uuid',
             ],
-        ];
+        ],
+        'admins' => [
+            'uri' => 'admins/{admin}',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['admin'],
+            'bindings' => [
+                'admin' => 'uuid',
+            ],
+        ],
+        'tags' => [
+            'uri' => 'tags/{tag}',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['tag'],
+            'bindings' => [
+                'tag' => 'id',
+            ],
+        ],
+        'tokens' => [
+            'uri' => 'tokens/{token}',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['token'],
+        ],
+        'users.numbers' => [
+            'uri' => 'users/{user}/{number}',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['user', 'number'],
+            'bindings' => [
+                'user' => 'uuid',
+            ],
+        ],
+        'users.store' => [
+            'uri' => 'users',
+            'methods' => ['POST'],
+        ],
+        'comments' => [
+            'uri' => 'comments/{comment}',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['comment'],
+            'bindings' => [
+                'comment' => 'uuid',
+            ],
+        ],
+        'replies' => [
+            'uri' => 'replies/{reply}',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['reply'],
+            'bindings' => [
+                'reply' => 'uuid',
+            ],
+        ],
+        'posts' => [
+            'uri' => 'blog/{category}/{post}',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['category', 'post'],
+            'bindings' => [
+                'category' => 'id',
+                'post' => 'slug',
+            ],
+        ],
+        'posts.tags' => [
+            'uri' => 'blog/{category}/{post}/{tag}',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['category', 'post', 'tag'],
+            'bindings' => [
+                'category' => 'id',
+                'post' => 'slug',
+                'tag' => 'slug',
+            ],
+        ],
+    ]);
+});
 
-        $this->assertSame($expected, (new Ziggy)->filter('replies')->toArray()['routes']);
-    }
-}
+test('include bindings in json', function () {
+    expect((new Ziggy)->toJson())
+        ->toBe('{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"parameters":["user"],"bindings":{"user":"uuid"}},"admins":{"uri":"admins\/{admin}","methods":["GET","HEAD"],"parameters":["admin"],"bindings":{"admin":"uuid"}},"tags":{"uri":"tags\/{tag}","methods":["GET","HEAD"],"parameters":["tag"],"bindings":{"tag":"id"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"],"parameters":["token"]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"parameters":["user","number"],"bindings":{"user":"uuid"}},"users.store":{"uri":"users","methods":["POST"]},"comments":{"uri":"comments\/{comment}","methods":["GET","HEAD"],"parameters":["comment"],"bindings":{"comment":"uuid"}},"replies":{"uri":"replies\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"uuid"}},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"parameters":["category","post"],"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"parameters":["category","post","tag"],"bindings":{"category":"id","post":"slug","tag":"slug"}}}}');
+});
+
+test('skip booting models that dont override their route key', function () {
+    (new Ziggy)->filter(['tokens', 'users.numbers']);
+
+    expect(User::$wasBooted)->toBeTrue();
+    expect(Tag::$wasBooted)->toBeFalse();
+});
+
+test('handle abstract classes in route model bindings', function () {
+    Route::get('models/{model}', fn (Model $model) => '')->name('models');
+
+    expect((new Ziggy)->toArray()['routes']['models'])->toBe([
+        'uri' => 'models/{model}',
+        'methods' => ['GET', 'HEAD'],
+        'parameters' => ['model'],
+        'bindings' => [
+            'model' => 'id',
+        ],
+    ]);
+});
+
+test('use custom primary key set with primaryKey property', function () {
+    expect((new Ziggy)->toArray()['routes']['comments'])->toBe([
+        'uri' => 'comments/{comment}',
+        'methods' => ['GET', 'HEAD'],
+        'parameters' => ['comment'],
+        'bindings' => [
+            'comment' => 'uuid',
+        ],
+    ]);
+});
+
+test('use custom primary key set with getKeyName method', function () {
+    expect((new Ziggy)->toArray()['routes']['replies'])->toBe([
+        'uri' => 'replies/{reply}',
+        'methods' => ['GET', 'HEAD'],
+        'parameters' => ['reply'],
+        'bindings' => [
+            'reply' => 'uuid',
+        ],
+    ]);
+});
 
 class User extends Model
 {
