@@ -28,6 +28,7 @@ class Ziggy implements JsonSerializable
         protected ?string $url = null,
     ) {
         $this->url = rtrim($url ?? url('/'), '/');
+
         $this->routes = static::$cache ??= $this->nameKeyedRoutes();
     }
 
