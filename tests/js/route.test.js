@@ -623,6 +623,29 @@ describe('route()', () => {
         });
     });
 
+    test('can extract only route parameters from the current URL', () => {
+        global.window.location.href = 'https://ziggy.dev/posts/1?post=2&foo=bar';
+        global.window.location.host = 'ziggy.dev';
+        global.window.location.pathname = '/posts/1';
+        global.window.location.search = '?post=2&foo=bar';
+
+        // Query param overwrites route param
+        expect(route().params).toStrictEqual({ post: '2', foo: 'bar' });
+
+        // Can't use strict equality, route().routeParams has a null prototype
+        expect(route().routeParams).toEqual({ post: '1' });
+        expect(JSON.stringify(route().routeParams)).toBe(JSON.stringify({ post: '1' }));
+    });
+
+    test('can extract only query parameters from the current URL', () => {
+        global.window.location.href = 'https://ziggy.dev/posts/1?post=2&foo=bar';
+        global.window.location.host = 'ziggy.dev';
+        global.window.location.pathname = '/posts/1';
+        global.window.location.search = '?post=2&foo=bar';
+
+        expect(route().queryParams).toStrictEqual({ post: '2', foo: 'bar' });
+    });
+
     test("can append 'extra' string/number parameter to query", () => {
         // 'posts.index' has no parameters
         expect(route('posts.index', 'extra')).toBe('https://ziggy.dev/posts?extra=');
