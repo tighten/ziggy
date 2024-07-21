@@ -9,12 +9,12 @@ use Laravel\Octane\Events\RequestReceived;
 
 class ZiggyServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function boot(): void
     {
         if ($this->app->resolved('blade.compiler')) {
             $this->registerDirective($this->app['blade.compiler']);
         } else {
-            $this->app->afterResolving('blade.compiler', fn (BladeCompiler $blade) => $this->registerDirective($blade));
+            $this->app->afterResolving('blade.compiler', $this->registerDirective(...));
         }
 
         Event::listen(RequestReceived::class, function () {
@@ -26,7 +26,7 @@ class ZiggyServiceProvider extends ServiceProvider
         }
     }
 
-    protected function registerDirective(BladeCompiler $blade)
+    protected function registerDirective(BladeCompiler $blade): void
     {
         $blade->directive('routes', fn ($group) => "<?php echo app('" . BladeRouteGenerator::class . "')->generate({$group}); ?>");
     }

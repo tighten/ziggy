@@ -19,25 +19,16 @@ class CommandRouteGenerator extends Command
 
     protected $description = 'Generate a JavaScript file containing Ziggy’s routes and configuration.';
 
-    protected $files;
-
-    public function __construct(Filesystem $files)
-    {
-        parent::__construct();
-
-        $this->files = $files;
-    }
-
-    public function handle()
+    public function handle(Filesystem $filesystem)
     {
         $ziggy = new Ziggy($this->option('group'), $this->option('url') ? url($this->option('url')) : null);
 
         $path = $this->argument('path') ?? config('ziggy.output.path', 'resources/js/ziggy.js');
 
-        if ($this->files->isDirectory(base_path($path))) {
+        if ($filesystem->isDirectory(base_path($path))) {
             $path .= '/ziggy';
         } else {
-            $this->makeDirectory($path);
+            $filesystem->ensureDirectoryExists(dirname(base_path($path)), recursive: true);
         }
 
         $name = preg_replace('/(\.d)?\.ts$|\.js$/', '', $path);
@@ -45,24 +36,15 @@ class CommandRouteGenerator extends Command
         if (! $this->option('types-only')) {
             $output = config('ziggy.output.file', File::class);
 
-            $this->files->put(base_path("{$name}.js"), new $output($ziggy));
+            $filesystem->put(base_path("{$name}.js"), new $output($ziggy));
         }
 
         if ($this->option('types') || $this->option('types-only')) {
             $types = config('ziggy.output.types', Types::class);
 
-            $this->files->put(base_path("{$name}.d.ts"), new $types($ziggy));
+            $filesystem->put(base_path("{$name}.d.ts"), new $types($ziggy));
         }
 
         $this->info('Files generated!');
-    }
-
-    private function makeDirectory($path)
-    {
-        if (! $this->files->isDirectory(dirname(base_path($path)))) {
-            $this->files->makeDirectory(dirname(base_path($path)), 0755, true, true);
-        }
-
-        return $path;
     }
 }
