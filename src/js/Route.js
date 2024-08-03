@@ -80,6 +80,7 @@ export default class Route {
         // Transform the route's template into a regex that will match a hydrated URL,
         // by replacing its parameter segments with matchers for parameter values
         const pattern = this.template
+            .replace(/[.*+$()[\]]/g, '\\$&')
             .replace(/(\/?){([^}?]*)(\??)}/g, (_, slash, segment, optional) => {
                 const regex = `(?<${segment}>${
                     this.wheres[segment]?.replace(/(^\^)|(\$$)/g, '') || '[^/?]+'

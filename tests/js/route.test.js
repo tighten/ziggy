@@ -261,6 +261,10 @@ const defaultZiggy = {
             },
             parameters: ['storefront', 'catalog_uri'],
         },
+        regexSpecialChars: {
+            uri: 'test.*+$()[]/{slug}',
+            methods: ['GET', 'HEAD'],
+        },
     },
 };
 
@@ -1437,6 +1441,13 @@ describe('current()', () => {
 
         expect(route().current('events.venues-index')).toBe(true);
         expect(route().current('events.venues.*')).toBe(false);
+    });
+
+    test('matches route with escaped Regex special characters', () => {
+        global.window.location.pathname = '/test.*+$()[]/1';
+
+        expect(route().current()).toBe('regexSpecialChars');
+        expect(route().current('regexSpecialChars')).toBe(true);
     });
 
     test.skip('can unresolve arbitrary urls to names and params', () => {
