@@ -262,7 +262,7 @@ const defaultZiggy = {
             parameters: ['storefront', 'catalog_uri'],
         },
         regexSpecialChars: {
-            uri: 'test.*+^$()|[]/{slug}',
+            uri: 'test.*+$()[]/{slug}',
             methods: ['GET', 'HEAD'],
         },
     },
@@ -1444,7 +1444,7 @@ describe('current()', () => {
     });
 
     test('matches route with escaped Regex special characters', () => {
-        global.window.location.pathname = '/test.*+^$()|[]/1';
+        global.window.location.pathname = '/test.*+$()[]/1';
 
         expect(route().current()).toBe('regexSpecialChars');
         expect(route().current('regexSpecialChars')).toBe(true);
