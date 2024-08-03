@@ -275,20 +275,59 @@ beforeEach(() => {
     global.Ziggy = { ...defaultZiggy };
 });
 
+describe('generate url', () => {
+    test.each(
+        Object.entries({
+            'no parameters': [
+                {
+                    routes: {
+                        'posts.index': {
+                            uri: 'posts',
+                            methods: ['GET', 'HEAD'],
+                        },
+                    },
+                },
+                ['posts.index'],
+                'https://ziggy.dev/posts',
+            ],
+            'default parameters': [
+                {
+                    defaults: { locale: 'en' },
+                    routes: {
+                        'translatePosts.index': {
+                            uri: '{locale}/posts',
+                            methods: ['GET', 'HEAD'],
+                        },
+                    },
+                },
+                ['translatePosts.index'],
+                'https://ziggy.dev/en/posts',
+            ],
+        }).map(([name, params]) => [name, ...params]),
+    )('%s', (_, config, args, url) => {
+        Object.assign(Ziggy, config);
+        expect(route(...args)).toBe(url);
+    });
+});
+
 describe('route()', () => {
-    test('can generate a URL with no parameters', () => {
+    test('no params', () => {
         expect(route('posts.index')).toBe('https://ziggy.dev/posts');
     });
 
-    test('can generate a URL with default parameters', () => {
-        expect(route('translatePosts.index')).toBe('https://ziggy.dev/en/posts');
-    });
-
-    test('can generate a relative URL by passing absolute = false', () => {
+    test('no params, relative', () => {
         expect(route('posts.index', [], false)).toBe('/posts');
     });
 
-    test('can generate a URL with filled optional parameters', () => {
+    test('default params', () => {
+        expect(route('translatePosts.index')).toBe('https://ziggy.dev/en/posts');
+    });
+
+    test('default params, relative', () => {
+        expect(route('translatePosts.index', [], false)).toBe('/en/posts');
+    });
+
+    test('filled optional params', () => {
         expect(
             route('conversations.show', {
                 type: 'email',
@@ -298,7 +337,7 @@ describe('route()', () => {
         ).toBe('https://ziggy.dev/subscribers/123/conversations/email/1234');
     });
 
-    test('can generate a relative URL with filled optional parameters', () => {
+    test('filled optional params, relative', () => {
         expect(
             route(
                 'conversations.show',
@@ -310,10 +349,6 @@ describe('route()', () => {
                 false,
             ),
         ).toBe('/subscribers/123/conversations/email/1234');
-    });
-
-    test('can generate a relative URL with default parameters', () => {
-        expect(route('translatePosts.index', [], false)).toBe('/en/posts');
     });
 
     test('can error if a required parameter is not provided', () => {
@@ -330,14 +365,14 @@ describe('route()', () => {
         expect(() => route('translatePosts.index')).toThrow(/'locale' parameter is required/);
     });
 
-    test('can generate a URL using an integer', () => {
+    test('integer params', () => {
         // route with required parameters
         expect(route('posts.show', 1)).toBe('https://ziggy.dev/posts/1');
         // route with default parameters
         expect(route('translatePosts.show', 1)).toBe('https://ziggy.dev/en/posts/1');
     });
 
-    test('can generate a URL using a string', () => {
+    test('string params', () => {
         // route with required parameters
         expect(route('posts.show', 'my-first-post')).toBe('https://ziggy.dev/posts/my-first-post');
         // route with default parameters
@@ -346,7 +381,7 @@ describe('route()', () => {
         );
     });
 
-    test('can generate a URL using an object', () => {
+    test('object params', () => {
         // routes with required parameters
         expect(route('posts.show', { id: 1 })).toBe('https://ziggy.dev/posts/1');
         expect(route('events.venues.show', { event: 1, venue: 2 })).toBe(

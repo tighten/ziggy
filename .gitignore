@@ -4,3 +4,4 @@ vendor/
 *.log
 composer.lock
 phpunit.xml
+*.vitest-temp.json
