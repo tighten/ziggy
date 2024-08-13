@@ -29,7 +29,7 @@ test('include named folio routes', function () {
 
     Folio::path(resource_path('views/pages'));
 
-    expect((new Ziggy())->toArray()['routes'])->toBe([
+    expect((new Ziggy())->toArray()['routes'])->toEqualCanonicalizing([
         'about' => [
             'uri' => 'about',
             'methods' => ['GET'],

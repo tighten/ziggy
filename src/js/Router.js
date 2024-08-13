@@ -211,7 +211,7 @@ export default class Router extends String {
      * @return {Boolean}
      */
     has(name) {
-        return Object.keys(this._config.routes).includes(name);
+        return this._config.routes.hasOwnProperty(name);
     }
 
     /**
