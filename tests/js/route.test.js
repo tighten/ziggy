@@ -1412,6 +1412,13 @@ describe('current()', () => {
         expect(route().current('statistics')).toBe(true);
     });
 
+    test('can check the current route with encoded percent sign', () => {
+        global.window.location.pathname = '/optionalpage/john%25';
+
+        expect(route().current()).toBe('pages.optional');
+        expect(route().current('pages.optional')).toBe(true);
+    });
+
     test('can ignore routes that don’t allow GET requests', () => {
         global.window.location.pathname = '/posts/1';
 
