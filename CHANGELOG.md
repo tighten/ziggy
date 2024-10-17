@@ -8,6 +8,17 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v2.3.1] - 2024-10-17
+
+**Fixed**
+
+- Escape special regex characters when matching routes by @aguingand in https://github.com/tighten/ziggy/pull/766
+- Fix params sometimes being double-decoded by @bakerkretzmar in https://github.com/tighten/ziggy/pull/778
+
+**Changed**
+
+- Optimize has() by @thomas-brx in https://github.com/tighten/ziggy/pull/770
+
 ## [v2.3.0] - 2024-07-21
 
 **Added**
@@ -418,7 +429,8 @@ See [UPGRADING](UPGRADING.md#upgrading-from-1x-to-2x) for detailed upgrade instr
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v2.3.1...HEAD
+[v2.3.1]: https://github.com/tighten/ziggy/compare/v2.3.0...v2.3.1
 [v2.3.0]: https://github.com/tighten/ziggy/compare/v2.2.1...v2.3.0
 [v2.2.1]: https://github.com/tighten/ziggy/compare/v2.2.0...v2.2.1
 [v2.2.0]: https://github.com/tighten/ziggy/compare/v2.1.0...v2.2.0
