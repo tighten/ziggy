@@ -567,7 +567,7 @@ class ZiggyTest extends TestCase
             'port' => null,
             'defaults' => [],
             'errors' => [
-                'graceful' => true,
+                'graceful' => false,
                 'fallback_url' => '#',
             ],
             'routes' => [
@@ -621,7 +621,7 @@ class ZiggyTest extends TestCase
             'port' => null,
             'defaults' => [],
             'errors' => [
-                'graceful' => true,
+                'graceful' => false,
                 'fallback_url' => '#',
             ],
             'routes' => [
