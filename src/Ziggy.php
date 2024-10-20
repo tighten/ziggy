@@ -163,6 +163,10 @@ class Ziggy implements JsonSerializable
             'defaults' => method_exists(app('url'), 'getDefaultParameters')
                 ? app('url')->getDefaultParameters()
                 : [],
+            'errors' => [
+                'graceful' => config('ziggy.errors.graceful',false),
+                'fallback_url' => config('ziggy.errors.fallback_url','#'),
+            ],
             'routes' => $this->applyFilters($this->group)->toArray(),
         ];
     }
