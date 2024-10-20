@@ -19,11 +19,18 @@ export default class Router extends String {
 
         if (name) {
             if (!this._config.routes[name]) {
-                throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
-            }
+                // Throw the error only if not gracefull
+                if(!this._config.errors.graceful)
+                    throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
 
-            this._route = new Route(name, this._config.routes[name], this._config);
-            this._params = this._parse(params);
+                // Otherwise set the route and params to null and show console error
+                this._route = this._params = null;
+                console.error(`Ziggy error: route '${name}' is not in the route list.`)
+            }
+            else{
+                this._route = new Route(name, this._config.routes[name], this._config);
+                this._params = this._parse(params);
+            }
         }
     }
 
@@ -37,6 +44,11 @@ export default class Router extends String {
      * @return {String}
      */
     toString() {
+
+        // If the route is null return the fallback_url
+        if(!this._route) 
+            return this._config.errors.fallback_url
+
         // Get parameters that don't correspond to any route segments to append them to the query
         const unhandled = Object.keys(this._params)
             .filter((key) => !this._route.parameterSegments.some(({ name }) => name === key))
