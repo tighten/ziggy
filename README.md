@@ -25,6 +25,7 @@ Ziggy provides a JavaScript `route()` function that works like Laravel's, making
 - [**Filtering Routes**](#filtering-routes)
     - [Including/excluding routes](#includingexcluding-routes)
     - [Filtering with groups](#filtering-with-groups)
+- [**Error Handling**](#error-handling)
 - [**Other**](#other)
 - [**Contributing**](#contributing)
 
@@ -495,6 +496,22 @@ To expose multiple groups you can pass an array of group names:
 ```
 
 > Note: Passing group names to the `@routes` directive will always take precedence over your other `only` or `except` settings.
+
+## Error Handling
+For error handling you can be strict which means to stop the execution of your app, or graceful which means to continue executing your app and just show out a red console error and fallback to a specific url like `#`.
+```
+// config/ziggy.php
+<?php
+return [
+    ...
+    'errors' => [
+        'graceful' => true,
+        'fallback_url' => '#'
+    ]
+    ...
+]
+```
+
 
 ## Other
 
