@@ -566,6 +566,10 @@ class ZiggyTest extends TestCase
             'url' => 'http://ziggy.dev',
             'port' => null,
             'defaults' => [],
+            'errors' => [
+                'graceful' => true,
+                'fallback_url' => '#',
+            ],
             'routes' => [
                 'home' => [
                     'uri' => 'home',
@@ -616,6 +620,10 @@ class ZiggyTest extends TestCase
             'url' => 'http://ziggy.dev',
             'port' => null,
             'defaults' => [],
+            'errors' => [
+                'graceful' => true,
+                'fallback_url' => '#',
+            ],
             'routes' => [
                 'postComments.index' => [
                     'uri' => 'posts/{post}/comments',
