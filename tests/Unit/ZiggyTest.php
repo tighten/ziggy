@@ -641,7 +641,7 @@ class ZiggyTest extends TestCase
             ],
         ];
 
-        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"parameters":["post"]},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"parameters":["post","comment"],"bindings":{"comment":"uuid"}}}}';
+        $json = '{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"errors":{"graceful":false,"fallback_url":"#"},"routes":{"postComments.index":{"uri":"posts\/{post}\/comments","methods":["GET","HEAD"],"parameters":["post"]},"postComments.show":{"uri":"posts\/{post}\/comments\/{comment}","methods":["GET","HEAD"],"parameters":["post","comment"],"bindings":{"comment":"uuid"}}}}';
 
         $this->assertSame($expected, json_decode(json_encode(new Ziggy), true));
         $this->assertSame($json, json_encode(new Ziggy));
