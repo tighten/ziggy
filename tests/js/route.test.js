@@ -15,6 +15,10 @@ const defaultZiggy = {
     url: 'https://ziggy.dev',
     port: null,
     defaults: { locale: 'en' },
+    errors: {
+        graceful: false,
+        fallback_url: "#"
+    },
     routes: {
         home: {
             uri: '/',
@@ -542,6 +546,10 @@ describe('route()', () => {
             url: 'http://notYourAverage.dev',
             port: null,
             defaults: { locale: 'en' },
+            errors: {
+                graceful: false,
+                fallback_url: "#"
+            },
             routes: {
                 'tightenDev.packages.index': {
                     uri: 'tightenDev/{dev}/packages',
@@ -820,6 +828,10 @@ describe('current()', () => {
         const config = {
             url: 'https://ziggy.dev',
             port: null,
+            errors: {
+                graceful: false,
+                fallback_url: "#"
+            },
             routes: {
                 'events.index': {
                     uri: 'events',
@@ -954,6 +966,10 @@ describe('current()', () => {
         const config = {
             url: 'https://ziggy.dev',
             port: null,
+            errors: {
+                graceful: false,
+                fallback_url: "#"
+            },
             routes: {
                 'workspaces.processes.index': {
                     uri: '{workspace}/processes',
@@ -1370,6 +1386,10 @@ describe('current()', () => {
         const config = {
             url: 'https://ziggy.dev',
             port: null,
+            errors: {
+                graceful: false,
+                fallback_url: "#"
+            },
             routes: {
                 'events.venues.show': {
                     uri: 'events/{event}/venues/{venue}',
