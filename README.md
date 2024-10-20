@@ -372,6 +372,14 @@ import App from './App.vue';
 createApp(App).use(ZiggyVue);
 ```
 
+In `vue 3` you need to use `inject` to access `route()`
+```
+<script setup>
+    import { inject } from "vue"
+    const route = inject('route')
+</script>
+```
+
 Now you can use the `route()` function anywhere in your Vue components and templates:
 
 ```vue
