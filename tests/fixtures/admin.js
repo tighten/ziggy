@@ -1,4 +1,4 @@
-const Ziggy = {"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"admin.dashboard":{"uri":"admin","methods":["GET","HEAD"]}}};
+const Ziggy = {"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"errors":{"graceful":false,"fallback_url":"#"},"routes":{"admin.dashboard":{"uri":"admin","methods":["GET","HEAD"]}}};
 if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
     Object.assign(Ziggy.routes, window.Ziggy.routes);
 }
