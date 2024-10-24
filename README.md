@@ -44,7 +44,7 @@ Add the `@routes` Blade directive to your main layout (_before_ your application
 
 ### `route()` function
 
-Ziggy's `route()` function works like [Laravel's `route()` helper](https://laravel.com/docs/10.x/helpers#method-route)—you can pass it the name of a route, and the parameters you want to pass to the route, and it will generate a URL.
+Ziggy's `route()` function works like [Laravel's `route()` helper](https://laravel.com/docs/helpers#method-route)—you can pass it the name of a route, and the parameters you want to pass to the route, and it will generate a URL.
 
 #### Basic usage
 
