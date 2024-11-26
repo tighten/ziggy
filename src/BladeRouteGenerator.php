@@ -9,7 +9,7 @@ class BladeRouteGenerator
 {
     public static $generated;
 
-    public function generate($group = null, string $nonce = null): string
+    public function generate($group = null, ?string $nonce = null): string
     {
         $ziggy = new Ziggy($group);
 
