@@ -7,17 +7,23 @@ export function route(name, params, absolute, config) {
 }
 
 export const ZiggyVue = {
-    install(app, options) {
+    install(app, pluginOptions = {}) {
+        const {
+            globalRouteFnName = 'route',
+            injectRouteFnName = 'route',
+            ...options
+        } = pluginOptions;
+
         const r = (name, params, absolute, config = options) =>
             route(name, params, absolute, config);
 
         if (parseInt(app.version) > 2) {
-            app.config.globalProperties.route = r;
-            app.provide('route', r);
+            app.config.globalProperties[globalRouteFnName] = r;
+            app.provide(injectRouteFnName, r);
         } else {
             app.mixin({
                 methods: {
-                    route: r,
+                    [globalRouteFnName]: r,
                 },
             });
         }

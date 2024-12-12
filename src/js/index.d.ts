@@ -158,6 +158,8 @@ interface Config {
         pathname?: string;
         search?: string;
     };
+    globalRouteFnName?: string;
+    injectRouteFnName?: string;
 }
 
 /**

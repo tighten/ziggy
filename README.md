@@ -388,6 +388,17 @@ const route = inject('route');
 </script>
 ```
 
+With `<script setup lang="ts">` you can use TypeScript to type the `route` function:
+
+```vue
+<script setup>
+import { inject } from 'vue';
+import { route as routeFn } from 'ziggy-js'
+
+const route = inject<typeof routeFn>('route')
+</script>
+```
+
 If you are not using the `@routes` Blade directive, import Ziggy's configuration too and pass it to `.use()`:
 
 ```js
@@ -408,6 +419,19 @@ declare module 'vue' {
     }
 }
 ```
+
+If you want to change the name of the `route` global or inject, you can pass a custom name to the `ZiggyVue` plugin:
+
+```js
+createApp(App).use(ZiggyVue, {
+    globalRouteFnName: '$route', // Default is `"route"`
+    injectRouteFnName: '$route', // Default is `"route"`
+});
+```
+
+> [!NOTE]
+> If changing the `globalRouteFnName`, make sure to update `ComponentCustomProperties` in your `.d.ts` file accordingly.  
+> If changing the `injectRouteFnName`, make sure to update the `inject` call in your Vue components accordingly.
 
 ### React
 
