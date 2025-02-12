@@ -171,6 +171,8 @@ route().current('events.*');     // true
 route().current('events.show');  // false
 ```
 
+> Note: If you [filter which routes are sent to Ziggy on the frontend](#filtering-routes), only those routes will be available to the `Router` class on the frontend. As a result, calling `route().current()` on a route that has been filtered out will return `undefined`.
+
 `route().current()` optionally accepts parameters as its second argument, and will check that their values also match in the current URL:
 
 ```js
