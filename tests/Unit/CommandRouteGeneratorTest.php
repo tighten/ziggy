@@ -119,18 +119,18 @@ test('generate dts file', function () {
     if (windows_os()) {
         // `json_encode` always uses Unix line endings
         file_put_contents(
-            base_path('resources/js/ziggy.d.ts'),
-            preg_replace('/\r?\n/', "\r\n", file_get_contents(base_path('resources/js/ziggy.d.ts'))),
+            base_path('resources/js/ziggy-types.d.ts'),
+            preg_replace('/\r?\n/', "\r\n", file_get_contents(base_path('resources/js/ziggy-types.d.ts'))),
         );
     }
 
-    expect(base_path('resources/js/ziggy.d.ts'))->toEqualFile('./tests/fixtures/ziggy.d.ts');
+    expect(base_path('resources/js/ziggy-types.d.ts'))->toEqualFile('./tests/fixtures/ziggy-types.d.ts');
 });
 
 test('generate dts file without generating routes file', function () {
     artisan('ziggy:generate --types-only');
 
-    expect(base_path('resources/js/ziggy.d.ts'))->toBeFile();
+    expect(base_path('resources/js/ziggy-types.d.ts'))->toBeFile();
     expect(base_path('resources/js/ziggy.js'))->not->toBeFile();
 });
 
@@ -140,7 +140,7 @@ test('infer dts file name from routes file name', function () {
     artisan('ziggy:generate --types-only');
 
     expect(base_path('resources/js/custom.d.ts'))->toBeFile();
-    expect(base_path('resources/js/ziggy.d.ts'))->not->toBeFile();
+    expect(base_path('resources/js/ziggy-types.d.ts'))->not->toBeFile();
 });
 
 test('generate correct routes and dts files based on provided arguments', function (string $args, array $files) {
@@ -157,7 +157,7 @@ test('generate correct routes and dts files based on provided arguments', functi
     ['resources/js/y.ts --types', ['resources/js/y.js', 'resources/js/y.d.ts']],
     ['resources/js/z.d.ts --types', ['resources/js/z.js', 'resources/js/z.d.ts']],
     ['resources/scripts/foo --types', ['resources/scripts/foo.js', 'resources/scripts/foo.d.ts']],
-    ['resources/js --types', ['resources/js/ziggy.js', 'resources/js/ziggy.d.ts']],
+    ['resources/js --types', ['resources/js/ziggy.js', 'resources/js/ziggy-types.d.ts']],
 ]);
 
 class CustomFile extends File
