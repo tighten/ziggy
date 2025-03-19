@@ -139,7 +139,7 @@ test('infer dts file name from routes file name', function () {
 
     artisan('ziggy:generate --types-only');
 
-    expect(base_path('resources/js/custom.d.ts'))->toBeFile();
+    expect(base_path('resources/js/custom-types.d.ts'))->toBeFile();
     expect(base_path('resources/js/ziggy-types.d.ts'))->not->toBeFile();
 });
 
@@ -153,10 +153,10 @@ test('generate correct routes and dts files based on provided arguments', functi
 
     expect(array_map(base_path(...), $files))->each->toBeFile();
 })->with([
-    ['resources/js/x.js --types', ['resources/js/x.js', 'resources/js/x.d.ts']],
-    ['resources/js/y.ts --types', ['resources/js/y.js', 'resources/js/y.d.ts']],
-    ['resources/js/z.d.ts --types', ['resources/js/z.js', 'resources/js/z.d.ts']],
-    ['resources/scripts/foo --types', ['resources/scripts/foo.js', 'resources/scripts/foo.d.ts']],
+    ['resources/js/x.js --types', ['resources/js/x.js', 'resources/js/x-types.d.ts']],
+    ['resources/js/y.ts --types', ['resources/js/y.js', 'resources/js/y-types.d.ts']],
+    ['resources/js/z.d.ts --types', ['resources/js/z.js', 'resources/js/z-types.d.ts']],
+    ['resources/scripts/foo --types', ['resources/scripts/foo.js', 'resources/scripts/foo-types.d.ts']],
     ['resources/js --types', ['resources/js/ziggy.js', 'resources/js/ziggy-types.d.ts']],
 ]);
 
