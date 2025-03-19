@@ -124,7 +124,7 @@ test('generate dts file', function () {
         );
     }
 
-    expect(base_path('resources/js/ziggy-types.d.ts'))->toEqualFile('./tests/fixtures/ziggy-types.d.ts');
+    expect(base_path('resources/js/ziggy-types.d.ts'))->toEqualFile('./tests/fixtures/ziggy.d.ts');
 });
 
 test('generate dts file without generating routes file', function () {
