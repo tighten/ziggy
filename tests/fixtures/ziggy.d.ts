@@ -31,4 +31,4 @@ declare module 'ziggy-js' {
     ]
 }
 }
-export {};
+export { Ziggy } from 'ziggy-js';
