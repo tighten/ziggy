@@ -23,7 +23,7 @@ class Types implements Stringable
         declare module 'ziggy-js' {
           interface RouteList {$routes->toJson(JSON_PRETTY_PRINT)}
         }
-        export {};
+        export { Ziggy } from 'ziggy-js';
 
         JAVASCRIPT;
     }
