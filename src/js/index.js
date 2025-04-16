@@ -25,6 +25,13 @@ export const ZiggyVue = {
 };
 
 export function useRoute(defaultConfig) {
+    if (!globalThis.Ziggy) {
+        const ziggyJson = document.getElementById('Ziggy_routes').textContent;
+        if (ziggyJson) {
+            globalThis.Ziggy = JSON.parse(ziggyJson);
+        }
+    }
+
     if (!defaultConfig && !globalThis.Ziggy && typeof Ziggy === 'undefined') {
         throw new Error(
             'Ziggy error: missing configuration. Ensure that a `Ziggy` variable is defined globally or pass a config object into the useRoute hook.',

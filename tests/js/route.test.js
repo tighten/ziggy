@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
-import { route } from '../../src/js';
+import { route, useRoute } from '../../src/js';
 // import { route } from '../../dist/index.esm.js';
 // import { route } from '../../dist/index.js';
 // import route from '../../dist/route.umd.js';
@@ -1501,5 +1501,22 @@ describe('current()', () => {
         expect(route(undefined, undefined, undefined, config).current()).toBe('events.venues.show');
 
         global.window = oldWindow;
+    });
+});
+
+describe('route() with routes loaded from JSON', () => {
+    test('can generate a URL when routes are loaded from a JSON element', () => {
+        const scriptElement = document.createElement('script');
+        scriptElement.id = 'Ziggy_routes';
+        scriptElement.type = 'application/json';
+        scriptElement.textContent = JSON.stringify(defaultZiggy);
+        document.body.appendChild(scriptElement);
+
+        global.Ziggy = undefined;
+
+        const configuredRoute = useRoute();
+        expect(configuredRoute('posts.index')).toBe('https://ziggy.dev/posts');
+
+        document.body.removeChild(scriptElement);
     });
 });
