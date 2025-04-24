@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
-import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { route, useRoute } from '../../src/js';
+import { ZiggyVue } from '../../src/js';
+
 // import { route } from '../../dist/index.esm.js';
 // import { route } from '../../dist/index.js';
 // import route from '../../dist/route.umd.js';
@@ -1518,5 +1520,27 @@ describe('route() with routes loaded from JSON', () => {
         expect(configuredRoute('posts.index')).toBe('https://ziggy.dev/posts');
 
         document.body.removeChild(scriptElement);
+    });
+});
+
+describe('ZiggyVue', () => {
+    test('initializes window.route function', () => {
+        // Mock the Vue app object
+        const mockApp = {
+            version: '3.0',
+            config: {
+                globalProperties: {},
+            },
+            provide: vi.fn(),
+        };
+
+        // Ensure window.route is undefined before initialization
+        delete window.route;
+
+        // Install ZiggyVue
+        ZiggyVue.install(mockApp, {});
+
+        // Assert that window.route is defined
+        expect(typeof window.route).toBe('function');
     });
 });
