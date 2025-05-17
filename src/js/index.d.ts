@@ -171,7 +171,7 @@ interface ParsedQs {
  */
 interface Router {
     current(): ValidRouteName | undefined;
-    current<T extends ValidRouteName>(name: T, params?: ParameterValue | RouteParams<T>): boolean;
+    current<T extends RouteName>(name: T, params?: ParameterValue | RouteParams<T>): boolean;
     get params(): Record<string, string>;
     get routeParams(): Record<string, string>;
     get queryParams(): ParsedQs;

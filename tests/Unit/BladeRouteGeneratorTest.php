@@ -89,7 +89,7 @@ test('generate route config for groups', function (array $groups, array $names) 
 ]);
 
 test('render csp nonce', function () {
-    expect((new BladeRouteGenerator)->generate(false, 'test-nonce'))
+    expect((new BladeRouteGenerator)->generate(nonce: 'test-nonce'))
         ->toContain('<script type="text/javascript" nonce="test-nonce">');
 });
 

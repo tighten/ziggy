@@ -89,6 +89,8 @@ assertType(route().has(''));
 // Test router getter autocompletion
 assertType(route().params);
 
+// These should NOT error in strict mode
+assertType(route().current('posts.*'));
 assertType(route().current('missing', { foo: 1 }));
 
 // @ts-expect-error missing required 'post' parameter

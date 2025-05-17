@@ -24,7 +24,7 @@ class Ziggy implements JsonSerializable
     protected Collection $routes;
 
     public function __construct(
-        protected $group = null,
+        protected array|string|null $group = null,
         protected ?string $url = null,
     ) {
         $this->url = rtrim($url ?? url('/'), '/');
