@@ -2,6 +2,7 @@
 
 namespace Tighten\Ziggy;
 
+use Tighten\Ziggy\Output\Json;
 use Tighten\Ziggy\Output\MergeScript;
 use Tighten\Ziggy\Output\Script;
 
@@ -15,8 +16,14 @@ class BladeRouteGenerator
 
         $nonce = $nonce ? " nonce=\"{$nonce}\"" : '';
 
+        if ($asJson) {
+            $output = config('ziggy.output.json', Json::class);
+
+            return (string) new $output($ziggy, $nonce);
+        }
+
         if (static::$generated) {
-            return (string) $this->generateMergeJavascript($ziggy, $nonce, $asJson);
+            return (string) $this->generateMergeJavascript($ziggy, $nonce);
         }
 
         static::$generated = true;
@@ -25,13 +32,13 @@ class BladeRouteGenerator
 
         $routeFunction = config('ziggy.skip-route-function') ? '' : file_get_contents(__DIR__ . '/../dist/route.umd.js');
 
-        return (string) new $output($ziggy, $routeFunction, $nonce, $asJson);
+        return (string) new $output($ziggy, $routeFunction, $nonce);
     }
 
-    private function generateMergeJavascript(Ziggy $ziggy, string $nonce, bool $asJson)
+    private function generateMergeJavascript(Ziggy $ziggy, string $nonce)
     {
         $output = config('ziggy.output.merge_script', MergeScript::class);
 
-        return new $output($ziggy, $nonce, $asJson);
+        return new $output($ziggy, $nonce);
     }
 }

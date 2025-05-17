@@ -5,7 +5,7 @@ namespace Tighten\Ziggy\Output;
 use Stringable;
 use Tighten\Ziggy\Ziggy;
 
-class MergeScript implements Stringable
+class Json implements Stringable
 {
     public function __construct(
         protected Ziggy $ziggy,
@@ -14,10 +14,8 @@ class MergeScript implements Stringable
 
     public function __toString(): string
     {
-        $routes = json_encode($this->ziggy->toArray()['routes']);
-
         return <<<HTML
-        <script type="text/javascript"{$this->nonce}>Object.assign(Ziggy.routes,{$routes});</script>
+        <script id="Ziggy_routes" type="application/json"{$this->nonce}>{$this->ziggy->toJson()}</script>
         HTML;
     }
 }
