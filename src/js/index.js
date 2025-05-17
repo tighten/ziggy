@@ -33,7 +33,7 @@ export function useRoute(defaultConfig) {
         !defaultConfig &&
         !globalThis.Ziggy &&
         typeof Ziggy === 'undefined' &&
-        !document.getElementById('Ziggy_routes').textContent
+        !document.getElementById('ziggy-routes-json')
     ) {
         throw new Error(
             'Ziggy error: missing configuration. Ensure that a `Ziggy` variable is defined globally or pass a config object into the useRoute hook.',

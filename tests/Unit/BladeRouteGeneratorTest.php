@@ -93,9 +93,10 @@ test('render csp nonce', function () {
         ->toContain('<script type="text/javascript" nonce="test-nonce">');
 });
 
-test('render as json', function () {
-    expect((new BladeRouteGenerator)->generate(false, null, true))
-        ->toContain('<script id="Ziggy_routes" type="application/json">');
+test('render JSON', function () {
+    expect((new BladeRouteGenerator)->generate(json: true))
+        ->toContain('<script id="ziggy-routes-json" type="application/json">')
+        ->not->toContain('function');
 });
 
 test('render script tag', function () {

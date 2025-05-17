@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { route, useRoute } from '../../src/js';
+import { route } from '../../src/js';
 import { ZiggyVue } from '../../src/js';
 
 // import { route } from '../../dist/index.esm.js';
@@ -1506,20 +1506,33 @@ describe('current()', () => {
     });
 });
 
-describe('route() with routes loaded from JSON', () => {
-    test('can generate a URL when routes are loaded from a JSON element', () => {
-        const scriptElement = document.createElement('script');
-        scriptElement.id = 'Ziggy_routes';
-        scriptElement.type = 'application/json';
-        scriptElement.textContent = JSON.stringify(defaultZiggy);
-        document.body.appendChild(scriptElement);
-
+describe('json', () => {
+    test('generate a URL with routes loaded from JSON', () => {
+        let script = document.createElement('script');
+        script.id = 'ziggy-routes-json';
+        script.type = 'application/json';
+        script.textContent = JSON.stringify(defaultZiggy);
+        document.head.appendChild(script);
         global.Ziggy = undefined;
 
-        const configuredRoute = useRoute();
-        expect(configuredRoute('posts.index')).toBe('https://ziggy.dev/posts');
+        expect(route('posts.index')).toBe('https://ziggy.dev/posts');
 
-        document.body.removeChild(scriptElement);
+        document.head.removeChild(script);
+    });
+
+    test.only('only parse JSON routes once', () => {
+        let script = document.createElement('script');
+        script.id = 'ziggy-routes-json';
+        script.type = 'application/json';
+        script.textContent = JSON.stringify(defaultZiggy);
+        document.head.appendChild(script);
+        global.Ziggy = undefined;
+
+        expect(route('posts.index')).toBe('https://ziggy.dev/posts');
+
+        document.head.removeChild(script);
+
+        expect(route('posts.show', 1)).toBe('https://ziggy.dev/posts/1');
     });
 });
 

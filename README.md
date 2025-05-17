@@ -526,16 +526,16 @@ If your application is using [TLS/SSL termination](https://en.wikipedia.org/wiki
 
 ### Using `@routes` with a Content Security Policy
 
-A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) may block inline scripts, including those output by Ziggy's `@routes` Blade directive. If you have a CSP, you can request that the directive inlines the routes as a JSON object rather than a JavaScript, which is permitted under CSP:
-
-```php
-@routes(asJson: true)
-```
-
-Alternatively, if you are using a nonce to flag safe inline scripts, you can pass the nonce to the `@routes` directive and it will be added to Ziggy's script tag:
+A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) (CSP) may block inline scripts, including those output by Ziggy's `@routes` Blade directive. If you have a CSP and are using a nonce to flag safe inline scripts, you can pass the nonce to the `@routes` directive and it will be added to Ziggy's script tag:
 
 ```php
 @routes(nonce: 'your-nonce-here')
+```
+
+Alternatively, you can configure Ziggy to output your routes as plain JSON, rather than JavaScript, so that the output is ignored by the CSP. Note that if you use this option you will need to load Ziggy's JavaScript `route()` function yourself, by configuring the Vue plugin or React hook or importing the JavaScript manually.
+
+```php
+@routes(json: true)
 ```
 
 ### Disabling the `route()` helper

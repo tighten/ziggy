@@ -10,17 +10,17 @@ class BladeRouteGenerator
 {
     public static $generated;
 
-    public function generate($group = null, ?string $nonce = null, ?bool $asJson = false): string
+    public function generate($group = null, ?string $nonce = null, ?bool $json = false): string
     {
         $ziggy = new Ziggy($group);
 
-        $nonce = $nonce ? " nonce=\"{$nonce}\"" : '';
-
-        if ($asJson) {
+        if ($json) {
             $output = config('ziggy.output.json', Json::class);
 
-            return (string) new $output($ziggy, $nonce);
+            return (string) new $output($ziggy);
         }
+
+        $nonce = $nonce ? " nonce=\"{$nonce}\"" : '';
 
         if (static::$generated) {
             return (string) $this->generateMergeJavascript($ziggy, $nonce);

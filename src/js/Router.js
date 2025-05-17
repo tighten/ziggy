@@ -14,12 +14,17 @@ export default class Router extends String {
     constructor(name, params, absolute = true, config) {
         super();
 
-        this._config =
-            config ??
-            (typeof Ziggy !== 'undefined' ? Ziggy : globalThis?.Ziggy) ??
-            (typeof document !== 'undefined' && document.getElementById('Ziggy_routes')
-                ? JSON.parse(document.getElementById('Ziggy_routes').textContent)
-                : undefined);
+        this._config = config ?? (typeof Ziggy !== 'undefined' ? Ziggy : globalThis?.Ziggy);
+
+        if (
+            !this._config &&
+            typeof document !== 'undefined' &&
+            document.getElementById('ziggy-routes-json')
+        ) {
+            globalThis.Ziggy = JSON.parse(document.getElementById('ziggy-routes-json').textContent);
+            this._config = globalThis.Ziggy;
+        }
+
         this._config = { ...this._config, absolute };
 
         if (name) {
