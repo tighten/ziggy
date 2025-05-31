@@ -53,8 +53,7 @@
         "regex": "^_(?!query)"
     },
     "dependencies": {
-        "@types/qs": "^6.9.17",
-        "qs": "~6.9.7"
+        "neoqs": "^6.13.0"
     },
     "devDependencies": {
         "jsdom": "^26.1.0",

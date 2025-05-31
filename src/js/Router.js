@@ -1,4 +1,4 @@
-import { stringify } from 'qs';
+import { stringify } from 'neoqs';
 import Route from './Route.js';
 
 /**
