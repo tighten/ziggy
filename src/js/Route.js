@@ -74,8 +74,8 @@ export default class Route {
      * @param {String} url - URL to check.
      * @return {Object|false} - If this route matches, returns the matched parameters.
      */
-    matchesUrl(url) {
-        if (!this.definition.methods.includes('GET')) return false;
+    matchesUrl(url, method = 'GET') {
+        if (!this.definition.methods.includes(method)) return false;
 
         // Transform the route's template into a regex that will match a hydrated URL,
         // by replacing its parameter segments with matchers for parameter values
