@@ -203,6 +203,29 @@ route().params; // { venue: '1', event: '2', hosts: 'all' }
 
 > Note: parameter values retrieved with `route().params` will always be returned as strings.
 
+#### Match url to get route name and params
+
+```js
+// Laravel route called 'post.update' with URI '/post/{post}'
+// axios response.request.responseURL is https://myapp.com/post/1
+
+route().match('/myapp.com/post/1');
+/* result:
+ *  {
+ *      name: 'posts.update',
+ *      params: {post: '1'},
+ *      query: {},
+ *      route: {
+ *          uri: 'posts/{post}',
+ *          methods: ['PUT'],
+ *          bindings: {
+ *              post: 'id',
+ *          },
+ *      },
+ *  }
+*/
+```
+
 ### Route-model binding
 
 Ziggy supports Laravel's [route-model binding](https://laravel.com/docs/routing#route-model-binding), and can even recognize custom route key names. If you pass `route()` a JavaScript object as a route parameter, Ziggy will use the registered route-model binding keys for that route to find the correct parameter value inside the object. If no route-model binding keys are explicitly registered for a parameter, Ziggy will use the object's `id` key.
