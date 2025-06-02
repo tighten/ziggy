@@ -1526,4 +1526,19 @@ describe('match()', () => {
             route: undefined
         });
     });
+
+    test('can get routes PUT requests by lower case', () => {
+        expect(route().match('ziggy.dev/posts/1', 'put')).toEqual({
+            name: 'posts.update',
+            params: {post: '1'},
+            query: {},
+            route: {
+                uri: 'posts/{post}',
+                methods: ['PUT'],
+                bindings: {
+                    post: 'id',
+                },
+            },
+        });
+    });
 });
