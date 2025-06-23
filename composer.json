@@ -26,7 +26,10 @@
     "require": {
         "php": ">=8.1",
         "ext-json": "*",
-        "laravel/framework": ">=9.0"
+        "illuminate/routing": ">=9.0",
+        "illuminate/support": ">=9.0",
+        "illuminate/container": ">=9.0",
+        "illuminate/contracts": ">=9.0"
     },
     "require-dev": {
         "laravel/folio": "^1.1",
