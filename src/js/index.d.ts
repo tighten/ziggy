@@ -208,6 +208,26 @@ export function route<T extends ValidRouteName>(
 ): string;
 
 /**
+ * Configuration manager for Ziggy.
+ */
+export declare class ZiggyConfig {
+    /**
+     * Get the default Ziggy configuration.
+     */
+    static get(): Config | null;
+
+    /**
+     * Set the default Ziggy configuration.
+     */
+    static set(config: Config | (() => Config)): void;
+
+    /**
+     * Set the default absolute URL flag.
+     */
+    static absolute(absolute: boolean): void;
+}
+
+/**
  * Ziggy's Vue plugin.
  */
 export const ZiggyVue: {

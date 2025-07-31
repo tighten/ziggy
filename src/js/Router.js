@@ -1,5 +1,6 @@
 import { stringify } from 'qs';
 import Route from './Route.js';
+import Config from './Config.js';
 
 /**
  * A collection of Laravel routes. This class constitutes Ziggy's main API.
@@ -10,19 +11,16 @@ export default class Router extends String {
      * @param {(String|Number|Array|Object)} [params] - Route parameters.
      * @param {Boolean} [absolute] - Whether to include the URL origin.
      * @param {Object} [config] - Ziggy configuration.
+     * @throws {Error} If no configuration is provided and no global Ziggy object is defined.
+     * @throws {Error} If the route name is not found in the configuration.
      */
-    constructor(name, params, absolute = true, config) {
+    constructor(name, params, absolute, config) {
         super();
 
-        this._config = config ?? (typeof Ziggy !== 'undefined' ? Ziggy : globalThis?.Ziggy);
-        this._config = { ...this._config, absolute };
+        this._config = new Config(config, absolute);
 
         if (name) {
-            if (!this._config.routes[name]) {
-                throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
-            }
-
-            this._route = new Route(name, this._config.routes[name], this._config);
+            this._route = new Route(name, this._config.route(name), this._config);
             this._params = this._parse(params);
         }
     }
@@ -71,7 +69,7 @@ export default class Router extends String {
         } else if (this._config.absolute && url.startsWith('/')) {
             // If we are using absolute URLs and a relative URL
             // is passed, prefix the host to make it absolute
-            url = this._location().host + url;
+            url = this._config.location.host + url;
         }
 
         let matchedParams = {};
@@ -84,7 +82,7 @@ export default class Router extends String {
     }
 
     _currentUrl() {
-        const { host, pathname, search } = this._location();
+        const { host, pathname, search } = this._config.location;
 
         return (
             (this._config.absolute
@@ -162,26 +160,6 @@ export default class Router extends String {
     }
 
     /**
-     * Get an object representing the current location (by default this will be
-     * the JavaScript `window` global if it's available).
-     *
-     * @return {Object}
-     */
-    _location() {
-        const {
-            host = '',
-            pathname = '',
-            search = '',
-        } = typeof window !== 'undefined' ? window.location : {};
-
-        return {
-            host: this._config.location?.host ?? host,
-            pathname: this._config.location?.pathname ?? pathname,
-            search: this._config.location?.search ?? search,
-        };
-    }
-
-    /**
      * Get all parameter values from the current window URL.
      *
      * @example
@@ -211,7 +189,7 @@ export default class Router extends String {
      * @return {Boolean}
      */
     has(name) {
-        return this._config.routes.hasOwnProperty(name);
+        return this._config.hasRoute(name);
     }
 
     /**
@@ -261,29 +239,12 @@ export default class Router extends String {
             params = { [segments[0].name]: params };
         }
 
+        const parameterNames = route.parameterSegments.map(({ name }) => name);
+
         return {
-            ...this._defaults(route),
+            ...this._config.default(parameterNames),
             ...this._substituteBindings(params, route),
         };
-    }
-
-    /**
-     * Populate default parameters for the given route.
-     *
-     * @example
-     * // with default parameters { locale: 'en', country: 'US' } and 'posts.show' route '{locale}/posts/{post}'
-     * defaults(...); // { locale: 'en' }
-     *
-     * @param {Route} route
-     * @return {Object} Default route parameters.
-     */
-    _defaults(route) {
-        return route.parameterSegments
-            .filter(({ name }) => this._config.defaults[name])
-            .reduce(
-                (result, { name }, i) => ({ ...result, [name]: this._config.defaults[name] }),
-                {},
-            );
     }
 
     /**

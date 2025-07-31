@@ -1,4 +1,5 @@
 import { parse } from 'qs';
+import Config from './Config.js';
 
 /**
  * A Laravel route. This class represents one route and its configuration and metadata.
@@ -7,7 +8,7 @@ export default class Route {
     /**
      * @param {String} name - Route name.
      * @param {Object} definition - Route definition.
-     * @param {Object} config - Ziggy configuration.
+     * @param {Config} config - Ziggy configuration.
      */
     constructor(name, definition, config) {
         this.name = name;
@@ -45,7 +46,7 @@ export default class Route {
         return !this.config.absolute
             ? ''
             : this.definition.domain
-              ? `${this.config.url.match(/^\w+:\/\//)[0]}${this.definition.domain}${
+              ? `${this.config.protocol}${this.definition.domain}${
                     this.config.port ? `:${this.config.port}` : ''
                 }`
               : this.config.url;

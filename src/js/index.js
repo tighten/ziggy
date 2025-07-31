@@ -1,4 +1,5 @@
 import Router from './Router.js';
+import ZiggyConfig from './Config.js';
 
 export function route(name, params, absolute, config) {
     const router = new Router(name, params, absolute, config);
@@ -34,3 +35,5 @@ export function useRoute(defaultConfig) {
     return (name, params, absolute, config = defaultConfig) =>
         route(name, params, absolute, config);
 }
+
+export { ZiggyConfig };

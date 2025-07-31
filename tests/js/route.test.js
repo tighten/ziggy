@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
-import { route } from '../../src/js';
+import { route, ZiggyConfig } from '../../src/js';
 // import { route } from '../../dist/index.esm.js';
 // import { route } from '../../dist/index.js';
 // import route from '../../dist/route.umd.js';
@@ -837,6 +837,106 @@ describe('route()', () => {
 
         // Laravel does encode '$', but encodeURI() doesn't
         expect(route('pages', 'a$b')).toBe('https://ziggy.dev/a%24b');
+    });
+});
+
+describe('route() with ZiggyConfig', () => {
+    const customConfig = {
+        url: 'https://config.ziggy.dev',
+        port: null,
+        defaults: { theme: 'dark' },
+        routes: {
+            home: {
+                uri: 'dashboard',
+                methods: ['GET', 'HEAD'],
+            },
+            'page.show': {
+                uri: 'page/{id}',
+                methods: ['GET', 'HEAD'],
+            },
+        },
+    };
+
+    beforeEach(() => {
+        // Reset any global Config settings before each test
+        ZiggyConfig.set(() => customConfig);
+        ZiggyConfig.absolute(true);
+        delete global.Ziggy;
+    });
+
+    test('can set default configuration using ZiggyConfig.set() with function', () => {
+        expect(route('home')).toBe('https://config.ziggy.dev/dashboard');
+    });
+
+    test('can set default configuration using ZiggyConfig.set() with object', () => {
+        ZiggyConfig.set(customConfig);
+
+        expect(route('page.show', { id: 1 })).toBe('https://config.ziggy.dev/page/1');
+    });
+
+    test('can get default configuration using ZiggyConfig.get()', () => {
+        expect(ZiggyConfig.get()).toEqual(customConfig);
+    });
+
+    test('can set default absolute URL flag using ZiggyConfig.absolute()', () => {
+        ZiggyConfig.absolute(false);
+
+        expect(route('home')).toBe('/dashboard');
+    });
+
+    test('can override default config object per route call', () => {
+        const defaultZiggy = {
+            url: 'https://ziggy.dev',
+            port: null,
+            defaults: { locale: 'en' },
+            routes: {
+                home: {
+                    uri: '/',
+                    methods: ['GET', 'HEAD'],
+                },
+            },
+        };
+
+        // Override default config
+        expect(route('home', undefined, undefined, defaultZiggy)).toBe('https://ziggy.dev');
+
+        // Use default
+        expect(route('home')).toBe('https://config.ziggy.dev/dashboard');
+    });
+
+    test('can override default absolute flag per route call', () => {
+        ZiggyConfig.absolute(false);
+
+        // Override default absolute flag
+        expect(route('page.show', { id: 2 }, true)).toBe('https://config.ziggy.dev/page/2');
+
+        // Use default
+        expect(route('page.show', { id: 2 })).toBe('/page/2');
+    });
+
+    test('ZiggyConfig.set() throws error for invalid config type', () => {
+        expect(() => ZiggyConfig.set()).toThrow(
+            'Ziggy error: Invalid config type. Expected an object or a function.',
+        );
+
+        expect(() => ZiggyConfig.set('invalid')).toThrow(
+            'Ziggy error: Invalid config type. Expected an object or a function.',
+        );
+
+        expect(() => ZiggyConfig.set(123)).toThrow(
+            'Ziggy error: Invalid config type. Expected an object or a function.',
+        );
+
+        expect(() => ZiggyConfig.set(true)).toThrow(
+            'Ziggy error: Invalid config type. Expected an object or a function.',
+        );
+    });
+
+    test('ZiggyConfig.get() returns undefined when no global Ziggy config is set', () => {
+        // Reset config back to default global getter
+        ZiggyConfig.set(() => (typeof Ziggy !== 'undefined' ? Ziggy : globalThis?.Ziggy));
+
+        expect(ZiggyConfig.get()).toBeUndefined();
     });
 });
 
