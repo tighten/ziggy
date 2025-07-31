@@ -180,17 +180,22 @@ export default class Config {
      * @return {Object}
      */
     get location() {
-        const {
-            host = '',
-            pathname = '',
-            search = '',
-        } = typeof window !== 'undefined' ? window.location : {};
+        const windowLocation = typeof window !== 'undefined' ? window.location : {};
+        let configLocation = this._config.location || {};
 
-        const location = this._config.location ?? {};
+        if (typeof configLocation === 'string') {
+            try {
+                const { host, pathname, search } = new URL(configLocation);
+                configLocation = { host, pathname, search };
+            } catch (e) {
+                configLocation = {};
+            }
+        }
 
         return {
-            ...{ host, pathname, search },
-            ...location,
+            host: configLocation.host ?? windowLocation.host ?? '',
+            pathname: configLocation.pathname ?? windowLocation.pathname ?? '',
+            search: configLocation.search ?? windowLocation.search ?? '',
         };
     }
 

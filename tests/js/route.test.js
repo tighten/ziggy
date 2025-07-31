@@ -611,6 +611,28 @@ describe('route()', () => {
         );
     });
 
+    test('can accept string location from Ziggy configuration', () => {
+        global.Ziggy.location = 'https://ziggy.dev/events/1/venues/2?vip=true';
+
+        global.window.location.host = 'ziggy.dev';
+        global.window.location.pathname = '/posts/4';
+        global.window.location.search = '?vip=false';
+
+        expect(route().params).toStrictEqual({ event: '1', venue: '2', vip: 'true' });
+    });
+
+    test('can handle invalid string location from Ziggy configuration', () => {
+        global.Ziggy.location = 'invalid-url';
+
+        global.window.location.host = 'ziggy.dev';
+        global.window.location.pathname = '/posts/4';
+        global.window.location.search = '?vip=false';
+
+        // Should work normally when string location is invalid
+        expect(() => route()).not.toThrow();
+        expect(route().params).toStrictEqual({ post: '4', vip: 'false' });
+    });
+
     test('can extract parameters for an app installed in a subfolder', () => {
         global.Ziggy.url = 'https://ziggy.dev/subfolder';
 
