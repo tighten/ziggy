@@ -13,7 +13,7 @@ export interface TypeConfig {}
 /**
  * A route name registered with Ziggy.
  */
-type KnownRouteName = keyof RouteList;
+export type KnownRouteName = keyof RouteList;
 
 /**
  * A route name, or any string.
@@ -22,6 +22,12 @@ type RouteName = KnownRouteName | (string & {});
 // `(string & {})` prevents TypeScript from reducing this type to just `string`,
 // which would prevent intellisense from autocompleting known route names.
 // See https://stackoverflow.com/a/61048124/6484459.
+
+/**
+ * A URL string generated for a route.
+ * Can be used as a branded type if desired.
+ */
+export type RouteUrl = string;
 
 /**
  * A valid route name to pass to `route()` to generate a URL.
@@ -198,14 +204,14 @@ export function route<T extends ValidRouteName>(
     params?: RouteParams<T> | undefined,
     absolute?: boolean,
     config?: Config,
-): string;
+): RouteUrl;
 
 export function route<T extends ValidRouteName>(
     name: T,
     params?: ParameterValue | undefined,
     absolute?: boolean,
     config?: Config,
-): string;
+): RouteUrl;
 
 /**
  * Ziggy's Vue plugin.
