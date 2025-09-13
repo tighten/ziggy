@@ -24,6 +24,11 @@ type RouteName = KnownRouteName | (string & {});
 // See https://stackoverflow.com/a/61048124/6484459.
 
 /**
+ * A generated route URL string.
+ */
+export type RouteUrl = string;
+
+/**
  * A valid route name to pass to `route()` to generate a URL.
  */
 type ValidRouteName = TypeConfig extends { strictRouteNames: true } ? KnownRouteName : RouteName;
@@ -201,14 +206,14 @@ export function route<T extends ValidRouteName>(
     params?: RouteParams<T> | undefined,
     absolute?: boolean,
     config?: Config,
-): string;
+): RouteUrl;
 
 export function route<T extends ValidRouteName>(
     name: T,
     params?: ParameterValue | undefined,
     absolute?: boolean,
     config?: Config,
-): string;
+): RouteUrl;
 
 /**
  * Ziggy's Vue plugin.
