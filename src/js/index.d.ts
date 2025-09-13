@@ -13,7 +13,7 @@ export interface TypeConfig {}
 /**
  * A route name registered with Ziggy.
  */
-export type KnownRouteName = keyof RouteList;
+type KnownRouteName = keyof RouteList;
 
 /**
  * A route name, or any string.
@@ -24,8 +24,7 @@ type RouteName = KnownRouteName | (string & {});
 // See https://stackoverflow.com/a/61048124/6484459.
 
 /**
- * A URL string generated for a route.
- * Can be used as a branded type if desired.
+ * A generated route URL string.
  */
 export type RouteUrl = string;
 
