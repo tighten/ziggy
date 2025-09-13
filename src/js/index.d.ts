@@ -53,7 +53,10 @@ type ParameterValue = RawParameterValue | DefaultRoutable;
  * A parseable route parameter, either plain or nested inside an object under its binding key.
  */
 type Routable<I extends ParameterInfo> = I extends { binding: string }
-    ? ({ [K in I['binding']]: RawParameterValue } & Record<keyof any, unknown>) | RawParameterValue
+    ?
+          | { [K in I['binding']]: RawParameterValue }
+          | ({ [K in I['binding']]: RawParameterValue } & Record<keyof any, unknown>)
+          | RawParameterValue
     : ParameterValue;
 
 // Uncomment to test:
