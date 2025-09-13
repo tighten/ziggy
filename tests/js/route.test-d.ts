@@ -49,6 +49,14 @@ assertType(route('posts.comments.show', { comment: { foo: 'bar' } }));
 // parameter has an explicit 'uuid' binding, so that's required :)
 assertType(route('posts.comments.show', { comment: { id: 2 } }));
 
+// Interfaces
+interface Model {
+    uuid: string;
+    foo: string;
+}
+let comment: Model = { uuid: '123', foo: 'bar' };
+assertType(route('posts.comments.show', { comment, post: '1' }));
+
 // Plain values
 assertType(route('posts.comments.show', 2));
 assertType(route('posts.comments.show', 'foo'));
