@@ -41,13 +41,6 @@ assertType(route('posts.comments.show', { post: { foo: 'bar' } }));
 // Binding/'routable' object example with custom 'uuid' binding
 assertType(route('posts.comments.show', { comment: { uuid: 1 }, post: '1' }));
 // Allows extra nested object properties
-interface Test {
-    uuid: number;
-    foo: string;
-}
-
-const comment: Test = { uuid: 1, foo: 'bar' };
-assertType(route('posts.comments.show', { comment, post: '1' }));
 assertType(route('posts.comments.show', { comment: { uuid: 1, foo: 'bar' }, post: '1' }));
 // @ts-expect-error missing 'uuid' key in comment parameter object
 assertType(route('posts.comments.show', { comment: { foo: 'bar' } }));
@@ -55,6 +48,14 @@ assertType(route('posts.comments.show', { comment: { foo: 'bar' } }));
 // 'id' doesn't fix it because 'id' is the default/fallback but this
 // parameter has an explicit 'uuid' binding, so that's required :)
 assertType(route('posts.comments.show', { comment: { id: 2 } }));
+
+// Interfaces
+interface Model {
+    uuid: string;
+    foo: string;
+}
+let comment: Model = { uuid: '123', foo: 'bar' };
+assertType(route('posts.comments.show', { comment, post: '1' }));
 
 // Plain values
 assertType(route('posts.comments.show', 2));
