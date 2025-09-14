@@ -546,6 +546,12 @@ A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CS
 @routes(nonce: 'your-nonce-here')
 ```
 
+Alternatively, you can configure Ziggy to output your routes as plain JSON, rather than JavaScript, so that the output is ignored by the CSP. Note that if you use this option you will need to load Ziggy's JavaScript `route()` function yourself, by configuring the Vue plugin or React hook or importing the JavaScript manually.
+
+```php
+@routes(json: true)
+```
+
 ### Disabling the `route()` helper
 
 If you only want to use the `@routes` directive to make Ziggy's configuration available in JavaScript, but don't need the `route()` helper function, set the `ziggy.skip-route-function` config to `true`.
