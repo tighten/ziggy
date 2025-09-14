@@ -1513,7 +1513,8 @@ describe('current()', () => {
     });
 
     test('url containing raw hash', () => {
-        // This specific case doesn't really matter because it's not valid, # is a URL anchor and can't be in the path like this
+        // This specific case may not matter because it's not valid, # is a URL anchor and
+        // can't be in the path like this, but in general this should work both ways
         global.window.location.pathname = '/slashes/foo/Arcbees_c#_doc.md';
 
         expect(route().current()).toBe('slashes');
