@@ -1504,8 +1504,17 @@ describe('current()', () => {
     });
 
     // https://github.com/tighten/ziggy/issues/844
-    test('url containing hash', () => {
+    test('url containing encoded hash', () => {
         global.window.location.pathname = '/slashes/foo/Arcbees_c%23_doc.md';
+
+        expect(route().current()).toBe('slashes');
+        expect(route().current('slashes', { slug: 'Arcbees_c#_doc.md' })).toBe(true);
+        expect(route().current('slashes', { slug: 'Arcbees_c%23_doc.md' })).toBe(true);
+    });
+
+    test('url containing raw hash', () => {
+        // This specific case doesn't really matter because it's not valid, # is a URL anchor and can't be in the path like this
+        global.window.location.pathname = '/slashes/foo/Arcbees_c#_doc.md';
 
         expect(route().current()).toBe('slashes');
         expect(route().current('slashes', { slug: 'Arcbees_c#_doc.md' })).toBe(true);
