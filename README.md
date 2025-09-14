@@ -287,6 +287,20 @@ If you don't have Ziggy's NPM package installed, add the following to your `jsco
 }
 ```
 
+#### Strict route name type checking
+
+By default, even when you generate type definitions to enable better autocompletion, Ziggy still allows passing any string to `route()`. You can optionally enable strict type checking of route names, so that calling `route()` with a route name Ziggy doensn't recognizes triggers a type error. To do so, extend Ziggy's `TypeConfig` interface and set `strictRouteNames` to `true`:
+
+```ts
+declare module 'ziggy-js' {
+  interface TypeConfig {
+    strictRouteNames: true
+  }
+}
+```
+
+Place this declaration in a `.d.ts` type definition file somewhere in your project. Depending on your setup, you may need to add an `export {};` statement to the end of file so TypeScript can pick it up.
+
 ## JavaScript frameworks
 
 > [!NOTE]
@@ -530,6 +544,12 @@ A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CS
 
 ```php
 @routes(nonce: 'your-nonce-here')
+```
+
+Alternatively, you can configure Ziggy to output your routes as plain JSON, rather than JavaScript, so that the output is ignored by the CSP. Note that if you use this option you will need to load Ziggy's JavaScript `route()` function yourself, by configuring the Vue plugin or React hook or importing the JavaScript manually.
+
+```php
+@routes(json: true)
 ```
 
 ### Disabling the `route()` helper

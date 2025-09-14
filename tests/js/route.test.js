@@ -1503,3 +1503,33 @@ describe('current()', () => {
         global.window = oldWindow;
     });
 });
+
+describe('json', () => {
+    test('generate a URL with routes loaded from JSON', () => {
+        let script = document.createElement('script');
+        script.id = 'ziggy-routes-json';
+        script.type = 'application/json';
+        script.textContent = JSON.stringify(defaultZiggy);
+        document.head.appendChild(script);
+        global.Ziggy = undefined;
+
+        expect(route('posts.index')).toBe('https://ziggy.dev/posts');
+
+        document.head.removeChild(script);
+    });
+
+    test('only parse JSON routes once', () => {
+        let script = document.createElement('script');
+        script.id = 'ziggy-routes-json';
+        script.type = 'application/json';
+        script.textContent = JSON.stringify(defaultZiggy);
+        document.head.appendChild(script);
+        global.Ziggy = undefined;
+
+        expect(route('posts.index')).toBe('https://ziggy.dev/posts');
+
+        document.head.removeChild(script);
+
+        expect(route('posts.show', 1)).toBe('https://ziggy.dev/posts/1');
+    });
+});
