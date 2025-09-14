@@ -150,7 +150,9 @@ export default class Router extends String {
         const isSubset = (subset, full) => {
             return Object.entries(subset).every(([key, value]) => {
                 if (Array.isArray(value) && Array.isArray(full[key])) {
-                    return value.every((v) => full[key].includes(v));
+                    return value.every(
+                        (v) => full[key].includes(v) || full[key].includes(decodeURIComponent(v)),
+                    );
                 }
 
                 if (
@@ -162,7 +164,7 @@ export default class Router extends String {
                     return isSubset(value, full[key]);
                 }
 
-                return full[key] == value;
+                return full[key] == value || full[key] == decodeURIComponent(value);
             });
         };
 
