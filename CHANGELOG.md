@@ -8,6 +8,22 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v2.6.0] - 2025-09-14
+
+**Added**
+
+* Support route model binding and interfaces by @christian98 in https://github.com/tighten/ziggy/pull/854
+* feat(typescript): add branded type for creating routes by @pataar in https://github.com/tighten/ziggy/pull/862
+* Add JSON option to `@routes` for improved CSP compatibility by @flexponsive in https://github.com/tighten/ziggy/pull/831
+
+**Fixed**
+
+* Fix current checks with encoded `#` in URL by @bakerkretzmar in https://github.com/tighten/ziggy/pull/863
+
+**Changed**
+
+* Replace `qs` by @benmccann in https://github.com/tighten/ziggy/pull/846
+
 ## [v2.5.3] - 2025-05-17
 
 **Fixed**
@@ -488,7 +504,8 @@ See [UPGRADING](UPGRADING.md#upgrading-from-1x-to-2x) for detailed upgrade instr
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v2.5.3...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v2.6.0...HEAD
+[v2.6.0]: https://github.com/tighten/ziggy/compare/v2.5.3...v2.6.0
 [v2.5.3]: https://github.com/tighten/ziggy/compare/v2.5.2...v2.5.3
 [v2.5.2]: https://github.com/tighten/ziggy/compare/v2.5.1...v2.5.2
 [v2.5.1]: https://github.com/tighten/ziggy/compare/v2.5.0...v2.5.1

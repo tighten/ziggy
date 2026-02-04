@@ -93,6 +93,12 @@ test('render csp nonce', function () {
         ->toContain('<script type="text/javascript" nonce="test-nonce">');
 });
 
+test('render JSON', function () {
+    expect((new BladeRouteGenerator)->generate(json: true))
+        ->toContain('<script id="ziggy-routes-json" type="application/json">')
+        ->not->toContain('function');
+});
+
 test('render script tag', function () {
     Route::get('posts', fn () => '')->name('posts.index');
 

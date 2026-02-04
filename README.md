@@ -10,23 +10,43 @@
 
 Ziggy provides a JavaScript `route()` function that works like Laravel's, making it a breeze to use your named Laravel routes in JavaScript.
 
-- [**Installation**](#installation)
-- [**Usage**](#usage)
+- [Ziggy – Use your Laravel routes in JavaScript](#ziggy--use-your-laravel-routes-in-javascript)
+  - [Installation](#installation)
+  - [Usage](#usage)
     - [`route()` function](#route-function)
+      - [Basic usage](#basic-usage)
+      - [Parameters](#parameters)
+      - [Multiple parameters](#multiple-parameters)
+      - [Query parameters](#query-parameters)
+      - [Default parameter values](#default-parameter-values)
+      - [Examples](#examples)
     - [`Router` class](#router-class)
+      - [Check the current route: `route().current()`](#check-the-current-route-routecurrent)
+      - [Check if a route exists: `route().has()`](#check-if-a-route-exists-routehas)
+      - [Retrieve the current route params: `route().params`](#retrieve-the-current-route-params-routeparams)
+      - [Match url to get route name and params](#match-url-to-get-route-name-and-params)
     - [Route-model binding](#route-model-binding)
     - [TypeScript](#typescript)
-- [**JavaScript frameworks**](#javascript-frameworks)
+      - [Strict route name type checking](#strict-route-name-type-checking)
+  - [JavaScript frameworks](#javascript-frameworks)
     - [Generating and importing Ziggy's configuration](#generating-and-importing-ziggys-configuration)
     - [Importing the `route()` function](#importing-the-route-function)
     - [Vue](#vue)
     - [React](#react)
     - [SPAs or separate repos](#spas-or-separate-repos)
-- [**Filtering Routes**](#filtering-routes)
+  - [Filtering Routes](#filtering-routes)
     - [Including/excluding routes](#includingexcluding-routes)
     - [Filtering with groups](#filtering-with-groups)
-- [**Other**](#other)
-- [**Contributing**](#contributing)
+  - [Other](#other)
+    - [TLS/SSL termination and trusted proxies](#tlsssl-termination-and-trusted-proxies)
+    - [Using `@routes` with a Content Security Policy](#using-routes-with-a-content-security-policy)
+    - [Disabling the `route()` helper](#disabling-the-route-helper)
+    - [Retrieving Ziggy's config from an API endpoint](#retrieving-ziggys-config-from-an-api-endpoint)
+    - [Re-generating the routes file when your app routes change](#re-generating-the-routes-file-when-your-app-routes-change)
+  - [Contributing](#contributing)
+  - [Credits](#credits)
+  - [Security](#security)
+  - [License](#license)
 
 ## Installation
 
@@ -209,7 +229,7 @@ route().params; // { venue: '1', event: '2', hosts: 'all' }
 // Laravel route called 'post.update' with URI '/post/{post}'
 // axios response.request.responseURL is https://myapp.com/post/1
 
-route().match('/myapp.com/post/1');
+route().match('/myapp.com/post/1', 'put');
 /* result:
  *  {
  *      name: 'posts.update',
@@ -309,6 +329,20 @@ If you don't have Ziggy's NPM package installed, add the following to your `jsco
     }
 }
 ```
+
+#### Strict route name type checking
+
+By default, even when you generate type definitions to enable better autocompletion, Ziggy still allows passing any string to `route()`. You can optionally enable strict type checking of route names, so that calling `route()` with a route name Ziggy doensn't recognizes triggers a type error. To do so, extend Ziggy's `TypeConfig` interface and set `strictRouteNames` to `true`:
+
+```ts
+declare module 'ziggy-js' {
+  interface TypeConfig {
+    strictRouteNames: true
+  }
+}
+```
+
+Place this declaration in a `.d.ts` type definition file somewhere in your project. Depending on your setup, you may need to add an `export {};` statement to the end of file so TypeScript can pick it up.
 
 ## JavaScript frameworks
 
@@ -553,6 +587,12 @@ A [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CS
 
 ```php
 @routes(nonce: 'your-nonce-here')
+```
+
+Alternatively, you can configure Ziggy to output your routes as plain JSON, rather than JavaScript, so that the output is ignored by the CSP. Note that if you use this option you will need to load Ziggy's JavaScript `route()` function yourself, by configuring the Vue plugin or React hook or importing the JavaScript manually.
+
+```php
+@routes(json: true)
 ```
 
 ### Disabling the `route()` helper

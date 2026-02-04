@@ -1,4 +1,4 @@
-import { stringify } from 'qs';
+import { stringify } from 'qs-esm';
 import Route from './Route.js';
 
 /**
@@ -15,6 +15,16 @@ export default class Router extends String {
         super();
 
         this._config = config ?? (typeof Ziggy !== 'undefined' ? Ziggy : globalThis?.Ziggy);
+
+        if (
+            !this._config &&
+            typeof document !== 'undefined' &&
+            document.getElementById('ziggy-routes-json')
+        ) {
+            globalThis.Ziggy = JSON.parse(document.getElementById('ziggy-routes-json').textContent);
+            this._config = globalThis.Ziggy;
+        }
+
         this._config = { ...this._config, absolute };
 
         if (name) {
@@ -140,7 +150,9 @@ export default class Router extends String {
         const isSubset = (subset, full) => {
             return Object.entries(subset).every(([key, value]) => {
                 if (Array.isArray(value) && Array.isArray(full[key])) {
-                    return value.every((v) => full[key].includes(v));
+                    return value.every(
+                        (v) => full[key].includes(v) || full[key].includes(decodeURIComponent(v)),
+                    );
                 }
 
                 if (
@@ -152,7 +164,7 @@ export default class Router extends String {
                     return isSubset(value, full[key]);
                 }
 
-                return full[key] == value;
+                return full[key] == value || full[key] == decodeURIComponent(value);
             });
         };
 
