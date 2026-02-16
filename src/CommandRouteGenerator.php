@@ -12,7 +12,7 @@ class CommandRouteGenerator extends Command
 {
     protected $signature = 'ziggy:generate
                             {path? : Path to the generated JavaScript file. Default: `resources/js/ziggy.js`.}
-                            {--types : Generate a TypeScript declaration file.}
+                            {--types=false : Generate a TypeScript declaration file at the given path. Default: `resources/js/ziggy.d.ts`.}
                             {--types-only : Generate only a TypeScript declaration file.}
                             {--url=}
                             {--group=}
@@ -47,10 +47,15 @@ class CommandRouteGenerator extends Command
             $filesystem->put(base_path("{$name}.js"), new $output($ziggy));
         }
 
-        if ($this->option('types') || $this->option('types-only')) {
+        if ($this->option('types') !== 'false' || $this->option('types-only')) {
             $types = config('ziggy.output.types', Types::class);
 
-            $filesystem->put(base_path("{$name}.d.ts"), new $types($ziggy));
+            $typesPath = match ($this->option('types')) {
+                'false', null => config('ziggy.output.types-path', "{$name}.d.ts"),
+                default => $this->option('types'),
+            };
+
+            $filesystem->put(base_path($typesPath), new $types($ziggy));
         }
 
         $this->info('Files generated!');
