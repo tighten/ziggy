@@ -8,6 +8,12 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v2.6.1] - 2026-02-16
+
+**Changed**
+
+* Allow specifying the name of the typescript declaration file by @bakerkretzmar in https://github.com/tighten/ziggy/pull/872
+
 ## [v2.6.0] - 2025-09-14
 
 **Added**
@@ -504,7 +510,8 @@ See [UPGRADING](UPGRADING.md#upgrading-from-1x-to-2x) for detailed upgrade instr
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v2.6.0...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v2.6.1...HEAD
+[v2.6.1]: https://github.com/tighten/ziggy/compare/v2.6.0...v2.6.1
 [v2.6.0]: https://github.com/tighten/ziggy/compare/v2.5.3...v2.6.0
 [v2.5.3]: https://github.com/tighten/ziggy/compare/v2.5.2...v2.5.3
 [v2.5.2]: https://github.com/tighten/ziggy/compare/v2.5.1...v2.5.2
