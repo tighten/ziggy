@@ -196,10 +196,10 @@ test('include middleware in route list', function () {
 
 test('use subdomain from current request', function () {
     Route::domain('{team}.ziggy.dev')
-        ->post('/', fn () => response()->json(new Ziggy))
-        ->name('home');
+        ->post('/test', fn () => response()->json(new Ziggy))
+        ->name('test');
 
-    post(route('home', ['team' => 'tgtn']))
+    post(route('test', ['team' => 'tgtn']))
         ->assertJson([
             'url' => 'http://tgtn.ziggy.dev',
         ]);
