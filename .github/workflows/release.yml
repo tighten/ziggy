@@ -3,6 +3,9 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      version:
+        required: true
 jobs:
   publish:
     name: Publish
@@ -24,13 +27,13 @@ jobs:
         run: echo "version=$(cat package.json | jq '.version' --raw-output)" >> $GITHUB_OUTPUT
       # Abort if the version in the package.json file (prefixed with 'v') doesn't match the tag name of the release
       - name: Check package.json version against tag name
-        if: format('v{0}', steps.package-json-version.outputs.version) != github.event.release.tag_name
+        if: (github.event_name == 'release' && format('v{0}', steps.package-json-version.outputs.version) != github.event.release.tag_name) || (github.event_name == 'workflow_dispatch' && format('v{0}', steps.package-json-version.outputs.version) != inputs.version)
         uses: actions/github-script@v7
         with:
           script: core.setFailed('Release tag does not match package.json version!')
       # Abort if this is a pre-release and the version in the package.json file doesn't contain a '-' to indicate that (e.g. v2.0.0-beta.1), or vice-versa
       - name: Check package.json version against pre-release
-        if: contains(steps.package-json-version.outputs.version, '-') != github.event.release.prerelease
+        if: github.event_name == 'release' && contains(steps.package-json-version.outputs.version, '-') != github.event.release.prerelease
         uses: actions/github-script@v7
         with:
           script: core.setFailed('Stability of release tag does not match package.json version!')
