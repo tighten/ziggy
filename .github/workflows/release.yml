@@ -34,6 +34,4 @@ jobs:
         with:
           script: core.setFailed('Stability of release tag does not match package.json version!')
       # If this is a pre-release, publish it to NPM under the 'next' tag (default is 'latest')
-      - run: npm publish --provenance ${{ github.event.release.prerelease && '--tag next' || '' }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm publish ${{ github.event.release.prerelease && '--tag next' || '' }}
