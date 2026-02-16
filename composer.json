@@ -30,9 +30,9 @@
     },
     "require-dev": {
         "laravel/folio": "^1.1",
-        "orchestra/testbench": "^7.0 || ^8.0 || ^9.0 || ^10.0",
-        "pestphp/pest": "^2.26|^3.0",
-        "pestphp/pest-plugin-laravel": "^2.4|^3.0"
+        "orchestra/testbench": "^8.0 || ^9.0 || ^10.0",
+        "pestphp/pest": "^2.0 || ^3.0 || ^4.0",
+        "pestphp/pest-plugin-laravel": "^2.0 || ^3.0 || ^4.0"
     },
     "autoload": {
         "psr-4": {
