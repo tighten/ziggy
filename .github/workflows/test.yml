@@ -1,45 +1,68 @@
 name: Test
+
 on:
   pull_request:
-    paths-ignore: ['dist/**', '*.md']
+    paths-ignore:
+      - dist/**
+      - *.md
   push:
-    branches: [2.x, main, ci]
-    paths-ignore: ['dist/**', '*.md']
+    branches:
+      - 2.x
+      - main
+      - ci
+    paths-ignore:
+      - dist/**
+      - *.md
+
 concurrency:
   group: ${{ github.ref_name }}
   cancel-in-progress: true
+
 jobs:
   test:
     name: ${{ matrix.os[0] }}, PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}
+
     runs-on: ${{ matrix.os[1] }}
+
     continue-on-error: ${{ matrix.php == 8.6 }}
+
     strategy:
       matrix:
         os: [[Ubuntu, ubuntu-latest], [Windows, windows-latest]]
         php: [8.2, 8.3, 8.4, 8.5, 8.6]
-        laravel: [10, 11, 12]
+        laravel: [10, 11, 12, '13']
         exclude:
           - php: 8.5
             laravel: 10
           - php: 8.6
             laravel: 10
+          - laravel: '13'
+            php: 8.2
         include:
           - php: 8.6
             composer: --ignore-platform-req=php+
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           extensions: fileinfo
+
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: 'npm'
+          cache: npm
+
       - run: composer require laravel/framework:"${{ matrix.laravel }}.*" --no-update --no-interaction
+
       - uses: ramsey/composer-install@v3
         with:
           composer-options: ${{ matrix.composer }}
+
       - run: vendor/bin/pest
+
       - run: npm ci && npm run build
+
       - run: npm run test
