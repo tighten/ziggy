@@ -8,6 +8,13 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v2.6.2] - 2026-03-05
+
+**Fixed**
+
+* Fix shared route bindings mutation in _substituteBindings by @pataar in https://github.com/tighten/ziggy/pull/875
+* fix: handle falsy parameter values in _parse by @pataar in https://github.com/tighten/ziggy/pull/876
+
 ## [v2.6.1] - 2026-02-16
 
 **Changed**
@@ -510,7 +517,8 @@ See [UPGRADING](UPGRADING.md#upgrading-from-1x-to-2x) for detailed upgrade instr
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v2.6.1...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v2.6.2...HEAD
+[v2.6.2]: https://github.com/tighten/ziggy/compare/v2.6.1...v2.6.2
 [v2.6.1]: https://github.com/tighten/ziggy/compare/v2.6.0...v2.6.1
 [v2.6.0]: https://github.com/tighten/ziggy/compare/v2.5.3...v2.6.0
 [v2.5.3]: https://github.com/tighten/ziggy/compare/v2.5.2...v2.5.3
