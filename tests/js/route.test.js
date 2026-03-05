@@ -437,6 +437,16 @@ describe('route()', () => {
         );
     });
 
+    test("falling back to 'id' key does not mutate registered route model bindings", () => {
+        expect(route('postComments.show', [1, { id: 1 }])).toBe(
+            'https://ziggy.dev/posts/1/comments/1',
+        );
+
+        expect(route('postComments.show', [1, { id: 1, uuid: '1-2-3' }])).toBe(
+            'https://ziggy.dev/posts/1/comments/1-2-3',
+        );
+    });
+
     test('can generate a URL for an app installed in a subfolder', () => {
         global.Ziggy.url = 'https://ziggy.dev/subfolder';
 
