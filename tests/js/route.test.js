@@ -603,6 +603,10 @@ describe('route()', () => {
         expect(route('posts.update', 0)).toBe('https://ziggy.dev/posts/0');
     });
 
+    test('can handle an object parameter with a falsy value for the segment name', () => {
+        expect(route('posts.show', { post: 0 })).toBe('https://ziggy.dev/posts/0');
+    });
+
     test('can accept a custom Ziggy configuration object', () => {
         const config = {
             url: 'http://notYourAverage.dev',

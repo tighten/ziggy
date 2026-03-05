@@ -263,7 +263,7 @@ export default class Router extends String {
             );
         } else if (
             segments.length === 1 &&
-            !params[segments[0].name] &&
+            !params.hasOwnProperty(segments[0].name) &&
             (params.hasOwnProperty(Object.values(route.bindings)[0]) || params.hasOwnProperty('id'))
         ) {
             // If there is only one template segment and `params` is an object, that object is
