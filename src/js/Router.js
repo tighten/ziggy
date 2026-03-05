@@ -321,18 +321,19 @@ export default class Router extends String {
                 return { ...result, [key]: value };
             }
 
-            if (!value.hasOwnProperty(bindings[key])) {
-                if (value.hasOwnProperty('id')) {
-                    // As a fallback, we still accept an 'id' key not explicitly registered as a binding
-                    bindings[key] = 'id';
-                } else {
-                    throw new Error(
-                        `Ziggy error: object passed as '${key}' parameter is missing route model binding key '${bindings[key]}'.`,
-                    );
-                }
+            const binding = value.hasOwnProperty(bindings[key])
+                ? bindings[key]
+                : value.hasOwnProperty('id')
+                  ? 'id'
+                  : undefined;
+
+            if (binding === undefined) {
+                throw new Error(
+                    `Ziggy error: object passed as '${key}' parameter is missing route model binding key '${bindings[key]}'.`,
+                );
             }
 
-            return { ...result, [key]: value[bindings[key]] };
+            return { ...result, [key]: value[binding] };
         }, {});
     }
 
