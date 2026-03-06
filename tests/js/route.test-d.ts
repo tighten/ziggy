@@ -126,3 +126,17 @@ assertType<Router>(route(undefined, undefined, undefined, {} as Config));
 //         strictRouteNames: true;
 //     }
 // }
+
+// https://github.com/tighten/ziggy/issues/803
+assertType(
+    // @ts-expect-error missing required 'post' parameter
+    route('posts.comments.show', {
+        // Trigger completions here (add a new line and type 'p' or 'c') - should suggest 'post' and 'comment' but doesn't
+    }),
+);
+assertType(
+    route('posts.comments.show', {
+        post: 1,
+        // Trigger completions here - now that 'post' (required) is provided, suggestions show 'comment' as expected
+    }),
+);
