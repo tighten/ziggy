@@ -118,6 +118,7 @@ assertType<string>(route('optional', 'foo'));
 assertType<RouteUrl>(route('posts.comments.show', 'foo'));
 // @ts-expect-error a plain string is not assignable to RouteUrl
 assertType<RouteUrl>('/posts/foo' as string);
+assertType<Router>(route(undefined, undefined, false));
 assertType<Router>(route(undefined, undefined, undefined, {} as Config));
 
 // Uncomment to test strict route name checking - invalid route names in this file should error
