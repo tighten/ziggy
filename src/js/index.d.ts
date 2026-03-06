@@ -205,17 +205,23 @@ interface Router {
 // Called with no arguments - returns a Router instance
 export function route(): Router;
 
-// Called with a route name and optional additional arguments - returns a URL string
+// Called with just a route name - returns a URL string
+// Separate from the overloads below to preserve route name autocompletion
+export function route(name: ValidRouteName): RouteUrl;
+
+// Called with a route name and parameters - returns a URL string
 export function route<T extends ValidRouteName>(
-    name: T,
-    params?: RouteParams<T> | undefined,
+    name: T & {},
+    params: RouteParams<T> | undefined,
     absolute?: boolean,
     config?: Config,
 ): RouteUrl;
 
+// Called with a route name and single parameter - returns a URL string
+// Separate from the overload above for better parameter autocompletion and more specific error messages
 export function route<T extends ValidRouteName>(
-    name: T,
-    params?: ParameterValue | undefined,
+    name: T & {},
+    params: ParameterValue | undefined,
     absolute?: boolean,
     config?: Config,
 ): RouteUrl;
@@ -224,8 +230,8 @@ export function route<T extends ValidRouteName>(
 export function route(
     name: undefined,
     params: undefined,
-    absolute: boolean | undefined,
-    config: Config,
+    absolute?: boolean,
+    config?: Config,
 ): Router;
 
 /**

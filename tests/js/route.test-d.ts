@@ -112,6 +112,10 @@ assertType(route().current('posts.comments.show', 'foo'));
 assertType(route('optional', []));
 assertType(route('optional', ['foo']));
 
+// All-optional route with config
+assertType(route('optional', undefined, false));
+assertType(route('optional', undefined, undefined, {} as Config));
+
 // Test route function return types
 assertType<string>(route('optional', { maybe: 'foo' }));
 assertType<string>(route('optional', 'foo'));

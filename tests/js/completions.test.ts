@@ -83,6 +83,15 @@ function getCompletions(source: string, marker = '/*cursor*/') {
 }
 
 describe('TypeScript completions', () => {
+    test('suggests known route names', () => {
+        let completions = getCompletions(`
+            route('/*cursor*/');
+        `);
+
+        expect(completions).toContain('posts.comments.show');
+        expect(completions).toContain('optional');
+    });
+
     test('suggests route params when a required param is still missing', () => {
         let completions = getCompletions(`
             route('posts.comments.show', {
