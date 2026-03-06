@@ -132,7 +132,7 @@ assertType<Router>(route(undefined, undefined, undefined, {} as Config));
 //     }
 // }
 
-// https://github.com/tighten/ziggy/issues/803 (now fixed, by defining config-only `route()` overload last)
+// Test Intellisense/autocomplete
 assertType(
     // @ts-expect-error missing required 'post' parameter
     route('posts.comments.show', {

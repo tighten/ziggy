@@ -83,7 +83,7 @@ function getCompletions(source: string, marker = '/*cursor*/') {
 }
 
 describe('TypeScript completions', () => {
-    test('suggests known route names', () => {
+    test('suggest known route names', () => {
         let completions = getCompletions(`
             route('/*cursor*/');
         `);
@@ -92,7 +92,7 @@ describe('TypeScript completions', () => {
         expect(completions).toContain('optional');
     });
 
-    test('suggests route params when a required param is still missing', () => {
+    test('suggest route params when a required param is still missing', () => {
         let completions = getCompletions(`
             route('posts.comments.show', {
                 /*cursor*/
@@ -104,7 +104,7 @@ describe('TypeScript completions', () => {
         expect(completions).toContain('_query');
     });
 
-    test('suggests remaining params after required params are provided', () => {
+    test('suggest remaining params after required params are provided', () => {
         let completions = getCompletions(`
             route('posts.comments.show', {
                 post: 1,
@@ -117,7 +117,7 @@ describe('TypeScript completions', () => {
         expect(completions).not.toContain('post');
     });
 
-    test('suggests optional params on all-optional routes', () => {
+    test('suggest optional params on all-optional routes', () => {
         let completions = getCompletions(`
             route('optional', {
                 /*cursor*/
