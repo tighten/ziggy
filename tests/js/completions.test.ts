@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import ts from 'typescript';
 import { describe, expect, test } from 'vitest';
 
-const fixtureFile = resolve(process.cwd(), 'tests/js/__completions__.ts');
+const fixtureFile = resolve(__dirname, '__completions__.ts');
 
 function getCompletions(source: string, marker = '/*cursor*/') {
     if (!source.includes(marker)) {
