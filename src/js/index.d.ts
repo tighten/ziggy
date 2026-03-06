@@ -24,9 +24,10 @@ type RouteName = KnownRouteName | (string & {});
 // See https://stackoverflow.com/a/61048124/6484459.
 
 /**
- * A generated route URL string.
+ * A generated route URL string, branded to distinguish it from a plain string.
  */
-export type RouteUrl = string;
+declare const RouteUrlBrand: unique symbol;
+export type RouteUrl = string & { readonly [RouteUrlBrand]: typeof RouteUrlBrand };
 
 /**
  * A valid route name to pass to `route()` to generate a URL.
