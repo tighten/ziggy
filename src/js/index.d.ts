@@ -205,14 +205,6 @@ interface Router {
 // Called with no arguments - returns a Router instance
 export function route(): Router;
 
-// Called with configuration arguments only - returns a configured Router instance
-export function route(
-    name: undefined,
-    params: undefined,
-    absolute?: boolean,
-    config?: Config,
-): Router;
-
 // Called with a route name and optional additional arguments - returns a URL string
 export function route<T extends ValidRouteName>(
     name: T,
@@ -227,6 +219,14 @@ export function route<T extends ValidRouteName>(
     absolute?: boolean,
     config?: Config,
 ): RouteUrl;
+
+// Called with configuration arguments only - returns a configured Router instance
+export function route(
+    name: undefined,
+    params: undefined,
+    absolute: boolean | undefined,
+    config: Config,
+): Router;
 
 /**
  * Ziggy's Vue plugin.

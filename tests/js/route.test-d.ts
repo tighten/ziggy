@@ -127,11 +127,11 @@ assertType<Router>(route(undefined, undefined, undefined, {} as Config));
 //     }
 // }
 
-// https://github.com/tighten/ziggy/issues/803
+// https://github.com/tighten/ziggy/issues/803 (now fixed, by defining config-only `route()` overload last)
 assertType(
     // @ts-expect-error missing required 'post' parameter
     route('posts.comments.show', {
-        // Trigger completions here (add a new line and type 'p' or 'c') - should suggest 'post' and 'comment' but doesn't
+        // Trigger completions here (add a new line and type 'p' or 'c') - should suggest 'post' and 'comment'
     }),
 );
 assertType(
