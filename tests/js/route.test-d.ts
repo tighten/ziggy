@@ -65,12 +65,12 @@ assertType(route('posts.comments.show', 'foo'));
 assertType(route('posts.comments.show'));
 
 // Simple array examples
-// assertType(route('posts.comments.show', [2])); // TODO shouldn't error, only one required param
+assertType(route('posts.comments.show', [2]));
 assertType(route('posts.comments.show', [2, 3]));
-// assertType(route('posts.comments.show', ['foo'])); // TODO shouldn't error, only one required param
+assertType(route('posts.comments.show', ['foo']));
 assertType(route('posts.comments.show', ['foo', 'bar']));
 // Allows mix of plain values and parameter objects
-// assertType(route('posts.comments.show', [{ id: 2 }])); // TODO shouldn't error, only one required param
+assertType(route('posts.comments.show', [{ id: 2 }]));
 assertType(route('posts.comments.show', [{ id: 2 }, 3]));
 assertType(route('posts.comments.show', ['2', { uuid: 3 }]));
 assertType(route('posts.comments.show', [{ id: 2 }, { uuid: '3' }]));
@@ -105,8 +105,12 @@ assertType(route().current('missing', { foo: 1 }));
 assertType(route().current('posts.comments.show', { comment: 2 }));
 assertType(route().current('posts.comments.show', { post: 2 }));
 assertType(route().current('posts.comments.show', 2));
-// assertType(route().current('posts.comments.show', [2])); // TODO shouldn't error, only one required param
+assertType(route().current('posts.comments.show', [2]));
 assertType(route().current('posts.comments.show', 'foo'));
+
+// All-optional route with array params
+assertType(route('optional', []));
+assertType(route('optional', ['foo']));
 
 // Test route function return types
 assertType<string>(route('optional', { maybe: 'foo' }));

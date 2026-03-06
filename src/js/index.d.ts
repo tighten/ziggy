@@ -115,16 +115,28 @@ type RouteParamsObject<N extends RouteName> = N extends KnownRouteName
 type GenericRouteParamsArray = unknown[];
 /**
  * An array of parameters for a specific named route.
+ *
+ * Required parameters come first as required tuple elements, then optional
+ * parameters become optional tuple elements, followed by arbitrary extras.
  */
 type KnownRouteParamsArray<I extends readonly ParameterInfo[]> = [
-    ...{ [K in keyof I]: Routable<I[K]> },
-    ...unknown[],
+    ...RequiredParamsTuple<I>,
+    ...OptionalParamsTuple<I>,
 ];
-// Because `K in keyof I` for a `readonly` array is always a number, even though this
-// looks like `{ 0: T, 1: U, 2: V }` TypeScript generates `[T, U, V]`. The nested
-// array destructing lets us type the first n items in the array, which are known
-// route parameters, and then allow arbitrary additional items.
-// See https://github.com/tighten/ziggy/pull/664#discussion_r1330002370.
+
+type RequiredParamsTuple<I extends readonly ParameterInfo[]> =
+    I extends readonly [infer F extends ParameterInfo, ...infer R extends ParameterInfo[]]
+        ? F extends { required: true }
+            ? [Routable<F>, ...RequiredParamsTuple<R>]
+            : []
+        : [];
+
+type OptionalParamsTuple<I extends readonly ParameterInfo[]> =
+    I extends readonly [infer F extends ParameterInfo, ...infer R extends ParameterInfo[]]
+        ? F extends { required: false }
+            ? [Routable<F>?, ...OptionalParamsTuple<R>]
+            : OptionalParamsTuple<R>
+        : [...unknown[]];
 
 // Uncomment to test:
 // type B = KnownRouteParamsArray<[{ name: 'post'; required: true; binding: 'uuid' }]>;
