@@ -17,12 +17,14 @@ jobs:
       matrix:
         os: [[Ubuntu, ubuntu-latest], [Windows, windows-latest]]
         php: [8.2, 8.3, 8.4, 8.5, 8.6]
-        laravel: [10, 11, 12]
+        laravel: [10, 11, 12, 13]
         exclude:
           - php: 8.5
             laravel: 10
           - php: 8.6
             laravel: 10
+          - php: 8.2
+            laravel: 13
         include:
           - php: 8.6
             composer: --ignore-platform-req=php+
@@ -35,7 +37,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: 'npm'
+          cache: npm
       - run: composer require laravel/framework:"${{ matrix.laravel }}.*" --no-update --no-interaction
       - uses: ramsey/composer-install@v3
         with:
