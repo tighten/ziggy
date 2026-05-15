@@ -75,7 +75,7 @@ export default class Router extends String {
      * @param {String} [url] - The URL to inspect, defaults to the current window URL.
      * @return {{ name: string, params: Object, query: Object, route: Route }}
      */
-    _unresolve(url) {
+    match(url, httpMethod = 'GET') {
         if (!url) {
             url = this._currentUrl();
         } else if (this._config.absolute && url.startsWith('/')) {
@@ -87,7 +87,7 @@ export default class Router extends String {
         let matchedParams = {};
         const [name, route] = Object.entries(this._config.routes).find(
             ([name, route]) =>
-                (matchedParams = new Route(name, route, this._config).matchesUrl(url)),
+                (matchedParams = new Route(name, route, this._config).matchesUrl(url, httpMethod)),
         ) || [undefined, undefined];
 
         return { name, ...matchedParams, route };
@@ -100,8 +100,8 @@ export default class Router extends String {
             (this._config.absolute
                 ? host + pathname
                 : pathname
-                      .replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '')
-                      .replace(/^\/+/, '/')) + search
+                    .replace(this._config.url.replace(/^\w*:\/\/[^/]+/, ''), '')
+                    .replace(/^\/+/, '/')) + search
         );
     }
 
@@ -122,7 +122,7 @@ export default class Router extends String {
      * @return {(Boolean|String|undefined)}
      */
     current(name, params) {
-        const { name: current, params: currentParams, query, route } = this._unresolve();
+        const { name: current, params: currentParams, query, route } = this.match();
 
         // If a name wasn't passed, return the name of the current route
         if (!name) return current;
@@ -203,17 +203,17 @@ export default class Router extends String {
      * @return {Object}
      */
     get params() {
-        const { params, query } = this._unresolve();
+        const { params, query } = this.match();
 
         return { ...params, ...query };
     }
 
     get routeParams() {
-        return this._unresolve().params;
+        return this.match().params;
     }
 
     get queryParams() {
-        return this._unresolve().query;
+        return this.match().query;
     }
 
     /**
@@ -257,8 +257,8 @@ export default class Router extends String {
                     segments[i]
                         ? { ...result, [segments[i].name]: current }
                         : typeof current === 'object'
-                          ? { ...result, ...current }
-                          : { ...result, [current]: '' },
+                            ? { ...result, ...current }
+                            : { ...result, [current]: '' },
                 {},
             );
         } else if (
@@ -324,8 +324,8 @@ export default class Router extends String {
             const binding = value.hasOwnProperty(bindings[key])
                 ? bindings[key]
                 : value.hasOwnProperty('id')
-                  ? 'id'
-                  : undefined;
+                    ? 'id'
+                    : undefined;
 
             if (binding === undefined) {
                 throw new Error(
