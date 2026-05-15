@@ -1,3 +1,11 @@
+# Remark
+
+This repo is fork from tighten/ziggy because they don't want to add the url matching function
+
+https://github.com/tighten/ziggy/pull/848
+
+> Note: When need update js file(s) then repackage js to dist, please run `npm run build:npm`
+
 ![Ziggy - Use your Laravel routes in JavaScript](https://raw.githubusercontent.com/tighten/ziggy/main/ziggy-banner.png)
 
 # Ziggy – Use your Laravel routes in JavaScript
@@ -10,23 +18,44 @@
 
 Ziggy provides a JavaScript `route()` function that works like Laravel's, making it a breeze to use your named Laravel routes in JavaScript.
 
-- [**Installation**](#installation)
-- [**Usage**](#usage)
+- [Remark](#remark)
+- [Ziggy – Use your Laravel routes in JavaScript](#ziggy--use-your-laravel-routes-in-javascript)
+  - [Installation](#installation)
+  - [Usage](#usage)
     - [`route()` function](#route-function)
+      - [Basic usage](#basic-usage)
+      - [Parameters](#parameters)
+      - [Multiple parameters](#multiple-parameters)
+      - [Query parameters](#query-parameters)
+      - [Default parameter values](#default-parameter-values)
+      - [Examples](#examples)
     - [`Router` class](#router-class)
+      - [Check the current route: `route().current()`](#check-the-current-route-routecurrent)
+      - [Check if a route exists: `route().has()`](#check-if-a-route-exists-routehas)
+      - [Retrieve the current route params: `route().params`](#retrieve-the-current-route-params-routeparams)
+      - [Match url to get route name and params](#match-url-to-get-route-name-and-params)
     - [Route-model binding](#route-model-binding)
     - [TypeScript](#typescript)
-- [**JavaScript frameworks**](#javascript-frameworks)
+      - [Strict route name type checking](#strict-route-name-type-checking)
+  - [JavaScript frameworks](#javascript-frameworks)
     - [Generating and importing Ziggy's configuration](#generating-and-importing-ziggys-configuration)
     - [Importing the `route()` function](#importing-the-route-function)
     - [Vue](#vue)
     - [React](#react)
     - [SPAs or separate repos](#spas-or-separate-repos)
-- [**Filtering Routes**](#filtering-routes)
+  - [Filtering Routes](#filtering-routes)
     - [Including/excluding routes](#includingexcluding-routes)
     - [Filtering with groups](#filtering-with-groups)
-- [**Other**](#other)
-- [**Contributing**](#contributing)
+  - [Other](#other)
+    - [TLS/SSL termination and trusted proxies](#tlsssl-termination-and-trusted-proxies)
+    - [Using `@routes` with a Content Security Policy](#using-routes-with-a-content-security-policy)
+    - [Disabling the `route()` helper](#disabling-the-route-helper)
+    - [Retrieving Ziggy's config from an API endpoint](#retrieving-ziggys-config-from-an-api-endpoint)
+    - [Re-generating the routes file when your app routes change](#re-generating-the-routes-file-when-your-app-routes-change)
+  - [Contributing](#contributing)
+  - [Credits](#credits)
+  - [Security](#security)
+  - [License](#license)
 
 ## Installation
 
@@ -202,6 +231,29 @@ route().params; // { venue: '1', event: '2', hosts: 'all' }
 ```
 
 > Note: parameter values retrieved with `route().params` will always be returned as strings.
+
+#### Match url to get route name and params
+
+```js
+// Laravel route called 'post.update' with URI '/post/{post}'
+// axios response.request.responseURL is https://myapp.com/post/1
+
+route().match('/myapp.com/post/1', 'put');
+/* result:
+ *  {
+ *      name: 'posts.update',
+ *      params: {post: '1'},
+ *      query: {},
+ *      route: {
+ *          uri: 'posts/{post}',
+ *          methods: ['PUT'],
+ *          bindings: {
+ *              post: 'id',
+ *          },
+ *      },
+ *  }
+*/
+```
 
 ### Route-model binding
 
