@@ -1566,3 +1566,42 @@ describe('json', () => {
         expect(route('posts.show', 1)).toBe('https://ziggy.dev/posts/1');
     });
 });
+
+describe('match()', () => {
+    test('can get routes PUT requests', () => {
+        expect(route().match('ziggy.dev/posts/1', 'PUT')).toEqual({
+            name: 'posts.update',
+            params: {post: '1'},
+            query: {},
+            route: {
+                uri: 'posts/{post}',
+                methods: ['PUT'],
+                bindings: {
+                    post: 'id',
+                },
+            },
+        });
+    });
+
+    test('can ignore routes that don’t allow PUT requests', () => {
+        expect(route().match('ziggy.dev/hosting-contacts', 'PUT')).toEqual({
+            name: undefined,
+            route: undefined
+        });
+    });
+
+    test('can get routes PUT requests by lower case', () => {
+        expect(route().match('ziggy.dev/posts/1', 'put')).toEqual({
+            name: 'posts.update',
+            params: {post: '1'},
+            query: {},
+            route: {
+                uri: 'posts/{post}',
+                methods: ['PUT'],
+                bindings: {
+                    post: 'id',
+                },
+            },
+        });
+    });
+});
