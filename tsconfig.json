@@ -2,7 +2,8 @@
     "compilerOptions": {
         "module": "ESNext",
         "moduleResolution": "Bundler",
-        "target": "ESNext"
+        "target": "ESNext",
+        "skipLibCheck": true
     },
     "exclude": ["vendor", "tests/fixtures"]
 }

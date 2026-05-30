@@ -33,33 +33,28 @@
         "dist"
     ],
     "type": "module",
-    "source": "./src/js/index.js",
     "exports": {
         "types": "./src/js/index.d.ts",
+        "import": "./dist/index.js",
         "default": "./dist/index.js"
     },
-    "module": "./dist/index.esm.js",
+    "module": "./dist/index.js",
     "types": "./src/js/index.d.ts",
     "scripts": {
-        "build": "npm run build:esm && npm run build:umd",
-        "build:esm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap --no-generateTypes --external none",
-        "build:npm": "microbundle -i ./src/js/index.js -o ./dist/index.js --format modern,esm --no-sourcemap --no-generateTypes",
-        "build:umd": "microbundle -i ./src/js/browser.js -o ./dist/route.js --format umd --name route --no-sourcemap --no-generateTypes --external none",
+        "build": "tsdown --config tsdown.config.ts",
+        "build:npm": "tsdown --config tsdown.config.npm.ts",
         "test": "vitest --typecheck",
         "format": "prettier . --write",
-        "prepublishOnly": "rm -r ./dist/* && npm run build:npm"
-    },
-    "mangle": {
-        "regex": "^_(?!query)"
+        "prepublishOnly": "npm run build:npm"
     },
     "dependencies": {
         "qs-esm": "^7.0.3"
     },
     "devDependencies": {
         "jsdom": "^28.1.0",
-        "microbundle": "^0.15.1",
         "prettier": "^3.8.1",
-        "typescript": "^5.9.3",
+        "tsdown": "^0.22.1",
+        "typescript": "^6.0.3",
         "vitest": "^4.0.18"
     },
     "prettier": {
