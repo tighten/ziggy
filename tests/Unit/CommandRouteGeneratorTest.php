@@ -163,6 +163,17 @@ test('generate dts file at custom path', function () {
     expect(base_path('resources/js/custom.d.ts'))->toBeFile();
 });
 
+test('generate dts file at custom path in a directory that does not exist', function () {
+    if (is_dir(base_path('resources/types'))) {
+        array_map(unlink(...), glob(base_path('resources/types/*')));
+        rmdir(base_path('resources/types'));
+    }
+
+    artisan('ziggy:generate --types-only --types=resources/types/ziggy.d.ts');
+
+    expect(base_path('resources/types/ziggy.d.ts'))->toBeFile();
+});
+
 test('generate dts file at path set in config', function () {
     config(['ziggy.output.types-path' => 'resources/js/types.d.ts']);
 

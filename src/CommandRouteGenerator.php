@@ -55,6 +55,8 @@ class CommandRouteGenerator extends Command
                 default => $this->option('types'),
             };
 
+            $filesystem->ensureDirectoryExists(dirname(base_path($typesPath)), recursive: true);
+
             $filesystem->put(base_path($typesPath), new $types($ziggy));
         }
 
