@@ -8,6 +8,19 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v2.6.3] - 2026-06-23
+
+**Fixed**
+
+* Fix TypeError when optional params omitted from array (fixes #736) by @pataar in https://github.com/tighten/ziggy/pull/878
+* Docs: Update PHP_CodeSniffer repository link by @rodrigoprimo in https://github.com/tighten/ziggy/pull/881
+* Create the directory for a custom types path if it doesn't exist by @lazerg in https://github.com/tighten/ziggy/pull/888
+
+**Changed**
+
+* Brand RouteUrl type to distinguish it from plain strings by @pataar in https://github.com/tighten/ziggy/pull/877
+* Test on Laravel 13 by @bakerkretzmar in https://github.com/tighten/ziggy/pull/874
+
 ## [v2.6.2] - 2026-03-05
 
 **Fixed**
@@ -517,7 +530,8 @@ See [UPGRADING](UPGRADING.md#upgrading-from-1x-to-2x) for detailed upgrade instr
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v2.6.2...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v2.6.3...HEAD
+[v2.6.3]: https://github.com/tighten/ziggy/compare/v2.6.2...v2.6.3
 [v2.6.2]: https://github.com/tighten/ziggy/compare/v2.6.1...v2.6.2
 [v2.6.1]: https://github.com/tighten/ziggy/compare/v2.6.0...v2.6.1
 [v2.6.0]: https://github.com/tighten/ziggy/compare/v2.5.3...v2.6.0
