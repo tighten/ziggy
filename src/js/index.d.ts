@@ -202,10 +202,30 @@ interface Router {
 /**
  * Ziggy's route helper.
  */
-// Called with no arguments - returns a Router instance
+
+// Call with no arguments - returns a Router instance
 export function route(): Router;
 
-// Called with configuration arguments only - returns a configured Router instance
+// Call with just a route name - returns a URL string (separate from below to preserve route name autocompletion)
+export function route(name: ValidRouteName): RouteUrl;
+
+// Call with a route name and parameters - returns a URL string
+export function route<T extends ValidRouteName>(
+    name: T & {},
+    params: RouteParams<T> | undefined,
+    absolute?: boolean,
+    config?: Config,
+): RouteUrl;
+
+// Call with a route name and single parameter - returns a URL string (separate from above for better parameter autocompletion and more specific error messages)
+export function route<T extends ValidRouteName>(
+    name: T & {},
+    params: ParameterValue | undefined,
+    absolute?: boolean,
+    config?: Config,
+): RouteUrl;
+
+// Call with configuration arguments only - returns a configured Router instance
 export function route(
     name: undefined,
     params: undefined,
@@ -213,20 +233,13 @@ export function route(
     config?: Config,
 ): Router;
 
-// Called with a route name and optional additional arguments - returns a URL string
+// All allowed runtime calls (preserves flexible derived type shape)
 export function route<T extends ValidRouteName>(
-    name: T,
-    params?: RouteParams<T> | undefined,
+    name?: T,
+    params?: RouteParams<T> | ParameterValue,
     absolute?: boolean,
     config?: Config,
-): RouteUrl;
-
-export function route<T extends ValidRouteName>(
-    name: T,
-    params?: ParameterValue | undefined,
-    absolute?: boolean,
-    config?: Config,
-): RouteUrl;
+): RouteUrl | Router;
 
 /**
  * Ziggy's Vue plugin.
