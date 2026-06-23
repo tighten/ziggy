@@ -136,7 +136,7 @@ assertType<Router>(route(undefined, undefined, undefined, {} as Config));
 assertType(
     // @ts-expect-error missing required 'post' parameter
     route('posts.comments.show', {
-        // Trigger completions here (add a new line and type 'p' or 'c') - should suggest 'post' and 'comment'
+        // Trigger completions here (⌃Space or add a new line and type 'p' or 'c') - should suggest 'post' and 'comment'
     }),
 );
 assertType(
