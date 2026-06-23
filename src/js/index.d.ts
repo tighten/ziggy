@@ -202,14 +202,14 @@ interface Router {
 /**
  * Ziggy's route helper.
  */
-// Called with no arguments - returns a Router instance
+
+// Call with no arguments - returns a Router instance
 export function route(): Router;
 
-// Called with just a route name - returns a URL string
-// Separate from the overloads below to preserve route name autocompletion
+// Call with just a route name - returns a URL string (separate from below to preserve route name autocompletion)
 export function route(name: ValidRouteName): RouteUrl;
 
-// Called with a route name and parameters - returns a URL string
+// Call with a route name and parameters - returns a URL string
 export function route<T extends ValidRouteName>(
     name: T & {},
     params: RouteParams<T> | undefined,
@@ -217,8 +217,7 @@ export function route<T extends ValidRouteName>(
     config?: Config,
 ): RouteUrl;
 
-// Called with a route name and single parameter - returns a URL string
-// Separate from the overload above for better parameter autocompletion and more specific error messages
+// Call with a route name and single parameter - returns a URL string (separate from above for better parameter autocompletion and more specific error messages)
 export function route<T extends ValidRouteName>(
     name: T & {},
     params: ParameterValue | undefined,
@@ -226,7 +225,7 @@ export function route<T extends ValidRouteName>(
     config?: Config,
 ): RouteUrl;
 
-// Called with configuration arguments only - returns a configured Router instance
+// Call with configuration arguments only - returns a configured Router instance
 export function route(
     name: undefined,
     params: undefined,
@@ -234,7 +233,7 @@ export function route(
     config?: Config,
 ): Router;
 
-// Final overload to preserve flexible derived type shape
+// All allowed runtime calls (preserves flexible derived type shape)
 export function route<T extends ValidRouteName>(
     name?: T,
     params?: RouteParams<T> | ParameterValue,
