@@ -234,6 +234,14 @@ export function route(
     config?: Config,
 ): Router;
 
+// Final overload to preserve flexible derived type shape
+export function route<T extends ValidRouteName>(
+    name?: T,
+    params?: RouteParams<T> | ParameterValue,
+    absolute?: boolean,
+    config?: Config,
+): RouteUrl | Router;
+
 /**
  * Ziggy's Vue plugin.
  */
