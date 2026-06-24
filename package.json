@@ -36,7 +36,6 @@
     "module": "./dist/index.js",
     "exports": {
         "types": "./src/js/index.d.ts",
-        "import": "./dist/index.js",
         "default": "./dist/index.js"
     },
     "types": "./src/js/index.d.ts",
