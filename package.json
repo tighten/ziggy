@@ -51,7 +51,7 @@
         "qs-esm": "^7.0.3"
     },
     "devDependencies": {
-        "@types/node": "^25.3.5",
+        "@types/node": "^25.9.4",
         "jsdom": "^28.1.0",
         "prettier": "^3.8.1",
         "tsdown": "^0.22.3",
