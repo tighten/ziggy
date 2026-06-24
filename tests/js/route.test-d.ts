@@ -1,4 +1,4 @@
-import { assertType } from 'vitest';
+import { assertType, expectTypeOf } from 'vitest';
 import { Config, route, Router, RouteUrl } from '../../src/js';
 
 // Add generated routes to use for testing inside this file. In a real app these declarations
@@ -112,13 +112,26 @@ assertType(route().current('posts.comments.show', 'foo'));
 assertType(route('optional', []));
 assertType(route('optional', ['foo']));
 
+// All-optional route with config
+assertType(route('optional', undefined, false));
+assertType(route('optional', undefined, undefined, {} as Config));
+
 // Test route function return types
 assertType<string>(route('optional', { maybe: 'foo' }));
 assertType<string>(route('optional', 'foo'));
 assertType<RouteUrl>(route('posts.comments.show', 'foo'));
 // @ts-expect-error a plain string is not assignable to RouteUrl
 assertType<RouteUrl>('/posts/foo' as string);
+assertType<Router>(route(undefined, undefined, false));
 assertType<Router>(route(undefined, undefined, undefined, {} as Config));
+
+// Derived parameter and return types should include all valid shapes/overloads
+expectTypeOf<ReturnType<typeof route>>().toEqualTypeOf<RouteUrl | Router>();
+expectTypeOf<['posts.index']>().toExtend<Parameters<typeof route>>();
+expectTypeOf<['posts.comments.show', { post: 1 }]>().toExtend<Parameters<typeof route>>();
+expectTypeOf<[]>().toExtend<Parameters<typeof route>>();
+expectTypeOf<[undefined, undefined, false]>().toExtend<Parameters<typeof route>>();
+expectTypeOf<[undefined, undefined, undefined, Config]>().toExtend<Parameters<typeof route>>();
 
 // Uncomment to test strict route name checking - invalid route names in this file should error
 // declare module '../../src/js' {
@@ -126,3 +139,17 @@ assertType<Router>(route(undefined, undefined, undefined, {} as Config));
 //         strictRouteNames: true;
 //     }
 // }
+
+// Test Intellisense/autocomplete
+assertType(
+    // @ts-expect-error missing required 'post' parameter
+    route('posts.comments.show', {
+        // Trigger completions here (⌃Space or add a new line and type 'p' or 'c') - should suggest 'post' and 'comment'
+    }),
+);
+assertType(
+    route('posts.comments.show', {
+        post: 1,
+        // Trigger completions here - now that 'post' (required) is provided, suggestions show 'comment' as expected
+    }),
+);

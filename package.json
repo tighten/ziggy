@@ -1,6 +1,6 @@
 {
     "name": "ziggy-js",
-    "version": "2.6.2",
+    "version": "2.6.3",
     "description": "Use your Laravel named routes in JavaScript.",
     "keywords": [
         "laravel",
@@ -51,6 +51,7 @@
         "qs-esm": "^7.0.3"
     },
     "devDependencies": {
+        "@types/node": "^25.3.5",
         "jsdom": "^28.1.0",
         "prettier": "^3.8.1",
         "tsdown": "^0.22.3",

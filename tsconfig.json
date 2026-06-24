@@ -3,6 +3,7 @@
         "module": "ESNext",
         "moduleResolution": "Bundler",
         "target": "ESNext",
+        "types": ["node"],
         "skipLibCheck": true
     },
     "exclude": ["vendor", "tests/fixtures"]
