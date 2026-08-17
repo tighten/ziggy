@@ -3,6 +3,8 @@
 namespace Tighten\Ziggy;
 
 use Illuminate\Contracts\Routing\UrlRoutable;
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -181,6 +183,8 @@ class Ziggy implements JsonSerializable
                     (new ReflectionMethod($model, 'getRouteKeyName'))->class !== Model::class
                     || (new ReflectionMethod($model, 'getKeyName'))->class !== Model::class
                     || (new ReflectionProperty($model, 'primaryKey'))->class !== Model::class
+                    || count((new ReflectionClass($model))->getAttributes(Table::class)) > 0
+                    || count((new ReflectionClass($model))->getAttributes(RouteKey::class)) > 0
                 );
 
                 // Avoid booting this model if it doesn't override the default route key name

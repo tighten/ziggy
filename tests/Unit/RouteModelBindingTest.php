@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 use Tighten\Ziggy\Ziggy;
@@ -13,6 +15,8 @@ beforeEach(function () {
     Route::post('users', fn (User $user) => '')->name('users.store');
     Route::get('comments/{comment}', fn (Comment $comment) => '')->name('comments');
     Route::get('replies/{reply}', fn (Reply $reply) => '')->name('replies');
+    Route::get('replies-table/{reply}', fn (ReplyWithTable $reply) => '')->name('replies-table');
+    Route::get('replies-route-key/{reply}', fn (ReplyWithRouteKey $reply) => '')->name('replies-route-key');
     Route::get('blog/{category}/{post:slug}', fn (PostCategory $category, Post $post) => '')->name('posts');
     Route::get('blog/{category}/{post:slug}/{tag:slug}', fn (PostCategory $category, Post $post, Tag $tag) => '')->name('posts.tags');
 });
@@ -140,6 +144,22 @@ test('merge implicit and scoped bindings', function () {
                 'reply' => 'uuid',
             ],
         ],
+        'replies-table' => [
+            'uri' => 'replies-table/{reply}',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['reply'],
+            'bindings' => [
+                'reply' => 'uuid',
+            ],
+        ],
+        'replies-route-key' => [
+            'uri' => 'replies-route-key/{reply}',
+            'methods' => ['GET', 'HEAD'],
+            'parameters' => ['reply'],
+            'bindings' => [
+                'reply' => 'uuid',
+            ],
+        ],
         'posts' => [
             'uri' => 'blog/{category}/{post}',
             'methods' => ['GET', 'HEAD'],
@@ -164,13 +184,15 @@ test('merge implicit and scoped bindings', function () {
 
 test('include bindings in json', function () {
     expect((new Ziggy)->toJson())
-        ->toBe('{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"parameters":["user"],"bindings":{"user":"uuid"}},"admins":{"uri":"admins\/{admin}","methods":["GET","HEAD"],"parameters":["admin"],"bindings":{"admin":"uuid"}},"tags":{"uri":"tags\/{tag}","methods":["GET","HEAD"],"parameters":["tag"],"bindings":{"tag":"id"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"],"parameters":["token"]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"parameters":["user","number"],"bindings":{"user":"uuid"}},"users.store":{"uri":"users","methods":["POST"]},"comments":{"uri":"comments\/{comment}","methods":["GET","HEAD"],"parameters":["comment"],"bindings":{"comment":"uuid"}},"replies":{"uri":"replies\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"uuid"}},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"parameters":["category","post"],"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"parameters":["category","post","tag"],"bindings":{"category":"id","post":"slug","tag":"slug"}}}}');
+        ->toBe('{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"parameters":["user"],"bindings":{"user":"uuid"}},"admins":{"uri":"admins\/{admin}","methods":["GET","HEAD"],"parameters":["admin"],"bindings":{"admin":"uuid"}},"tags":{"uri":"tags\/{tag}","methods":["GET","HEAD"],"parameters":["tag"],"bindings":{"tag":"id"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"],"parameters":["token"]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"parameters":["user","number"],"bindings":{"user":"uuid"}},"users.store":{"uri":"users","methods":["POST"]},"comments":{"uri":"comments\/{comment}","methods":["GET","HEAD"],"parameters":["comment"],"bindings":{"comment":"uuid"}},"replies":{"uri":"replies\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"uuid"}},"replies-table":{"uri":"replies-table\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"uuid"}},"replies-route-key":{"uri":"replies-route-key\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"uuid"}},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"parameters":["category","post"],"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"parameters":["category","post","tag"],"bindings":{"category":"id","post":"slug","tag":"slug"}}}}');
 });
 
 test('skip booting models that dont override their route key', function () {
     (new Ziggy)->filter(['tokens', 'users.numbers']);
 
     expect(User::$wasBooted)->toBeTrue();
+    expect(ReplyWithTable::$wasBooted)->toBeTrue();
+    expect(ReplyWithRouteKey::$wasBooted)->toBeTrue();
     expect(Tag::$wasBooted)->toBeFalse();
 });
 
@@ -261,5 +283,29 @@ class Reply extends Model
     public function getKeyName()
     {
         return 'uuid';
+    }
+}
+
+#[Table(key: 'uuid')]
+class ReplyWithTable extends Model
+{
+    public static $wasBooted = false;
+
+    public static function boot()
+    {
+        parent::boot();
+        static::$wasBooted = true;
+    }
+}
+
+#[RouteKey(key: 'uuid')]
+class ReplyWithRouteKey extends Model
+{
+    public static $wasBooted = false;
+
+    public static function boot()
+    {
+        parent::boot();
+        static::$wasBooted = true;
     }
 }
