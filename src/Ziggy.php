@@ -179,12 +179,13 @@ class Ziggy implements JsonSerializable
 
                 $model = Reflector::getParameterClassName($parameter);
 
-                $override = (new ReflectionClass($model))->isInstantiable() && (
+                $classReflection = new ReflectionClass($model);
+                $override = $classReflection->isInstantiable() && (
                     (new ReflectionMethod($model, 'getRouteKeyName'))->class !== Model::class
                     || (new ReflectionMethod($model, 'getKeyName'))->class !== Model::class
                     || (new ReflectionProperty($model, 'primaryKey'))->class !== Model::class
-                    || count((new ReflectionClass($model))->getAttributes(Table::class)) > 0
-                    || count((new ReflectionClass($model))->getAttributes(RouteKey::class)) > 0
+                    || count($classReflection->getAttributes(Table::class)) > 0
+                    || count($classReflection->getAttributes(RouteKey::class)) > 0
                 );
 
                 // Avoid booting this model if it doesn't override the default route key name
