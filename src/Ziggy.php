@@ -181,9 +181,9 @@ class Ziggy implements JsonSerializable
 
                 $classReflection = new ReflectionClass($model);
                 $override = $classReflection->isInstantiable() && (
-                    (new ReflectionMethod($model, 'getRouteKeyName'))->class !== Model::class
-                    || (new ReflectionMethod($model, 'getKeyName'))->class !== Model::class
-                    || (new ReflectionProperty($model, 'primaryKey'))->class !== Model::class
+                    $classReflection->getMethod('getRouteKeyName')->class !== Model::class
+                    || $classReflection->getMethod('getKeyName')->class !== Model::class
+                    || $classReflection->getMethod('primaryKey')->class !== Model::class
                     || count($classReflection->getAttributes(Table::class)) > 0
                     || count($classReflection->getAttributes(RouteKey::class)) > 0
                 );
