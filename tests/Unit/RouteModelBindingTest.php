@@ -150,7 +150,7 @@ test('merge implicit and scoped bindings', function () {
             'methods' => ['GET', 'HEAD'],
             'parameters' => ['reply'],
             'bindings' => [
-                'reply' => 'uuid',
+                'reply' => laravel_version_compare('13', '>=') ? 'uuid' : 'id',
             ],
         ],
         'replies-route-key' => [
@@ -158,7 +158,7 @@ test('merge implicit and scoped bindings', function () {
             'methods' => ['GET', 'HEAD'],
             'parameters' => ['reply'],
             'bindings' => [
-                'reply' => 'uuid',
+                'reply' => laravel_version_compare('13', '>=') ? 'uuid' : 'id',
             ],
         ],
         'posts' => [
