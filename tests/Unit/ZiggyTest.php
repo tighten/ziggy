@@ -353,11 +353,11 @@ test('cache compiled route list internally across repeated Ziggy class instantia
 });
 
 test('filter routes from nested groups', function () {
-    Route::get('foo', fn() => '')->name('foo');
+    Route::get('foo', fn () => '')->name('foo');
     Route::name('foo.')->group(function () {
-        Route::get('foo/bar', fn() => '')->name('bar');
+        Route::get('foo/bar', fn () => '')->name('bar');
         Route::name('bar.')->group(function () {
-            Route::get('foo/bar/baz', fn() => '')->name('baz');
+            Route::get('foo/bar/baz', fn () => '')->name('baz');
         });
     });
 
