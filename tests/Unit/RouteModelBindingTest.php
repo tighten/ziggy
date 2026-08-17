@@ -150,7 +150,7 @@ test('merge implicit and scoped bindings', function () {
             'methods' => ['GET', 'HEAD'],
             'parameters' => ['reply'],
             'bindings' => [
-                'reply' => laravel_version_compare('13', '>=') ? 'uuid' : 'id',
+                'reply' => laravel_version_compare('13.0', '>=') ? 'uuid' : 'id',
             ],
         ],
         'replies-route-key' => [
@@ -158,7 +158,7 @@ test('merge implicit and scoped bindings', function () {
             'methods' => ['GET', 'HEAD'],
             'parameters' => ['reply'],
             'bindings' => [
-                'reply' => laravel_version_compare('13', '>=') ? 'uuid' : 'id',
+                'reply' => laravel_version_compare('13.0', '>=') ? 'uuid' : 'id',
             ],
         ],
         'posts' => [
@@ -186,12 +186,12 @@ test('merge implicit and scoped bindings', function () {
 test('include bindings in json (< v13)', function () {
     expect((new Ziggy)->toJson())
         ->toBe('{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"parameters":["user"],"bindings":{"user":"uuid"}},"admins":{"uri":"admins\/{admin}","methods":["GET","HEAD"],"parameters":["admin"],"bindings":{"admin":"uuid"}},"tags":{"uri":"tags\/{tag}","methods":["GET","HEAD"],"parameters":["tag"],"bindings":{"tag":"id"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"],"parameters":["token"]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"parameters":["user","number"],"bindings":{"user":"uuid"}},"users.store":{"uri":"users","methods":["POST"]},"comments":{"uri":"comments\/{comment}","methods":["GET","HEAD"],"parameters":["comment"],"bindings":{"comment":"uuid"}},"replies":{"uri":"replies\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"uuid"}},"replies-table":{"uri":"replies-table\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"id"}},"replies-route-key":{"uri":"replies-route-key\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"id"}},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"parameters":["category","post"],"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"parameters":["category","post","tag"],"bindings":{"category":"id","post":"slug","tag":"slug"}}}}');
-})->skip(fn () => laravel_version_compare('13', '<'));
+})->skip(fn () => laravel_version_compare('13.0', '>='));
 
 test('include bindings in json (>= v13)', function () {
     expect((new Ziggy)->toJson())
         ->toBe('{"url":"http:\/\/ziggy.dev","port":null,"defaults":{},"routes":{"users":{"uri":"users\/{user}","methods":["GET","HEAD"],"parameters":["user"],"bindings":{"user":"uuid"}},"admins":{"uri":"admins\/{admin}","methods":["GET","HEAD"],"parameters":["admin"],"bindings":{"admin":"uuid"}},"tags":{"uri":"tags\/{tag}","methods":["GET","HEAD"],"parameters":["tag"],"bindings":{"tag":"id"}},"tokens":{"uri":"tokens\/{token}","methods":["GET","HEAD"],"parameters":["token"]},"users.numbers":{"uri":"users\/{user}\/{number}","methods":["GET","HEAD"],"parameters":["user","number"],"bindings":{"user":"uuid"}},"users.store":{"uri":"users","methods":["POST"]},"comments":{"uri":"comments\/{comment}","methods":["GET","HEAD"],"parameters":["comment"],"bindings":{"comment":"uuid"}},"replies":{"uri":"replies\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"uuid"}},"replies-table":{"uri":"replies-table\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"uuid"}},"replies-route-key":{"uri":"replies-route-key\/{reply}","methods":["GET","HEAD"],"parameters":["reply"],"bindings":{"reply":"uuid"}},"posts":{"uri":"blog\/{category}\/{post}","methods":["GET","HEAD"],"parameters":["category","post"],"bindings":{"category":"id","post":"slug"}},"posts.tags":{"uri":"blog\/{category}\/{post}\/{tag}","methods":["GET","HEAD"],"parameters":["category","post","tag"],"bindings":{"category":"id","post":"slug","tag":"slug"}}}}');
-})->skip(fn () => laravel_version_compare('13', '>='));
+})->skip(fn () => laravel_version_compare('13.0', '<'));
 
 test('skip booting models that dont override their route key', function () {
     (new Ziggy)->filter(['tokens', 'users.numbers']);
