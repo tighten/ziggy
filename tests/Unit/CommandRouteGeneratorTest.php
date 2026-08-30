@@ -138,6 +138,14 @@ test('generate file at path set in config', function () {
     expect(base_path('resources/js/custom.js'))->toBeFile();
 });
 
+test('generate file at absolute path', function () {
+    $path = sys_get_temp_dir() . '/' . uniqid() . '/ziggy.js';
+
+    artisan('ziggy:generate', ['path' => $path]);
+
+    expect($path)->toBeFile();
+});
+
 test('generate dts file', function () {
     Route::get('posts', fn () => '')->name('posts.index');
     Route::post('posts/{post}/comments', fn ($post, $comment) => '')->name('comments.store');

@@ -33,10 +33,10 @@ class CommandRouteGenerator extends Command
 
         $path = $this->argument('path') ?? config('ziggy.output.path', 'resources/js/ziggy.js');
 
-        if ($filesystem->isDirectory(base_path($path))) {
+        if ($filesystem->isDirectory($this->path($path))) {
             $path .= '/ziggy';
         } else {
-            $filesystem->ensureDirectoryExists(dirname(base_path($path)), recursive: true);
+            $filesystem->ensureDirectoryExists(dirname($this->path($path)), recursive: true);
         }
 
         $name = preg_replace('/(\.d)?\.ts$|\.js$/', '', $path);
@@ -44,7 +44,7 @@ class CommandRouteGenerator extends Command
         if (! $this->option('types-only')) {
             $output = config('ziggy.output.file', File::class);
 
-            $filesystem->put(base_path("{$name}.js"), new $output($ziggy));
+            $filesystem->put($this->path("{$name}.js"), new $output($ziggy));
         }
 
         if ($this->option('types') !== 'false' || $this->option('types-only')) {
@@ -55,11 +55,20 @@ class CommandRouteGenerator extends Command
                 default => $this->option('types'),
             };
 
-            $filesystem->ensureDirectoryExists(dirname(base_path($typesPath)), recursive: true);
+            $filesystem->ensureDirectoryExists(dirname($this->path($typesPath)), recursive: true);
 
-            $filesystem->put(base_path($typesPath), new $types($ziggy));
+            $filesystem->put($this->path($typesPath), new $types($ziggy));
         }
 
         $this->info('Files generated!');
+    }
+
+    private function path(string $path): string
+    {
+        $isAbsolute = str_starts_with($path, '/')
+            || str_starts_with($path, '\\')
+            || (strlen($path) > 1 && ctype_alpha($path[0]) && $path[1] === ':');
+
+        return $isAbsolute ? $path : base_path($path);
     }
 }
