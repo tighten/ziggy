@@ -8,6 +8,14 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v2.6.4] - 2026-08-18
+
+**Fixed**
+
+* Fix intellisense/completions for partial route parameter objects by @bakerkretzmar in https://github.com/tighten/ziggy/pull/880
+* Check if model has table or route key attribute to determine bindings by @bram-pkg in https://github.com/tighten/ziggy/pull/894
+
+
 ## [v2.6.3] - 2026-06-23
 
 **Fixed**
@@ -530,7 +538,8 @@ See [UPGRADING](UPGRADING.md#upgrading-from-1x-to-2x) for detailed upgrade instr
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v2.6.3...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v2.6.4...HEAD
+[v2.6.4]: https://github.com/tighten/ziggy/compare/v2.6.3...v2.6.4
 [v2.6.3]: https://github.com/tighten/ziggy/compare/v2.6.2...v2.6.3
 [v2.6.2]: https://github.com/tighten/ziggy/compare/v2.6.1...v2.6.2
 [v2.6.1]: https://github.com/tighten/ziggy/compare/v2.6.0...v2.6.1
