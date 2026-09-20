@@ -10,6 +10,7 @@ export default defineConfig([
             alwaysBundle: ['qs-esm'],
         },
         platform: 'browser',
+        target: 'es2015',
         minify: true,
         hooks: {
             'build:done'() {
@@ -26,6 +27,7 @@ export default defineConfig([
             alwaysBundle: ['qs-esm'],
         },
         platform: 'browser',
+        target: 'es2015',
         minify: true,
         globalName: 'route',
     },

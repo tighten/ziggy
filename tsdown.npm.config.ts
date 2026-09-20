@@ -5,6 +5,7 @@ export default defineConfig({
     entry: './src/js/index.js',
     dts: false,
     platform: 'browser',
+    target: 'es2015',
     minify: true,
     hooks: {
         'build:done'() {
