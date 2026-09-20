@@ -17,7 +17,7 @@ test('generate named routes', function () {
     Route::get('posts/{post}/comments', fn () => '')->name('postComments.index');
 
     $output = (new BladeRouteGenerator)->generate();
-    $config = json_decode(Str::between($output, 'const Ziggy=', ';!'), true);
+    $config = json_decode(Str::between($output, 'const Ziggy=', ';(function'), true);
 
     expect($config['routes'])
         ->toHaveCount(4)
@@ -78,7 +78,7 @@ test('generate route config for groups', function (array $groups, array $names) 
     ]]);
 
     $output = (new BladeRouteGenerator)->generate($groups);
-    $config = json_decode(Str::between($output, 'const Ziggy=', ';!'), true);
+    $config = json_decode(Str::between($output, 'const Ziggy=', ';(function'), true);
 
     expect($config['routes'])
         ->toHaveCount(count($names))
