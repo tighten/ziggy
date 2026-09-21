@@ -3,6 +3,8 @@
 namespace Tighten\Ziggy;
 
 use Illuminate\Contracts\Routing\UrlRoutable;
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -14,8 +16,6 @@ use Laravel\Folio\FolioRoutes;
 use Laravel\Folio\Pipeline\MatchedView;
 use Laravel\Folio\Pipeline\PotentiallyBindablePathSegment;
 use ReflectionClass;
-use ReflectionMethod;
-use ReflectionProperty;
 
 class Ziggy implements JsonSerializable
 {
@@ -175,22 +175,40 @@ class Ziggy implements JsonSerializable
                     break;
                 }
 
-                $model = Reflector::getParameterClassName($parameter);
-
-                $override = (new ReflectionClass($model))->isInstantiable() && (
-                    (new ReflectionMethod($model, 'getRouteKeyName'))->class !== Model::class
-                    || (new ReflectionMethod($model, 'getKeyName'))->class !== Model::class
-                    || (new ReflectionProperty($model, 'primaryKey'))->class !== Model::class
-                );
-
-                // Avoid booting this model if it doesn't override the default route key name
-                $bindings[$parameter->getName()] = $override ? app($model)->getRouteKeyName() : 'id';
+                $bindings[$parameter->getName()] = $this->resolveRouteKeyName(Reflector::getParameterClassName($parameter));
             }
 
             $routes[$name] = [...$bindings, ...$route->bindingFields()];
         }
 
         return $routes;
+    }
+
+    // Avoids booting a model if it doesn't override the default route key name
+    private function resolveRouteKeyName(string $model): string
+    {
+        $class = new ReflectionClass($model);
+
+        if ($class->isInstantiable()) {
+            if (
+                $class->getMethod('getRouteKeyName')->class !== Model::class
+                || $class->getMethod('getKeyName')->class !== Model::class
+                || $class->getProperty('primaryKey')->class !== Model::class
+            ) {
+                return app($model)->getRouteKeyName();
+            }
+
+            // @see \Illuminate\Database\Eloquent\Model::resolveClassAttribute()
+            do {
+                foreach ([$class, ...$class->getTraits()] as $reflection) {
+                    if ($reflection->getAttributes(Table::class) || $reflection->getAttributes(RouteKey::class)) {
+                        return app($model)->getRouteKeyName();
+                    }
+                }
+            } while ($class = $class->getParentClass());
+        }
+
+        return 'id';
     }
 
     /**
@@ -221,13 +239,7 @@ class Ziggy implements JsonSerializable
                     if ($field = $param->field()) {
                         $bindings[$name] = $field;
                     } elseif ($param->bindable()) {
-                        $override = (new ReflectionClass($param->class()))->isInstantiable() && (
-                            (new ReflectionMethod($param->class(), 'getRouteKeyName'))->class !== Model::class
-                            || (new ReflectionMethod($param->class(), 'getKeyName'))->class !== Model::class
-                            || (new ReflectionProperty($param->class(), 'primaryKey'))->class !== Model::class
-                        );
-
-                        $bindings[$name] = $override ? app($param->class())->getRouteKeyName() : 'id';
+                        $bindings[$name] = $this->resolveRouteKeyName($param->class());
                     }
                 }
             }
