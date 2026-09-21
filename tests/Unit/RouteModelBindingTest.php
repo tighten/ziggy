@@ -237,6 +237,19 @@ test('use custom primary key set with getKeyName method', function () {
     ]);
 });
 
+test('use route key attributes on traits and parent models', function (Closure $action) {
+    Route::get('models/{model}', $action)->name('models');
+
+    expect((new Ziggy)->toArray()['routes']['models']['bindings'])->toBe(['model' => 'uuid']);
+})->with([
+    'table trait' => [fn (ReplyWithTableTrait $model) => ''],
+    'route key trait' => [fn (ReplyWithRouteKeyTrait $model) => ''],
+    'parent table attribute' => [fn (InheritedReplyWithTable $model) => ''],
+    'parent route key attribute' => [fn (InheritedReplyWithRouteKey $model) => ''],
+    'parent table trait' => [fn (InheritedReplyWithTableTrait $model) => ''],
+    'parent route key trait' => [fn (InheritedReplyWithRouteKeyTrait $model) => ''],
+])->skip(fn () => laravel_version_compare('13.0', '<'));
+
 class User extends Model
 {
     public static $wasBooted = false;
@@ -314,4 +327,46 @@ class ReplyWithRouteKey extends Model
         parent::boot();
         static::$wasBooted = true;
     }
+}
+
+#[Table(key: 'uuid')]
+trait HasTableAttribute
+{
+    //
+}
+
+#[RouteKey(key: 'uuid')]
+trait HasRouteKeyAttribute
+{
+    //
+}
+
+class ReplyWithTableTrait extends Model
+{
+    use HasTableAttribute;
+}
+
+class ReplyWithRouteKeyTrait extends Model
+{
+    use HasRouteKeyAttribute;
+}
+
+class InheritedReplyWithTable extends ReplyWithTable
+{
+    //
+}
+
+class InheritedReplyWithRouteKey extends ReplyWithRouteKey
+{
+    //
+}
+
+class InheritedReplyWithTableTrait extends ReplyWithTableTrait
+{
+    //
+}
+
+class InheritedReplyWithRouteKeyTrait extends ReplyWithRouteKeyTrait
+{
+    //
 }

@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
@@ -7,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Folio\Folio;
 use Laravel\Folio\FolioServiceProvider;
 use Tighten\Ziggy\Ziggy;
+use function Orchestra\Testbench\laravel_version_compare;
 
 beforeEach(function () {
     if ((int) head(explode('.', app()->version())) < 10) {
@@ -364,6 +367,41 @@ test('custom route model binding field and custom view data variable name', func
         ],
     ]);
 });
+
+test('implicit route model binding with attributes on traits', function (string $model) {
+    File::ensureDirectoryExists(resource_path('views/pages/models'));
+    File::put(resource_path("views/pages/models/[{$model}-\$model].blade.php"), '<?php Laravel\Folio\name("models.show");');
+
+    Folio::path(resource_path('views/pages'));
+
+    expect((new Ziggy)->toArray()['routes']['models.show']['bindings'])->toBe(['model' => 'uuid']);
+})->with([
+    'table trait' => [FolioModelWithTableTrait::class],
+    'route key trait' => [FolioModelWithRouteKeyTrait::class],
+])
+    ->skip(fn () => laravel_version_compare('13.0', '<'));
+
+#[Table(key: 'uuid')]
+trait FolioHasTableAttribute
+{
+    //
+}
+
+#[RouteKey(key: 'uuid')]
+trait FolioHasRouteKeyAttribute
+{
+    //
+}
+
+class FolioModelWithTableTrait extends Model
+{
+    use FolioHasTableAttribute;
+}
+
+class FolioModelWithRouteKeyTrait extends Model
+{
+    use FolioHasRouteKeyAttribute;
+}
 
 class FolioUser extends Model
 {
