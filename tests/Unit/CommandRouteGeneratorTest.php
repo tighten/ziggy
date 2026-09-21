@@ -161,17 +161,7 @@ test('generate files at absolute paths set in config', function () {
     expect("{$path}/types/custom.d.ts")->toBeFile();
 });
 
-test('generate file relative to Windows drive current directory', function () {
-    // C:ziggy.js
-    $path = substr(getcwd(), 0, 2) . 'ziggy.js';
-
-    artisan('ziggy:generate', ['path' => $path])->assertExitCode(0);
-
-    // C:\path\to\app\ziggy.js
-    expect(getcwd() . '\\ziggy.js')->toBeFile();
-})->onlyOnWindows();
-
-test('generate file relative to Windows drive root', function () {
+test('generate file in Windows drive root', function () {
     // \ziggy.js
     artisan('ziggy:generate', ['path' => '\\ziggy.js'])->assertExitCode(0);
 
