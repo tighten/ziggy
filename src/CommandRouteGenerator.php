@@ -65,10 +65,10 @@ class CommandRouteGenerator extends Command
 
     private function path(string $path): string
     {
-        $isAbsolute = str_starts_with($path, '/')
+        $absolute = str_starts_with($path, '/')
             || str_starts_with($path, '\\')
             || (strlen($path) > 1 && ctype_alpha($path[0]) && $path[1] === ':');
 
-        return $isAbsolute ? $path : base_path($path);
+        return $absolute ? $path : base_path($path);
     }
 }

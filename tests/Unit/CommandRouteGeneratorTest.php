@@ -138,13 +138,46 @@ test('generate file at path set in config', function () {
     expect(base_path('resources/js/custom.js'))->toBeFile();
 });
 
-test('generate file at absolute path', function () {
+test('generate files at absolute path', function () {
     $path = sys_get_temp_dir() . '/' . uniqid() . '/ziggy.js';
 
-    artisan('ziggy:generate', ['path' => $path]);
+    artisan('ziggy:generate', ['path' => $path, '--types' => null])->assertExitCode(0);
 
     expect($path)->toBeFile();
+    expect(str_replace('.js', '.d.ts', $path))->toBeFile();
 });
+
+test('generate files at absolute paths set in config', function () {
+    $path = sys_get_temp_dir() . '/' . uniqid();
+
+    config([
+        'ziggy.output.path' => "{$path}/scripts/custom.js",
+        'ziggy.output.types-path' => "{$path}/types/custom.d.ts",
+    ]);
+
+    artisan('ziggy:generate', ['--types' => null])->assertExitCode(0);
+
+    expect("{$path}/scripts/custom.js")->toBeFile();
+    expect("{$path}/types/custom.d.ts")->toBeFile();
+});
+
+test('generate file relative to Windows drive current directory', function () {
+    // C:ziggy.js
+    $path = substr(getcwd(), 0, 2) . 'ziggy.js';
+
+    artisan('ziggy:generate', ['path' => $path])->assertExitCode(0);
+
+    // C:\path\to\app\ziggy.js
+    expect(getcwd() . '\\ziggy.js')->toBeFile();
+})->onlyOnWindows();
+
+test('generate file relative to Windows drive root', function () {
+    // \ziggy.js
+    artisan('ziggy:generate', ['path' => '\\ziggy.js'])->assertExitCode(0);
+
+    // C:\ziggy.js
+    expect(substr(getcwd(), 0, 2) . '\\ziggy.js')->toBeFile();
+})->onlyOnWindows();
 
 test('generate dts file', function () {
     Route::get('posts', fn () => '')->name('posts.index');
