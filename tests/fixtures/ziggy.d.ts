@@ -31,4 +31,4 @@ declare module 'ziggy-js' {
     ]
 }
 }
-export {};
+export declare const Ziggy: import('ziggy-js').Config;
