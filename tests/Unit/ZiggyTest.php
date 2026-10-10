@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
 use Tighten\Ziggy\Ziggy;
 
@@ -196,7 +197,7 @@ test('include middleware in route list', function () {
 
 test('use subdomain from current request', function () {
     Route::domain('{team}.ziggy.dev')
-        ->post('/test', fn () => response()->json(new Ziggy))
+        ->post('/test', fn () => new JsonResponse(new Ziggy))
         ->name('test');
 
     post(route('test', ['team' => 'tgtn']))
@@ -206,7 +207,7 @@ test('use subdomain from current request', function () {
 });
 
 test('use port from current request', function () {
-    Route::post('/', fn () => response()->json(new Ziggy))->name('home');
+    Route::post('/', fn () => new JsonResponse(new Ziggy))->name('home');
 
     post('http://ziggy.dev:3000')
         ->assertJson([
@@ -331,7 +332,7 @@ test('serialize route payload to JSON', function () {
 test('automatically serialize route payload to JSON in response', function () {
     config(['ziggy.only' => ['postComments.*']]);
 
-    Route::get('json', fn () => response()->json(new Ziggy));
+    Route::get('json', fn () => new JsonResponse(new Ziggy));
 
     get('json')
         ->assertOk()
