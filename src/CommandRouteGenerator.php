@@ -51,7 +51,7 @@ class CommandRouteGenerator extends Command
             $types = config('ziggy.output.types', Types::class);
 
             $typesPath = match ($this->option('types')) {
-                'false', '1', true, null => config('ziggy.output.types-path', "{$name}.d.ts"),
+                'false', true, null => config('ziggy.output.types-path', "{$name}.d.ts"),
                 default => $this->option('types'),
             };
 
