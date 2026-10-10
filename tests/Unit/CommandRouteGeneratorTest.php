@@ -180,6 +180,13 @@ test('generate dts file at path set in config', function () {
     expect(base_path('resources/js/types.d.ts'))->toBeFile();
 });
 
+test('generate dts file when types option passed as boolean', function () {
+    artisan('ziggy:generate', ['--types' => true]);
+
+    expect(base_path('resources/js/ziggy.js'))->toBeFile();
+    expect(base_path('resources/js/ziggy.d.ts'))->toBeFile();
+});
+
 test('generate dts file without generating routes file', function () {
     artisan('ziggy:generate --types-only');
 
