@@ -57,7 +57,9 @@ class CommandRouteGenerator extends Command
 
             $filesystem->ensureDirectoryExists(dirname(base_path($typesPath)), recursive: true);
 
-            $filesystem->put(base_path($typesPath), new $types($ziggy));
+            $declare = ! $this->option('types-only') && $typesPath === "{$name}.d.ts";
+
+            $filesystem->put(base_path($typesPath), new $types($ziggy, $declare));
         }
 
         $this->info('Files generated!');

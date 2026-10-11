@@ -178,6 +178,7 @@ test('generate dts file at path set in config', function () {
 
     expect(base_path('resources/js/ziggy.js'))->toBeFile();
     expect(base_path('resources/js/types.d.ts'))->toBeFile();
+    expect(file_get_contents(base_path('resources/js/types.d.ts')))->not->toContain('export declare const Ziggy');
 });
 
 test('generate dts file when types option passed as boolean', function () {
@@ -185,6 +186,7 @@ test('generate dts file when types option passed as boolean', function () {
 
     expect(base_path('resources/js/ziggy.js'))->toBeFile();
     expect(base_path('resources/js/ziggy.d.ts'))->toBeFile();
+    expect(file_get_contents(base_path('resources/js/ziggy.d.ts')))->toContain('export declare const Ziggy');
 });
 
 test('generate dts file without generating routes file', function () {
@@ -192,6 +194,7 @@ test('generate dts file without generating routes file', function () {
 
     expect(base_path('resources/js/ziggy.d.ts'))->toBeFile();
     expect(base_path('resources/js/ziggy.js'))->not->toBeFile();
+    expect(file_get_contents(base_path('resources/js/ziggy.d.ts')))->not->toContain('export declare const Ziggy');
 });
 
 test('infer dts file name from routes file name', function () {
@@ -203,7 +206,7 @@ test('infer dts file name from routes file name', function () {
     expect(base_path('resources/js/ziggy.d.ts'))->not->toBeFile();
 });
 
-test('generate correct routes and dts files based on provided arguments', function (string $args, array $files) {
+test('generate correct routes and dts files based on provided arguments', function (string $args, array $files, bool $declare) {
     if (is_dir(base_path('resources/scripts'))) {
         array_map(unlink(...), glob(base_path('resources/scripts/*')));
         rmdir(base_path('resources/scripts'));
@@ -212,13 +215,15 @@ test('generate correct routes and dts files based on provided arguments', functi
     artisan("ziggy:generate {$args}");
 
     expect(array_map(base_path(...), $files))->each->toBeFile();
+    expect(str_contains(file_get_contents(base_path($files[1])), 'export declare const Ziggy'))->toBe($declare);
 })->with([
-    ['resources/js/x.js --types', ['resources/js/x.js', 'resources/js/x.d.ts']],
-    ['resources/js/x.js --types=resources/js/t.d.ts', ['resources/js/x.js', 'resources/js/t.d.ts']],
-    ['resources/js/y.ts --types', ['resources/js/y.js', 'resources/js/y.d.ts']],
-    ['resources/js/z.d.ts --types', ['resources/js/z.js', 'resources/js/z.d.ts']],
-    ['resources/scripts/foo --types', ['resources/scripts/foo.js', 'resources/scripts/foo.d.ts']],
-    ['resources/js --types', ['resources/js/ziggy.js', 'resources/js/ziggy.d.ts']],
+    ['resources/js/x.js --types', ['resources/js/x.js', 'resources/js/x.d.ts'], true],
+    ['resources/js/x.js --types=resources/js/t.d.ts', ['resources/js/x.js', 'resources/js/t.d.ts'], false],
+    ['resources/js/x.js --types=resources/scripts/x.d.ts', ['resources/js/x.js', 'resources/scripts/x.d.ts'], false],
+    ['resources/js/y.ts --types', ['resources/js/y.js', 'resources/js/y.d.ts'], true],
+    ['resources/js/z.d.ts --types', ['resources/js/z.js', 'resources/js/z.d.ts'], true],
+    ['resources/scripts/foo --types', ['resources/scripts/foo.js', 'resources/scripts/foo.d.ts'], true],
+    ['resources/js --types', ['resources/js/ziggy.js', 'resources/js/ziggy.d.ts'], true],
 ]);
 
 class CustomFile extends File
