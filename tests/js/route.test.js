@@ -1433,6 +1433,21 @@ describe('current()', () => {
         expect(route().current('pages.optional')).toBe(true);
     });
 
+    test('can check the current route with malformed URI encoding', () => {
+        global.window.location.pathname = '/%c0/%c0/%c0';
+
+        expect(route().current()).toBe(undefined);
+        expect(route().current('pages')).toBe(false);
+    });
+
+    test('can check the current route with malformed URI encoding in a parameter', () => {
+        global.window.location.pathname = '/posts/%c0';
+
+        expect(route().current()).toBe('posts.show');
+        expect(route().current('posts.show')).toBe(true);
+        expect(route().routeParams).toEqual({ post: '%c0' });
+    });
+
     test('can ignore routes that don’t allow GET requests', () => {
         global.window.location.pathname = '/posts/1';
 
