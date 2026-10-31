@@ -242,13 +242,32 @@ export function route<T extends ValidRouteName>(
 ): RouteUrl | Router;
 
 /**
+ * A request/navigation snapshot. Location is explicit: scoped helpers never
+ * fall back to window.location or another request's globals.
+ */
+export type RouteScopeConfig = Omit<Config, 'routes' | 'location'> & {
+    location: NonNullable<Config['location']>;
+};
+
+type ReadonlyRoute = { readonly [K in keyof Route]: Readonly<Route[K]> };
+
+/**
+ * Copy/freeze a plain route registry once. Each factory call snapshots only
+ * request-local config and returns a helper with one reverse-resolution cache.
+ * Prepare again when the route definitions change.
+ */
+export function prepareRoutes(
+    routes: Readonly<Record<string, ReadonlyRoute>>,
+): (config: RouteScopeConfig) => typeof route;
+
+/**
  * Ziggy's Vue plugin.
  */
 export const ZiggyVue: {
-    install(app: any, options?: Config): void;
+    install(app: any, options?: Config | typeof route): void;
 };
 
 /**
  * Ziggy's React hook.
  */
-export function useRoute(defaultConfig?: Config): typeof route;
+export function useRoute(defaultConfig?: Config | typeof route): typeof route;

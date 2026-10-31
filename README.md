@@ -19,6 +19,7 @@ Ziggy provides a JavaScript `route()` function that works like Laravel's, making
 - [**JavaScript frameworks**](#javascript-frameworks)
     - [Generating and importing Ziggy's configuration](#generating-and-importing-ziggys-configuration)
     - [Importing the `route()` function](#importing-the-route-function)
+    - [Prepared route registries for SSR](#prepared-route-registries-for-ssr)
     - [Vue](#vue)
     - [React](#react)
     - [SPAs or separate repos](#spas-or-separate-repos)
@@ -373,6 +374,51 @@ Now your imports can be shortened to:
 ```js
 import { route } from 'ziggy-js';
 ```
+
+### Prepared route registries for SSR
+
+For large registries, repeated `route().current()` and parameter inspections can repeat the same reverse URL search during a render. You can opt into a prepared registry and a helper scoped to one request:
+
+```js
+import { prepareRoutes } from 'ziggy-js';
+import { Ziggy } from './ziggy.js';
+
+// Once per worker/build: only route definitions are shared.
+const createRoute = prepareRoutes(Ziggy.routes);
+
+export function renderPage(page) {
+    // Once per request: supply the current origin, defaults, and location.
+    const route = createRoute({
+        url: page.props.ziggy.url,
+        port: page.props.ziggy.port,
+        defaults: page.props.ziggy.defaults,
+        location: new URL(page.props.ziggy.location),
+    });
+
+    return renderApplication(page, route);
+}
+```
+
+`prepareRoutes()` copies and freezes plain, acyclic route data once. It does not retain the input object. Each factory call copies only its request context and retains at most one reverse-resolution result, shared by the Router instances created by that helper. Returned parameter/query objects are independent copies. Named URL generation uses the same routing rules and types as `route()` and does not trigger reverse resolution.
+
+Prepare a new registry whenever definitions, filtering/group selection, bindings, or constraints change. Existing prepared registries deliberately do not observe input edits. Use separate prepared factories for different manifests; do not share a tenant-specific manifest with another tenant. You own factory retention and invalidation—there is no global registry cache.
+
+Create a new helper for every SSR request or client navigation so that origin, defaults, location, and cached results remain local to that scope. Location is required and snapshotted; missing location fields become empty strings, rather than falling back to browser globals. Do not assign a scoped helper to a process global. A `URL` object or a `{ host, pathname, search }` object can supply the location.
+
+Existing `route()`, `useRoute(config)`, and `ZiggyVue` configuration behavior remains unchanged. To distribute a scoped helper through the existing adapters, pass it directly:
+
+```js
+// One Vue app per SSR request:
+createSSRApp(App).use(ZiggyVue, route);
+
+// React: receive the request's helper through props or your application context.
+function PostLink({ scopedRoute, post }) {
+    const route = useRoute(scopedRoute);
+    return <a href={route('posts.show', post)}>View post</a>;
+}
+```
+
+Passing an explicit fourth configuration argument to the scoped helper bypasses reuse and uses the ordinary mutable helper behavior for that call. Errors, first-match ordering, relative URL behavior, and route constraints follow the existing helper. Preparation does not remove the first search, PHP export, SSR transport, or hydration cost; it is most useful when a prepared registry is reused and a render performs multiple reverse lookups. For a single named URL, use the existing helper without preparing the whole registry.
 
 ### Vue
 
