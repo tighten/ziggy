@@ -8,6 +8,14 @@ export function route(name, params, absolute, config) {
 
 export const ZiggyVue = {
     install(app, options) {
+        try {
+            if (process.env.NODE_ENV !== 'production') {
+                warnIfConfigDiffersFromRoutesDirective(options);
+            }
+        } catch (e) {
+            // `process` isn't defined, so we can't tell whether this is a development build.
+        }
+
         const r = (name, params, absolute, config = options) =>
             route(name, params, absolute, config);
 
@@ -38,4 +46,12 @@ export function useRoute(defaultConfig) {
 
     return (name, params, absolute, config = defaultConfig) =>
         route(name, params, absolute, config);
+}
+
+function warnIfConfigDiffersFromRoutesDirective(options) {
+    if (options?.url && globalThis.Ziggy?.url && options.url !== globalThis.Ziggy.url) {
+        console.warn(
+            `Ziggy warning: the config passed to ZiggyVue has a different URL (${options.url}) than the global Ziggy config set by @routes (${globalThis.Ziggy.url}). route() may generate different URLs depending on where it's called. Use either @routes or a config passed to .use(ZiggyVue), not both.`,
+        );
+    }
 }
