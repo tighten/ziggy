@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
-import { route } from '../../src/js';
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { route, ZiggyVue } from '../../src/js';
 // import { route } from '../../dist/index.esm.js';
 // import { route } from '../../dist/index.js';
 // import route from '../../dist/route.umd.js';
@@ -1564,5 +1564,63 @@ describe('json', () => {
         document.head.removeChild(script);
 
         expect(route('posts.show', 1)).toBe('https://ziggy.dev/posts/1');
+    });
+});
+
+describe('ZiggyVue', () => {
+    const makeApp = () => ({
+        version: '3.5.0',
+        config: { globalProperties: {} },
+        provide: vi.fn(),
+    });
+
+    let warn;
+
+    beforeEach(() => {
+        warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        warn.mockRestore();
+        vi.unstubAllEnvs();
+    });
+
+    test('warns when the passed config has a different url than the global config', () => {
+        const app = makeApp();
+
+        ZiggyVue.install(app, { ...defaultZiggy, url: 'https://other.dev' });
+
+        expect(warn).toHaveBeenCalledOnce();
+        expect(warn.mock.calls[0][0]).toContain('https://other.dev');
+        expect(warn.mock.calls[0][0]).toContain('https://ziggy.dev');
+        expect(app.config.globalProperties.route('posts.index')).toBe('https://other.dev/posts');
+    });
+
+    test('does not warn when the passed config has the same url as the global config', () => {
+        ZiggyVue.install(makeApp(), { ...defaultZiggy });
+
+        expect(warn).not.toHaveBeenCalled();
+    });
+
+    test('does not warn when no config is passed', () => {
+        ZiggyVue.install(makeApp());
+
+        expect(warn).not.toHaveBeenCalled();
+    });
+
+    test('does not warn when there is no global config', () => {
+        global.Ziggy = undefined;
+
+        ZiggyVue.install(makeApp(), { ...defaultZiggy, url: 'https://other.dev' });
+
+        expect(warn).not.toHaveBeenCalled();
+    });
+
+    test('does not warn in production', () => {
+        vi.stubEnv('NODE_ENV', 'production');
+
+        ZiggyVue.install(makeApp(), { ...defaultZiggy, url: 'https://other.dev' });
+
+        expect(warn).not.toHaveBeenCalled();
     });
 });

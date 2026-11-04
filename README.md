@@ -413,6 +413,9 @@ import App from './App.vue';
 createApp(App).use(ZiggyVue, Ziggy);
 ```
 
+> [!NOTE]
+> Use either the `@routes` Blade directive or a config passed to `.use()`, not both. If both are present, the global `route()` function uses the `@routes` config while `route()` in your Vue components uses the config you passed in, so they can generate different URLs. In development, Ziggy logs a warning if the two configs have different `url` values.
+
 If you're using TypeScript, you may need to add the following declaration to a `.d.ts` file in your project to avoid type errors when using the `route()` function in your Vue component templates:
 
 ```ts

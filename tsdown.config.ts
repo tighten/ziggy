@@ -12,6 +12,8 @@ export default defineConfig([
         platform: 'browser',
         target: 'es2015',
         minify: true,
+        // Leave `process.env.NODE_ENV` for the app's bundler to replace
+        define: { 'process.env.NODE_ENV': 'process.env.NODE_ENV' },
         hooks: {
             'build:done'() {
                 writeFileSync('dist/index.esm.js', "export * from './index.js';\n");
