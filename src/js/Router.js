@@ -186,10 +186,14 @@ export default class Router extends String {
             search = '',
         } = typeof window !== 'undefined' ? window.location : {};
 
+        let location = typeof this._config.location === 'string'
+            ? new URL(this._config.location)
+            : this._config.location;
+
         return {
-            host: this._config.location?.host ?? host,
-            pathname: this._config.location?.pathname ?? pathname,
-            search: this._config.location?.search ?? search,
+            host: location?.host ?? host,
+            pathname: location?.pathname ?? pathname,
+            search: location?.search ?? search,
         };
     }
 
