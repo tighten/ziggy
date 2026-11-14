@@ -8,6 +8,19 @@ Breaking changes are marked with ⚠️.
 
 ## [Unreleased]
 
+## [v2.7.0] - 2026-11-14
+
+**Added**
+
+* fix: allow dynamic location and config in Router and ZiggyVue by @helmipradita in https://github.com/tighten/ziggy/pull/902
+
+**Fixed**
+
+* Generate the types file when --types is passed as a boolean by @lazerg in https://github.com/tighten/ziggy/pull/896
+* Don't block packages with Composer security advisories by @bakerkretzmar in https://github.com/tighten/ziggy/pull/903
+* Honor absolute paths passed to ziggy:generate by @lazerg in https://github.com/tighten/ziggy/pull/895
+* Handle malformed URIs when matching routes by @Jussi-Mannisto in https://github.com/tighten/ziggy/pull/899
+
 ## [v2.6.5] - 2026-10-10
 
 **Fixed**
@@ -547,7 +560,8 @@ See [UPGRADING](UPGRADING.md#upgrading-from-1x-to-2x) for detailed upgrade instr
 
 For previous changes see the [Releases](https://github.com/tighten/ziggy/releases) page.
 
-[Unreleased]: https://github.com/tighten/ziggy/compare/v2.6.5...HEAD
+[Unreleased]: https://github.com/tighten/ziggy/compare/v2.7.0...HEAD
+[v2.7.0]: https://github.com/tighten/ziggy/compare/v2.6.5...v2.7.0
 [v2.6.5]: https://github.com/tighten/ziggy/compare/v2.6.4...v2.6.5
 [v2.6.4]: https://github.com/tighten/ziggy/compare/v2.6.3...v2.6.4
 [v2.6.3]: https://github.com/tighten/ziggy/compare/v2.6.2...v2.6.3
