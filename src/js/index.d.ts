@@ -179,7 +179,7 @@ interface Config {
         host?: string;
         pathname?: string;
         search?: string;
-    };
+    } | string;
 }
 
 // qs's parsed query params type, so we don't have to have qs as a dependency
@@ -245,7 +245,7 @@ export function route<T extends ValidRouteName>(
  * Ziggy's Vue plugin.
  */
 export const ZiggyVue: {
-    install(app: any, options?: Config): void;
+    install(app: any, options?: Config | (() => Config)): void;
 };
 
 /**
