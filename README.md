@@ -318,6 +318,12 @@ php artisan ziggy:generate
 
 This command places your configuration in `resources/js/ziggy.js` by default, but you can customize this path by passing an argument to the Artisan command or setting the `ziggy.output.path` config value.
 
+Output paths are relative to the application root by default. To use absolute paths, pass the `--realpath` option:
+
+```bash
+php artisan ziggy:generate /path/to/frontend/ziggy.js --realpath
+```
+
 The file `ziggy:generate` creates looks something like this:
 
 ```js

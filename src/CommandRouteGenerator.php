@@ -14,6 +14,7 @@ class CommandRouteGenerator extends Command
                             {path? : Path to the generated JavaScript file. Default: `resources/js/ziggy.js`.}
                             {--types=false : Generate a TypeScript declaration file at the given path. Default: `resources/js/ziggy.d.ts`.}
                             {--types-only : Generate only a TypeScript declaration file.}
+                            {--realpath : Treat any provided output paths as pre-resolved absolute paths.}
                             {--url=}
                             {--group=}
                             {--except= : Route name patterns to exclude.}
@@ -65,10 +66,6 @@ class CommandRouteGenerator extends Command
 
     private function path(string $path): string
     {
-        $absolute = str_starts_with($path, '/')
-            || str_starts_with($path, '\\')
-            || (strlen($path) > 1 && ctype_alpha($path[0]) && $path[1] === ':');
-
-        return $absolute ? $path : base_path($path);
+        return $this->option('realpath') ? $path : base_path($path);
     }
 }
