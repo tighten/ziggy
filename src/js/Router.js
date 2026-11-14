@@ -1,4 +1,5 @@
 import { stringify } from 'qs-esm';
+import { decode } from './lib.js';
 import Route from './Route.js';
 
 /**
@@ -151,7 +152,7 @@ export default class Router extends String {
             return Object.entries(subset).every(([key, value]) => {
                 if (Array.isArray(value) && Array.isArray(full[key])) {
                     return value.every(
-                        (v) => full[key].includes(v) || full[key].includes(decodeURIComponent(v)),
+                        (v) => full[key].includes(v) || full[key].includes(decode(String(v))),
                     );
                 }
 
@@ -164,7 +165,7 @@ export default class Router extends String {
                     return isSubset(value, full[key]);
                 }
 
-                return full[key] == value || full[key] == decodeURIComponent(value);
+                return full[key] == value || full[key] == decode(String(value));
             });
         };
 

@@ -1,4 +1,5 @@
 import { parse } from 'qs-esm';
+import { decode } from './lib.js';
 
 /**
  * A Laravel route. This class represents one route and its configuration and metadata.
@@ -91,16 +92,20 @@ export default class Route {
 
         const [location, query] = url.replace(/^\w+:\/\//, '').split('?');
 
-        const matches =
-            new RegExp(`^${pattern}/?$`).exec(location) ??
-            new RegExp(`^${pattern}/?$`).exec(decodeURI(location));
+        let matches = new RegExp(`^${pattern}/?$`).exec(location);
+
+        if (!matches) {
+            // If the location can't be decoded, this route doesn't match
+            try {
+                matches = new RegExp(`^${pattern}/?$`).exec(decodeURI(location));
+            } catch {}
+        }
 
         if (matches) {
             for (const k in matches.groups) {
-                matches.groups[k] =
-                    typeof matches.groups[k] === 'string'
-                        ? decodeURIComponent(matches.groups[k])
-                        : matches.groups[k];
+                if (typeof matches.groups[k] === 'string') {
+                    matches.groups[k] = decode(matches.groups[k]);
+                }
             }
             return { params: matches.groups, query: parse(query) };
         }
