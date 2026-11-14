@@ -1,4 +1,4 @@
-import { assertType, expectTypeOf } from 'vitest';
+import { assertType, expectTypeOf, test } from 'vitest';
 import { Config, route, Router, RouteUrl } from '../../src/js';
 
 // Add generated routes to use for testing inside this file. In a real app these declarations
@@ -126,12 +126,14 @@ assertType<Router>(route(undefined, undefined, false));
 assertType<Router>(route(undefined, undefined, undefined, {} as Config));
 
 // Derived parameter and return types should include all valid shapes/overloads
-expectTypeOf<ReturnType<typeof route>>().toEqualTypeOf<RouteUrl | Router>();
-expectTypeOf<['posts.index']>().toExtend<Parameters<typeof route>>();
-expectTypeOf<['posts.comments.show', { post: 1 }]>().toExtend<Parameters<typeof route>>();
-expectTypeOf<[]>().toExtend<Parameters<typeof route>>();
-expectTypeOf<[undefined, undefined, false]>().toExtend<Parameters<typeof route>>();
-expectTypeOf<[undefined, undefined, undefined, Config]>().toExtend<Parameters<typeof route>>();
+test('route parameter and return types include all valid overloads', () => {
+    expectTypeOf<ReturnType<typeof route>>().toEqualTypeOf<RouteUrl | Router>();
+    expectTypeOf<['posts.index']>().toExtend<Parameters<typeof route>>();
+    expectTypeOf<['posts.comments.show', { post: 1 }]>().toExtend<Parameters<typeof route>>();
+    expectTypeOf<[]>().toExtend<Parameters<typeof route>>();
+    expectTypeOf<[undefined, undefined, false]>().toExtend<Parameters<typeof route>>();
+    expectTypeOf<[undefined, undefined, undefined, Config]>().toExtend<Parameters<typeof route>>();
+});
 
 // Uncomment to test strict route name checking - invalid route names in this file should error
 // declare module '../../src/js' {

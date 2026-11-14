@@ -36,7 +36,7 @@ jobs:
           extensions: fileinfo
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
       - run: composer require laravel/framework:"${{ matrix.laravel }}.*" --no-update --no-interaction
       - uses: ramsey/composer-install@v3

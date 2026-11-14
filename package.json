@@ -47,15 +47,15 @@
         "prepublishOnly": "npm run build:npm"
     },
     "dependencies": {
-        "qs-esm": "^7.0.3"
+        "qs-esm": "^8.0.2"
     },
     "devDependencies": {
-        "@types/node": "^25.9.4",
-        "jsdom": "^28.1.0",
-        "prettier": "^3.8.1",
-        "tsdown": "^0.22.3",
+        "@types/node": "^26.6.6",
+        "jsdom": "^31.0.1",
+        "prettier": "^3.10.1",
+        "tsdown": "^0.23.7",
         "typescript": "^6.0.3",
-        "vitest": "^4.0.18"
+        "vitest": "^5.1.0"
     },
     "prettier": {
         "printWidth": 100,
