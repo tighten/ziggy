@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
-import { route } from '../../src/js';
+import { route, ZiggyVue } from '../../src/js';
 // import { route } from '../../dist/index.esm.js';
 // import { route } from '../../dist/index.js';
 // import route from '../../dist/route.umd.js';
@@ -1514,7 +1514,49 @@ describe('current()', () => {
 
         expect(route(undefined, undefined, undefined, config).current()).toBe('events.venues.show');
 
+        // Dynamic location function
+        const configWithFn = {
+            ...config,
+            location: () => ({
+                host: 'ziggy.dev',
+                pathname: '/events/1/venues/2',
+                search: '?user=Jacob&id=9',
+            }),
+        };
+        expect(route(undefined, undefined, undefined, configWithFn).current()).toBe('events.venues.show');
+
+        // String URL location
+        const configWithUrlString = {
+            ...config,
+            location: 'https://ziggy.dev/events/1/venues/2?user=Jacob&id=9',
+        };
+        expect(route(undefined, undefined, undefined, configWithUrlString).current()).toBe('events.venues.show');
+
         global.window = oldWindow;
+    });
+
+    test('ZiggyVue plugin with dynamic config function', () => {
+        let currentPath = '/posts';
+        const app = {
+            version: '3.5.0',
+            config: { globalProperties: {} },
+            provide(key, value) {
+                this[key] = value;
+            },
+        };
+
+        ZiggyVue.install(app, () => ({
+            ...defaultZiggy,
+            location: {
+                host: 'ziggy.dev',
+                pathname: currentPath,
+            },
+        }));
+
+        expect(app.config.globalProperties.route().current()).toBe('posts.index');
+
+        currentPath = '/';
+        expect(app.config.globalProperties.route().current()).toBe('home');
     });
 
     // https://github.com/tighten/ziggy/issues/844

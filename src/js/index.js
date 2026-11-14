@@ -8,8 +8,11 @@ export function route(name, params, absolute, config) {
 
 export const ZiggyVue = {
     install(app, options) {
-        const r = (name, params, absolute, config = options) =>
-            route(name, params, absolute, config);
+        const r = (name, params, absolute, config = options) => {
+            const resolvedConfig = typeof config === 'function' ? config() : config;
+
+            return route(name, params, absolute, resolvedConfig);
+        };
 
         if (parseInt(app.version) > 2) {
             app.config.globalProperties.route = r;

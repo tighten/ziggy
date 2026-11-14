@@ -175,11 +175,23 @@ interface Config {
     port: number | null;
     defaults: Record<string, RawParameterValue>;
     routes: Record<string, Route>;
-    location?: {
-        host?: string;
-        pathname?: string;
-        search?: string;
-    };
+    location?:
+        | {
+            host?: string;
+            pathname?: string;
+            search?: string;
+          }
+        | URL
+        | string
+        | (() =>
+              | {
+                    host?: string;
+                    pathname?: string;
+                    search?: string;
+                }
+              | URL
+              | string
+              | undefined);
 }
 
 // qs's parsed query params type, so we don't have to have qs as a dependency
@@ -245,7 +257,7 @@ export function route<T extends ValidRouteName>(
  * Ziggy's Vue plugin.
  */
 export const ZiggyVue: {
-    install(app: any, options?: Config): void;
+    install(app: any, options?: Config | (() => Config)): void;
 };
 
 /**
