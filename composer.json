@@ -53,6 +53,11 @@
     },
     "config": {
         "optimize-autoloader": true,
+        "policy": {
+            "advisories": {
+                "block": false
+            }
+        },
         "sort-packages": true,
         "allow-plugins": {
             "kylekatarnls/update-helper": true,
