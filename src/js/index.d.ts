@@ -175,23 +175,11 @@ interface Config {
     port: number | null;
     defaults: Record<string, RawParameterValue>;
     routes: Record<string, Route>;
-    location?:
-        | {
-            host?: string;
-            pathname?: string;
-            search?: string;
-          }
-        | URL
-        | string
-        | (() =>
-              | {
-                    host?: string;
-                    pathname?: string;
-                    search?: string;
-                }
-              | URL
-              | string
-              | undefined);
+    location?: {
+        host?: string;
+        pathname?: string;
+        search?: string;
+    } | string;
 }
 
 // qs's parsed query params type, so we don't have to have qs as a dependency

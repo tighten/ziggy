@@ -9,9 +9,7 @@ export function route(name, params, absolute, config) {
 export const ZiggyVue = {
     install(app, options) {
         const r = (name, params, absolute, config = options) => {
-            const resolvedConfig = typeof config === 'function' ? config() : config;
-
-            return route(name, params, absolute, resolvedConfig);
+            return route(name, params, absolute, typeof config === 'function' ? config() : config);
         };
 
         if (parseInt(app.version) > 2) {
