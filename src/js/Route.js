@@ -1,4 +1,5 @@
 import { parse } from 'qs-esm';
+import { decode } from './lib.js';
 
 /**
  * A Laravel route. This class represents one route and its configuration and metadata.
@@ -102,12 +103,9 @@ export default class Route {
 
         if (matches) {
             for (const k in matches.groups) {
-                if (typeof matches.groups[k] !== 'string') continue;
-
-                // If the value can't be decoded, keep it encoded
-                try {
-                    matches.groups[k] = decodeURIComponent(matches.groups[k]);
-                } catch {}
+                if (typeof matches.groups[k] === 'string') {
+                    matches.groups[k] = decode(matches.groups[k]);
+                }
             }
             return { params: matches.groups, query: parse(query) };
         }
